@@ -68,7 +68,7 @@ public class UKPostCodeExample extends Optimization {
   }
 
   public String toString() {
-    return "Testing UKPostCode cosntraint as part of the ZoneCode feature.";
+    return "Testing UKPostCode constraint as part of the ZoneCode feature.";
   }
 
   public void example()
