@@ -1,0 +1,99 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!-- General info -->
+	<url>http://www.dna-evolutions.com/</url>
+	<groupId>jopt</groupId>
+	<version>1.0.0-SNAPSHOT</version>
+	<artifactId>jopt.public.examples</artifactId>
+	<name>Java examples for JOpt-TourOptimizer</name>
+	<inceptionYear>2017</inceptionYear>
+	<description>Collection of Java examples for JOpt-TourOptimizer.</description>
+	
+	<properties>
+		<project.build.sourceEncoding>cp1252</project.build.sourceEncoding>
+	</properties>
+
+	<developers>
+		<developer>
+			<id>jens@dnaevolutions</id>
+			<name>Jens Richter</name>
+			<email>jens.richter@dna-evolutions.com</email>
+		</developer>
+	</developers>
+
+
+	<organization>
+		<name>DNA Evolutions GmbH</name>
+		<url>http://www.dna-evolutions.com/</url>
+	</organization>
+
+
+	<licenses>
+		<license>
+			<name>Custom DNA evolutions license</name>
+			<url>https://www.dna-evolutions.com</url>
+		</license>
+	</licenses>
+
+	<repositories>
+		<repository>
+			<id>jopt4-maven</id>
+			<url>https://public.repo.dna-evolutions.com/repository/maven-public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>jopt</groupId>
+			<artifactId>jopt.core.pg</artifactId>
+			<version>7.4.1</version>
+			<classifier>shaded</classifier>
+		</dependency>
+		<dependency>
+			<groupId>jopt</groupId>
+			<artifactId>jopt.core.pg</artifactId>
+			<version>7.4.1</version>
+			<classifier>javadoc</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>6.9.10</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-core</artifactId>
+			<version>1.3</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
+			<version>1.3</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>1.10.19</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.atlassian.commonmark</groupId>
+			<artifactId>commonmark</artifactId>
+			<version>0.14.0</version>
+		</dependency>
+	</dependencies>
+
+</project>
