@@ -11,9 +11,11 @@
 	<name>Java examples for JOpt-TourOptimizer</name>
 	<inceptionYear>2017</inceptionYear>
 	<description>Collection of Java examples for JOpt-TourOptimizer.</description>
-	
+
 	<properties>
 		<project.build.sourceEncoding>cp1252</project.build.sourceEncoding>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
 	</properties>
 
 	<developers>
@@ -95,5 +97,15 @@
 			<version>0.14.0</version>
 		</dependency>
 	</dependencies>
+
+	<plugins>
+		<plugin>
+			<artifactId>maven-compiler-plugin</artifactId>
+			<configuration>
+				<source>1.8</source>
+				<target>1.8</target>
+			</configuration>
+		</plugin>
+	</plugins>
 
 </project>
