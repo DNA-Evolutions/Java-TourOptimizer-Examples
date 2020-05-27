@@ -1,6 +1,14 @@
 # Java-JOpt-TourOptimizer-Examples
 This repository is part of our JOpt-TourOptimizer-Sweet for Java. It includes an extensive collection of examples (written in Java). This fully functional Maven project can be cloned and can be used as base for starting with JOpt-TourOptimizer.
 
+The project is roughly subdivided into three major types of examples:
+
+1. Basic Examples
+2. Advanced Examples
+3. Expert Examples
+
+Each of the examples sections has its own README.
+
 # Further Documentation and Links
 
 - Further documentation - <a href="https://docs.dna-evolutions.com" target="_blank">docs.dna-evolutions.com</a>
