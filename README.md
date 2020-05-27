@@ -3,9 +3,9 @@ This repository is part of our JOpt-TourOptimizer-Sweet for Java. It includes an
 
 The project is roughly subdivided into three major types of examples:
 
-1. Basic Examples
-2. Advanced Examples
-3. Expert Examples
+1. <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic" target="_blank">Basic Examples</a>
+2. <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced" target="_blank">Advanced Examples</a>
+3. <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert" target="_blank">Expert Examples</a>
 
 Each of the examples sections has its own README.
 

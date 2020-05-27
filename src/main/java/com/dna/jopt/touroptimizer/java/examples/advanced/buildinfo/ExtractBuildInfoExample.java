@@ -1,4 +1,4 @@
-package com.dna.jopt.touroptimizer.java.examples.basic.buildinfo;
+package com.dna.jopt.touroptimizer.java.examples.advanced.buildinfo;
 /*-
  * #%L
  * JOpt TourOptimizer Examples

@@ -1,4 +1,4 @@
-package com.dna.jopt.touroptimizer.java.examples.basic.readoutresult;
+package com.dna.jopt.touroptimizer.java.examples.basic.recommendedimplementation_02;
 /*-
  * #%L
  * JOpt TourOptimizer Examples
@@ -11,10 +11,12 @@ package com.dna.jopt.touroptimizer.java.examples.basic.readoutresult;
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
-import static java.time.Month.MAY;
 import static tec.units.ri.unit.MetricPrefix.KILO;
 import static tec.units.ri.unit.Units.METRE;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.ZoneId;
@@ -25,48 +27,52 @@ import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import static java.time.Month.MAY;
+
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 
+import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationProgress;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
+import com.dna.jopt.io.exporting.IEntityExporter;
+import com.dna.jopt.io.exporting.kml.EntityKMLExporter;
 import com.dna.jopt.member.unit.hours.IWorkingHours;
-import com.dna.jopt.member.bucket.route.controller.detail.ILogicRouteElementDetailItem;
 import com.dna.jopt.member.unit.hours.IOpeningHours;
 import com.dna.jopt.member.unit.hours.WorkingHours;
 import com.dna.jopt.member.unit.hours.OpeningHours;
+import com.dna.jopt.member.unit.node.INode;
 import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.resource.CapacityResource;
-import com.dna.jopt.member.unit.violation.IViolation;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 import tec.units.ri.quantity.Quantities;
 
-/** Example on how to access route information and details from result object. */
-public class ReadOutResultExample extends Optimization {
+/** Doing an asynch run. Getting an completable future of the OptimizationResult. */
+public class RecommendedAsynchImplementationExample extends Optimization {
 
-  public static void main(String[] args)
-      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
-    new ReadOutResultExample().example();
+  public static void main(String[] args) throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
+    new RecommendedAsynchImplementationExample().example();
   }
 
   public String toString() {
-    return "Example on how to access route information and details from result object.";
+    return "Getting an completable future of the OptimizationResult.";
   }
 
-  public void example()
-      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+  public void example() throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
+	  
+	  
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
     // Properties!
-    this.setProperties();
+    this.setProperties(this);
 
-    this.addNodes();
-    this.addResources();
+    this.addNodes(this);
+    this.addResources(this);
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
@@ -74,88 +80,92 @@ public class ReadOutResultExample extends Optimization {
     resultFuture.get();
   }
 
-  private void setProperties() {
+  private void setProperties(IOptimization opti) {
 
     Properties props = new Properties();
 
-    props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
+    props.setProperty("JOptExitCondition.JOptGenerationCount", "20000");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
     props.setProperty("JOpt.NumCPUCores", "4");
 
-    this.addElement(props);
+    opti.addElement(props);
   }
 
-  private void addResources() {
+  private void addResources(IOptimization opti) {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
         new WorkingHours(
             ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
     workingHours.add(
         new WorkingHours(
             ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+            ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-    Duration maxWorkingTime = Duration.ofHours(4);
+    Duration maxWorkingTime = Duration.ofHours(13);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
     CapacityResource rep1 =
         new CapacityResource(
             "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
     rep1.setCost(0, 1, 1);
-    this.addElement(rep1);
+    opti.addElement(rep1);
   }
 
-  private void addNodes() {
+  private void addNodes(IOptimization opti) {
 
     List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
     weeklyOpeningHours.add(
         new OpeningHours(
             ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 12, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
     weeklyOpeningHours.add(
         new OpeningHours(
             ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 12, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+            ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
     Duration visitDuration = Duration.ofMinutes(20);
 
     // Define some nodes
-    TimeWindowGeoNode koeln =
+    INode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(koeln);
+    opti.addElement(koeln);
 
-    TimeWindowGeoNode essen =
+    INode oberhausen =
+        new TimeWindowGeoNode("Oberhausen", 51.4667, 6.85, weeklyOpeningHours, visitDuration, 1);
+    opti.addElement(oberhausen);
+
+    INode essen =
         new TimeWindowGeoNode("Essen", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(essen);
+    opti.addElement(essen);
 
-    TimeWindowGeoNode dueren =
+    INode dueren =
         new TimeWindowGeoNode("Dueren", 50.8, 6.48333, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(dueren);
+    opti.addElement(dueren);
 
-    TimeWindowGeoNode nuernberg =
+    INode nuernberg =
         new TimeWindowGeoNode("Nuernberg", 49.4478, 11.0683, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(nuernberg);
+    opti.addElement(nuernberg);
 
-    TimeWindowGeoNode heilbronn =
+    INode heilbronn =
         new TimeWindowGeoNode("Heilbronn", 49.1403, 9.22, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(heilbronn);
+    opti.addElement(heilbronn);
 
-    TimeWindowGeoNode stuttgart =
+    INode stuttgart =
         new TimeWindowGeoNode("Stuttgart", 48.7667, 9.18333, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(stuttgart);
+    opti.addElement(stuttgart);
 
-    TimeWindowGeoNode wuppertal =
+    INode wuppertal =
         new TimeWindowGeoNode("Wuppertal", 51.2667, 7.18333, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(wuppertal);
+    opti.addElement(wuppertal);
 
-    TimeWindowGeoNode aachen =
+    INode aachen =
         new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(aachen);
+    opti.addElement(aachen);
   }
 
   @Override
@@ -185,40 +195,21 @@ public class ReadOutResultExample extends Optimization {
   }
 
   @Override
-  public void onAsynchronousOptimizationResult(IOptimizationResult result) {
+  public void onAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {
+    System.out.println(rapoptResult);
 
+    IEntityExporter kmlExporter = new EntityKMLExporter();
+    kmlExporter.setTitle("" + this.getClass().getSimpleName());
 
+    try {
 
-    // Access the data about each route
-    result
-        .getRoutes()
-        .stream()
-        .forEach(
-            r -> {
+      kmlExporter.export(
+          rapoptResult.getContainer(),
+          new FileOutputStream(new File("./" + this.getClass().getSimpleName() + ".kml")));
 
-              // Get e.g. cost of a route
-              System.out.println("\nRouteCost: "+result.getRouteCost(r));
-
-              // Get details of the route
-              List<ILogicRouteElementDetailItem> details = result.getOrderedRouteItems(r);
-              details.forEach(System.out::println);
-
-              // Get route violations
-              List<IViolation> violations = result.getRouteViolations(r);
-              violations.forEach(System.out::println);
-
-              // Get node Violations
-              details
-                  .stream()
-                  .forEach(
-                      d -> {
-                        List<IViolation> nodeVios =
-                            r.getRouteCostAndViolationController()
-                                .getNodeViolations(d.getElement().getId());
-                        if (!nodeVios.isEmpty()) {
-                          System.out.println(d.getElement().getId() + ": " + nodeVios);
-                        }
-                      });
-            });
+    } catch (FileNotFoundException e) {
+      //
+      e.printStackTrace();
+    }
   }
 }

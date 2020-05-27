@@ -1,4 +1,4 @@
-package com.dna.jopt.touroptimizer.java.examples.basic.recommendedimplementation;
+package com.dna.jopt.touroptimizer.java.examples.basic.recommendedimplementation_02;
 /*-
  * #%L
  * JOpt TourOptimizer Examples
@@ -14,9 +14,7 @@ package com.dna.jopt.touroptimizer.java.examples.basic.recommendedimplementation
 import static tec.units.ri.unit.MetricPrefix.KILO;
 import static tec.units.ri.unit.Units.METRE;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.ZoneId;
@@ -35,10 +33,7 @@ import javax.measure.quantity.Length;
 import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
-import com.dna.jopt.framework.outcomewrapper.IOptimizationProgress;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
-import com.dna.jopt.io.exporting.IEntityExporter;
-import com.dna.jopt.io.exporting.kml.EntityKMLExporter;
 import com.dna.jopt.member.unit.hours.IWorkingHours;
 import com.dna.jopt.member.unit.hours.IOpeningHours;
 import com.dna.jopt.member.unit.hours.WorkingHours;
@@ -46,38 +41,73 @@ import com.dna.jopt.member.unit.hours.OpeningHours;
 import com.dna.jopt.member.unit.node.INode;
 import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.resource.CapacityResource;
+import com.dna.jopt.member.unit.resource.IResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 import tec.units.ri.quantity.Quantities;
 
-/** Doing an asynch run. Getting an completable future of the OptimizationResult. */
-public class RecommendedAsynchImplementationExample extends Optimization {
+/**
+ * Doing an asynch run and subscribe to different events.
+ */
+public class RecommendedImplementationReactiveJavaExample extends Optimization {
 
-  public static void main(String[] args) throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
-    new RecommendedAsynchImplementationExample().example();
+  public static void main(String[] args) throws InvalidLicenceException {
+    try {
+      new RecommendedImplementationReactiveJavaExample().example();
+    } catch (InterruptedException | ExecutionException | IOException e) {
+      e.printStackTrace();
+    }
   }
-
+  
   public String toString() {
-    return "Getting an completable future of the OptimizationResult.";
+	  return "Getting an completable future of the OptimizationResult and subscribe to call-back methods.";
   }
 
-  public void example() throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
-	  
-	  
+  public void example()
+      throws InterruptedException, ExecutionException, FileNotFoundException, IOException, InvalidLicenceException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
     // Properties!
     this.setProperties(this);
-
     this.addNodes(this);
     this.addResources(this);
 
+    /*
+     *  Use reactive java, in case synch run is used all subscription have to be done before calling
+     *  start, otherwise data from subscription will be triggered after run is done
+     */
+
+    // Use asynch run here
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
-    resultFuture.get();
+    // Subscribe to events
+    this.getOptimizationEvents()
+        .progress
+        .subscribe(
+            p -> {
+              System.out.println(p.getProgressString());
+            });
+    
+
+    this.getOptimizationEvents()
+        .error
+        .subscribe(
+            e -> {
+              System.out.println(e.getCause() + " " + e.getCode());
+            });
+
+    this.getOptimizationEvents()
+        .status
+        .subscribe(
+            s -> {
+              System.out.println(s.getDescription() + " " + s.getCode());
+            });
+
+    // Get result - This also blocking the execution
+    IOptimizationResult result = resultFuture.get();
+    System.out.println(result);
   }
 
   private void setProperties(IOptimization opti) {
@@ -108,7 +138,7 @@ public class RecommendedAsynchImplementationExample extends Optimization {
     Duration maxWorkingTime = Duration.ofHours(13);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
-    CapacityResource rep1 =
+    IResource rep1 =
         new CapacityResource(
             "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
     rep1.setCost(0, 1, 1);
@@ -135,81 +165,36 @@ public class RecommendedAsynchImplementationExample extends Optimization {
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     opti.addElement(koeln);
 
-    INode oberhausen =
+    TimeWindowGeoNode oberhausen =
         new TimeWindowGeoNode("Oberhausen", 51.4667, 6.85, weeklyOpeningHours, visitDuration, 1);
     opti.addElement(oberhausen);
 
-    INode essen =
+    TimeWindowGeoNode essen =
         new TimeWindowGeoNode("Essen", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
     opti.addElement(essen);
 
-    INode dueren =
+    TimeWindowGeoNode dueren =
         new TimeWindowGeoNode("Dueren", 50.8, 6.48333, weeklyOpeningHours, visitDuration, 1);
     opti.addElement(dueren);
 
-    INode nuernberg =
+    TimeWindowGeoNode nuernberg =
         new TimeWindowGeoNode("Nuernberg", 49.4478, 11.0683, weeklyOpeningHours, visitDuration, 1);
     opti.addElement(nuernberg);
 
-    INode heilbronn =
+    TimeWindowGeoNode heilbronn =
         new TimeWindowGeoNode("Heilbronn", 49.1403, 9.22, weeklyOpeningHours, visitDuration, 1);
     opti.addElement(heilbronn);
 
-    INode stuttgart =
+    TimeWindowGeoNode stuttgart =
         new TimeWindowGeoNode("Stuttgart", 48.7667, 9.18333, weeklyOpeningHours, visitDuration, 1);
     opti.addElement(stuttgart);
 
-    INode wuppertal =
+    TimeWindowGeoNode wuppertal =
         new TimeWindowGeoNode("Wuppertal", 51.2667, 7.18333, weeklyOpeningHours, visitDuration, 1);
     opti.addElement(wuppertal);
 
-    INode aachen =
+    TimeWindowGeoNode aachen =
         new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
     opti.addElement(aachen);
-  }
-
-  @Override
-  public void onError(int code, String message) {
-    System.out.println("code: " + code + " message:" + message);
-  }
-
-  @Override
-  public void onStatus(int code, String message) {
-    System.out.println("code: " + code + " message:" + message);
-  }
-
-  @Override
-  public void onWarning(int code, String message) {
-    //
-
-  }
-
-  @Override
-  public void onProgress(String winnerProgressString) {
-    System.out.println(winnerProgressString);
-  }
-
-  @Override
-  public void onProgress(IOptimizationProgress rapoptProgress) {
-    //
-  }
-
-  @Override
-  public void onAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {
-    System.out.println(rapoptResult);
-
-    IEntityExporter kmlExporter = new EntityKMLExporter();
-    kmlExporter.setTitle("" + this.getClass().getSimpleName());
-
-    try {
-
-      kmlExporter.export(
-          rapoptResult.getContainer(),
-          new FileOutputStream(new File("./" + this.getClass().getSimpleName() + ".kml")));
-
-    } catch (FileNotFoundException e) {
-      //
-      e.printStackTrace();
-    }
   }
 }

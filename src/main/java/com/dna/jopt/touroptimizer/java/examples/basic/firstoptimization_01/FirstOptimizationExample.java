@@ -1,4 +1,4 @@
-package com.dna.jopt.touroptimizer.java.examples.basic.firstoptimization;
+package com.dna.jopt.touroptimizer.java.examples.basic.firstoptimization_01;
 /*-
  * #%L
  * JOpt TourOptimizer Examples

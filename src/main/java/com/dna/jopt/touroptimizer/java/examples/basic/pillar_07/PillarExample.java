@@ -1,4 +1,4 @@
-package com.dna.jopt.touroptimizer.java.examples.basic.pillar;
+package com.dna.jopt.touroptimizer.java.examples.basic.pillar_07;
 /*-
  * #%L
  * JOpt TourOptimizer Examples

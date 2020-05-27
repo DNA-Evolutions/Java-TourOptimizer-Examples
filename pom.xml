@@ -40,9 +40,10 @@
 		</license>
 	</licenses>
 
+
 	<repositories>
 		<repository>
-			<id>jopt4-maven</id>
+			<id>jopt-maven-public</id>
 			<url>https://public.repo.dna-evolutions.com/repository/maven-public/</url>
 			<releases>
 				<enabled>true</enabled>
@@ -97,6 +98,7 @@
 			<version>0.14.0</version>
 		</dependency>
 	</dependencies>
+
 
 	<build>
 		<plugins>

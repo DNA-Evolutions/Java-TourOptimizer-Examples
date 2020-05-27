@@ -1,4 +1,4 @@
-package com.dna.jopt.touroptimizer.java.examples.basic.recommendedimplementation;
+package com.dna.jopt.touroptimizer.java.examples.basic.io_03;
 /*-
  * #%L
  * JOpt TourOptimizer Examples
@@ -11,10 +11,11 @@ package com.dna.jopt.touroptimizer.java.examples.basic.recommendedimplementation
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
+import static java.time.Month.MARCH;
 import static tec.units.ri.unit.MetricPrefix.KILO;
 import static tec.units.ri.unit.Units.METRE;
 
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.ZoneId;
@@ -23,148 +24,150 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import static java.time.Month.MAY;
 
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 
+import com.dna.jopt.config.convert.ConvertException;
+import com.dna.jopt.config.convert.ExportTarget;
+import com.dna.jopt.config.serialize.SerializationException;
 import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationProgress;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
-import com.dna.jopt.member.unit.hours.IWorkingHours;
+import com.dna.jopt.io.BZip2JsonOptimizationIO;
+import com.dna.jopt.io.IOptimizationIO;
 import com.dna.jopt.member.unit.hours.IOpeningHours;
+import com.dna.jopt.member.unit.hours.IWorkingHours;
 import com.dna.jopt.member.unit.hours.WorkingHours;
 import com.dna.jopt.member.unit.hours.OpeningHours;
 import com.dna.jopt.member.unit.node.INode;
 import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.resource.CapacityResource;
+import com.dna.jopt.member.unit.resource.IResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
-
 import tec.units.ri.quantity.Quantities;
 
-/** Doing a synch run. */
-public class RecommendedSynchImplementationExample extends Optimization {
+/** Saving the current optimization state to a file using JSON-file. */
+public class SaveOptimizationToJsonExample extends Optimization {
 
   public static void main(String[] args)
-      throws FileNotFoundException, IOException, InvalidLicenceException, InterruptedException,
-          ExecutionException, TimeoutException {
-
-    new RecommendedSynchImplementationExample().example();
+      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
+    new SaveOptimizationToJsonExample().example();
   }
 
   public String toString() {
-    return "Getting the OptimizationResult directly by defining a time out.";
+    return "Saving the current optimization state to a file using JSON-file.";
   }
 
   public void example()
-      throws FileNotFoundException, IOException, InvalidLicenceException, InterruptedException,
-          ExecutionException, TimeoutException {
+      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
     // Properties!
-    this.setProperties(this);
+    this.setProperties();
 
-    this.addNodes(this);
-    this.addResources(this);
+    this.addNodes();
+    this.addResources();
 
-    // We want to get the final result or timeout
-    IOptimizationResult result = this.startRunSync(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
-    System.out.println(result);
+    this.startRunAsync().get();
   }
 
-  private void setProperties(IOptimization opti) {
+  private void setProperties() {
 
     Properties props = new Properties();
 
     props.setProperty("JOptExitCondition.JOptGenerationCount", "20000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
+    props.setProperty("JOptLicense.CheckAutoLicensce", "FALSE");
     props.setProperty("JOpt.NumCPUCores", "4");
 
-    opti.addElement(props);
+    this.addElement(props);
   }
 
-  private void addResources(IOptimization opti) {
+  private void addResources() {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
         new WorkingHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+            ZonedDateTime.of(2020, MARCH.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MARCH.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
     workingHours.add(
         new WorkingHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+            ZonedDateTime.of(2020, MARCH.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MARCH.getValue(), 7, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-    Duration maxWorkingTime = Duration.ofHours(13);
+    Duration maxWorkingTimeJack = Duration.ofHours(8);
+    Duration maxWorkingTimeJohn = Duration.ofHours(14);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
-    CapacityResource rep1 =
+    IResource rep1 =
         new CapacityResource(
-            "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
+            "Jack", 50.775346, 6.083887, maxWorkingTimeJack, maxDistanceKmW, workingHours);
     rep1.setCost(0, 1, 1);
-    opti.addElement(rep1);
+
+    this.addElement(rep1);
+
+    IResource rep2 =
+        new CapacityResource(
+            "John", 50.775346, 6.083887, maxWorkingTimeJohn, maxDistanceKmW, workingHours);
+    rep2.setCost(0, 1, 1);
+    this.addElement(rep2);
   }
 
-  private void addNodes(IOptimization opti) {
+  private void addNodes() {
 
     List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
     weeklyOpeningHours.add(
         new OpeningHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+            ZonedDateTime.of(2020, MARCH.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MARCH.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
     weeklyOpeningHours.add(
         new OpeningHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+            ZonedDateTime.of(2020, MARCH.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MARCH.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
     Duration visitDuration = Duration.ofMinutes(20);
 
     // Define some nodes
+
     INode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-    opti.addElement(koeln);
+    this.addElement(koeln);
+
+    INode koeln1 =
+        new TimeWindowGeoNode("Koeln1", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
+    this.addElement(koeln1);
 
     INode oberhausen =
         new TimeWindowGeoNode("Oberhausen", 51.4667, 6.85, weeklyOpeningHours, visitDuration, 1);
-    opti.addElement(oberhausen);
+    this.addElement(oberhausen);
 
     INode essen =
         new TimeWindowGeoNode("Essen", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
-    opti.addElement(essen);
-
-    INode dueren =
-        new TimeWindowGeoNode("Dueren", 50.8, 6.48333, weeklyOpeningHours, visitDuration, 1);
-    opti.addElement(dueren);
-
-    INode nuernberg =
-        new TimeWindowGeoNode("Nuernberg", 49.4478, 11.0683, weeklyOpeningHours, visitDuration, 1);
-    opti.addElement(nuernberg);
+    this.addElement(essen);
 
     INode heilbronn =
         new TimeWindowGeoNode("Heilbronn", 49.1403, 9.22, weeklyOpeningHours, visitDuration, 1);
-    opti.addElement(heilbronn);
+    this.addElement(heilbronn);
 
     INode stuttgart =
         new TimeWindowGeoNode("Stuttgart", 48.7667, 9.18333, weeklyOpeningHours, visitDuration, 1);
-    opti.addElement(stuttgart);
+    this.addElement(stuttgart);
 
     INode wuppertal =
         new TimeWindowGeoNode("Wuppertal", 51.2667, 7.18333, weeklyOpeningHours, visitDuration, 1);
-    opti.addElement(wuppertal);
+    this.addElement(wuppertal);
 
     INode aachen =
         new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
-    opti.addElement(aachen);
+    this.addElement(aachen);
   }
 
   @Override
@@ -195,6 +198,23 @@ public class RecommendedSynchImplementationExample extends Optimization {
 
   @Override
   public void onAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {
-    //
+    System.out.println(rapoptResult);
+
+    try {
+      IOptimizationIO<IOptimization> io =
+          new BZip2JsonOptimizationIO(); // alternative without compression: new
+      // JsonOptimizationIO()
+
+      String jsonFile = "myopti.json.bz2";
+      io.write(new FileOutputStream(jsonFile), ExportTarget.of(this));
+
+    } catch (IOException e) {
+      //
+      e.printStackTrace();
+    } catch (ConvertException e) {
+      e.printStackTrace();
+    } catch (SerializationException e) {
+      e.printStackTrace();
+    }
   }
 }

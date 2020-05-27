@@ -1,4 +1,4 @@
-package com.dna.jopt.touroptimizer.java.examples.basic.setlicense;
+package com.dna.jopt.touroptimizer.java.examples.basic.readoutresult_05;
 /*-
  * #%L
  * JOpt TourOptimizer Examples
@@ -11,12 +11,10 @@ package com.dna.jopt.touroptimizer.java.examples.basic.setlicense;
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
+import static java.time.Month.MAY;
 import static tec.units.ri.unit.MetricPrefix.KILO;
 import static tec.units.ri.unit.Units.METRE;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.ZoneId;
@@ -27,169 +25,137 @@ import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static java.time.Month.MAY;
-
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 
-import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationProgress;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
-import com.dna.jopt.io.exporting.IEntityExporter;
-import com.dna.jopt.io.exporting.kml.EntityKMLExporter;
 import com.dna.jopt.member.unit.hours.IWorkingHours;
+import com.dna.jopt.member.bucket.route.controller.detail.ILogicRouteElementDetailItem;
 import com.dna.jopt.member.unit.hours.IOpeningHours;
 import com.dna.jopt.member.unit.hours.WorkingHours;
 import com.dna.jopt.member.unit.hours.OpeningHours;
 import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.resource.CapacityResource;
+import com.dna.jopt.member.unit.violation.IViolation;
+import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
+
 import tec.units.ri.quantity.Quantities;
 
-/** Reading the JOpt-license from a file. */
-public class SetLicenseExample extends Optimization {
-
-  private static final String LICENSE_PATH = "src/main/resources/YOUR_LICENSE.dli";
+/** Example on how to access route information and details from result object. */
+public class ReadOutResultExample extends Optimization {
 
   public static void main(String[] args)
-      throws InvalidLicenceException, InterruptedException, ExecutionException, IOException {
-    new SetLicenseExample().example();
+      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+    new ReadOutResultExample().example();
   }
 
   public String toString() {
-    return "Reading the JOpt-license from a file.";
+    return "Example on how to access route information and details from result object.";
   }
 
   public void example()
-      throws InvalidLicenceException, InterruptedException, ExecutionException, IOException {
+      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
 
-    // Set license via file object
-    SetLicenseExample.setFileLicense(this); // Alternatively use setStringLicense with your valid license
-    
-    
+    // Set license via helper
+    ExampleLicenseHelper.setLicense(this);
+
     // Properties!
-    this.setProperties(this);
+    this.setProperties();
 
-    this.addNodes(this);
-    this.addResources(this);
+    this.addNodes();
+    this.addResources();
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
     // It is important to block the call, otherwise optimization will be terminated
-
     resultFuture.get();
   }
 
-  public static boolean setFileLicense(IOptimization opti) throws IOException {
-
-    File myLicFile = new File(SetLicenseExample.LICENSE_PATH);
-
-    // Check that file exists, otherwise use free mode implicitly by not setting any license
-    if (myLicFile.exists()) {
-      opti.setLicenseJSON(myLicFile);
-      return true;
-    }
-
-
-    return false;
-  }
-
-  public static boolean setStringLicense(IOptimization opti) throws IOException {
-
-    // Attention: This is not a valid license
-    String myJsonLicense =
-        "{\r\n"
-            + "  \"version\" : \"7.4\",\r\n"
-            + "  \"identifier\" : \"TEST-\",\r\n"
-            + "  \"description\" : \"Key provided to you@company.com by DNA evolutions GmbH\",\r\n"
-            + "  \"contact\" : \"you@company.com\",\r\n"
-            + "  \"modules\" : [ {\r\n"
-            + "    \"Module:\" : \"Date\",\r\n"
-            + "    \"creation\" : \"2020-05-25\",\r\n"
-            + "    \"due\" : \"2024-05-08\"\r\n"
-            + "  }, {\r\n"
-            + "    \"Module:\" : \"Elements\",\r\n"
-            + "    \"max\" : 100\r\n"
-            + "  } ],\r\n"
-            + "  \"key\" : \"TEST-AVERYUNIQUEKEY\"\r\n"
-            + "}";
-
-    opti.setLicenseJSON(myJsonLicense);
-    return true;
-  }
-
-  private void setProperties(IOptimization opti) {
+  private void setProperties() {
 
     Properties props = new Properties();
 
-    props.setProperty("JOptExitCondition.JOptGenerationCount", "20000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000000");
+    props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
     props.setProperty("JOpt.NumCPUCores", "4");
 
-    opti.addElement(props);
+    this.addElement(props);
   }
 
-  private void addResources(IOptimization opti) {
+  private void addResources() {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
         new WorkingHours(
             ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
     workingHours.add(
         new WorkingHours(
             ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+            ZonedDateTime.of(2020, MAY.getValue(), 7, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-    Duration maxWorkingTime = Duration.ofHours(13);
+    Duration maxWorkingTime = Duration.ofHours(4);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
     CapacityResource rep1 =
         new CapacityResource(
             "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
     rep1.setCost(0, 1, 1);
-    opti.addElement(rep1);
+    this.addElement(rep1);
   }
 
-  private void addNodes(IOptimization opti) {
+  private void addNodes() {
 
     List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
     weeklyOpeningHours.add(
         new OpeningHours(
             ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 12, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
     weeklyOpeningHours.add(
         new OpeningHours(
             ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+            ZonedDateTime.of(2020, MAY.getValue(), 7, 12, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
     Duration visitDuration = Duration.ofMinutes(20);
 
     // Define some nodes
     TimeWindowGeoNode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-    opti.addElement(koeln);
-
-    TimeWindowGeoNode oberhausen =
-        new TimeWindowGeoNode("Oberhausen", 51.4667, 6.85, weeklyOpeningHours, visitDuration, 1);
-    opti.addElement(oberhausen);
+    this.addElement(koeln);
 
     TimeWindowGeoNode essen =
         new TimeWindowGeoNode("Essen", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
-    opti.addElement(essen);
+    this.addElement(essen);
 
     TimeWindowGeoNode dueren =
         new TimeWindowGeoNode("Dueren", 50.8, 6.48333, weeklyOpeningHours, visitDuration, 1);
-    opti.addElement(dueren);
+    this.addElement(dueren);
 
     TimeWindowGeoNode nuernberg =
         new TimeWindowGeoNode("Nuernberg", 49.4478, 11.0683, weeklyOpeningHours, visitDuration, 1);
-    opti.addElement(nuernberg);
+    this.addElement(nuernberg);
 
+    TimeWindowGeoNode heilbronn =
+        new TimeWindowGeoNode("Heilbronn", 49.1403, 9.22, weeklyOpeningHours, visitDuration, 1);
+    this.addElement(heilbronn);
+
+    TimeWindowGeoNode stuttgart =
+        new TimeWindowGeoNode("Stuttgart", 48.7667, 9.18333, weeklyOpeningHours, visitDuration, 1);
+    this.addElement(stuttgart);
+
+    TimeWindowGeoNode wuppertal =
+        new TimeWindowGeoNode("Wuppertal", 51.2667, 7.18333, weeklyOpeningHours, visitDuration, 1);
+    this.addElement(wuppertal);
+
+    TimeWindowGeoNode aachen =
+        new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
+    this.addElement(aachen);
   }
 
   @Override
@@ -219,21 +185,40 @@ public class SetLicenseExample extends Optimization {
   }
 
   @Override
-  public void onAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {
-    System.out.println(rapoptResult);
+  public void onAsynchronousOptimizationResult(IOptimizationResult result) {
 
-    IEntityExporter kmlExporter = new EntityKMLExporter();
-    kmlExporter.setTitle("" + this.getClass().getSimpleName());
 
-    try {
 
-      kmlExporter.export(
-          rapoptResult.getContainer(),
-          new FileOutputStream(new File("./" + this.getClass().getSimpleName() + ".kml")));
+    // Access the data about each route
+    result
+        .getRoutes()
+        .stream()
+        .forEach(
+            r -> {
 
-    } catch (FileNotFoundException e) {
-      //
-      e.printStackTrace();
-    }
+              // Get e.g. cost of a route
+              System.out.println("\nRouteCost: "+result.getRouteCost(r));
+
+              // Get details of the route
+              List<ILogicRouteElementDetailItem> details = result.getOrderedRouteItems(r);
+              details.forEach(System.out::println);
+
+              // Get route violations
+              List<IViolation> violations = result.getRouteViolations(r);
+              violations.forEach(System.out::println);
+
+              // Get node Violations
+              details
+                  .stream()
+                  .forEach(
+                      d -> {
+                        List<IViolation> nodeVios =
+                            r.getRouteCostAndViolationController()
+                                .getNodeViolations(d.getElement().getId());
+                        if (!nodeVios.isEmpty()) {
+                          System.out.println(d.getElement().getId() + ": " + nodeVios);
+                        }
+                      });
+            });
   }
 }
