@@ -9,8 +9,7 @@ In case you are new to JOpt-TourOptimizer, you might want to start with the <a h
 ## Advanced Examples
 The following examples are part of the advanced example section ():
 
-- Package `alternatedestination`: 
-
+- Package `alternatedestination`: Usually, a route starts at the Resource's home location and ends at the Resource's home location. An alternate destination redefines the stop of the route.
 - Package `autofilter`: A way to let JOpt-TourOptimizer automatically remove nodes that are in most cases violating your predefined conditions (For example, TimeWindows, Skills, etc.)
 - Package `condition`: Define conditions where Nodes are coupled to Resources. For example, I want this Resource to visit this node. Another example would be a node that requires a particular skillset provided by the Resource. It is even possible to define these conditions as a hard constraint. Hard constraining means it is guaranteed that these conditions are not violated. 
 - Package `connectionefficiency`: Usually, connections between nodes and Resources are provided by an external distance provider (like Google, OpenStreetMap, etc.) when not using the internal Haversine calculation of JOpt-TourOptimizer. Theses connections might need to be modified to account for different Resource-specific properties (the type of vehicle, driving behavior, etc.). To achieve this, an efficiency factor can be applied.
