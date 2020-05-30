@@ -1,4 +1,4 @@
-package com.dna.jopt.touroptimizer.java.examples.advanced.externalcostconvergence;
+package com.dna.jopt.touroptimizer.java.examples.expert.externalcostconvergence;
 /*-
  * #%L
  * JOpt TourOptimizer Examples

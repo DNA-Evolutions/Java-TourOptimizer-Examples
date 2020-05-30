@@ -1,4 +1,4 @@
-package com.dna.jopt.touroptimizer.java.examples.advanced.customsolution;
+package com.dna.jopt.touroptimizer.java.examples.expert.customsolution;
 /*-
  * #%L
  * JOpt TourOptimizer Examples

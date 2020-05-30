@@ -1,4 +1,4 @@
-package com.dna.jopt.touroptimizer.java.examples.advanced.ukpostcode;
+package com.dna.jopt.touroptimizer.java.examples.advanced.zonecode;
 /*-
  * #%L
  * JOpt TourOptimizer Examples
