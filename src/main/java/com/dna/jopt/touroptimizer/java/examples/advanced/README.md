@@ -7,7 +7,7 @@ In case you are new to JOpt-TourOptimizer, you might want to start with the <a h
 
 
 ## Advanced Examples
-The following examples are part of the advanced example section ():
+The following examples are part of the advanced example section:
 
 - Package `alternatedestination`: Usually, a route starts at the Resource's home location and ends at the Resource's home location. An alternate destination redefines the stop of the route.
 - Package `autofilter`: A way to let JOpt-TourOptimizer automatically remove nodes that are in most cases violating your predefined conditions (For example, TimeWindows, Skills, etc.)
