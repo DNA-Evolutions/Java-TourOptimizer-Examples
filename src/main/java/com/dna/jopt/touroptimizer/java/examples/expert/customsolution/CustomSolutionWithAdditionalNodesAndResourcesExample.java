@@ -65,7 +65,8 @@ public class CustomSolutionWithAdditionalNodesAndResourcesExample extends Optimi
 
   public String toString() {
     return "Setting a custom solution for starting the optimization. Further, add"
-        + "nodes will be added to the optimization in an optimized way.";
+        + "nodes will be added to the optimization in an optimized way. "
+        + "THIS EXAMPLE CAN BE ONLY RUN WITH A VALID FULL LICENSE!";
   }
 
   public void example() throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
