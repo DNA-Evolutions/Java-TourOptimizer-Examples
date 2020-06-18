@@ -24,6 +24,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import javax.measure.Quantity;
@@ -33,8 +34,6 @@ import com.dna.jopt.framework.body.Optimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationProgress;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
-import com.dna.jopt.io.exporting.IOptimizationExporter;
-import com.dna.jopt.io.exporting.json.OptimizationJSONExporter;
 import com.dna.jopt.member.unit.hours.IOpeningHours;
 import com.dna.jopt.member.unit.hours.IWorkingHours;
 import com.dna.jopt.member.unit.hours.WorkingHours;
@@ -46,15 +45,15 @@ import com.dna.jopt.member.unit.resource.IResource;
 import tec.units.ri.quantity.Quantities;
 
 /** Saving the current optimization state to a file using JSON-file. */
-public class SaveOptimizationToJsonExample extends Optimization {
+public class SaveOptimizationDuringRunToJsonExample extends Optimization {
 
   public static void main(String[] args)
       throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
-    new SaveOptimizationToJsonExample().example();
+    new SaveOptimizationDuringRunToJsonExample().example();
   }
 
   public String toString() {
-    return "Saving the current optimization state to a file using JSON-file.";
+    return "Saving the current optimization state to a file using JSON-file during the Optimization run via request.";
   }
 
   public void example()
@@ -188,21 +187,28 @@ public class SaveOptimizationToJsonExample extends Optimization {
   }
 
   @Override
-  public void onProgress(IOptimizationProgress rapoptProgress) {
-    //
+  public void onProgress(IOptimizationProgress progress) {
+    if (progress.getOptimizationStage() == 2 && progress.getProgress() == 80.0) {
+      try {
+
+        String jsonFile = "myoptiSavedDuringRun.json.bz2";
+        
+        CompletableFuture<String> doneFuture =
+            this.requestExportState(new FileOutputStream(jsonFile), "TestSaveAt80Percent");
+        
+        // Wait for the saving to be done
+        String done = doneFuture.get();
+        
+        System.out.println("Saved::" + done);
+
+      } catch (FileNotFoundException | InterruptedException | ExecutionException e) {
+        e.printStackTrace();
+      }
+    }
   }
 
   @Override
   public void onAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {
     System.out.println(rapoptResult);
-
-    String jsonFile = "myopti.json.bz2";
-
-    IOptimizationExporter exporter = new OptimizationJSONExporter();
-    try {
-      exporter.export(this, new FileOutputStream(jsonFile));
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }
   }
 }

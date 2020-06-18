@@ -52,17 +52,17 @@ import java.util.ArrayList;
  * @author Jens Richter
  * @version Jan 16, 2019
  * @since Jan 16, 2019
- *     <p>Example of pick up and delivery optimization problem.
+ *     <p>Example of pick up and delivery optimization problem with unload all.
  */
-public class PickupAndDeliveryExample extends Optimization {
+public class PickupAndDeliveryUnloadAllExample extends Optimization {
 
   public static void main(String[] args)
       throws InvalidLicenceException, IOException, InterruptedException, ExecutionException {
-    new PickupAndDeliveryExample().example();
+    new PickupAndDeliveryUnloadAllExample().example();
   }
 
   public String toString() {
-    return "Example of pick up and delivery optimization problem.";
+    return "Example of pick up and delivery optimization problem with unload all.";
   }
 
   public void example()
@@ -97,31 +97,16 @@ public class PickupAndDeliveryExample extends Optimization {
 
   public void addRes() {
 
+    // ATTENTION: One route is exactly bound to one accessible working Hour. If we only provide one
+    // workingHour the optimizer
+    //            is forced to put all nodes in one route! WorkingHours that are not used are simply
+    // later on neglected.
+
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
         new WorkingHours(
             ZonedDateTime.of(2020, MARCH.getValue(), 11, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MARCH.getValue(), 11, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    workingHours.add(
-        new WorkingHours(
-            ZonedDateTime.of(2020, MARCH.getValue(), 12, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MARCH.getValue(), 12, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    workingHours.add(
-        new WorkingHours(
-            ZonedDateTime.of(2020, MARCH.getValue(), 13, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MARCH.getValue(), 13, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    workingHours.add(
-        new WorkingHours(
-            ZonedDateTime.of(2020, MARCH.getValue(), 14, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MARCH.getValue(), 14, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    workingHours.add(
-        new WorkingHours(
-            ZonedDateTime.of(2020, MARCH.getValue(), 15, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MARCH.getValue(), 15, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
     Duration maxWorkingTime = Duration.ofHours(10);
 
@@ -131,21 +116,23 @@ public class PickupAndDeliveryExample extends Optimization {
         new CapacityResource(
             "truck1", 50.1167, 7.68333, maxWorkingTime, maxDistanceKmW, workingHours);
 
-    double[] truck1InitialLoad = {0};
+    double[] truck1InitialLoad = {1, 1};
     truck1.setInitialLoad(truck1InitialLoad);
 
-    // Add the capacity
+    //  Add the capacity
+    truck1.addCapacity(1);
+    truck1.addCapacity(1);
 
-    double truck1Capacity = 3;
-    truck1.addCapacity(truck1Capacity);
+    // As we set truck1InitialLoad to be 1,1 and the capacity to be 1,1, the Truck starts fully
+    // loaded
 
     this.addElement(truck1);
   }
 
   public void addNodes() {
 
-    // We request to deliver items to the nodes (plus sign)
-    double[] unitsPerTrip = {1};
+    // We request to pick up load from the nodes (minus sign)
+    double[] unitsPerTrip = {-1, -1};
 
     List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
     weeklyOpeningHours.add(
@@ -153,68 +140,44 @@ public class PickupAndDeliveryExample extends Optimization {
             ZonedDateTime.of(2020, MARCH.getValue(), 11, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MARCH.getValue(), 11, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-    weeklyOpeningHours.add(
-        new OpeningHours(
-            ZonedDateTime.of(2020, MARCH.getValue(), 12, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MARCH.getValue(), 12, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    weeklyOpeningHours.add(
-        new OpeningHours(
-            ZonedDateTime.of(2020, MARCH.getValue(), 13, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MARCH.getValue(), 13, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    weeklyOpeningHours.add(
-        new OpeningHours(
-            ZonedDateTime.of(2020, MARCH.getValue(), 14, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MARCH.getValue(), 14, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    weeklyOpeningHours.add(
-        new OpeningHours(
-            ZonedDateTime.of(2020, MARCH.getValue(), 15, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MARCH.getValue(), 15, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
     Duration visitDuration = Duration.ofMinutes(20);
 
     INode job1 = new TimeWindowGeoNode("job1", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     job1.setLoad(unitsPerTrip);
     this.addElement(job1);
 
+    INode unloadAll1 =
+        new TimeWindowGeoNode("unloadAll1", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
+    unloadAll1.setUnloadAll(true);
+    this.addElement(unloadAll1);
+
     INode job2 = new TimeWindowGeoNode("job2", 51.4667, 6.85, weeklyOpeningHours, visitDuration, 1);
     job2.setLoad(unitsPerTrip);
     this.addElement(job2);
+
+    INode unloadAll2 =
+        new TimeWindowGeoNode("unloadAll2", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
+    unloadAll2.setUnloadAll(true);
+    this.addElement(unloadAll2);
 
     INode job3 =
         new TimeWindowGeoNode("job3", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
     job3.setLoad(unitsPerTrip);
     this.addElement(job3);
 
+    INode unloadAll3 =
+        new TimeWindowGeoNode("unloadAll3", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
+    unloadAll3.setUnloadAll(true);
+    this.addElement(unloadAll3);
+
     INode job4 = new TimeWindowGeoNode("job4", 50.8, 6.48333, weeklyOpeningHours, visitDuration, 1);
     job4.setLoad(unitsPerTrip);
     this.addElement(job4);
 
-    INode job5 =
-        new TimeWindowGeoNode("job5", 49.4883, 8.46472, weeklyOpeningHours, visitDuration, 1);
-    job5.setLoad(unitsPerTrip);
-    this.addElement(job5);
-
-    INode job6 =
-        new TimeWindowGeoNode("job6", 48.15, 11.5833, weeklyOpeningHours, visitDuration, 1);
-    job6.setLoad(unitsPerTrip);
-    this.addElement(job6);
-
-    INode job7 =
-        new TimeWindowGeoNode("job7", 49.4478, 11.0683, weeklyOpeningHours, visitDuration, 1);
-    job7.setLoad(unitsPerTrip);
-    this.addElement(job7);
-
-    INode job8 = new TimeWindowGeoNode("job8", 49.1403, 9.22, weeklyOpeningHours, visitDuration, 1);
-    job8.setLoad(unitsPerTrip);
-    this.addElement(job8);
-
-    INode job9 =
-        new TimeWindowGeoNode("job9", 48.7667, 9.18333, weeklyOpeningHours, visitDuration, 1);
-    job9.setLoad(unitsPerTrip);
-    this.addElement(job9);
+    INode unloadAll4 =
+        new TimeWindowGeoNode("unloadAll4", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
+    unloadAll4.setUnloadAll(true);
+    this.addElement(unloadAll4);
   }
 
   @Override

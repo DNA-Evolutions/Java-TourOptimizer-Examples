@@ -19,6 +19,7 @@ The following examples are part of the advanced example section:
 - Package `openclosedroute`: Usually, a route starts at the Resource's home location and ends at the Resource's home location. When using open routes, the route of the Resource is assumed to be done at the last node.
 - Package `overnightstay`: A Resource might need to stay out in a hotel. The Optimizer can auto-schedule these overnight stays. It is possible to enable only certain working days of the Resource for overnight-stays (hard constraint)
 - Package `pickupanddelivery`: Pick-up-Delivery Optimization is used, when Resource delivering goods to nodes or Resources need to pick up goods from nodes.  
+- Package `progressfrequency`: By default, at every one percent of progress, a report is thrown. However, either a report can be requested at any time, or the frequency for the report can be manipulated.
 - Package `relationship`: Nodes are might coupled with each other. For example, Node A needs to be visited before Node B. Or Node A is not allowed to be visited in the same route as Node B.
 - Package `requestresult`: Instead of waiting for the final result of the Optimizer, it is possible to ask the Optimizer for an intermediate result.
 - Package `zonecode`: ZoneCodes are used to define areas a Resource is allowed to visit (can be modified for each working day separately). Further, nodes themselves hold an area identifier. This way, sale/deliver areas can be predefined. Also, it is possible to define this as a hard constraint.

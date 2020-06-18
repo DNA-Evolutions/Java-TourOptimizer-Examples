@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.basic.io_03;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -30,8 +30,8 @@ import com.dna.jopt.framework.body.Optimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationProgress;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
-import com.dna.jopt.io.BZip2JsonOptimizationIO;
-import com.dna.jopt.io.IOptimizationIO;
+import com.dna.jopt.io.importing.IOptimizationImporter;
+import com.dna.jopt.io.importing.json.OptimizationJSONImporter;
 import com.dna.jopt.member.unit.hours.IOpeningHours;
 import com.dna.jopt.member.unit.hours.OpeningHours;
 import com.dna.jopt.member.unit.node.INode;
@@ -144,9 +144,8 @@ public class LoadOptimizationFromJsonAndReassignNodes extends Optimization {
   private void invokeFromJson(FileInputStream jsonFile, IOptimization opti)
       throws ConvertException, SerializationException, IOException {
 
-    IOptimizationIO<IOptimization> io = new BZip2JsonOptimizationIO();
-    // Read from the snapshot and add to existingEmptyOpt
-    io.read(jsonFile, opti);
+    IOptimizationImporter importer = new OptimizationJSONImporter();
+    importer.update(jsonFile, opti);
   }
 
   @Override

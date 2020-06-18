@@ -33,8 +33,8 @@ import com.dna.jopt.framework.body.Optimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationProgress;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
-import com.dna.jopt.io.exporting.IOptimizationExporter;
-import com.dna.jopt.io.exporting.json.OptimizationJSONExporter;
+import com.dna.jopt.io.exporting.IEntityExporter;
+import com.dna.jopt.io.exporting.kml.EntityKMLExporter;
 import com.dna.jopt.member.unit.hours.IOpeningHours;
 import com.dna.jopt.member.unit.hours.IWorkingHours;
 import com.dna.jopt.member.unit.hours.WorkingHours;
@@ -46,11 +46,11 @@ import com.dna.jopt.member.unit.resource.IResource;
 import tec.units.ri.quantity.Quantities;
 
 /** Saving the current optimization state to a file using JSON-file. */
-public class SaveOptimizationToJsonExample extends Optimization {
+public class Export2KMLExample extends Optimization {
 
   public static void main(String[] args)
       throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
-    new SaveOptimizationToJsonExample().example();
+    new Export2KMLExample().example();
   }
 
   public String toString() {
@@ -196,11 +196,11 @@ public class SaveOptimizationToJsonExample extends Optimization {
   public void onAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {
     System.out.println(rapoptResult);
 
-    String jsonFile = "myopti.json.bz2";
-
-    IOptimizationExporter exporter = new OptimizationJSONExporter();
     try {
-      exporter.export(this, new FileOutputStream(jsonFile));
+      String jsonFile = "myopti.kml";
+
+      IEntityExporter exporter = new EntityKMLExporter();
+      exporter.export(rapoptResult.getContainer(), new FileOutputStream(jsonFile));
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }

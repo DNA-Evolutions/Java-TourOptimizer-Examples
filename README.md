@@ -48,6 +48,17 @@ For adding the JOpt dependency to your ``pom.xml`` you can use the following sni
 </dependency>
 ```
 
+or latest
+
+```xml
+<dependency>
+  <groupId>jopt</groupId>
+  <artifactId>jopt.core.pg</artifactId>
+   <version>7.4.5-rc1</version>
+  <classifier>shaded</classifier>
+</dependency>
+```
+
 ### JavaDocs
 
 In case you want to add our JavaDocs to your project, further add the following dependency:
@@ -57,6 +68,17 @@ In case you want to add our JavaDocs to your project, further add the following 
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
   <version>7.4.4</version>
+  <classifier>javadoc</classifier>
+</dependency>
+```
+
+or latest
+
+```xml
+<dependency>
+  <groupId>jopt</groupId>
+  <artifactId>jopt.core.pg</artifactId>
+   <version>7.4.5-rc1</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
