@@ -86,7 +86,6 @@ public class PickupAndDeliveryExample extends Optimization {
 
     Properties props = new Properties();
     props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
-    props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
 
     // We have to tell the optimizer that we have an high interest in capacity planning, Default is
