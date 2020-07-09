@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.expert.optionalnode;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -50,23 +50,24 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 import tec.units.ri.quantity.Quantities;
 
-
 /**
- * In this example optional nodes can be used to reload, unload or load goods. If a node is set to be
- * optional, the optimizer can choose to schedule it or not.
+ * In this example optional nodes can be used to reload, unload or load goods. If a node is set to
+ * be optional, the optimizer can choose to schedule it or not.
  */
 public class ReloadBaseExample extends Optimization {
 
-  public static void main(String[] args) throws InvalidLicenceException, IOException, InterruptedException, ExecutionException {
+  public static void main(String[] args)
+      throws InvalidLicenceException, IOException, InterruptedException, ExecutionException {
     new ReloadBaseExample().example();
   }
-  
+
   public String toString() {
-	  return "In this example optional nodes can be used to reload, unload or load goods. If a node is set to be\r\n" + 
-	      " optional, the optimizer can choose to schedule it or not. THIS EXAMPLE CAN BE ONLY RUN WITH A VALID FULL LICENSE!";
+    return "In this example optional nodes can be used to reload, unload or load goods. If a node is set to be\r\n"
+        + " optional, the optimizer can choose to schedule it or not. THIS EXAMPLE CAN BE ONLY RUN WITH A VALID FULL LICENSE!";
   }
 
-  public void example() throws InvalidLicenceException, IOException, InterruptedException, ExecutionException {
+  public void example()
+      throws InvalidLicenceException, IOException, InterruptedException, ExecutionException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
@@ -76,7 +77,6 @@ public class ReloadBaseExample extends Optimization {
 
     this.addNodes();
     this.addResources();
-
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
@@ -119,7 +119,7 @@ public class ReloadBaseExample extends Optimization {
         new CapacityResource(
             "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
     rep1.setCost(0, 1, 1);
-    rep1.addCapacity(20);
+    rep1.setCapacity(new double[] {20});
     rep1.setCost(0, 1, 1);
     rep1.setInitialLoad(rep1InitialLoad);
 
@@ -179,14 +179,6 @@ public class ReloadBaseExample extends Optimization {
         new TimeWindowGeoNode("Essen1", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
     essen1.setLoad(loadPerNode);
 
-    INode essen2 =
-        new TimeWindowGeoNode("Essen2", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
-    essen2.setLoad(loadPerNode);
-
-    INode essen3 =
-        new TimeWindowGeoNode("Essen3", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
-    essen3.setLoad(loadPerNode);
-
     INode dresdenOptionalFarFarAway =
         new TimeWindowGeoNode(
             "DresdenFarAwayOptional", 51.05347, 13.74316, weeklyOpeningHours, visitDuration, 1);
@@ -203,8 +195,6 @@ public class ReloadBaseExample extends Optimization {
     this.addElement(oberhausen3);
 
     this.addElement(essen1);
-    this.addElement(essen2);
-    this.addElement(essen3);
 
     this.addElement(dresdenOptionalFarFarAway);
   }

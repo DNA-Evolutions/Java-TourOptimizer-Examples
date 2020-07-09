@@ -7,16 +7,13 @@ package com.dna.jopt.touroptimizer.java.examples.expert.optionalnode;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
 import static tec.units.ri.unit.MetricPrefix.KILO;
 import static tec.units.ri.unit.Units.METRE;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.ZoneId;
@@ -33,18 +30,10 @@ import static java.time.temporal.ChronoUnit.MINUTES;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 
-import com.dna.jopt.config.convert.ConvertException;
-import com.dna.jopt.config.convert.ExportTarget;
-import com.dna.jopt.config.serialize.SerializationException;
-import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationProgress;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
-import com.dna.jopt.io.BZip2JsonOptimizationIO;
-import com.dna.jopt.io.IOptimizationIO;
-import com.dna.jopt.io.exporting.IEntityExporter;
-import com.dna.jopt.io.exporting.kml.EntityKMLExporter;
 import com.dna.jopt.member.unit.hours.IWorkingHours;
 import com.dna.jopt.member.unit.hours.IOpeningHours;
 import com.dna.jopt.member.unit.hours.WorkingHours;
@@ -125,7 +114,7 @@ public class ReloadBaseWithUnloadAllExample extends Optimization {
         new CapacityResource(
             "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
     rep1.setCost(0, 1, 1);
-    rep1.addCapacity(30);
+    rep1.setCapacity(new double[] {30});
     rep1.setCost(0, 1, 1);
     rep1.setInitialLoad(rep1InitialLoad);
 
@@ -144,9 +133,9 @@ public class ReloadBaseWithUnloadAllExample extends Optimization {
     // Nodes
     Duration visitDuration = Duration.of(20, MINUTES);
 
-    double[] loadPerNode = {10};
-    double[] loadPerNodeHigh = {15};
-    double[] unloadPerOptionalNode = {-10};
+    double[] loadPerNode = {-10}; // We pick up 10 items
+    double[] loadPerNodeHigh = {-15}; // We pick up 15 items
+    double[] unloadPerOptionalNode = {10}; // We drop 10 items
 
     // 1.) add the nodes to be visited
     INode koelnOptional =
@@ -186,14 +175,6 @@ public class ReloadBaseWithUnloadAllExample extends Optimization {
         new TimeWindowGeoNode("Essen1", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
     essen1.setLoad(loadPerNode);
 
-    INode essen2 =
-        new TimeWindowGeoNode("Essen2", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
-    essen2.setLoad(loadPerNode);
-
-    INode essen3 =
-        new TimeWindowGeoNode("Essen3", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
-    essen3.setLoad(loadPerNode);
-
     INode dresdenOptionalFarFarAway =
         new TimeWindowGeoNode(
             "DresdenFarAwayOptional", 51.05347, 13.74316, weeklyOpeningHours, visitDuration, 1);
@@ -210,8 +191,6 @@ public class ReloadBaseWithUnloadAllExample extends Optimization {
     this.addElement(oberhausen3);
 
     this.addElement(essen1);
-    this.addElement(essen2);
-    this.addElement(essen3);
 
     this.addElement(dresdenOptionalFarFarAway);
   }
@@ -245,33 +224,5 @@ public class ReloadBaseWithUnloadAllExample extends Optimization {
   @Override
   public void onAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {
     System.out.println(rapoptResult);
-
-    IEntityExporter kmlExporter = new EntityKMLExporter();
-    kmlExporter.setTitle("" + this.getClass().getSimpleName());
-
-    try {
-
-      kmlExporter.export(
-          rapoptResult.getContainer(),
-          new FileOutputStream(new File("./" + this.getClass().getSimpleName() + ".kml")));
-
-    } catch (FileNotFoundException e) {
-      //
-      e.printStackTrace();
-    }
-
-    IOptimizationIO<IOptimization> io =
-        new BZip2JsonOptimizationIO(); // alternative without compression: new JsonOptimizationIO()
-
-    String jsonFile = "./" + this.getClass().getSimpleName() + ".json.bz2";
-    try {
-      io.write(new FileOutputStream(jsonFile), ExportTarget.of(this));
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (ConvertException e) {
-      e.printStackTrace();
-    } catch (SerializationException e) {
-      e.printStackTrace();
-    }
   }
 }

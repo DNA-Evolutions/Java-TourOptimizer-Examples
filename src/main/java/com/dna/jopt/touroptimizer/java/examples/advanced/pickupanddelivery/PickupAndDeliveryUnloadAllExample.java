@@ -120,8 +120,7 @@ public class PickupAndDeliveryUnloadAllExample extends Optimization {
     truck1.setInitialLoad(truck1InitialLoad);
 
     //  Add the capacity
-    truck1.addCapacity(1);
-    truck1.addCapacity(1);
+    truck1.setCapacity(new double[] {1,1});
 
     // As we set truck1InitialLoad to be 1,1 and the capacity to be 1,1, the Truck starts fully
     // loaded

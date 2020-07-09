@@ -24,7 +24,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import javax.measure.Quantity;
@@ -67,6 +66,8 @@ public class SaveOptimizationDuringRunToJsonExample extends Optimization {
 
     this.addNodes();
     this.addResources();
+    
+    this.getOptimizationEvents().requestCodeExecutionDoneSubject().subscribe(e->System.out.println(" Info Saved from event::" + e));
 
     this.startRunAsync().get();
   }
@@ -192,19 +193,21 @@ public class SaveOptimizationDuringRunToJsonExample extends Optimization {
       try {
 
         String jsonFile = "myoptiSavedDuringRun.json.bz2";
-        
-        CompletableFuture<String> doneFuture =
-            this.requestExportState(new FileOutputStream(jsonFile), "TestSaveAt80Percent");
-        
-        // Wait for the saving to be done
-        String done = doneFuture.get();
-        
-        System.out.println("Saved::" + done);
 
-      } catch (FileNotFoundException | InterruptedException | ExecutionException e) {
+        this.requestExportState(new FileOutputStream(jsonFile), "TestSaveAt80Percent");
+
+        // When the saving is done onRequestCodeExecutionDone will be called,
+        // in addition an event is emitted.
+
+      } catch (FileNotFoundException e) {
         e.printStackTrace();
       }
     }
+  }
+
+  @Override
+  public void onRequestCodeExecutionDone(String executionId) {
+	  System.out.println("Info Saved from callback::" + executionId);
   }
 
   @Override

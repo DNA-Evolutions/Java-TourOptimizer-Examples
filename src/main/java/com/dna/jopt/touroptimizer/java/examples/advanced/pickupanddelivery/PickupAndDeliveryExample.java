@@ -134,9 +134,8 @@ public class PickupAndDeliveryExample extends Optimization {
     truck1.setInitialLoad(truck1InitialLoad);
 
     // Add the capacity
-
     double truck1Capacity = 3;
-    truck1.addCapacity(truck1Capacity);
+    truck1.setCapacity(new double[] {truck1Capacity});
 
     this.addElement(truck1);
   }
