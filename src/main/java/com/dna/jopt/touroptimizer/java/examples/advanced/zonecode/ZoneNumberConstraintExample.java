@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.zonecode;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -21,7 +21,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -39,9 +38,9 @@ import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
 import com.dna.jopt.member.unit.hours.IWorkingHours;
 import com.dna.jopt.member.unit.condition.IQualification;
-import com.dna.jopt.member.unit.condition.workinghour.zone.ukpostcode.UKPostCode;
-import com.dna.jopt.member.unit.condition.workinghour.zone.ukpostcode.UKPostCodeConstraint;
-import com.dna.jopt.member.unit.condition.workinghour.zone.ukpostcode.UKPostCodeQualification;
+import com.dna.jopt.member.unit.condition.workinghour.zone.zonenumber.ZoneNumber;
+import com.dna.jopt.member.unit.condition.workinghour.zone.zonenumber.ZoneNumberConstraint;
+import com.dna.jopt.member.unit.condition.workinghour.zone.zonenumber.ZoneNumberQualification;
 import com.dna.jopt.member.unit.hours.IOpeningHours;
 import com.dna.jopt.member.unit.hours.WorkingHours;
 import com.dna.jopt.member.unit.hours.OpeningHours;
@@ -53,20 +52,55 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 import tec.units.ri.quantity.Quantities;
 
-/** Using UK Post codes */
-public class UKPostCodeExample extends Optimization {
+/**
+ *  Using ZoneNumber to divide nodes into areas. A Resource is allowed to visit different areas
+ *  on different workingDays.
+ *
+ * @author jrich
+ * @version Aug 14, 2020
+ * @since Aug 14, 2020
+ */
+public class ZoneNumberConstraintExample extends Optimization {
 
+  /**
+   * The main method.
+   *
+   * @param args the arguments
+   * @throws InvalidLicenceException the invalid licence exception
+   * @throws ConvertException the convert exception
+   * @throws SerializationException the serialization exception
+   * @throws FileNotFoundException the file not found exception
+   * @throws InterruptedException the interrupted exception
+   * @throws ExecutionException the execution exception
+   * @throws IOException Signals that an I/O exception has occurred.
+   */
   public static void main(String[] args)
       throws InvalidLicenceException, ConvertException, SerializationException,
           FileNotFoundException, InterruptedException, ExecutionException, IOException {
 
-    new UKPostCodeExample().example();
+    new ZoneNumberConstraintExample().example();
   }
 
+  /**
+   * To string.
+   *
+   * @return the string
+   */
   public String toString() {
-    return "Testing UKPostCode constraint as part of the ZoneCode feature.";
+    return "Testing ZoneNumber constraint as part of the ZoneCode feature.";
   }
 
+  /**
+   * Example.
+   *
+   * @throws InterruptedException the interrupted exception
+   * @throws ExecutionException the execution exception
+   * @throws FileNotFoundException the file not found exception
+   * @throws IOException Signals that an I/O exception has occurred.
+   * @throws InvalidLicenceException the invalid licence exception
+   * @throws ConvertException the convert exception
+   * @throws SerializationException the serialization exception
+   */
   public void example()
       throws InterruptedException, ExecutionException, FileNotFoundException, IOException,
           InvalidLicenceException, ConvertException, SerializationException {
@@ -113,15 +147,19 @@ public class UKPostCodeExample extends Optimization {
 
     // Print result
     System.out.println(result);
-
   }
 
+  /**
+   * Sets the properties.
+   *
+   * @param opti the new properties
+   */
   private void setProperties(IOptimization opti) {
 
     Properties props = new Properties();
 
-    props.setProperty("JOptExitCondition.JOptGenerationCount", "20000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000000");
+    props.setProperty("JOptExitCondition.JOptGenerationCount", "10000");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "500000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
     props.setProperty("JOpt.NumCPUCores", "4");
 
@@ -133,31 +171,27 @@ public class UKPostCodeExample extends Optimization {
     opti.addElement(props);
   }
 
+  /**
+   * Adds the elements.
+   *
+   * @param opti the opti
+   */
   private void addElements(IOptimization opti) {
 
     /*
-     *
-     *  Defining a resource which is allowed (hard constrained) to visit:
-     *  B37 and B48 on the first day
-     *  B36         on the second day
-     *
-     *  Further, there is one node which has no matching post code, therefore it will be unassigned.
+     *  Define three different zones: "1", "2", and "3"
      */
+    ZoneNumber zoneOne = new ZoneNumber(1);
+    ZoneNumber zoneTwo = new ZoneNumber(2);
+    ZoneNumber zoneThree = new ZoneNumber(3);
 
-    // Defining UK Post codes with:
-    // =============================
-    // String areaIdent,
-    // Optional<Integer> districtIdent,
-    // Optional<Integer> sectorIdent,
-    // Optional<String> unitIdent
-
-    UKPostCode b37 = new UKPostCode("B", Optional.of(37), Optional.empty(), Optional.empty());
-
-    UKPostCode b48 = new UKPostCode("B", Optional.of(48), Optional.empty(), Optional.empty());
-
-    UKPostCode b36 = new UKPostCode("B", Optional.of(36), Optional.empty(), Optional.empty());
-
-    // Defining workingHours
+    /*
+     *  Defining workingHours and attach constraints based on the zones we created
+     *  
+     *  For example: the first WorkingHour gets ZoneOne and ZoneTwo as constraint. This means
+     *  the resource holding this workingHour should only visit ZoneOne and ZoneTwo during
+     *  this workingHour 
+     */
     IWorkingHours woh1 =
         new WorkingHours(
             ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
@@ -172,21 +206,26 @@ public class UKPostCodeExample extends Optimization {
     weeklyWorkingHours.add(woh1);
     weeklyWorkingHours.add(woh2);
 
-    // Crating/Adding constraints
-    UKPostCodeConstraint postCodeConstraintWoh1 = new UKPostCodeConstraint();
+    // Creating/Adding Zones as constraints
+    ZoneNumberConstraint zoneNumberConstraintWOHOne = new ZoneNumberConstraint();
 
-    postCodeConstraintWoh1.setIsHard(false); // Use as soft constraint
-    postCodeConstraintWoh1.addZoneCode(b37);
-    postCodeConstraintWoh1.addZoneCode(b48);
-    woh1.addConstraint(postCodeConstraintWoh1);
+    zoneNumberConstraintWOHOne.setIsHard(true); // Use as hard constraint
+    zoneNumberConstraintWOHOne.addZoneCode(zoneOne);
+    zoneNumberConstraintWOHOne.addZoneCode(zoneTwo);
+    woh1.addConstraint(zoneNumberConstraintWOHOne);
 
-    UKPostCodeConstraint postCodeConstraintWoh2 = new UKPostCodeConstraint();
+    ZoneNumberConstraint zoneNumberConstraintWOHTwo = new ZoneNumberConstraint();
 
-    postCodeConstraintWoh2.setIsHard(false); // Use as soft constraint
-    postCodeConstraintWoh2.addZoneCode(b36);
-    woh2.addConstraint(postCodeConstraintWoh2);
+    zoneNumberConstraintWOHTwo.setIsHard(true); // Use as soft constraint
+    zoneNumberConstraintWOHTwo.addZoneCode(zoneThree);
+    woh2.addConstraint(zoneNumberConstraintWOHTwo);
 
-    // Creating/Adding resource
+    /*
+     * 
+     *  Creating/Adding the resource and attach constrained workingHours
+     *  
+     */
+    
     Duration maxWorkingTime = Duration.ofHours(13);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
@@ -208,80 +247,81 @@ public class UKPostCodeExample extends Optimization {
             ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-    Duration visitDuration = Duration.ofMinutes(20);
 
-    // Define some nodes and adding post codes
+    /*
+     * 
+     *  Define some nodes and add ZoneNumberQualifications based on ZoneNumber we created.
+     *  
+     *  For example: If a node gets a qualification for zoneOne, it should be only visited by a resource
+     *  holding a ZoneNumberOne constraint along its constraints. 
+     *  
+     *  Note: If a resource is not holding any ZoneNumerConstraint it is free to visit all nodes.
+     *  
+     *  
+     */
+
+    IQualification zoneOneQuali = new ZoneNumberQualification(zoneOne);
+    IQualification zoneTwoQuali = new ZoneNumberQualification(zoneTwo);
+    IQualification zoneThreeQuali = new ZoneNumberQualification(zoneThree);
+
+
+    Duration visitDuration = Duration.ofMinutes(20);
+    
+    //
     INode koeln =
-        new TimeWindowGeoNode(
-            "KoelnNoMatchingPostCode", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-    IQualification b312Gquali =
-        new UKPostCodeQualification(
-            new UKPostCode("B", Optional.of(31), Optional.of(2), Optional.of("G")));
-    koeln.addQualification(b312Gquali);
+        new TimeWindowGeoNode("Koeln-Z1", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
+    koeln.addQualification(zoneOneQuali); // Adding qualification for zoneOne
     opti.addElement(koeln);
 
+    // Note: Oberhausen has a qualification for zoneOne AND zoneTwo. Usually, this makes sense, if a node
+    //       is located at the geographical boundary of two zones. This way, Resources holding a constraint
+    //       for zoneOne and Resources holding a constraint for zoneTwo are allowed to visit the node
     INode oberhausen =
-        new TimeWindowGeoNode("Oberhausen", 51.4667, 6.85, weeklyOpeningHours, visitDuration, 1);
-    IQualification b372Gquali =
-        new UKPostCodeQualification(
-            new UKPostCode("B", Optional.of(37), Optional.of(2), Optional.of("G")));
-    oberhausen.addQualification(b372Gquali);
+        new TimeWindowGeoNode(
+            "Oberhausen-Z1-Z2", 51.4667, 6.85, weeklyOpeningHours, visitDuration, 1);
+    oberhausen.addQualification(zoneOneQuali);
+    oberhausen.addQualification(zoneTwoQuali);
     opti.addElement(oberhausen);
 
+    //
     INode essen =
-        new TimeWindowGeoNode("Essen", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
-    IQualification b482Gquali =
-        new UKPostCodeQualification(
-            new UKPostCode("B", Optional.of(48), Optional.of(2), Optional.of("G")));
-    essen.addQualification(b482Gquali);
+        new TimeWindowGeoNode("Essen-Z3", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
+    essen.addQualification(zoneThreeQuali);
     opti.addElement(essen);
 
+    //
     INode dueren =
-        new TimeWindowGeoNode("Dueren", 50.8, 6.48333, weeklyOpeningHours, visitDuration, 1);
-    IQualification b362Gquali =
-        new UKPostCodeQualification(
-            new UKPostCode("B", Optional.of(36), Optional.of(2), Optional.of("G")));
-    dueren.addQualification(b362Gquali);
+        new TimeWindowGeoNode("Dueren-Z2", 50.8, 6.48333, weeklyOpeningHours, visitDuration, 1);
+    dueren.addQualification(zoneTwoQuali);
     opti.addElement(dueren);
 
+    //
     INode nuernberg =
-        new TimeWindowGeoNode("Nuernberg", 49.4478, 11.0683, weeklyOpeningHours, visitDuration, 1);
-    IQualification b362Hquali =
-        new UKPostCodeQualification(
-            new UKPostCode("B", Optional.of(36), Optional.of(2), Optional.of("H")));
-    nuernberg.addQualification(b362Hquali);
+        new TimeWindowGeoNode(
+            "Nuernberg-Z3", 49.4478, 11.0683, weeklyOpeningHours, visitDuration, 1);
+    nuernberg.addQualification(zoneThreeQuali);
     opti.addElement(nuernberg);
 
-    INode heilbronn =
-        new TimeWindowGeoNode("Heilbronn", 49.1403, 9.22, weeklyOpeningHours, visitDuration, 1);
-    IQualification b482Hquali =
-        new UKPostCodeQualification(
-            new UKPostCode("B", Optional.of(48), Optional.of(2), Optional.of("H")));
-    heilbronn.addQualification(b482Hquali);
-    opti.addElement(heilbronn);
-
+    //
     INode stuttgart =
-        new TimeWindowGeoNode("Stuttgart", 48.7667, 9.18333, weeklyOpeningHours, visitDuration, 1);
-    IQualification b362Fquali =
-        new UKPostCodeQualification(
-            new UKPostCode("B", Optional.of(36), Optional.of(2), Optional.of("F")));
-    stuttgart.addQualification(b362Fquali);
+        new TimeWindowGeoNode(
+            "Stuttgart-Z2", 48.7667, 9.18333, weeklyOpeningHours, visitDuration, 1);
+    stuttgart.addQualification(zoneTwoQuali);
     opti.addElement(stuttgart);
 
+    //
     INode wuppertal =
-        new TimeWindowGeoNode("Wuppertal", 51.2667, 7.18333, weeklyOpeningHours, visitDuration, 1);
-    IQualification b372Fquali =
-        new UKPostCodeQualification(
-            new UKPostCode("B", Optional.of(37), Optional.of(2), Optional.of("F")));
-    wuppertal.addQualification(b372Fquali);
+        new TimeWindowGeoNode(
+            "Wuppertal-Z2", 51.2667, 7.18333, weeklyOpeningHours, visitDuration, 1);
+    wuppertal.addQualification(zoneTwoQuali);
     opti.addElement(wuppertal);
 
+    //
     INode aachen =
-        new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
-    IQualification b482Fquali =
-        new UKPostCodeQualification(
-            new UKPostCode("B", Optional.of(48), Optional.of(2), Optional.of("F")));
-    aachen.addQualification(b482Fquali);
+        new TimeWindowGeoNode(
+            "Aachen-Z2", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
+    aachen.addQualification(zoneTwoQuali);
     opti.addElement(aachen);
+
   }
 }

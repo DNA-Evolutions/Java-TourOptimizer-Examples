@@ -43,6 +43,8 @@ import com.dna.jopt.member.unit.node.INode;
 import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.resource.CapacityResource;
 import com.dna.jopt.member.unit.resource.IResource;
+import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
+
 import tec.units.ri.quantity.Quantities;
 
 /** Saving the current optimization state to a file using JSON-file. */
@@ -61,7 +63,7 @@ public class SaveOptimizationToJsonExample extends Optimization {
       throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
 
     // Set license via helper
-    // ExampleLicenseHelper.setLicense(this);
+    ExampleLicenseHelper.setLicense(this);
 
     // Properties!
     this.setProperties();

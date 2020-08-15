@@ -20,7 +20,7 @@ The first example you should start with is stored in the package `firstoptimizat
 The examples in the basic section are numbered (within their package naming like `PACKAGENAME_NUMBER`). It is not necessary to strictly follow the numbering, but it gives a good way to increase the complexity during the first steps with JOpt-TourOptimizer.
 
 - Package `recommendedimplementation_02`: Comparable to `firstoptimization_01`. Further, shows how to use callbacks and reactive java.
-- Package `io_03`: Shows how to save an optimization to a JSON object and how to load a JSON into an optimization. Further, it show how to create an KML file from a solution object.
+- Package `io_03`: Shows how to save an optimization to a JSON object and how to load a JSON into an optimization. Additionally, it shows how to use a JSON file as data-storage for a new fresh run (ignoring a previous solution). Further, it show how to create an KML file from a solution object.
 - Package `connection_04`: Shows how to use connections. A connection defines, for example, the distances between two elements.
 - Package `readoutresult_05`: Shows how to use/analyze the result object after a successful optimization run is done.
 - Package `eventnode_06`: Shows how to create a node that has no geographical location (like a phone call).

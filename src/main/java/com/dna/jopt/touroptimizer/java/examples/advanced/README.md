@@ -18,7 +18,7 @@ The following examples are part of the advanced example section:
 - Package `looprun`: When using the converger, or even a custom externally defined algorithm to decide when to stop the optimization, it is helpful to let particular stages of the optimization run in an endless loop.
 - Package `openclosedroute`: Usually, a route starts at the Resource's home location and ends at the Resource's home location. When using open routes, the route of the Resource is assumed to be done at the last node.
 - Package `overnightstay`: A Resource might need to stay out in a hotel. The Optimizer can auto-schedule these overnight stays. It is possible to enable only certain working days of the Resource for overnight-stays (hard constraint)
-- Package `pickupanddelivery`: Pick-up-Delivery Optimization is used, when Resource delivering goods to nodes or Resources need to pick up goods from nodes.  
+- Package `pickupanddelivery`: Pick-up-Delivery (PND) Optimization is used, when Resource delivering goods to nodes or Resources need to pick up goods from nodes. Collection of multiple examples for standard PND-Problems and sophisticated examples including  manufacturing planning, and time-constrained transportation of goods and people.
 - Package `progressfrequency`: By default, at every one percent of progress, a report is thrown. However, either a report can be requested at any time, or the frequency for the report can be manipulated.
 - Package `relationship`: Nodes are might coupled with each other. For example, Node A needs to be visited before Node B. Or Node A is not allowed to be visited in the same route as Node B.
 - Package `requestresult`: Instead of waiting for the final result of the Optimizer, it is possible to ask the Optimizer for an intermediate result.

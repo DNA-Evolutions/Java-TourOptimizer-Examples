@@ -14,9 +14,6 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.overnightstay;
 import static tec.units.ri.unit.MetricPrefix.KILO;
 import static tec.units.ri.unit.Units.METRE;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.ZoneId;
@@ -36,8 +33,6 @@ import com.dna.jopt.framework.body.Optimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationProgress;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
-import com.dna.jopt.io.exporting.IEntityExporter;
-import com.dna.jopt.io.exporting.kml.EntityKMLExporter;
 import com.dna.jopt.member.unit.hours.IWorkingHours;
 import com.dna.jopt.member.unit.hours.IOpeningHours;
 import com.dna.jopt.member.unit.hours.WorkingHours;
@@ -218,7 +213,6 @@ public class OvernightStayExample extends Optimization {
     TimeWindowGeoNode wien =
         new TimeWindowGeoNode(
             "Wien", 48.208174, 16.373819, this.nodeOpeningHoursHelper(2), Duration.ofHours(1), 1);
-    wien.setIsWorkNode(true);
     wien.setIsStayNode(stayNodesEnabled);
     this.addElement(wien);
 
@@ -263,19 +257,5 @@ public class OvernightStayExample extends Optimization {
   @Override
   public void onAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {
     System.out.println(rapoptResult);
-
-    IEntityExporter kmlExporter = new EntityKMLExporter();
-    kmlExporter.setTitle("" + this.getClass().getSimpleName());
-
-    try {
-
-      kmlExporter.export(
-          rapoptResult.getContainer(),
-          new FileOutputStream(new File("./" + this.getClass().getSimpleName() + ".kml")));
-
-    } catch (FileNotFoundException e) {
-      //
-      e.printStackTrace();
-    }
   }
 }

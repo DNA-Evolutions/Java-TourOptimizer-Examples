@@ -5,10 +5,10 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.relationship;
  * %%
  * Copyright (C) 2017 - 2020 DNA Evolutions GmbH
  * %%
- * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
- * which is part of this repository.
+ * This file is subject to the terms and conditions defined in file 'LICENSE.txt',
+ * which is part of this source code package.
  * 
- * If not, see <https://www.dna-evolutions.com/>.
+ * If not, see <https://www.dna-evolutions.com/agb-conditions-and-terms/>.
  * #L%
  */
 import static java.time.Month.MAY;
@@ -33,6 +33,8 @@ import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationProgress;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
 import com.dna.jopt.member.unit.hours.IWorkingHours;
+import com.dna.jopt.member.unit.condition.resource.IConstraintResource;
+import com.dna.jopt.member.unit.condition.resource.MandatoryResourceConstraint;
 import com.dna.jopt.member.unit.hours.IOpeningHours;
 import com.dna.jopt.member.unit.hours.WorkingHours;
 import com.dna.jopt.member.unit.hours.OpeningHours;
@@ -50,10 +52,10 @@ import tec.units.ri.quantity.Quantities;
  * workOrder needs to be fulfilled before another one can start. Maybe it is even required that
  * the work is done and 2 hours pass before another workOrder can start.
  */
-public class RelativeTimeWindowRelationExample extends Optimization {
+public class RelativeTimeWindowRelationWithInducedIdleTimeExample extends Optimization {
 
   public static void main(String[] args) throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
-    new RelativeTimeWindowRelationExample().example();
+    new RelativeTimeWindowRelationWithInducedIdleTimeExample().example();
   }
   
   public String toString() {
@@ -85,11 +87,11 @@ public class RelativeTimeWindowRelationExample extends Optimization {
 
     Properties props = new Properties();
 
-    props.setProperty("JOptExitCondition.JOptGenerationCount", "500");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
-    props.setProperty("JOptWeight.Relationships", "10000");
+    props.setProperty("JOptWeight.Relationships", "100");
     props.setProperty("JOpt.NumCPUCores", "4");
+    props.setProperty("JOpt.UnlocatedIdleTime", "true");
 
     this.addElement(props);
   }
@@ -125,55 +127,47 @@ public class RelativeTimeWindowRelationExample extends Optimization {
 
   private void addNodes() {
 
-    List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
-    weeklyOpeningHours.add(
+    List<IOpeningHours> weeklyOpeningHoursAachen = new ArrayList<>();
+    weeklyOpeningHoursAachen.add(
         new OpeningHours(
             ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 16, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-    weeklyOpeningHours.add(
+    weeklyOpeningHoursAachen.add(
         new OpeningHours(
             ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+            ZonedDateTime.of(2020, MAY.getValue(), 7, 16, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+    
+    
+    List<IOpeningHours> weeklyOpeningHoursEssen = new ArrayList<>();
+    weeklyOpeningHoursEssen.add(
+        new OpeningHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 12, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 16, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-    Duration visitDuration = Duration.ofMinutes(20);
+    weeklyOpeningHoursEssen.add(
+        new OpeningHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 7, 12, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MAY.getValue(), 7, 16, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+
+    Duration visitDuration = Duration.ofMinutes(60);
 
     // Define some nodes
-    TimeWindowGeoNode koeln =
-        new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(koeln);
-
-    TimeWindowGeoNode oberhausen =
-        new TimeWindowGeoNode("Oberhausen", 51.4667, 6.85, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(oberhausen);
 
     TimeWindowGeoNode essen =
-        new TimeWindowGeoNode("Essen", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
+        new TimeWindowGeoNode("Essen", 50.775346, 6.083887, weeklyOpeningHoursEssen, visitDuration, 1);
+    IConstraintResource johnMandConstraint = new MandatoryResourceConstraint();
+    johnMandConstraint.addResource("John", 10);
     this.addElement(essen);
 
-    TimeWindowGeoNode dueren =
-        new TimeWindowGeoNode("Dueren", 50.8, 6.48333, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(dueren);
-
-    TimeWindowGeoNode nuernberg =
-        new TimeWindowGeoNode("Nuernberg", 49.4478, 11.0683, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(nuernberg);
-
-
-    TimeWindowGeoNode stuttgart =
-        new TimeWindowGeoNode("Stuttgart", 48.7667, 9.18333, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(stuttgart);
-
-    TimeWindowGeoNode wuppertal =
-        new TimeWindowGeoNode("Wuppertal", 51.2667, 7.18333, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(wuppertal);
-
     TimeWindowGeoNode aachen =
-        new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
+        new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHoursAachen, visitDuration, 1);
+    IConstraintResource jackMandConstraint = new MandatoryResourceConstraint();
+    jackMandConstraint.addResource("Jack", 10);
     this.addElement(aachen);
 
     // Create a relative timeWindowRelation as delta based on master node
-    INode2NodeTempusRelation rel = new RelativeTimeWindow2RelatedNodeRelation(Duration.ofMinutes(0), Duration.ofMinutes(20));
+    INode2NodeTempusRelation rel = new RelativeTimeWindow2RelatedNodeRelation(Duration.ofMinutes(0), Duration.ofMinutes(40));
     rel.setMasterNode(essen);
     rel.setRelatedNode(aachen);
     rel.setTimeComparisonJuncture(true, true);

@@ -1,4 +1,4 @@
-package com.dna.jopt.touroptimizer.java.examples.advanced.pickupanddelivery;
+package com.dna.jopt.touroptimizer.java.examples.advanced.pickupanddelivery.deprecated;
 /*-
  * #%L
  * JOpt TourOptimizer Examples
