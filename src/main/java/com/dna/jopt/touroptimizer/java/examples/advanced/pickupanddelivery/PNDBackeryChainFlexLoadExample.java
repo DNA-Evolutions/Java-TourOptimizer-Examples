@@ -258,8 +258,8 @@ public class PNDBackeryChainFlexLoadExample extends Optimization {
 
     INode store5 =
         new TimeWindowGeoNode(
-            "StoreBielefeld", 52.02113, 8.5294, weeklyOpeningHours, visitDuration, 1);
-    store5.setNodeDepot(this.createNodeDepot("StoreBielefeldDepot", 1));
+            "StoreMoenchengladbach", 51.19541, 6.41172, weeklyOpeningHours, visitDuration, 1);
+    store5.setNodeDepot(this.createNodeDepot("StoreMoenchengladbachDepot", 1));
     this.addElement(store5);
 
     INode store6 =
@@ -277,12 +277,21 @@ public class PNDBackeryChainFlexLoadExample extends Optimization {
         new TimeWindowGeoNode(
             "SupplyFlexNodeAachen", 50.77577, 6.08177, weeklyOpeningHours, visitDuration, 1);
     supplyFlexNodeAachen.setNodeDepot(this.createSupplyFlexDepot("SupplyFlexNodeAachenDepot"));
+    
+    // Could be also optional, if desired
+    boolean isAachenOptional = false;
+    supplyFlexNodeAachen.setIsOptional(isAachenOptional);
+    
     this.addElement(supplyFlexNodeAachen);
 
     INode supplyFlexNodeCologne =
         new TimeWindowGeoNode(
             "SupplyFlexNodeCologne", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     supplyFlexNodeCologne.setNodeDepot(this.createSupplyFlexDepot("SupplyFlexNodeCologneDepot"));
+    
+    // Could be also optional, if desired
+    boolean isCologneOptional = false;
+    supplyFlexNodeCologne.setIsOptional(isCologneOptional);
     this.addElement(supplyFlexNodeCologne);
   }
 
