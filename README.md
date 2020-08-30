@@ -1,4 +1,7 @@
 # Java-JOpt-TourOptimizer-Examples
+
+![Dna-Evolutions-Logo](https://docs.dna-evolutions.com/indexres/dna-temp-logo.png | width=125)
+
 This repository is part of our JOpt-TourOptimizer-Suite for Java. It includes an extensive collection of examples (written in Java). This fully functional Maven project can be cloned and can be used as a base for starting with JOpt-TourOptimizer.
 
 The project is subdivided into three major types of examples:
