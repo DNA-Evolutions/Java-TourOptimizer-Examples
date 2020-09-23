@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.basic.recommendedimplementation
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -53,7 +53,8 @@ import tec.units.ri.quantity.Quantities;
 /** Doing an asynch run. Getting an completable future of the OptimizationResult. */
 public class RecommendedAsynchImplementationExample extends Optimization {
 
-  public static void main(String[] args) throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
+  public static void main(String[] args)
+      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
     new RecommendedAsynchImplementationExample().example();
   }
 
@@ -61,9 +62,8 @@ public class RecommendedAsynchImplementationExample extends Optimization {
     return "Getting an completable future of the OptimizationResult.";
   }
 
-  public void example() throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
-	  
-	  
+  public void example()
+      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
@@ -197,19 +197,10 @@ public class RecommendedAsynchImplementationExample extends Optimization {
   @Override
   public void onAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {
     System.out.println(rapoptResult);
-
-    IEntityExporter kmlExporter = new EntityKMLExporter();
-    kmlExporter.setTitle("" + this.getClass().getSimpleName());
-
-    try {
-
-      kmlExporter.export(
-          rapoptResult.getContainer(),
-          new FileOutputStream(new File("./" + this.getClass().getSimpleName() + ".kml")));
-
-    } catch (FileNotFoundException e) {
-      //
-      e.printStackTrace();
-    }
+  }
+  
+  @Override
+  public void requestedAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {
+    System.out.println(rapoptResult);
   }
 }
