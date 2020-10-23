@@ -42,6 +42,8 @@ However, it is recommended to use our nexus-endpoint as a repository and downloa
 
 ### Snippet for Maven
 
+**We are recommending always using the latest version of JOpt.**
+
 For adding the JOpt dependency to your ``pom.xml`` you can use the following snippet (for help on how to set dependencies, please visit the <a href="https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html" target="_blank">official Maven documentation</a>):
 
 
@@ -54,7 +56,7 @@ For adding the JOpt dependency to your ``pom.xml`` you can use the following sni
 </dependency>
 ```
 
-or latest
+or latest (recommended)
 
 ```xml
 <dependency>
@@ -64,6 +66,8 @@ or latest
   <classifier>shaded</classifier>
 </dependency>
 ```
+
+**We are recommending always using the latest version of JOpt.**
 
 ### JavaDocs
 
