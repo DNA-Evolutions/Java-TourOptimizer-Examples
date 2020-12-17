@@ -64,12 +64,12 @@ or latest (recommended)
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.5-rc5</version>
+   <version>7.4.5-rc6</version>
   <classifier>shaded</classifier>
 </dependency>
 ```
 
-**We are recommending always using the latest version of JOpt.**
+**We are recommending always using the latest version of JOpt (rc).**
 
 ### JavaDocs
 
@@ -90,7 +90,7 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.5-rc5</version>
+   <version>7.4.5-rc6</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
