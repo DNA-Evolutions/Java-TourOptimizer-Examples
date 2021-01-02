@@ -64,7 +64,7 @@ or latest (recommended)
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.5-rc7</version>
+   <version>7.4.5-rc9</version>
   <classifier>shaded</classifier>
 </dependency>
 ```
@@ -90,7 +90,7 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.5-rc7</version>
+   <version>7.4.5-rc9</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
