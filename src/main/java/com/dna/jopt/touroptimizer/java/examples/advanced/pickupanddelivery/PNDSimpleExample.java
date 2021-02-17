@@ -152,15 +152,15 @@ public class PNDSimpleExample extends Optimization {
     Duration maxWorkingTime = Duration.ofHours(10);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(2800.0, KILO(METRE));
 
-    IResource truckJack =
+    IResource truck =
         new CapacityResource(
-            "JackTruck", 50.1167, 7.68333, maxWorkingTime, maxDistanceKmW, workingHours);
+            "Truck", 50.1167, 7.68333, maxWorkingTime, maxDistanceKmW, workingHours);
 
     // Setting a depot to our truck
-    truckJack.setResourceDepot(this.createResourceDepot());
+    truck.setResourceDepot(this.createResourceDepot());
 
     // Adding the truck to our optimization
-    this.addElement(truckJack);
+    this.addElement(truck);
   }
 
   /**
@@ -169,27 +169,29 @@ public class PNDSimpleExample extends Optimization {
    * @return the resource depot
    */
   public IResourceDepot createResourceDepot() {
-
     /*
-     * Defining a ResourceDepot "JackTruckDepot" that can store DeliverGood and PickupGood.
-     *
+     * Creating a ResourceDepot with two LoadCapacities and attach it to a Resource depot "truckDepot"
      */
 
-    // We can store a maximum of 10 DeliverGood on our track (assuming that no other load is
-    // present)
-    // Further, we start with an initial load of 5 DeliverGoods.
-    ILoadCapacity deliverGoodCapacity = new SimpleLoadCapacity("DeliverGood", 10, 5);
+    // Define the LoadCapacities "Fruit" and "Bread"
 
-    // We can store a maximum of 5 PickupGood on our track (assuming that no other load is present)
-    ILoadCapacity pickupGoodCapacity = new SimpleLoadCapacity("PickupGood", 5, 0);
+    // We can carry a maximum of 40 pallets of fruit (Assuming we have
+    // no "Bread" on our truck). We start with an initial load of 5 pallets of fruit.
+    // We can carry a maximum of 40 pallets of fruit. We start with an initial load of 5 pallets of
+    // fruit and 10
+    // initial load pallets of "Bread" of the maximum 30.
+    ILoadCapacity fruitLoadCapacity = new SimpleLoadCapacity("Fruit", 40, 5);
 
-    // Our depot can store a maximum of 10 total items. For example, 7 DeliverGoods
-    // and 3 PickupGoods.
-    IResourceDepot depot = new SimpleResourceDepot("JackTruckDepot", 10);
+    // We can store a maximum of 30 Bread on our track (assuming that no other load is present)
+    ILoadCapacity breadCapacity = new SimpleLoadCapacity("Bread", 30, 10);
+
+    // Our depot can store a maximum of 70 total items. For example, 40 Fruit
+    // and 30 Bread.
+    IResourceDepot depot = new SimpleResourceDepot("truckDepot", 70);
 
     // Adding the capacities to our depot
-    depot.add(deliverGoodCapacity);
-    depot.add(pickupGoodCapacity);
+    depot.add(fruitLoadCapacity);
+    depot.add(breadCapacity);
 
     return depot;
   }
@@ -213,14 +215,14 @@ public class PNDSimpleExample extends Optimization {
     INode job1 =
         new TimeWindowGeoNode("CustomerOne", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
 
-    job1.setNodeDepot(this.createNodeDepot(2, 3, "CustomerOneDepot"));
+    job1.setNodeDepot(this.createNodeDepot(2, 10, "CustomerOneDepot"));
     this.addElement(job1);
 
     //
     INode job2 =
         new TimeWindowGeoNode("CustomerTwo", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
 
-    job2.setNodeDepot(this.createNodeDepot(1, 2, "CustomerTwoDepot"));
+    job2.setNodeDepot(this.createNodeDepot(3, 10, "CustomerTwoDepot"));
     this.addElement(job2);
 
     //
@@ -230,16 +232,16 @@ public class PNDSimpleExample extends Optimization {
   /**
    * Creates the node depot.
    *
-   * @param deliverGoodRequest the deliver good request
-   * @param pickupGoodSupply the pickup good supply
+   * @param fruitRequest the fruit request
+   * @param breadSupply the bread supply
    * @param depotId the depot id
    * @return the i node depot
    */
-  public INodeDepot createNodeDepot(int deliverGoodRequest, int pickupGoodSupply, String depotId) {
+  public INodeDepot createNodeDepot(int fruitRequest, int breadSupply, String depotId) {
 
-    ILoad deliverGoodLoad = new SimpleLoad("DeliverGood", deliverGoodRequest, true, true);
+    ILoad deliverGoodLoad = new SimpleLoad("Fruit", fruitRequest, true, true);
 
-    ILoad pickupGoodLoad = new SimpleLoad("PickupGood", pickupGoodSupply, false, true);
+    ILoad pickupGoodLoad = new SimpleLoad("Bread", breadSupply, false, true);
 
     INodeDepot customerNodeDepot = new SimpleNodeDepot(depotId);
     customerNodeDepot.add(deliverGoodLoad);
