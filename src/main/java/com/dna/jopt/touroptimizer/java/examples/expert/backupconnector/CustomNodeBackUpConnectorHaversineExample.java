@@ -1,4 +1,4 @@
-package com.dna.jopt.touroptimizer.java.examples.expert.uncaughtexception;
+package com.dna.jopt.touroptimizer.java.examples.expert.backupconnector;
 /*-
  * #%L
  * JOpt TourOptimizer Examples
@@ -7,11 +7,10 @@ package com.dna.jopt.touroptimizer.java.examples.expert.uncaughtexception;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
-import static java.time.Month.MAY;
 import static tec.units.ri.unit.MetricPrefix.KILO;
 import static tec.units.ri.unit.Units.METRE;
 
@@ -25,12 +24,12 @@ import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import static java.time.Month.MAY;
+
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 
 import com.dna.jopt.framework.body.Optimization;
-import com.dna.jopt.framework.body.setup.DefaultOptimizationSetup;
-import com.dna.jopt.framework.body.setup.IOptimizationSetup;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationProgress;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
@@ -39,47 +38,62 @@ import com.dna.jopt.member.unit.hours.IOpeningHours;
 import com.dna.jopt.member.unit.hours.WorkingHours;
 import com.dna.jopt.member.unit.hours.OpeningHours;
 import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
+import com.dna.jopt.member.unit.nodeedge.INodeEdgeConnector;
+import com.dna.jopt.member.unit.nodeedge.NodeEdgeConnector;
+import com.dna.jopt.member.unit.nodeedge.backupconnector.DefaultFlatEarthAverageSpeedBackupElementConnector;
 import com.dna.jopt.member.unit.resource.CapacityResource;
+import com.dna.jopt.member.unit.resource.IResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
-import com.dna.jopt.touroptimizer.java.examples.expert.uncaughtexception.customhandler.MyUncaughtExceptionHandler;
-import com.dna.jopt.touroptimizer.java.examples.expert.uncaughtexception.openassessorexception.OpenCostAssessorOptimizationSchemeWithFaultyRestiction;
 
 import tec.units.ri.quantity.Quantities;
 
 /**
- * We use cost assessor injection to inject faulty code which will throw an exception. An attached
- * uncaught exception handler will stop the optimization accordingly.
+ * Using the Custom backup connector.
+ *
+ * @author jrich
+ * @version Feb 16, 2021
+ * @since Feb 16, 2021
  */
+public class CustomNodeBackUpConnectorHaversineExample extends Optimization {
 
-public class UncaughtExceptionHandlingExample {
+  /**
+   * The main method.
+   *
+   * @param args the arguments
+   * @throws InvalidLicenceException the invalid licence exception
+   * @throws IOException Signals that an I/O exception has occurred.
+   * @throws InterruptedException the interrupted exception
+   * @throws ExecutionException the execution exception
+   */
   public static void main(String[] args)
-      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
-
-    // Use the default setup and attach a custom uncaught exception handler
-    IOptimizationSetup currentSetup = new DefaultOptimizationSetup();
-    currentSetup.setSlaveUncaughtExceptionHandler(new MyUncaughtExceptionHandler());
-
-    new UncaughtExceptionHandlingOptimization(currentSetup);
+      throws InvalidLicenceException, IOException, InterruptedException, ExecutionException {
+    new CustomNodeBackUpConnectorHaversineExample().example();
   }
 
+  /**
+   * To string.
+   *
+   * @return the string
+   */
   public String toString() {
-    return "We use cost assessor injection to inject faulty code which will throw an exception. An attached\r\n"
-        + " uncaught exception handler will stop the optimization accordingly.";
+    return "Example for using a custom backup connector. In case no element distances/driving time"
+        + "are provided by the user, the optimizer uses an approximation to generate these values."
+        + "By using a custom backup connector a custom calculation for generating these values can be defined.";
   }
-}
 
-class UncaughtExceptionHandlingOptimization extends Optimization {
-
-  public UncaughtExceptionHandlingOptimization(IOptimizationSetup customSetup)
-      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
-
-    // Use the custom setup
-    super(customSetup);
+  /**
+   * Example.
+   *
+   * @throws InvalidLicenceException the invalid licence exception
+   * @throws IOException Signals that an I/O exception has occurred.
+   * @throws InterruptedException the interrupted exception
+   * @throws ExecutionException the execution exception
+   */
+  public void example()
+      throws InvalidLicenceException, IOException, InterruptedException, ExecutionException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
-
-    this.setOptimizationScheme(new OpenCostAssessorOptimizationSchemeWithFaultyRestiction(this));
 
     // Properties!
     this.setProperties();
@@ -87,12 +101,19 @@ class UncaughtExceptionHandlingOptimization extends Optimization {
     this.addNodes();
     this.addResources();
 
+    // Set custom backup connector
+    INodeEdgeConnector connector = new NodeEdgeConnector();
+    connector.setBackupElementConnector(new MyBackupElementConnector(false));
+    this.setNodeConnector(connector);
+
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
     // It is important to block the call, otherwise optimization will be terminated
+
     resultFuture.get();
   }
 
+  /** Sets the properties. */
   private void setProperties() {
 
     Properties props = new Properties();
@@ -105,6 +126,7 @@ class UncaughtExceptionHandlingOptimization extends Optimization {
     this.addElement(props);
   }
 
+  /** Adds the resources. */
   private void addResources() {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
@@ -128,6 +150,7 @@ class UncaughtExceptionHandlingOptimization extends Optimization {
     this.addElement(rep1);
   }
 
+  /** Adds the nodes. */
   private void addNodes() {
 
     List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
@@ -181,34 +204,151 @@ class UncaughtExceptionHandlingOptimization extends Optimization {
     this.addElement(aachen);
   }
 
+  /**
+   * On error.
+   *
+   * @param code the code
+   * @param message the message
+   */
   @Override
   public void onError(int code, String message) {
     System.out.println("code: " + code + " message:" + message);
   }
 
+  /**
+   * On status.
+   *
+   * @param code the code
+   * @param message the message
+   */
   @Override
   public void onStatus(int code, String message) {
     System.out.println("code: " + code + " message:" + message);
   }
 
+  /**
+   * On warning.
+   *
+   * @param code the code
+   * @param message the message
+   */
   @Override
   public void onWarning(int code, String message) {
     //
 
   }
 
-  @Override
-  public void onProgress(String winnerProgressString) {
-    System.out.println(winnerProgressString);
-  }
-
+  /**
+   * On progress.
+   *
+   * @param rapoptProgress the rapopt progress
+   */
   @Override
   public void onProgress(IOptimizationProgress rapoptProgress) {
-    //
+    System.out.println(rapoptProgress.getProgressString());
   }
 
+  /**
+   * On asynchronous optimization result.
+   *
+   * @param rapoptResult the rapopt result
+   */
   @Override
   public void onAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {
     System.out.println(rapoptResult);
+  }
+
+  public static double haversineDistanceMeter(double lon1, double lat1, double lon2, double lat2) {
+
+    double r = 6371 * 1000.0; // Radius of the earth in meter
+
+    double deltaLatRad = toRad(lat2 - lat1);
+    double deltaLonRad = toRad(lon2 - lon1);
+
+    double a =
+        Math.sin(deltaLatRad / 2) * Math.sin(deltaLatRad / 2)
+            + Math.cos(toRad(lat1))
+                * Math.cos(toRad(lat2))
+                * Math.sin(deltaLonRad / 2)
+                * Math.sin(deltaLonRad / 2);
+    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return r * c; // Distance in meter
+
+  }
+
+  private static Double toRad(Double value) {
+    return value * Math.PI / 180;
+  }
+
+  /**
+   * The Class MyResourceDependentBackupElementConnector.
+   *
+   * @author jrich
+   * @version Feb 16, 2021
+   * @since Feb 16, 2021
+   */
+  private class MyBackupElementConnector
+      extends DefaultFlatEarthAverageSpeedBackupElementConnector {
+
+    /**
+     * Instantiates a new my resource dependent backup element connector.
+     *
+     * @param doRecalculateElement2ElementDuration the do recalculate element 2 element duration
+     */
+    public MyBackupElementConnector(boolean doRecalculateElement2ElementDuration) {
+      super(doRecalculateElement2ElementDuration);
+    }
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -7893999473615030027L;
+
+    /**
+     * Gets the element 2 element distance.
+     *
+     * @param fromElementId the from element id
+     * @param fromElementLon the from element lon
+     * @param fromElementLat the from element lat
+     * @param toElementId the to element id
+     * @param toElementLon the to element lon
+     * @param toElementLat the to element lat
+     * @param visitor the visitor
+     * @return the element 2 element distance
+     */
+    @Override
+    public Quantity<Length> getElement2ElementDistance(
+        String fromElementId,
+        double fromElementLon,
+        double fromElementLat,
+        String toElementId,
+        double toElementLon,
+        double toElementLat,
+        IResource visitor) {
+
+      double distance =
+          CustomNodeBackUpConnectorHaversineExample.haversineDistanceMeter(
+                  fromElementLon, fromElementLat, toElementLon, toElementLat)
+              * 1.2;
+
+      return Quantities.getQuantity(distance, METRE);
+    }
+
+    /**
+     * Gets the element 2 element duration.
+     *
+     * @param fromElementId the from element id
+     * @param toElementId the to element id
+     * @param distanceMeter the distance meter
+     * @param visitor the visitor
+     * @return the element 2 element duration
+     */
+    @Override
+    public Duration getElement2ElementDuration(
+        String fromElementId, String toElementId, double distanceMeter, IResource visitor) {
+
+      long traveltimeMillis = (long) (distanceMeter / visitor.getAvgSpeed() * 1000L);
+
+      return Duration.ofMillis(traveltimeMillis);
+    }
   }
 }

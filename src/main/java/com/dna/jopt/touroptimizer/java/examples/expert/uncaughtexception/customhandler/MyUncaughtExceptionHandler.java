@@ -1,4 +1,4 @@
-package com.dna.jopt.touroptimizer.java.examples.expert.uncaughtexception;
+package com.dna.jopt.touroptimizer.java.examples.expert.uncaughtexception.customhandler;
 /*-
  * #%L
  * JOpt TourOptimizer Examples

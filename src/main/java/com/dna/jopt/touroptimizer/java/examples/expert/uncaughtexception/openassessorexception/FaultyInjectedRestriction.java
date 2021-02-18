@@ -1,4 +1,4 @@
-package com.dna.jopt.touroptimizer.java.examples.expert.uncaughtexception;
+package com.dna.jopt.touroptimizer.java.examples.expert.uncaughtexception.openassessorexception;
 /*-
  * #%L
  * JOpt TourOptimizer Examples
@@ -45,13 +45,11 @@ public class FaultyInjectedRestriction
     // This example simply triggers a java.lang.ArithmeticException: / by zero at some point
 	int randomNum = ThreadLocalRandom.current().nextInt(0, 1000);
 	if(randomNum == 0) {
-		throw new ArithmeticException(); 
+		throw new ArithmeticException("Test Exception"); 
 	}
 
-    // Create the result
-    EntityRestrictionResult myRestrictionResult = new EntityRestrictionResult();
-
-    return myRestrictionResult;
+    // Create the result and return
+    return new EntityRestrictionResult();
   }
 
 }

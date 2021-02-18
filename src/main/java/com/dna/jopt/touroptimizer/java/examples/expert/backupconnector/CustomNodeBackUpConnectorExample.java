@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.expert.backupconnector;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -47,20 +47,48 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 import tec.units.ri.quantity.Quantities;
 
-/** Using the Custom backup connector */
+/**
+ *  Using the Custom backup connector.
+ *
+ * @author jrich
+ * @version Feb 16, 2021
+ * @since Feb 16, 2021
+ */
 public class CustomNodeBackUpConnectorExample extends Optimization {
 
+  /**
+   * The main method.
+   *
+   * @param args the arguments
+   * @throws InvalidLicenceException the invalid licence exception
+   * @throws IOException Signals that an I/O exception has occurred.
+   * @throws InterruptedException the interrupted exception
+   * @throws ExecutionException the execution exception
+   */
   public static void main(String[] args)
       throws InvalidLicenceException, IOException, InterruptedException, ExecutionException {
     new CustomNodeBackUpConnectorExample().example();
   }
 
+  /**
+   * To string.
+   *
+   * @return the string
+   */
   public String toString() {
     return "Example for using a custom backup connector. In case no element distances/driving time"
         + "are provided by the user, the optimizer uses an approximation to generate these values."
         + "By using a custom backup connector a custom calculation for generating these values can be defined.";
   }
 
+  /**
+   * Example.
+   *
+   * @throws InvalidLicenceException the invalid licence exception
+   * @throws IOException Signals that an I/O exception has occurred.
+   * @throws InterruptedException the interrupted exception
+   * @throws ExecutionException the execution exception
+   */
   public void example()
       throws InvalidLicenceException, IOException, InterruptedException, ExecutionException {
 
@@ -75,7 +103,7 @@ public class CustomNodeBackUpConnectorExample extends Optimization {
 
     // Set custom backup connector
     INodeEdgeConnector connector = new NodeEdgeConnector();
-    connector.setBackupElementConnector(new MyResourceDependedtBackupElementConnector(false));
+    connector.setBackupElementConnector(new MyBackupElementConnector(false));
     this.setNodeConnector(connector);
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
@@ -85,6 +113,9 @@ public class CustomNodeBackUpConnectorExample extends Optimization {
     resultFuture.get();
   }
 
+  /**
+   * Sets the properties.
+   */
   private void setProperties() {
 
     Properties props = new Properties();
@@ -97,9 +128,12 @@ public class CustomNodeBackUpConnectorExample extends Optimization {
     this.addElement(props);
   }
 
+  /**
+   * Adds the resources.
+   */
   private void addResources() {
 
-    List<IWorkingHours> workingHours = new ArrayList<IWorkingHours>();
+    List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
         new WorkingHours(
             ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
@@ -120,9 +154,12 @@ public class CustomNodeBackUpConnectorExample extends Optimization {
     this.addElement(rep1);
   }
 
+  /**
+   * Adds the nodes.
+   */
   private void addNodes() {
 
-    List<IOpeningHours> weeklyOpeningHours = new ArrayList<IOpeningHours>();
+    List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
     weeklyOpeningHours.add(
         new OpeningHours(
             ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
@@ -173,47 +210,96 @@ public class CustomNodeBackUpConnectorExample extends Optimization {
     this.addElement(aachen);
   }
 
+  /**
+   * On error.
+   *
+   * @param code the code
+   * @param message the message
+   */
   @Override
   public void onError(int code, String message) {
     System.out.println("code: " + code + " message:" + message);
   }
 
+  /**
+   * On status.
+   *
+   * @param code the code
+   * @param message the message
+   */
   @Override
   public void onStatus(int code, String message) {
     System.out.println("code: " + code + " message:" + message);
   }
 
+  /**
+   * On warning.
+   *
+   * @param code the code
+   * @param message the message
+   */
   @Override
   public void onWarning(int code, String message) {
     //
 
   }
 
-  @Override
-  public void onProgress(String winnerProgressString) {
-    System.out.println(winnerProgressString);
-  }
-
+  /**
+   * On progress.
+   *
+   * @param rapoptProgress the rapopt progress
+   */
   @Override
   public void onProgress(IOptimizationProgress rapoptProgress) {
-    //
+    System.out.println(rapoptProgress.getProgressString());
   }
 
+  /**
+   * On asynchronous optimization result.
+   *
+   * @param rapoptResult the rapopt result
+   */
   @Override
   public void onAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {
     System.out.println(rapoptResult);
   }
 
-  private class MyResourceDependedtBackupElementConnector
+
+  /**
+   * The Class MyResourceDependentBackupElementConnector.
+   *
+   * @author jrich
+   * @version Feb 16, 2021
+   * @since Feb 16, 2021
+   */
+  private class MyBackupElementConnector
       extends DefaultFlatEarthAverageSpeedBackupElementConnector {
 
-    public MyResourceDependedtBackupElementConnector(boolean doRecalculateElement2ElementDuration) {
+
+    /**
+     * Instantiates a new my resource dependent backup element connector.
+     *
+     * @param doRecalculateElement2ElementDuration the do recalculate element 2 element duration
+     */
+    public MyBackupElementConnector(boolean doRecalculateElement2ElementDuration) {
       super(doRecalculateElement2ElementDuration);
     }
 
-    /** */
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -7893999473615030027L;
 
+    /**
+     * Gets the element 2 element distance.
+     *
+     * @param fromElementId the from element id
+     * @param fromElementLon the from element lon
+     * @param fromElementLat the from element lat
+     * @param toElementId the to element id
+     * @param toElementLon the to element lon
+     * @param toElementLat the to element lat
+     * @param visitor the visitor
+     * @return the element 2 element distance
+     */
     @Override
     public Quantity<Length> getElement2ElementDistance(
         String fromElementId,
@@ -232,6 +318,15 @@ public class CustomNodeBackUpConnectorExample extends Optimization {
       return Quantities.getQuantity(distance, METRE);
     }
 
+    /**
+     * Gets the element 2 element duration.
+     *
+     * @param fromElementId the from element id
+     * @param toElementId the to element id
+     * @param distanceMeter the distance meter
+     * @param visitor the visitor
+     * @return the element 2 element duration
+     */
     @Override
     public Duration getElement2ElementDuration(
         String fromElementId, String toElementId, double distanceMeter, IResource visitor) {

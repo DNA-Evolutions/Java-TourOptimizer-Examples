@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.expert.uncaughtexception;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
@@ -42,16 +43,21 @@ import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.resource.CapacityResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import com.dna.jopt.touroptimizer.java.examples.expert.uncaughtexception.customhandler.MyUncaughtExceptionHandler;
-import com.dna.jopt.touroptimizer.java.examples.expert.uncaughtexception.openassessorexception.OpenCostAssessorOptimizationSchemeWithFaultyRestiction;
 
 import tec.units.ri.quantity.Quantities;
 
 /**
- * We use cost assessor injection to inject faulty code which will throw an exception. An attached
- * uncaught exception handler will stop the optimization accordingly.
+ * We implement some evil code within the onProgess callback. Internally, this callback is a
+ * subscription to an RxJava subject. The evil code therefore is executed within a subscription. The
+ * default, or in our case, the customly defined MyUncaughtExceptionHandler is automatically
+ * attached to the internal subject.
+ *
+ * @author jrich
+ * @version Feb 16, 2021
+ * @since Feb 16, 2021
  */
+public class UncaughtExceptionHandlingRxJavaExample {
 
-public class UncaughtExceptionHandlingExample {
   public static void main(String[] args)
       throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
 
@@ -59,18 +65,36 @@ public class UncaughtExceptionHandlingExample {
     IOptimizationSetup currentSetup = new DefaultOptimizationSetup();
     currentSetup.setSlaveUncaughtExceptionHandler(new MyUncaughtExceptionHandler());
 
-    new UncaughtExceptionHandlingOptimization(currentSetup);
+    new UncaughtExceptionReactiveJavaHandlingOptimization(currentSetup);
   }
 
   public String toString() {
-    return "We use cost assessor injection to inject faulty code which will throw an exception. An attached\r\n"
-        + " uncaught exception handler will stop the optimization accordingly.";
+    return "An attached uncaught exception handler will stop the optimization accordingly after some evil code"
+        + " is excuted within the onProgress subscription.";
   }
 }
 
-class UncaughtExceptionHandlingOptimization extends Optimization {
+class UncaughtExceptionReactiveJavaHandlingOptimization extends Optimization {
 
-  public UncaughtExceptionHandlingOptimization(IOptimizationSetup customSetup)
+  @Override
+  public void onProgress(IOptimizationProgress progress) {
+
+    // Lets create some evil code, that will trigger an ArithmeticException.
+    // The overridden onProgress() method internally is a subscription to the
+    // onProgressEvent, therefore an error occurring within this method will generate
+    // a io.reactivex.exceptions.OnErrorNotImplementedException if not backed by an errorConsumer.
+    // By default, when subscribing, the provided UncaughtException handler is used to create
+    // an error consumer.
+
+    int randomNum = ThreadLocalRandom.current().nextInt(0, 3);
+    if (randomNum == 0) {
+      throw new ArithmeticException("Test Exception from overridden onProgress()");
+    }
+
+    System.out.println(progress.getProgressString());
+  }
+
+  public UncaughtExceptionReactiveJavaHandlingOptimization(IOptimizationSetup customSetup)
       throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
 
     // Use the custom setup
@@ -78,8 +102,6 @@ class UncaughtExceptionHandlingOptimization extends Optimization {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
-
-    this.setOptimizationScheme(new OpenCostAssessorOptimizationSchemeWithFaultyRestiction(this));
 
     // Properties!
     this.setProperties();
@@ -113,11 +135,6 @@ class UncaughtExceptionHandlingOptimization extends Optimization {
             ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-    workingHours.add(
-        new WorkingHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
     Duration maxWorkingTime = Duration.ofHours(13);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
@@ -136,79 +153,11 @@ class UncaughtExceptionHandlingOptimization extends Optimization {
             ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-    weeklyOpeningHours.add(
-        new OpeningHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
     Duration visitDuration = Duration.ofMinutes(20);
 
     // Define some nodes
     TimeWindowGeoNode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     this.addElement(koeln);
-
-    TimeWindowGeoNode oberhausen =
-        new TimeWindowGeoNode("Oberhausen", 51.4667, 6.85, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(oberhausen);
-
-    TimeWindowGeoNode essen =
-        new TimeWindowGeoNode("Essen", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(essen);
-
-    TimeWindowGeoNode dueren =
-        new TimeWindowGeoNode("Dueren", 50.8, 6.48333, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(dueren);
-
-    TimeWindowGeoNode nuernberg =
-        new TimeWindowGeoNode("Nuernberg", 49.4478, 11.0683, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(nuernberg);
-
-    TimeWindowGeoNode heilbronn =
-        new TimeWindowGeoNode("Heilbronn", 49.1403, 9.22, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(heilbronn);
-
-    TimeWindowGeoNode stuttgart =
-        new TimeWindowGeoNode("Stuttgart", 48.7667, 9.18333, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(stuttgart);
-
-    TimeWindowGeoNode wuppertal =
-        new TimeWindowGeoNode("Wuppertal", 51.2667, 7.18333, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(wuppertal);
-
-    TimeWindowGeoNode aachen =
-        new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(aachen);
-  }
-
-  @Override
-  public void onError(int code, String message) {
-    System.out.println("code: " + code + " message:" + message);
-  }
-
-  @Override
-  public void onStatus(int code, String message) {
-    System.out.println("code: " + code + " message:" + message);
-  }
-
-  @Override
-  public void onWarning(int code, String message) {
-    //
-
-  }
-
-  @Override
-  public void onProgress(String winnerProgressString) {
-    System.out.println(winnerProgressString);
-  }
-
-  @Override
-  public void onProgress(IOptimizationProgress rapoptProgress) {
-    //
-  }
-
-  @Override
-  public void onAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {
-    System.out.println(rapoptResult);
   }
 }
