@@ -22,6 +22,7 @@ Each of the examples sections has its README.
 - Our official repository 	- <a href="https://public.repo.dna-evolutions.com" target="_blank">public.repo.dna-evolutions.com</a>
 - Our official JavaDocs 		- <a href="https://public.javadoc.dna-evolutions.com" target="_blank">public.javadoc.dna-evolutions.com</a>
 - Our YouTube channel - <a href="https://www.youtube.com/channel/UCzfZjJLp5Rrk7U2UKsOf8Fw" target="_blank">DNA Tutorials</a>
+- Documentation on DNA's <a href="https://docs.dna-evolutions.com/rest/touroptimizer/rest_touroptimizer.html" target="_blank">RESTful Spring-TourOptimizer in Docker </a>
 
 
 # Short Introduction
@@ -64,7 +65,7 @@ or latest (recommended)
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.5-rc9</version>
+   <version>7.4.5-rc10</version>
   <classifier>shaded</classifier>
 </dependency>
 ```
@@ -90,7 +91,7 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.5-rc9</version>
+   <version>7.4.5-rc10</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
