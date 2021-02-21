@@ -231,7 +231,7 @@ public class CustomSolutionExample extends Optimization {
 
   @Override
   public void onWarning(int code, String message) {
-    //
+	  System.out.println("code: " + code + " message:" + message);
 
   }
 
