@@ -119,6 +119,16 @@ In your ``pom.xml`` add the following repository:
 
 <br>
 
+### .NET legacy version
+
+We still support a legacy .NET version of JOpt. We utilize <a href="https://en.wikipedia.org/wiki/IKVM.NET" target="_blank">IKVM.NET</a> that is effectively a Java framework running on top of the .NET's framework.
+
+The latest dll (archived as zip) as download:
+- <a href="https://shared.dna-evolutions.com/legacy/net/jopt.core.pg-7.4.6-shaded/jopt.core.pg-7.4.6-shaded.zip" target="_blank">Shaded dll</a>
+
+The IKVM.NET framework as download:
+- <a href="https://shared.dna-evolutions.com/legacy/net/ikvm_env/ikvm-8.1.5717.0.zip" target="_blank">IKVM.NET Framework</a>
+
 ### Non-Maven projects
 
 In case you use *Gradle*, *SBT*, *IVY*, *Grape*, *Leiningen*, *Builder*, or others, you can browse our <a href="https://public.repo.dna-evolutions.com/#browse/browse:maven-releases" target="_blank">nexus-repository</a>, select the desired dependency, and look out for the Usage container. Alternatively, you can use an online conversion tool to convert the Maven dependency into your desired format. Please keep in mind that you will have to add our repository in any case.
