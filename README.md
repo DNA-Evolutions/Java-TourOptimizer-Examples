@@ -30,7 +30,7 @@ JOpt is a flexible routing optimization-engine written in Java, allowing to solv
 
 Click, to open video:
 
-<a href="https://www.youtube.com/watch?v=U4mDQGnZGZs" target="_blank"><img src="https://dna-evolutions.com/wp-content/uploads/2021/02/joptIntrox169.png" width="500"
+<a href="https://www.youtube.com/watch?v=U4mDQGnZGZs" target="_blank"><img src="https://dna-evolutions.com/wp-content/uploads/2021/02/joptIntrox169_small.png" width="500"
 title="Introduction Video for DNA's JOpt" alt="Introduction Video for DNA's JOpt"></a>
 
 ## Getting Started
