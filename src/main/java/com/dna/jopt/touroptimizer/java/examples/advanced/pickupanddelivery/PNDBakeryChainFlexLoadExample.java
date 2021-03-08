@@ -74,7 +74,7 @@ import java.util.ArrayList;
  * @since Jul 27, 2020
  *     <p>Example of pick up and delivery optimization problem.
  */
-public class PNDBackeryChainFlexLoadExample extends Optimization {
+public class PNDBakeryChainFlexLoadExample extends Optimization {
 
 
   /**
@@ -90,7 +90,7 @@ public class PNDBackeryChainFlexLoadExample extends Optimization {
   public static void main(String[] args)
       throws InvalidLicenceException, IOException, InterruptedException, ExecutionException,
           TimeoutException {
-    new PNDBackeryChainFlexLoadExample().example();
+    new PNDBakeryChainFlexLoadExample().example();
   }
 
   /**
@@ -209,12 +209,12 @@ public class PNDBackeryChainFlexLoadExample extends Optimization {
 
     // We can store a maximum of 20 "Bread" on our truck (assuming that no other load is
     // present)
-    ILoadCapacity breadCpacity = new SimpleLoadCapacity("Bread", 20, 0);
+    ILoadCapacity breadCapacity = new SimpleLoadCapacity("Bread", 20, 0);
 
     // Adding the capacities to our depot, as we only transport a single good, the maxCapacity equals
     // the individual capacity of the bread capacity.
     IResourceDepot depot = new SimpleResourceDepot(depotId, 20);
-    depot.add(breadCpacity);
+    depot.add(breadCapacity);
 
     return depot;
   }
