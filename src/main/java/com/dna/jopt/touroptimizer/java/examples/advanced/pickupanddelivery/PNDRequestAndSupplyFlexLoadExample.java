@@ -59,23 +59,23 @@ import java.util.ArrayList;
 
 /**
  * In this example a resource called "JackTruck" has to deliver/pickup "Fridges" and has to
- * deliver/pickup "Tvs". Each customer can decide what to pickup (customer supply) and what need to
+ * deliver/pickup "Tvs". Each customer can decide what to pick up (customer supply) and what needs to
  * be delivered (customer request).
  *
- * <p>As planning the initial load for our truck "JackTruck" can be challenging in mixed pickup and
+ * <p>As planning the initial Load for our truck "JackTruck" can be challenging in mixed pickup and
  * delivery problems, we use a MixedFlexLoad that can adjust its own request or supply during
- * optimization. Event though a FlexLoad needs to be attached to a node, a FlexLoad usually can be
- * seen as a warehouse that a resource can use to reload and/or unload goods.
+ * optimization. Even though a FlexLoad needs to be attached to a Node, a FlexLoad usually can be
+ * seen as a warehouse that a Resource can use to reload and/or unload goods.
  *
- * <p>Sometimes, a warehouse is only able to provide load but is not able to store it. Further, a
- * node maybe can only act as a dump but cannot provide load. For this purpose, a RequestFlexLoad
+ * <p>Sometimes, a warehouse is only able to provide Load but is not able to store it. Further, a
+ * Node maybe can only act as a dump but cannot provide Load. For this purpose, a RequestFlexLoad
  * and a SupplyFlexLoad can be defined. A RequestFlexLoad is a MixedFlexLoad that will only request
- * (like a dump). A SupplyFlexLoad is like a MixedFlexLoad that can only provide load.
+ * (like a dump). A SupplyFlexLoad is like a MixedFlexLoad that can only provide Load.
  *
- * <p>Hint: This concept can be also combined with the optional node concept.
+ * <p>Hint: This concept can be also combined with the optional Node concept.
  *
  * @author Jens Richter
- * @version Jul 27, 2020
+ * @version Mar 08, 2020
  * @since Jul 27, 2020
  *     <p>Example of pick up and delivery optimization problem.
  */
@@ -126,13 +126,13 @@ public class PNDRequestAndSupplyFlexLoadExample extends Optimization {
     this.addNodes();
     this.addRes();
 
-    // 3.) start the optimization
+    // Start the optimization
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
     // Subscribe to events
     subscribeToEvents(this);
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     IOptimizationResult result = resultFuture.get(2, TimeUnit.MINUTES);
 
     System.out.println(result);
@@ -190,11 +190,11 @@ public class PNDRequestAndSupplyFlexLoadExample extends Optimization {
      *
      */
 
-    // We can store a maximum of 10 Fridges on our track (assuming that no other load is
+    // We can store a maximum of 10 Fridges on our track (assuming that no other Load is
     // present)
     ILoadCapacity fridgeCpacity = new SimpleLoadCapacity("Fridge", 10, 0);
 
-    // We can store a maximum of 10 TVs on our track (assuming that no other load is present)
+    // We can store a maximum of 10 TVs on our track (assuming that no other Load is present)
     ILoadCapacity tvCapacity = new SimpleLoadCapacity("TV", 10, 0);
 
     // Our depot can store a maximum of 15 total items. For example, 10 Fridges
@@ -284,7 +284,7 @@ public class PNDRequestAndSupplyFlexLoadExample extends Optimization {
 
     if (fridgesCount > 0) {
       // Only add if count is bigger than zero.
-      // However, this is not necessary but improves the readability of the result.
+      // Strictly speaking this is not necessary but improves the readability of the result.
       // The optimizer can also handle zero requests/supplies
       customerNodeDepot.add(fridgeLoad);
     }
@@ -308,8 +308,7 @@ public class PNDRequestAndSupplyFlexLoadExample extends Optimization {
     ILoad fridgeLoad = new RequestFlexLoad("Fridge");
 
     // The initial (before optimization) property of a RequestFlexLoad is a supply of 0.0
-    // For helping the optimizer to faster converge, and initial value for the FlexLoad loadValue
-    // can be provided.
+    // To help the optimizer converge faster, the initial value for FlexLoad loadValue can be provided.
     //
     // For example: Our RequestFlexLoad for TV starts with a LoadValue of 1.0 as mandatory request
     ILoad tvLoad = new RequestFlexLoad("TV", 1);
@@ -333,8 +332,8 @@ public class PNDRequestAndSupplyFlexLoadExample extends Optimization {
     ILoad fridgeLoad = new SupplyFlexLoad("Fridge");
 
     // The initial (before optimization) property of a SupplyFlexLoad is a request of 0.0
-    // For helping the optimizer to faster converge, and initial value for the FlexLoad loadValue
-    // can be provided.
+    // To help the optimizer converge faster, the initial value for FlexLoad loadValue can be provided.
+
     //
     // For example: Our SupplyFlexLoad for TV starts with a LoadValue of 3.0 as mandatory supply
     ILoad tvLoad = new SupplyFlexLoad("TV", 3);
