@@ -58,19 +58,19 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
 /**
- * In this example two resource called "JackTruckCologne" and "JohnTruckAachen" are employees of a
+ * In this example two Resource called "JackTruckCologne" and "JohnTruckAachen" are employees of a
  * bakery chain and have to deliver "Bread" to different supermarkets.
  *
- * <p>Each of the resources is bound to a different bakery. The optimizer takes over
+ * <p>Each of the Resources is bound to a different bakery. The optimizer takes over
  * the manufacturing planning. The goal is to find the optimal number
- * of breads each bakery has to prepare to satisfy the request of all supermarkets. To achieve this,
- * two SupplyFlexLoad are used. The optimized load of each SupplyFlexLoad describes the optimal number of breads
+ * of bread each bakery has to prepare to satisfy the request of all supermarkets. To achieve this,
+ * two SupplyFlexLoad are used. The optimized load of each SupplyFlexLoad describes the optimal number of bread
  * each bakery has to prepare.
  *
- * <p>Hint: This concept can be also combined with the optional node concept.
+ * <p>Hint: This concept can also be combined with the optional Node concept.
  *
  * @author Jens Richter
- * @version Mar 08, 2020
+ * @version Mar 08, 2021
  * @since Jul 27, 2020
  *     <p>Example of pick up and delivery optimization problem.
  */
@@ -142,7 +142,7 @@ public class PNDBakeryChainFlexLoadExample extends Optimization {
     props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000");
 
-    // We have to tell the optimizer that we have an high interest in capacity planning, default is
+    // We have to tell the optimizer that we have a high interest in capacity planning, default is
     // 100
     props.setProperty("JOptWeight.Capacity", "200");
     this.addElement(props);

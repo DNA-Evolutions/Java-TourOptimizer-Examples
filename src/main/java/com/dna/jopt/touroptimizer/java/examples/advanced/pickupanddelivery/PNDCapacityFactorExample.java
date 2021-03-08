@@ -65,8 +65,8 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
 /**
- * In this example a resource called "JackTruck" has to deliver/pickup "Pianos" and has to
- * deliver/pickup "Cups". Each customer can decide what to pickup (customer supply) and what needs
+ * In this example a Resource called "JackTruck" has to deliver/pickup "Pianos" and has to
+ * deliver/pickup "Cups". Each customer can decide what needs to be picked up (customer supply) and what needs
  * to be delivered (customer request).
  *
  * <p>It is obvious that a truck can load more units of "Cups" than units of "Pianos". Let's assume the
@@ -90,7 +90,7 @@ import java.util.ArrayList;
  * <p>TODO add Truck size
  *
  * @author Jens Richter
- * @version Mar 08, 2020
+ * @version Mar 08, 2021
  * @since Jul 27, 2020
  *     <p>Example of pick up and delivery optimization problem.
  */
@@ -160,7 +160,7 @@ public class PNDCapacityFactorExample extends Optimization {
     props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000");
 
-    // We have to tell the optimizer that we have an high interest in capacity planning, default is
+    // We have to tell the optimizer that we have a high interest in capacity planning, default is
     // 100
     props.setProperty("JOptWeight.Capacity", "200");
     this.addElement(props);
