@@ -59,10 +59,10 @@ import java.util.ArrayList;
 /**
  * In this example we have two Pizza restaurants of the same chain. One is situated in Cologne and
  * the other one in Essen. Each restaurant has one delivery man. On every customer order, the
- * restaurants can decide which restaurant is serving the request.
+ * restaurant chain can decide which subsidiary is serving the request.
  *
- * <p>The restaurant chain advertises with: "If you don't get your Pizza in 90 minutes, you get if
- * for free!". Therefore, it is desirable that each Pizza is delivered within 90 minutes.
+ * <p>The restaurant chain advertises with: "If you don't get your Pizza within 90 minutes, you get it
+ * for free!".
  *
  * <p>Cologne has the following employee: "JackCologne"
  *
@@ -75,7 +75,7 @@ import java.util.ArrayList;
  * job with an overtime value of 9.38 minutes.
  *
  * @author Jens Richter
- * @version Jul 27, 2020
+ * @version Mar 08, 2020
  * @since Jul 27, 2020
  *     <p>Example of pick up and delivery optimization problem.
  */
@@ -125,13 +125,13 @@ public class PNDTimedPizzaDeliveryExample extends Optimization {
     this.setProperties();
     this.addNodesAndRess();
 
-    // 3.) start the optimization
+    // Start the optimization
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
     // Subscribe to events
     subscribeToEvents(this);
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the  optimization will be terminated
     IOptimizationResult result = resultFuture.get(2, TimeUnit.MINUTES);
 
     System.out.println(result);
@@ -144,7 +144,7 @@ public class PNDTimedPizzaDeliveryExample extends Optimization {
     props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
 
-    // We have to tell the optimizer that we have an high interest in capacity planning, Default is
+    // We have to tell the optimizer that we have a high interest in capacity planning, the default is
     // 100
     props.setProperty("JOptWeight.Capacity", "200");
     this.addElement(props);

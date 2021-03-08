@@ -56,13 +56,13 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
 /**
- * In this example a resource called "JackTruck" has to deliver/pickup "Apples". Some customers
- * accept partial delivery/pickup (fuzzy) and other customers only allow full pickup/delivery.
+ * In this example a Resource called "JackTruck" has to deliver/pickup "Apples". Some customers
+ * accept partial delivery/pickup (fuzzy) and other customers only allow full pickups/deliveries.
  *
  * <p>On purpose, we create a problem that is not perfectly solvable to show the behavior of fuzzy
  * visits.
  *
- * <p>Let's look at an example where nodes cannot be fully satisfied.
+ * <p>Let's look at an example where Nodes cannot be fully satisfied.
  *
  * <p>FUZZY: The desired Load changes. For example from 20.0 to 10.0 request. That means, 10 items
  * were delivered, but still the customer has a request of 10.0: [ Id: Apple / Type: SimpleLoad /
@@ -75,7 +75,7 @@ import java.util.ArrayList;
  * Load Exchange: 35.0 / IsRequest: true / IsFuzzy: false / Priority: 1]
  *
  * @author Jens Richter
- * @version Jul 27, 2020
+ * @version Mar 08, 2020
  * @since Jul 27, 2020
  *     <p>Example of pick up and delivery optimization problem.
  */
@@ -126,13 +126,13 @@ public class PNDSimpleFuzzyExample extends Optimization {
     this.addNodes();
     this.addRes();
 
-    // 3.) start the optimization
+    // Start the optimization
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
     // Subscribe to events
     subscribeToEvents(this);
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     IOptimizationResult result = resultFuture.get(2, TimeUnit.MINUTES);
 
     System.out.println(result);
@@ -145,7 +145,7 @@ public class PNDSimpleFuzzyExample extends Optimization {
     props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000");
 
-    // We have to tell the optimizer that we have an high interest in capacity planning, Default is
+    // We have to tell the optimizer that we have a high interest in capacity planning, the default is
     // 100
     props.setProperty("JOptWeight.Capacity", "200");
     this.addElement(props);
@@ -155,7 +155,7 @@ public class PNDSimpleFuzzyExample extends Optimization {
   public void addRes() {
 
     /*
-     * Setting the resource JackTruck
+     * Setting the Resource JackTruck
      */
 
     List<IWorkingHours> workingHours = new ArrayList<>();
@@ -171,7 +171,7 @@ public class PNDSimpleFuzzyExample extends Optimization {
         new CapacityResource(
             "JackTruck", 50.1167, 7.68333, maxWorkingTime, maxDistanceKmW, workingHours);
 
-    // Setting a depot to our truck
+    // Setting a Depot to our truck
     truckJack.setResourceDepot(this.createResourceDepot());
 
     // Adding the truck to our optimization
@@ -190,15 +190,15 @@ public class PNDSimpleFuzzyExample extends Optimization {
      *
      */
 
-    // We can store a maximum of 10 DeliverGood on our track (assuming that no other load is
+    // We can store a maximum of 10 DeliverGood on our track (assuming that no other Load is
     // present)
-    // Further, we start with an initial load of 5 pallets of Apples.
+    // Further, we start with an initial Load of 5 pallets of Apples.
     ILoadCapacity appleCapacity = new SimpleLoadCapacity("Apple", 30, 10);
 
     // We can store a maximum of 30 apples, as we have only a single good
     IResourceDepot depot = new SimpleResourceDepot("JackTruckDepot", 30);
 
-    // Adding the capacities to our depot
+    // Adding the capacities to our Depot
     depot.add(appleCapacity);
 
     return depot;
