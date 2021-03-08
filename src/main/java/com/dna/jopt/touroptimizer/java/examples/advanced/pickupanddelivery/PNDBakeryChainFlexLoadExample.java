@@ -279,7 +279,7 @@ public class PNDBakeryChainFlexLoadExample extends Optimization {
             "SupplyFlexNodeAachen", 50.77577, 6.08177, weeklyOpeningHours, visitDuration, 1);
     supplyFlexNodeAachen.setNodeDepot(this.createSupplyFlexDepot("SupplyFlexNodeAachenDepot"));
     
-    // Could also be optional, if desired
+    // Could also be an optional Node, which allows offloading cargo, if desired
     boolean isAachenOptional = false;
     supplyFlexNodeAachen.setIsOptional(isAachenOptional);
     
@@ -289,8 +289,8 @@ public class PNDBakeryChainFlexLoadExample extends Optimization {
         new TimeWindowGeoNode(
             "SupplyFlexNodeCologne", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     supplyFlexNodeCologne.setNodeDepot(this.createSupplyFlexDepot("SupplyFlexNodeCologneDepot"));
-    
-    // Could also be optional, if desired
+
+    // Could also be an optional Node, which allows offloading cargo, if desired
     boolean isCologneOptional = false;
     supplyFlexNodeCologne.setIsOptional(isCologneOptional);
     this.addElement(supplyFlexNodeCologne);
