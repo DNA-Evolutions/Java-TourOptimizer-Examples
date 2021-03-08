@@ -61,7 +61,8 @@ import java.util.ArrayList;
  * In this example two resource called "JackTruckCologne" and "JohnTruckAachen" are employees of a
  * bakery chain and have to deliver "Bread" to different supermarkets.
  *
- * <p>Each of the resources is bound to a different bakery. The goal is to find the optimal number
+ * <p>Each of the resources is bound to a different bakery. The optimizer takes over
+ * the manufacturing planning. The goal is to find the optimal number
  * of breads each bakery has to prepare to satisfy the request of all supermarkets. To achieve this,
  * two SupplyFlexLoad are used. The optimized load of each SupplyFlexLoad describes the optimal number of breads
  * each bakery has to prepare.
@@ -69,7 +70,7 @@ import java.util.ArrayList;
  * <p>Hint: This concept can be also combined with the optional node concept.
  *
  * @author Jens Richter
- * @version Jul 27, 2020
+ * @version Mar 08, 2020
  * @since Jul 27, 2020
  *     <p>Example of pick up and delivery optimization problem.
  */
@@ -141,7 +142,7 @@ public class PNDBackeryChainFlexLoadExample extends Optimization {
     props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000");
 
-    // We have to tell the optimizer that we have an high interest in capacity planning, Default is
+    // We have to tell the optimizer that we have an high interest in capacity planning, default is
     // 100
     props.setProperty("JOptWeight.Capacity", "200");
     this.addElement(props);
@@ -206,7 +207,7 @@ public class PNDBackeryChainFlexLoadExample extends Optimization {
      *
      */
 
-    // We can store a maximum of 20 Breads on our truck (assuming that no other load is
+    // We can store a maximum of 20 "Bread" on our truck (assuming that no other load is
     // present)
     ILoadCapacity breadCpacity = new SimpleLoadCapacity("Bread", 20, 0);
 
@@ -278,7 +279,7 @@ public class PNDBackeryChainFlexLoadExample extends Optimization {
             "SupplyFlexNodeAachen", 50.77577, 6.08177, weeklyOpeningHours, visitDuration, 1);
     supplyFlexNodeAachen.setNodeDepot(this.createSupplyFlexDepot("SupplyFlexNodeAachenDepot"));
     
-    // Could be also optional, if desired
+    // Could also be optional, if desired
     boolean isAachenOptional = false;
     supplyFlexNodeAachen.setIsOptional(isAachenOptional);
     
@@ -289,7 +290,7 @@ public class PNDBackeryChainFlexLoadExample extends Optimization {
             "SupplyFlexNodeCologne", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     supplyFlexNodeCologne.setNodeDepot(this.createSupplyFlexDepot("SupplyFlexNodeCologneDepot"));
     
-    // Could be also optional, if desired
+    // Could also be optional, if desired
     boolean isCologneOptional = false;
     supplyFlexNodeCologne.setIsOptional(isCologneOptional);
     this.addElement(supplyFlexNodeCologne);
@@ -322,13 +323,13 @@ public class PNDBackeryChainFlexLoadExample extends Optimization {
    */
   public INodeDepot createSupplyFlexDepot(String depotId) {
 
-    // We assume that a truck most likely needs to start fully loaded with Bread
+    // We assume that a truck most likely needs to start fully loaded with "Bread"
     ILoad breadLoad = new SupplyFlexLoad("Bread", 20);
 
-    INodeDepot nodeDepotWittSupplyFlexLoads = new SimpleNodeDepot(depotId);
-    nodeDepotWittSupplyFlexLoads.add(breadLoad);
+    INodeDepot nodeDepotWithSupplyFlexLoads = new SimpleNodeDepot(depotId);
+    nodeDepotWithSupplyFlexLoads.add(breadLoad);
 
-    return nodeDepotWittSupplyFlexLoads;
+    return nodeDepotWithSupplyFlexLoads;
   }
 
   /**

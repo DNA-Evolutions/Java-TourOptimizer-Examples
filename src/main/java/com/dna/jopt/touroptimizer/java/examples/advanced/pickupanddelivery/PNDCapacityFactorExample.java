@@ -69,28 +69,28 @@ import java.util.ArrayList;
  * deliver/pickup "Cups". Each customer can decide what to pickup (customer supply) and what needs
  * to be delivered (customer request).
  *
- * <p>It is obvious that a truck can load more units of cups than units of Pianos. Let's assume the
- * cups are transported on pallets with a size of 1219 × 1016 mm (48 × 40 inches). We do not allow
- * to stack the pallets as otherwise, cups could break. Each customer is only allowed to request or
- * provide pallets of cups.
+ * <p>It is obvious that a truck can load more units of "Cups" than units of "Pianos". Let's assume the
+ * "Cups" are transported on pallets with a size of 1219 × 1016 mm (48 × 40 inches). We do not allow
+ * to stack the pallets as otherwise, "Cups" could break. Each customer is only allowed to request or
+ * provide pallets of "Cups".
  *
- * <p>A piano has a floor space of 160 x 140 cm (63 x 55 inches). Obviously we cannot stack pianos as
+ * <p>A "Piano" has a floor space of 160 x 140 cm (63 x 55 inches). Obviously we cannot stack "Pianos" as
  * well.
  *
  * <p>The truck has floor space of 7 x 2.5 m (23 x 8 feet).
  *
- * <p>The goal is to find a way to tell the Optimizer, what is the maximal amount of both goods a
- * truck can carry without overloading. For this we have to calculate the equivalent of one piano
- * and one pallet of cups.
+ * <p>The goal is to find a way to tell the Optimizer the maximal amount of both goods a
+ * truck can carry without overloading. Therefore, we have to calculate the equivalent of one "Piano"
+ * and one pallet of "Cups".
  *
- * <p>Precisely, we think of a ground unit with the value one (for cargo space this is square
- * meter). What is the equivalent of a Piano and what is the equivalent of a pallet of cups in this
+ * <p>The ground unit for this calculation is square-meter.
+ * What is the equivalent of a "Piano" and what is the equivalent of a pallet of "Cups" in this
  * ground unit?
  *
  * <p>TODO add Truck size
  *
  * @author Jens Richter
- * @version Jul 27, 2020
+ * @version Mar 08, 2020
  * @since Jul 27, 2020
  *     <p>Example of pick up and delivery optimization problem.
  */
@@ -160,7 +160,7 @@ public class PNDCapacityFactorExample extends Optimization {
     props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000");
 
-    // We have to tell the optimizer that we have an high interest in capacity planning, Default is
+    // We have to tell the optimizer that we have an high interest in capacity planning, default is
     // 100
     props.setProperty("JOptWeight.Capacity", "200");
     this.addElement(props);
