@@ -57,18 +57,18 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
 /**
- * In this example a resource called "JackTruck" has to pickup "Trash" and "Garbage". Each customer
- * can decide what to pickup.
+ * In this example a Resource called "JackTruck" has to pickup "Trash" and "Garbage". Each customer
+ * can decide what to pick up.
  *
  * <p>JackTruck starts empty and can use three optional dumps to avoid overloading. One of the
  * optional UnloadAllNodes is so far away, that the optimizer will not use it.
  *
- * <p>Note: This problem could be also solved by using RequestFlexLoads. However, as we know, that
+ * <p>Note: This problem could be also solved by using RequestFlexLoads. However, since we know that
  * we want to unload everything at our dumps, we can help the optimizer by using unloadAll Loads
  * instead.
  *
  * @author Jens Richter
- * @version Jul 27, 2020
+ * @version Mar 08, 2020
  * @since Jul 27, 2020
  *     <p>Example of pick up and delivery optimization problem.
  */
@@ -119,13 +119,13 @@ public class PNDOptionalUnloadAllLoadExample extends Optimization {
     this.addNodes();
     this.addRes();
 
-    // 3.) start the optimization
+    // Start the optimization
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
     // Subscribe to events
     subscribeToEvents(this);
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     IOptimizationResult result = resultFuture.get(2, TimeUnit.MINUTES);
 
     System.out.println(result);
@@ -138,7 +138,7 @@ public class PNDOptionalUnloadAllLoadExample extends Optimization {
     props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000");
 
-    // We have to tell the optimizer that we have an high interest in capacity planning, Default is
+    // We have to tell the optimizer that we have a high interest in capacity planning, default is
     // 100
     props.setProperty("JOptWeight.Capacity", "200");
     this.addElement(props);
@@ -183,12 +183,12 @@ public class PNDOptionalUnloadAllLoadExample extends Optimization {
      *
      */
 
-    // We can store a maximum of 20 Trash on our track (assuming that no other load is
+    // We can store a maximum of 20 Trash on our truck (assuming that no other Load is
     // present)
-    ILoadCapacity trashCpacity = new SimpleLoadCapacity("Trash", 20, 0);
+    ILoadCapacity trashCpacity = new SimpleLoadCapacity("Trash", 30, 0);
 
-    // We can store a maximum of 15 Garbage on our track (assuming that no other load is present)
-    ILoadCapacity garbageCapacity = new SimpleLoadCapacity("Garbage", 15, 0);
+    // We can store a maximum of 15 Garbage on our truck (assuming that no other Load is present)
+    ILoadCapacity garbageCapacity = new SimpleLoadCapacity("Garbage", 30, 0);
 
     // Our depot can store a maximum of 30 total items. For example, 19 Trash
     // and 11 Garbage.
@@ -266,7 +266,7 @@ public class PNDOptionalUnloadAllLoadExample extends Optimization {
   }
 
   /**
-   * Creates the node depot.
+   * Creates the NodeDepot.
    *
    * @param depotId the depot id
    * @param trashCount the trash count
@@ -282,7 +282,7 @@ public class PNDOptionalUnloadAllLoadExample extends Optimization {
 
     if (trashCount > 0) {
       // Only add if count is bigger than zero.
-      // However, this is not necessary but improves the readability of the result.
+      // Strictly speaking this is not necessary but improves the readability of the result.
       // The optimizer can also handle zero requests/supplies
       customerNodeDepot.add(trashLoad);
     }

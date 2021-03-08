@@ -122,13 +122,13 @@ public class PNDBakeryChainFlexLoadExample extends Optimization {
     this.addNodes();
     this.addRes();
 
-    // 3.) start the optimization
+    // Start the optimization
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
     // Subscribe to events
     subscribeToEvents(this);
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     IOptimizationResult result = resultFuture.get(2, TimeUnit.MINUTES);
     
     System.out.println(result);
