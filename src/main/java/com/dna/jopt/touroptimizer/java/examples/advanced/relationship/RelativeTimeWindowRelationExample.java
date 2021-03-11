@@ -46,9 +46,15 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tec.units.ri.quantity.Quantities;
 
 /**
- * Connecting to nodes with each other by defining a relative timeWindow. A use case would be that a certain
- * workOrder needs to be fulfilled before another one can start. Maybe it is even required that
- * the work is done and 2 hours pass before another workOrder can start.
+ * In this example we show how to connect Nodes by a relative timeWindow. This can be applied in use
+ * cases where tasks have to be tiered in a pre-defined order. In this example we want the tasks to be done
+ * as fast as possible. The relatedNode has to start working as soon as the masterNode is finished with it’s
+ * task. The function is very flexible. Separate variables would allow to set a minimal time that has to pass between
+ * the tasks or setting a loose timeframe within which both tasks have to be done.
+ *
+ * @author DNA
+ * @version 11/03/2021
+ * @since 11/03/2021
  */
 public class RelativeTimeWindowRelationExample extends Optimization {
 
@@ -57,10 +63,11 @@ public class RelativeTimeWindowRelationExample extends Optimization {
   }
   
   public String toString() {
-	  return "Connecting to nodes with each other by defining a relative timeWindow. A use case would be that a certain\r\n" + 
-	      " workOrder needs to be fulfilled before another one can start. Maybe it is even required that\r\n" + 
-	      " the work is done and 2 hours pass before another workOrder can start."
-	      + " In this example we want the nodes Aachen and Essen to start within a timeWindow of maximal 20 minutes (start in unison).";
+	  return "Connecting Nodes with each other by defining a relative timeWindow. A use case would be that a " +
+              "certain\r\n" + " workOrder needs to be fulfilled before another one can start. It is also possible to " +
+              "define that\r\n" + " two hours have topass before another workOrder can start."
+	      + " In this example we want the Nodes Aachen and Essen to start within a timeWindow of maximal 20 minutes " +
+              "(start in unison).";
   }
 
 
@@ -69,7 +76,7 @@ public class RelativeTimeWindowRelationExample extends Optimization {
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set Properties
     this.setProperties();
 
     this.addNodes();
@@ -77,7 +84,7 @@ public class RelativeTimeWindowRelationExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     resultFuture.get();
   }
 
@@ -172,10 +179,13 @@ public class RelativeTimeWindowRelationExample extends Optimization {
         new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
     this.addElement(aachen);
 
-    // Create a relative timeWindowRelation as delta based on master node
+    // Create a relative timeWindowRelation as delta based on the masterNode
+    // The task of the relatedNode has to start 20 minutes after the masterNode has arrived
+    // Since we set a visitDuration of 20 minutes, work has to proceed immediately
     INode2NodeTempusRelation rel = new RelativeTimeWindow2RelatedNodeRelation(Duration.ofMinutes(0), Duration.ofMinutes(20));
     rel.setMasterNode(essen);
     rel.setRelatedNode(aachen);
+    // Defining the arrival times of the Nodes to be the relevant timestamps for the settings above
     rel.setTimeComparisonJuncture(true, true);
     essen.addNode2NodeRelation(rel);
     aachen.addNode2NodeRelation(rel);

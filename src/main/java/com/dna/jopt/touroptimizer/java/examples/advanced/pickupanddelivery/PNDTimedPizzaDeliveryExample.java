@@ -75,7 +75,7 @@ import java.util.ArrayList;
  * job with an overtime value of 9.38 minutes.
  *
  * @author Jens Richter
- * @version Mar 08, 2020
+ * @version Mar 08, 2021
  * @since Jul 27, 2020
  *     <p>Example of pick up and delivery optimization problem.
  */

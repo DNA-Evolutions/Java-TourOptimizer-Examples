@@ -75,7 +75,7 @@ import java.util.ArrayList;
  * [New request: Id: Apple / Type: SimpleLoad / Desired Load Exchange: 35.0 / IsRequest: true / IsFuzzy: false / Priority: 1]
  *
  * @author Jens Richter
- * @version Mar 08, 2020
+ * @version Mar 11, 2021
  * @since Jul 27, 2020
  *     <p>Example of pick up and delivery optimization problem.
  */

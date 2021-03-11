@@ -45,12 +45,11 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tec.units.ri.quantity.Quantities;
 
 /**
- * Example DifferentRouteDifferentVisitorRelationExample. In this example two nodes should be
- * visited in a different route (Aachen and Dueren). Further, we want that these different routes,
- * are also routes of different resources (visitors).
+ * Example DifferentRouteDifferentVisitorRelationExample. In this example two Nodes (Aachen and Dueren) should be
+ * visited in a different Route. Further, we want these Routes to be served by different Resources (visitors).
  *
  * @author jrich
- * @version Dec 23, 2020
+ * @version Mar 11, 2021
  * @since Dec 23, 2020
  */
 public class DifferentRouteDifferentVisitorRelationExample extends Optimization {
@@ -75,7 +74,7 @@ public class DifferentRouteDifferentVisitorRelationExample extends Optimization 
    * @return the string
    */
   public String toString() {
-    return "Visiting two nodes in different routes by a different Resource by using relations.";
+    return "Visiting two Nodes in different Routes served by different Resource using Relations.";
   }
 
   /**
@@ -92,7 +91,7 @@ public class DifferentRouteDifferentVisitorRelationExample extends Optimization 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set Properties
     this.setProperties();
 
     this.addNodes();
@@ -102,7 +101,7 @@ public class DifferentRouteDifferentVisitorRelationExample extends Optimization 
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     System.out.println(resultFuture.get());
   }
 
@@ -116,7 +115,7 @@ public class DifferentRouteDifferentVisitorRelationExample extends Optimization 
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
 
     // Related properties
-    props.setProperty("JOptWeight.Relationships", "100.0"); //  Default is 100.0
+    props.setProperty("JOptWeight.Relationships", "100.0"); // Default is 100.0
 
     props.setProperty("JOpt.NumCPUCores", "4");
 
@@ -153,7 +152,7 @@ public class DifferentRouteDifferentVisitorRelationExample extends Optimization 
     this.addElement(rep2);
   }
 
-  /** Adds the nodes. */
+  /** Adds the Nodes. */
   private void addNodes() {
 
     List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
@@ -169,9 +168,9 @@ public class DifferentRouteDifferentVisitorRelationExample extends Optimization 
 
     Duration visitDuration = Duration.ofMinutes(150);
 
-    // Without any relation, Aachen and Dueren would cluster together in the same route
+    // Without defining the relations, Aachen and Dueren would cluster together in the same Route
 
-    // Define some nodes
+    // Define some Nodes
     TimeWindowGeoNode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     this.addElement(koeln);
@@ -192,13 +191,12 @@ public class DifferentRouteDifferentVisitorRelationExample extends Optimization 
         new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
     this.addElement(aachen);
 
-    // Create relation
-    // We want that Aachen and Dueren are visited in different routes by a different resource
+    // Create Relation
     INode2NodeVisitorRelation rel = new RelativeVisitor2RelatedNodeRelation();
     rel.setMasterNode(dueren);
     rel.setRelatedNode(aachen);
 
-    // We want also a different visitor
+    // We want that Aachen and Dueren are visited in different Routes by a different Resource
     boolean isForcedDifferentVisitor = true;
 
     rel.setIsForcedDifferentRoute(isForcedDifferentVisitor);
