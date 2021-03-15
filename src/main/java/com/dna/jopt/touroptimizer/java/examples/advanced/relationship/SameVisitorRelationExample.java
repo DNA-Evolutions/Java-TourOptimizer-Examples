@@ -45,11 +45,11 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tec.units.ri.quantity.Quantities;
 
 /**
- * Example SameVisitorRelationExample. In this example two nodes should be visited by the same resource (Aachen and Essen).
- * HINT: Same visitor means not necessarily same day/route.
+ * In this example two Nodes should be visited by the same Resource (Aachen and Essen), but we do not enforce the same
+ * same day/route.
  *
  * @author jrich
- * @version Dec 23, 2020
+ * @version Mar 15, 2021
  * @since Dec 23, 2020
  */
 public class SameVisitorRelationExample extends Optimization {
@@ -91,7 +91,7 @@ public class SameVisitorRelationExample extends Optimization {
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set the Properties
     this.setProperties();
 
     this.addNodes();
@@ -101,7 +101,7 @@ public class SameVisitorRelationExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     System.out.println(resultFuture.get());
   }
 
@@ -114,7 +114,7 @@ public class SameVisitorRelationExample extends Optimization {
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "10000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
 
-    // Related properties
+    // Related Properties
     props.setProperty("JOptWeight.Relationships", "100.0"); //  Default is 100.0
 
     props.setProperty("JOpt.NumCPUCores", "4");
@@ -122,7 +122,7 @@ public class SameVisitorRelationExample extends Optimization {
     this.addElement(props);
   }
 
-  /** Adds the resources. */
+  /** Adds the Resources. */
   private void addResources() {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
@@ -147,7 +147,7 @@ public class SameVisitorRelationExample extends Optimization {
     this.addElement(rep2);
   }
 
-  /** Adds the nodes. */
+  /** Adds the Nodes. */
   private void addNodes() {
 
     List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
@@ -158,12 +158,7 @@ public class SameVisitorRelationExample extends Optimization {
 
     Duration visitDuration = Duration.ofMinutes(150);
 
-    // Without any relation, Aachen->Dueren->Koeln would cluster together in the same route
-    // and Essen, Wupeprtal would cluster in the other route.
-
-    // However, here we want that Aachen and Essen is visited in the same route
-
-    // Define some nodes
+    // Define some Nodes
     TimeWindowGeoNode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     this.addElement(koeln);
@@ -183,6 +178,11 @@ public class SameVisitorRelationExample extends Optimization {
     TimeWindowGeoNode aachen =
         new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
     this.addElement(aachen);
+
+    // Without any Relation, Aachen->Dueren->Koeln would cluster together in the same Route for geographic reasons.
+    // Essen, Wupppertal would cluster in the other Route.
+    // Since we want Aachen and Essen to be visited by the same Resource (= same visitor) we have to set the
+    // appropriate Relations using setIsForcedSameVisitor().
 
     // Create relation
     INode2NodeVisitorRelation rel = new RelativeVisitor2RelatedNodeRelation();

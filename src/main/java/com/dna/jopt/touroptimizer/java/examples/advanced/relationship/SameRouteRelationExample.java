@@ -45,11 +45,11 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tec.units.ri.quantity.Quantities;
 
 /**
- * Example SameRouteRelationExample. In this example two nodes should be visited by the same
- * resource on the same day/route (Aachen and Essen).
+ * In this example two Nodes (Aachen and Essen) should be visited by the same
+ * Resource on the same day/Route.
  *
  * @author jrich
- * @version Dec 23, 2020
+ * @version Mar 15, 2021
  * @since Dec 23, 2020
  */
 public class SameRouteRelationExample extends Optimization {
@@ -91,7 +91,7 @@ public class SameRouteRelationExample extends Optimization {
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set the Properties
     this.setProperties();
 
     this.addNodes();
@@ -101,7 +101,7 @@ public class SameRouteRelationExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     System.out.println(resultFuture.get());
   }
 
@@ -122,7 +122,7 @@ public class SameRouteRelationExample extends Optimization {
     this.addElement(props);
   }
 
-  /** Adds the resources. */
+  /** Adds the Resources. */
   private void addResources() {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
@@ -151,7 +151,7 @@ public class SameRouteRelationExample extends Optimization {
     this.addElement(rep1);
   }
 
-  /** Adds the nodes. */
+  /** Adds the Nodes. */
   private void addNodes() {
 
     List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
@@ -172,12 +172,7 @@ public class SameRouteRelationExample extends Optimization {
 
     Duration visitDuration = Duration.ofMinutes(150);
 
-    // Without any relation, Aachen->Dueren->Koeln would cluster together in the same route
-    // and Essen, Wupeprtal would cluster in the other route.
-
-    // However, here we want that Aachen and Essen is visited in the same route
-
-    // Define some nodes
+    // Define some Nodes
     TimeWindowGeoNode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     this.addElement(koeln);
@@ -198,7 +193,12 @@ public class SameRouteRelationExample extends Optimization {
         new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
     this.addElement(aachen);
 
-    // Create relation
+    // Without any Relation, Aachen->Dueren->Koeln would cluster together in the same Route for geographic reasons.
+    // Essen, Wupppertal would cluster in the other Route.
+    // Since we want Aachen and Essen to be visited in the same Route we have to set the appropriate Relations
+    // by using setIsForcedSameRoute().
+
+    // Create the Relation
     INode2NodeVisitorRelation rel = new RelativeVisitor2RelatedNodeRelation();
     rel.setMasterNode(essen);
     rel.setRelatedNode(aachen);
