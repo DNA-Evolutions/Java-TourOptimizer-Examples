@@ -51,7 +51,16 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 import tec.units.ri.quantity.Quantities;
 
-/** Setting a type of a node that a resource should provide. */
+/**
+ * Setting a Qualification ("efficient") that a Node would prefer if the visiting Resource had it. We do not set
+ * this as a hard
+ * constraint but as a soft constraint. Therefore, the Optimizer will add additional costs to solutions that do not
+ * comply with this condition, but it will not be enforced.
+ *
+ * @author DNA
+ * @version 15/03/2021
+ * @since 15/03/2021
+ */
 public class ResourceTypeConditionSoftExample extends Optimization {
 
   public static void main(String[] args)
@@ -60,7 +69,7 @@ public class ResourceTypeConditionSoftExample extends Optimization {
   }
 
   public String toString() {
-    return "Setting a type of a node that a resource should provide (soft-constrained).";
+    return "Setting a type qualification of a Resource as a condition for visiting a Node as soft constrait.";
   }
 
   public void example()
@@ -74,7 +83,7 @@ public class ResourceTypeConditionSoftExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     resultFuture.get();
   }
 
@@ -100,14 +109,15 @@ public class ResourceTypeConditionSoftExample extends Optimization {
             "Jack", 50.775346, 6.083887, maxWorkingTimeJack, maxDistanceKmW, workingHours);
     rep1.setCost(0, 1, 1);
 
+
+    // We are defining the Qualification "super efficient" and add it to "Jack".
     IQualification typeQualification = new TypeQualification();
-
-    ((TypeQualification) typeQualification).addType("TEST");
-
+    ((TypeQualification) typeQualification).addType("efficient");
     rep1.addQualification(typeQualification);
-
     this.addElement(rep1);
 
+    // Note that "John" does not have the above-defined Qualification. Nodes with the respective typeConstraint will
+    // therefore prefer the "efficient" "Jack".
     IResource rep2 =
         new CapacityResource(
             "John", 50.775346, 6.083887, maxWorkingTimeJohn, maxDistanceKmW, workingHours);
@@ -130,13 +140,9 @@ public class ResourceTypeConditionSoftExample extends Optimization {
 
     Duration visitDuration = Duration.ofMinutes(20);
 
-    // Define some nodes
-    IConstraint typeConstraint = new TypeConstraint();
-    ((TypeConstraint) typeConstraint).addType("TEST");
-
+    // We are defining some Nodes
     INode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-    koeln.addConstraint(typeConstraint);
     this.addElement(koeln);
 
     INode oberhausen =
@@ -166,6 +172,15 @@ public class ResourceTypeConditionSoftExample extends Optimization {
     INode aachen =
         new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
     this.addElement(aachen);
+
+    // We are defining the typeConstraint "efficient" and add it to the Node "Koeln". Since we do not declare
+    // this typeConstraint as hard (typeConstraint.setisHard(true)), "Koeln" will prefer the Resource "Jack" that has
+    // the Qualification, but it will be content with the Resource "John" if the cost for getting "Jack" is too high.
+    // Efficiency has it’s price after all.
+    IConstraint typeConstraint = new TypeConstraint();
+    ((TypeConstraint) typeConstraint).addType("efficient");
+    koeln.addConstraint(typeConstraint);
+
   }
 
   @Override
