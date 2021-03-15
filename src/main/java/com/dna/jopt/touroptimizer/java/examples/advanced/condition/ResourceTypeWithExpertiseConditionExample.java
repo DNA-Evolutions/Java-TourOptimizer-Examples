@@ -52,14 +52,18 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tec.units.ri.quantity.Quantities;
 
 /**
- * In this example, we have a look at the Resource Type Expertise condition. An Expertise can
- * express the level of knowledge a Resource has in a certain type. In this example, we assume three
- * Resources: "Jack", "John", and "Paula" carry a Qualification with the type "Repair". However,
- * each resource has a different experience in that field, indicated by their individual expertise
- * level of 10 (Jack), 2 (John), and 4 (Paula). Two nodes "Koeln" and "Oberhausen", need a Resource
- * providing the RepairType. However, Koeln needs at least a Resource with expertise-level 8 (as a
- * hard constraint) and Oberhausen at least need an expertise-level of 3 (soft constraint) to be
- * successfully served,
+ * In this example, we have a look at the Resource type Expertise Qualification condition. An Expertise can
+ * express the level of knowledge a Resource has in a certain type of Qualification. In this example, we assume three
+ * Resources: "Jack", "John", and "Paula" carry a Qualification with the type "Repair". However,
+ * each resource has a different experience in that field, indicated by their individual Expertise
+ * level of 10 (Jack), 2 (John), and 4 (Paula). Two Nodes "Koeln" and "Oberhausen", need a Resource
+ * providing the RepairType. However, "Koeln" needs at least a Resource with expertise-level 8 (as a
+ * hard constraint) and "Oberhausen" at least need an expertise-level of 3 (soft constraint) to be
+ * successfully served,
+ *
+ * @author DNA
+ * @version 15/03/2021
+ * @since 15/03/2021
  */
 public class ResourceTypeWithExpertiseConditionExample extends Optimization {
 
@@ -72,7 +76,7 @@ public class ResourceTypeWithExpertiseConditionExample extends Optimization {
   }
 
   public String toString() {
-    return "Setting a type/skill with Expertise for a resources.";
+    return "Setting a type/skill with Expertise for a Resources.";
   }
 
   public void example()
@@ -82,7 +86,7 @@ public class ResourceTypeWithExpertiseConditionExample extends Optimization {
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set the Properties
     this.setProperties(this);
 
     this.addNodes(this);
@@ -93,7 +97,7 @@ public class ResourceTypeWithExpertiseConditionExample extends Optimization {
     // Subscribe to events
     subscribeToEvents(this);
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     resultFuture.get(1, TimeUnit.MINUTES);
   }
 
@@ -106,7 +110,7 @@ public class ResourceTypeWithExpertiseConditionExample extends Optimization {
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
 
     // The NodeType setting also influences how important it is not to violate the minimal
-    // required expertise level - In case we use a soft constraint.
+    // required Expertise level - In case we use a soft constraint.
     props.setProperty("JOptWeight.NodeType", "10.0"); // Default is 1.0
     props.setProperty("JOpt.NumCPUCores", "4");
 
@@ -147,7 +151,7 @@ public class ResourceTypeWithExpertiseConditionExample extends Optimization {
     Duration maxWorkingTime = Duration.ofHours(10);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
-    // Add Resources and assign qualification
+    // Add Resources and assign Qualification
     IResource resJack =
         new CapacityResource(
             "Jack Aachen - Expertise " + jackExpertiseLevel,
@@ -175,7 +179,7 @@ public class ResourceTypeWithExpertiseConditionExample extends Optimization {
             maxDistanceKmW,
             workingHours);
 
-    // Adding qualifications
+    // Adding the Qualifications to the Resources
     resJack.addQualification(jackRepairQualification);
     resJohn.addQualification(johnRepairQualification);
     resPaula.addQualification(paulaRepairQualification);
@@ -195,17 +199,22 @@ public class ResourceTypeWithExpertiseConditionExample extends Optimization {
 
     Duration visitDuration = Duration.ofMinutes(60);
 
+    // Defining the type Expertise Constraints for the Nodes
+    // Since this Expertise type is implemented as a hard constraint, lower qualified Resources cannot serve the
+    // respective Nodes at all
     int minEpxertiseLevelHigh = 8;
     TypeWithExpertiseConstraint repairConstraintHighExpertise = new TypeWithExpertiseConstraint();
     repairConstraintHighExpertise.addType(SKILL_TYPE, minEpxertiseLevelHigh);
     repairConstraintHighExpertise.setIsHard(true); // Forbidden to send Resource with low level
 
+    // This Expertise constraint is implemented as a soft Constraint. Lower qualified Resources can serve the
+    // respective Nodes - but get a cost penalty in order to discourage not fulfilling the condition
     int minEpxertiseLevelMedium = 3;
     TypeWithExpertiseConstraint repairConstraintMediumExpertise = new TypeWithExpertiseConstraint();
     repairConstraintMediumExpertise.addType(SKILL_TYPE, minEpxertiseLevelMedium);
     repairConstraintMediumExpertise.setIsHard(false); // Try to send matching expertise level
 
-    // Define some nodes
+    // Define some Nodes and adding the Constraints to the Nodes
     INode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     koeln.addConstraint(repairConstraintHighExpertise);

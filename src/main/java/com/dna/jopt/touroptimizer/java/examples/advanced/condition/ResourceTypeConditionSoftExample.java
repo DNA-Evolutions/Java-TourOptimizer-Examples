@@ -53,8 +53,7 @@ import tec.units.ri.quantity.Quantities;
 
 /**
  * Setting a Qualification ("efficient") that a Node would prefer if the visiting Resource had it. We do not set
- * this as a hard
- * constraint but as a soft constraint. Therefore, the Optimizer will add additional costs to solutions that do not
+ * this as a hard constraint but as a soft constraint. Therefore, the Optimizer will add additional costs to solutions that do not
  * comply with this condition, but it will not be enforced.
  *
  * @author DNA
