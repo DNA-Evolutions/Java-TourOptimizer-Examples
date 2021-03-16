@@ -57,7 +57,7 @@ import java.util.ArrayList;
 
 /**
  * The Class PNDSimpleExample. In this example a Resource called "JackTruck" has to deliver
- * "DeliverGood" and has to pick up "PickupGood".
+ * "Fruit" and has to pick up "Bread".
  *
  * @author Jens Richter
  * @version Mar 08, 2021
@@ -130,7 +130,7 @@ public class PNDSimpleExample extends Optimization {
     props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000");
 
-    // We have to tell the optimizer that we have a high interest in capacity planning, default is
+    // We have to tell the optimizer that we have a high interest in capacity planning, the default is
     // 100
     props.setProperty("JOptWeight.Capacity", "200");
     this.addElement(props);
@@ -175,16 +175,16 @@ public class PNDSimpleExample extends Optimization {
 
     // Define the LoadCapacities "Fruit" and "Bread"
 
-    // We can carry a maximum of 40 pallets of "Fruit" (Assuming we have
+    // We can carry a maximum of 70 pallets of "Fruit" (Assuming we have
     // no "Bread" on our truck). We start with an initial load of 5 pallets of "Fruit".
-    // We start with an initial load of 10 pallets of "Bread" of the maximum 30.
-    ILoadCapacity fruitLoadCapacity = new SimpleLoadCapacity("Fruit", 40, 5);
+    ILoadCapacity fruitLoadCapacity = new SimpleLoadCapacity("Fruit", 70, 5);
 
-    // We can store a maximum of 30 Bread on our track (assuming that no other Load is present)
-    ILoadCapacity breadCapacity = new SimpleLoadCapacity("Bread", 30, 10);
+    // We can store a maximum of 70 "Bread" on our truck (assuming that no other Load is present).
+    // We start with an initial load of 10 pallets of "Bread" of the maximum 70.
+    ILoadCapacity breadCapacity = new SimpleLoadCapacity("Bread", 70, 10);
 
-    // Our depot can store a maximum of 70 total items. For example, 40 Fruit
-    // and 30 Bread.
+    // Our depot can store a maximum of 70 total items. For example, 40 "Fruit"
+    // and 30 "Bread".
     IResourceDepot depot = new SimpleResourceDepot("truckDepot", 70);
 
     // Adding the capacities to our depot
