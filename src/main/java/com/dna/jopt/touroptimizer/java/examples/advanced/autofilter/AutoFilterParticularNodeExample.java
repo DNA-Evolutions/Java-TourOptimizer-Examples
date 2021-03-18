@@ -47,7 +47,16 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 import tec.units.ri.quantity.Quantities;
 
-/** Simple example for using the selective autofilter for late violations */
+/**
+ * In this example we are adding a local late Constraint to the Node "Nuernberg". In contrary to setting the
+ * Autofilter for late violations for all Nodes, the AutoFilter will only observes "Nuernberg" in this example. If
+ * the Resources will arrive late at "Nuernbergo" over several solutions above a certain treshold, the AutoFilter
+ * will exclude "Nuernberg" from the optimization.
+ *
+ * @author DNA
+ * @version 18/03/2021
+ * @since 18/03/2021
+ */
 public class AutoFilterParticularNodeExample extends Optimization {
 
   public static void main(String[] args) throws InvalidLicenceException, InterruptedException, ExecutionException, IOException {
@@ -64,7 +73,7 @@ public class AutoFilterParticularNodeExample extends Optimization {
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set the Properties
     this.setProperties();
 
     this.addNodes();
@@ -72,7 +81,7 @@ public class AutoFilterParticularNodeExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     resultFuture.get();
   }
 
@@ -84,7 +93,8 @@ public class AutoFilterParticularNodeExample extends Optimization {
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
 
-    props.setProperty("JOpt.SelectiveAutoFilter", "TRUE"); // This activates the filter mechanism
+    // Activate the filter mechanism
+    props.setProperty("JOpt.SelectiveAutoFilter", "TRUE");
 
     props.setProperty("JOpt.NumCPUCores", "4");
 
@@ -151,7 +161,9 @@ public class AutoFilterParticularNodeExample extends Optimization {
     this.addElement(nuernberg);
     
 
-    // Assign a local constraint to Nuernberg
+    // Assign a local Constraint to "Nuernberg"
+    // By adding a local late Constraint to "Nuernberg" this Node and only this Node will be filtered out of the
+    // Optimizer by the AutoFilter if it turns out to be responsible for too many late Violations.
     List<IAutoFilterNodeConstraint> nodeConstraints = new ArrayList<IAutoFilterNodeConstraint>();
     IAutoFilterNodeConstraint lateContraint = new LateAutoFilterConstraint();
     nodeConstraints.add(lateContraint);
