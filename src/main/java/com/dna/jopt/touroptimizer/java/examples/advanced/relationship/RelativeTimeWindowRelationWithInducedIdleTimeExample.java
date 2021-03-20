@@ -48,9 +48,16 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tec.units.ri.quantity.Quantities;
 
 /**
- * Connecting to nodes with each other by defining a relative timeWindow. A use case would be that a certain
- * workOrder needs to be fulfilled before another one can start. Maybe it is even required that
- * the work is done and 2 hours pass before another workOrder can start.
+ * Connecting two Nodes by defining a relative timeWindow. Relative timeWindows are very useful when
+ * defining tasks that have to be fulfilled consecutively. In this example the work orders take 60 minutes to fulfill.
+ * We ask the relatedNode to start work 40 minutes after the masterNode has arrived, on purpose inducing 20 minutes
+ * of idle time for the relatedNode for the sake of this demonstration. The function is very flexible. Separate
+ * variables would allow to set a minimal time that has to pass between the tasks or setting a loose timeframe within
+ * which both tasks have to be fulfilled.
+ *
+ * @author DNA
+ * @version 11/03/2021
+ * @since 11/03/2021
  */
 public class RelativeTimeWindowRelationWithInducedIdleTimeExample extends Optimization {
 
@@ -59,10 +66,9 @@ public class RelativeTimeWindowRelationWithInducedIdleTimeExample extends Optimi
   }
   
   public String toString() {
-	  return "Connecting to nodes with each other by defining a relative timeWindow. A use case would be that a certain\r\n" + 
-	      " workOrder needs to be fulfilled before another one can start. Maybe it is even required that\r\n" + 
-	      " the work is done and 2 hours pass before another workOrder can start."
-	      + " In this example we want the nodes Aachen and Essen to start within a timeWindow of maximal 20 minutes (start in unison).";
+	  return "Connecting Nodes with each other by defining a relative timeWindow. A use case would be that a " +
+              "certain\r\n" + " workOrder needs to be fulfilled before another one can start. In this example we " +
+              "induced 20 minutes of idle time for the relatedNode on purpose.";
   }
 
 
@@ -167,6 +173,8 @@ public class RelativeTimeWindowRelationWithInducedIdleTimeExample extends Optimi
     this.addElement(aachen);
 
     // Create a relative timeWindowRelation as delta based on master node
+    // The relatedNode has to start it’s task 40 minutes after the arrival of the masterNode. This results in 20
+    // minutes idle time for the relatedNode, since the tasks take 60 minutes to finish
     INode2NodeTempusRelation rel = new RelativeTimeWindow2RelatedNodeRelation(Duration.ofMinutes(0), Duration.ofMinutes(40));
     rel.setMasterNode(essen);
     rel.setRelatedNode(aachen);

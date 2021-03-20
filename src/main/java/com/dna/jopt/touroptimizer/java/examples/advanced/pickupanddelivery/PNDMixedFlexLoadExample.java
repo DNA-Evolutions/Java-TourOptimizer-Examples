@@ -57,19 +57,19 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
 /**
- * In this example a resource called "JackTruck" has to deliver/pickup "Fridges" and has to
- * deliver/pickup "TVs". Each customer can decide what to pickup (customer supply) and what need to
+ * In this example a Resource called "JackTruck" has to deliver/pickup "Fridges" and has to
+ * deliver/pickup "TVs". Each customer can decide what needs to be picked up (customer supply) and what needs to
  * be delivered (customer request).
  *
  * <p>As planning the initial load for our truck "JackTruck" can be challenging in mixed pickup and
  * delivery problems, we use a MixedFlexLoad that can adjust its own request or supply during
- * optimization. Event though a FlexLoad needs to be attached to a node, a FlexLoad usually can be
- * seen as a warehouse that a resource can use to reload and/or unload goods.
+ * optimization. Event though a FlexLoad needs to be attached to a Node, a FlexLoad usually can be
+ * seen as a warehouse that a Resource can use to reload and/or unload goods.
  *
- * <p>Hint: This concept can be also combined with the optional node concept.
+ * <p>Hint: This concept can be also combined with the optional Node concept.
  *
  * @author Jens Richter
- * @version Jul 27, 2020
+ * @version Mar 08, 2021
  * @since Jul 27, 2020
  *     <p>Example of pick up and delivery optimization problem.
  */
@@ -120,13 +120,13 @@ public class PNDMixedFlexLoadExample extends Optimization {
     this.addNodes();
     this.addRes();
 
-    // 3.) start the optimization
+    // Start the optimization
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
     // Subscribe to events
     subscribeToEvents(this);
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     IOptimizationResult result = resultFuture.get(2, TimeUnit.MINUTES);
 
     System.out.println(result);
@@ -139,7 +139,7 @@ public class PNDMixedFlexLoadExample extends Optimization {
     props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000");
 
-    // We have to tell the optimizer that we have an high interest in capacity planning, Default is
+    // We have to tell the optimizer that we have a high interest in capacity planning, default is
     // 100
     props.setProperty("JOptWeight.Capacity", "200");
     this.addElement(props);
@@ -184,12 +184,12 @@ public class PNDMixedFlexLoadExample extends Optimization {
      *
      */
 
-    // We can store a maximum of 10 Fridges on our track (assuming that no other load is
+    // We can store a maximum of 15 Fridges on our truck (assuming that no other Load is
     // present)
-    ILoadCapacity fridgeCpacity = new SimpleLoadCapacity("Fridge", 10, 0);
+    ILoadCapacity fridgeCpacity = new SimpleLoadCapacity("Fridge", 15, 0);
 
-    // We can store a maximum of 10 TVs on our track (assuming that no other load is present)
-    ILoadCapacity tvCapacity = new SimpleLoadCapacity("TV", 10, 0);
+    // We can store a maximum of 10 TVs on our truck (assuming that no other load is present)
+    ILoadCapacity tvCapacity = new SimpleLoadCapacity("TV", 15, 0);
 
     // Our depot can store a maximum of 15 total items. For example, 10 Fridges
     // and 5 TVs.
@@ -270,7 +270,7 @@ public class PNDMixedFlexLoadExample extends Optimization {
 
     if (fridgesCount > 0) {
       // Only add if count is bigger than zero.
-      // However, this is not necessary but improves the readability of the result.
+      // Strictly speaking this is not necessary but improves the readability of the result.
       // The optimizer can also handle zero requests/supplies
       customerNodeDepot.add(fridgeLoad);
     }
@@ -294,8 +294,8 @@ public class PNDMixedFlexLoadExample extends Optimization {
     ILoad fridgeLoad = new MixedFlexLoad("Fridge");
 
     // The initial (before optimization) properties of a MixedFlexLoad are a request of 0.0
-    // For helping the optimizer to faster converge, and initial value for FlexLoad and
-    // and initial value for the request state can be provided.
+    // To help the optimizer converge faster, the initial value for FlexLoad and
+    // the initial value for the request state can be provided.
     //
     // For example: Our MixedFlexLoad for TV starts as supply (isRequest is false) with a value of
     // 2.0

@@ -50,8 +50,12 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tec.units.ri.quantity.Quantities;
 
 /**
- * Setting a preferred resource for a node. In contrast to a mandatory resource it not guaranteed
- * that the resource is chosen if the cost for doing so is getting too high.
+ * In this example we are setting a preferred resource (soft constraint) for a Node. In contrast to a mandatory resource
+ * (hard constraint) it is not guaranteed that the Resource is chosen if the cost for doing so is getting too high.
+ *
+ * @author Jens Richter
+ * @version 15/03/2021
+ * @since 15/03/2021
  */
 public class PreferredResourceConditionExample extends Optimization {
 
@@ -60,8 +64,8 @@ public class PreferredResourceConditionExample extends Optimization {
   }
 
   public String toString() {
-    return "Setting a preferred resource for a node. In contrast to a mandatory resource it is not guaranteed"
-        + " that the resource is chosen in case the cost for doing so is getting too high.";
+    return "Setting a preferred Resource for a Node. In contrast to a mandatory Resource it is not guaranteed"
+        + " that the Resource is chosen in case the cost for doing so is getting too high.";
   }
 
   public void example()
@@ -75,7 +79,7 @@ public class PreferredResourceConditionExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     resultFuture.get();
   }
 
@@ -125,23 +129,14 @@ public class PreferredResourceConditionExample extends Optimization {
 
     Duration visitDuration = Duration.ofMinutes(20);
 
-    // Define some nodes
-
-    // Preferred constraint
-    IConstraintResource jackPrefConstraint = new PreferredResourceConstraint();
-    jackPrefConstraint.addResource("Jack", 10);
-
-    IConstraintResource johnPrefConstraint = new PreferredResourceConstraint();
-    johnPrefConstraint.addResource("John", 10);
+    // Define some Nodes
 
     INode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-    koeln.addConstraint(jackPrefConstraint);
     this.addElement(koeln);
 
     INode koeln1 =
         new TimeWindowGeoNode("Koeln1", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-    koeln1.addConstraint(johnPrefConstraint);
     this.addElement(koeln1);
 
     INode oberhausen =
@@ -168,6 +163,18 @@ public class PreferredResourceConditionExample extends Optimization {
     TimeWindowGeoNode aachen =
         new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
     this.addElement(aachen);
+
+    // Since we do not want to enforce the Resource constraints against all reasons (costs) as in the case of mandatory
+    // resource constraints, we are only setting preferred resource constraints
+
+    // Defining the preferred resource constraints, adding the respective Resource and add the Constraint to the Node
+    IConstraintResource jackPrefConstraint = new PreferredResourceConstraint();
+    jackPrefConstraint.addResource("Jack", 10);
+    koeln.addConstraint(jackPrefConstraint);
+
+    IConstraintResource johnPrefConstraint = new PreferredResourceConstraint();
+    johnPrefConstraint.addResource("John", 10);
+    koeln1.addConstraint(johnPrefConstraint);
   }
 
   @Override

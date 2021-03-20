@@ -55,7 +55,13 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tec.units.ri.quantity.Quantities;
 
 /**
- * Setting a type/skill for a resource based on its workingDays.
+ * In this example we are setting a type/skill for a Resource based on its workingDays. In this case, the
+ * Qualifications of the Resource are added to the WorkingHours and not the Resource itself. The Constraints are
+ * still set to the Nodes tough.
+ *
+ * @author DNA
+ * @version 15/03/2021
+ * @since 15/03/2021
  */
 public class SelectiveTypeConditionExample extends Optimization {
 
@@ -72,7 +78,7 @@ public class SelectiveTypeConditionExample extends Optimization {
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set Properties
     this.setProperties(this);
 
     this.addNodes(this);
@@ -80,7 +86,7 @@ public class SelectiveTypeConditionExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     resultFuture.get();
 
   }
@@ -112,7 +118,7 @@ public class SelectiveTypeConditionExample extends Optimization {
             ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin")));
     
-    IWorkingHours thridWoh = 
+    IWorkingHours thirdWoh =
             new WorkingHours(
                 ZonedDateTime.of(2020, MAY.getValue(), 8, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
                 ZonedDateTime.of(2020, MAY.getValue(), 8, 17, 0, 0, 0, ZoneId.of("Europe/Berlin")));
@@ -148,19 +154,20 @@ public class SelectiveTypeConditionExample extends Optimization {
     ((TypeQualification) typeQualification6).addType("Certification for dangerous goods");
     
     // First day
-    firstWoh.addQualification(typeQualification6); // Expires on third day
+    firstWoh.addQualification(typeQualification6); // Expires on third day, since it will not be refreshed
     firstWoh.addQualification(typeQualification1);
     firstWoh.addQualification(typeQualification4);
     firstWoh.addQualification(typeQualification5);
     
     // Second day
-    secondWoh.addQualification(typeQualification6); // Expires on third day
+    secondWoh.addQualification(typeQualification6); // Expires on third day since it will not be refreshed
     secondWoh.addQualification(typeQualification3);
     secondWoh.addQualification(typeQualification2);
     
     // Third day
-    thridWoh.addQualification(typeQualification5);
-    thridWoh.addQualification(typeQualification4);
+    // typeQualification 6 and 1 are not refreshed and therefore are not available anymore
+    thirdWoh.addQualification(typeQualification5);
+    thirdWoh.addQualification(typeQualification4);
 
     // Fourth day
     fourthWoh.addQualification(typeQualification5);
@@ -176,7 +183,7 @@ public class SelectiveTypeConditionExample extends Optimization {
     // Adding hours
     workingHours.add(firstWoh);
     workingHours.add(secondWoh);
-    workingHours.add(thridWoh);
+    workingHours.add(thirdWoh);
     workingHours.add(fourthWoh);
     workingHours.add(fifthWoh);
     
@@ -248,7 +255,7 @@ public class SelectiveTypeConditionExample extends Optimization {
     typeConstraint6.setIsHard(true);
     
 
-    // Define some nodes
+    // Define some Nodes and adding the respective constraints
     INode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     koeln.addConstraint(typeConstraint6);

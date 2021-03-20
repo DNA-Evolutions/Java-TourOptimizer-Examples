@@ -56,7 +56,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
 /**
- * In this example a resource called "JackCar" has to transport passengers from one location to
+ * In this example a Resource called "JackTaxi" has to transport passengers from one location to
  * another location. Each passenger should only stay a maximum of one hour in Jacks car. For this
  * purpose TimedLoads are created.
  *
@@ -64,7 +64,7 @@ import java.util.ArrayList;
  * overtime value of 19.33 minutes.
  *
  * @author Jens Richter
- * @version Jul 27, 2020
+ * @version Mar 08, 2021
  * @since Jul 27, 2020
  *     <p>Example of pick up and delivery optimization problem.
  */
@@ -115,13 +115,13 @@ public class PNDTimedLoadExample extends Optimization {
     this.addNodes();
     this.addRes();
 
-    // 3.) start the optimization
+    // Start the optimization
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
     // Subscribe to events
     subscribeToEvents(this);
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     IOptimizationResult result = resultFuture.get(2, TimeUnit.MINUTES);
 
     System.out.println(result);
@@ -134,7 +134,7 @@ public class PNDTimedLoadExample extends Optimization {
     props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000");
 
-    // We have to tell the optimizer that we have an high interest in capacity planning, Default is
+    // We have to tell the optimizer that we have a high interest in capacity planning, the default is
     // 100
     props.setProperty("JOptWeight.Capacity", "200");
     this.addElement(props);
@@ -144,7 +144,7 @@ public class PNDTimedLoadExample extends Optimization {
   public void addRes() {
 
     /*
-     * Setting the resource JackTruck
+     * Setting the Resource JackTaxi
      */
 
     List<IWorkingHours> workingHours = new ArrayList<>();
@@ -156,15 +156,15 @@ public class PNDTimedLoadExample extends Optimization {
     Duration maxWorkingTime = Duration.ofHours(10);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(2800.0, KILO(METRE));
 
-    IResource carJack =
+    IResource taxiJack =
         new CapacityResource(
-            "JackCar", 50.1167, 7.68333, maxWorkingTime, maxDistanceKmW, workingHours);
+            "JackTaxi", 50.1167, 7.68333, maxWorkingTime, maxDistanceKmW, workingHours);
 
-    // Setting a depot to our truck
-    carJack.setResourceDepot(this.createResourceDepot());
+    // Setting a Depot (passenger cabin) to our taxi
+    taxiJack.setResourceDepot(this.createResourceDepot());
 
-    // Adding the truck to our optimization
-    this.addElement(carJack);
+    // Adding the taxi to our optimization
+    this.addElement(taxiJack);
   }
 
   /**
@@ -175,26 +175,23 @@ public class PNDTimedLoadExample extends Optimization {
   public IResourceDepot createResourceDepot() {
 
     /*
-     * Defining a ResourceDepot "JackTruckDepot" that can store DeliverGood and PickupGood.
+     * Defining a ResourceDepot "JackTaxiDepot" (passenger cabin) that can host the passengers.
      *
      */
 
-    // We can store a maximum of 10 Fridges on our track (assuming that no other load is
-    // present)
-    ILoadCapacity maxCpacity = new SimpleLoadCapacity("Max", 1, 0);
+    // We add each potential passenger to our depot. Notice the currentLoad is 0, the passengers still need to be
+    // picked up.
+    ILoadCapacity maxCapacity = new SimpleLoadCapacity("Max", 1, 0);
 
-    // We can store a maximum of 10 TVs on our track (assuming that no other load is present)
     ILoadCapacity peterCapacity = new SimpleLoadCapacity("Peter", 1, 0);
 
-    // We can store a maximum of 10 TVs on our track (assuming that no other load is present)
     ILoadCapacity larsCapacity = new SimpleLoadCapacity("Lars", 1, 1);
 
-    // Our depot can store a maximum of 15 total items. For example, 10 Fridges
-    // and 5 TVs.
-    IResourceDepot depot = new SimpleResourceDepot("JackCarDepot", 3);
+    // Our passenger cabin can host a maximum of 3 passengers
+    IResourceDepot depot = new SimpleResourceDepot("JackTaxiDepot", 3);
 
     // Adding the capacities to our depot
-    depot.add(maxCpacity);
+    depot.add(maxCapacity);
     depot.add(peterCapacity);
     depot.add(larsCapacity);
 

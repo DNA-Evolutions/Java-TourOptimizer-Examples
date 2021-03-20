@@ -7,10 +7,11 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.condition;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
+
 import static java.time.Month.MARCH;
 import static tec.units.ri.unit.MetricPrefix.KILO;
 import static tec.units.ri.unit.Units.METRE;
@@ -50,7 +51,13 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 import tec.units.ri.quantity.Quantities;
 
-/** Setting a mandatory resource for a node */
+/**
+ * In this example we are setting a mandatory Resource for a Node through a hard constraint.
+ *
+ * @author Jens Richter
+ * @version 15/03/2021
+ * @since 15/03/2021
+ */
 public class MandatoryResourceConditionExample extends Optimization {
 
   public static void main(String[] args)
@@ -59,7 +66,7 @@ public class MandatoryResourceConditionExample extends Optimization {
   }
 
   public String toString() {
-    return "Simple example of setting a mandatory (hard-constrained) resource for a node.";
+    return "Simple example of setting a mandatory (hard-constrained) Resource for a Node.";
   }
 
   public void example()
@@ -73,10 +80,11 @@ public class MandatoryResourceConditionExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     resultFuture.get();
   }
 
+  // Add some Resources
   private void addResources() {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
@@ -108,6 +116,7 @@ public class MandatoryResourceConditionExample extends Optimization {
     this.addElement(rep2);
   }
 
+  // Define some Nodes
   private void addNodes() {
 
     List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
@@ -123,23 +132,12 @@ public class MandatoryResourceConditionExample extends Optimization {
 
     Duration visitDuration = Duration.ofMinutes(20);
 
-    // Define some nodes
-
-    // Mandatory is a hard preferred constraint
-    IConstraintResource jackMandConstraint = new MandatoryResourceConstraint();
-    jackMandConstraint.addResource("Jack", 10);
-
-    IConstraintResource johnMandConstraint = new MandatoryResourceConstraint();
-    johnMandConstraint.addResource("John", 10);
-
     INode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-    koeln.addConstraint(jackMandConstraint);
     this.addElement(koeln);
 
     INode koeln1 =
         new TimeWindowGeoNode("Koeln1", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-    koeln1.addConstraint(johnMandConstraint);
     this.addElement(koeln1);
 
     INode oberhausen =
@@ -165,6 +163,12 @@ public class MandatoryResourceConditionExample extends Optimization {
     INode aachen =
         new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
     this.addElement(aachen);
+
+    // In order to ensure Köln is visited by the Resource "John" we are defining a mandatory resource constraint
+    // and add the respective Resource and Node
+    IConstraintResource johnMandConstraint = new MandatoryResourceConstraint();
+    johnMandConstraint.addResource("John", 10);
+    koeln1.addConstraint(johnMandConstraint);
   }
 
   @Override

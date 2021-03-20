@@ -51,7 +51,17 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 import tec.units.ri.quantity.Quantities;
 
-/** Setting a type of a node that a resource must provide. */
+/**
+ * In this example we are giving a Resource ("Jack") a certain qualification ("plumbing") and adding a TypeConstraint
+ * to a Node ("Koeln"). Since we are adding the Constraint as a hard constraint, the Optimizer enforces that only the
+ * Resource with the respective Qualification can serve the Node with the Constraint.
+ * Please note, that we do not enforce the specific Resource that should visit "Koeln" but the Qualification said
+ * Resource needs to have. Any other Resource with the Qualification "plumbing" would be able to visit the Node.
+ *
+ * @author Jens Richter
+ * @version 15/03/2021
+ * @since 15/03/2021
+ */
 public class ResourceTypeConditionHardExample extends Optimization {
 
   public static void main(String[] args)
@@ -60,7 +70,8 @@ public class ResourceTypeConditionHardExample extends Optimization {
   }
 
   public String toString() {
-    return "Setting a type of a node that a resource must provide (hard-constrained).";
+    return "Setting certain qualification conditions on a Node. Since we set it as a hard constraint, only Resources " +
+            "with that qualifications can serve these Nodes.";
   }
 
   public void example()
@@ -74,7 +85,7 @@ public class ResourceTypeConditionHardExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     resultFuture.get();
   }
 
@@ -100,18 +111,14 @@ public class ResourceTypeConditionHardExample extends Optimization {
             "Jack", 50.775346, 6.083887, maxWorkingTimeJack, maxDistanceKmW, workingHours);
     rep1.setCost(0, 1, 1);
 
+    // We are defining the Qualification "plumbing" and add it to "Jack"
     IQualification typeQualification = new TypeQualification();
-
     ((TypeQualification) typeQualification).addType("plumbing");
-
     rep1.addQualification(typeQualification);
 
     this.addElement(rep1);
 
-    /*
-     *
-     */
-
+    // Note, "John" does not have the "plumbing" Qualification
     IResource rep2 =
         new CapacityResource(
             "John", 50.775346, 6.083887, maxWorkingTimeJohn, maxDistanceKmW, workingHours);
@@ -134,14 +141,8 @@ public class ResourceTypeConditionHardExample extends Optimization {
 
     Duration visitDuration = Duration.ofMinutes(20);
 
-    // Define some nodes
-    IConstraint typeConstraint = new TypeConstraint();
-    ((TypeConstraint) typeConstraint).addType("plumbing");
-    typeConstraint.setIsHard(true);
-
     INode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-    koeln.addConstraint(typeConstraint);
     this.addElement(koeln);
 
     INode oberhausen =
@@ -171,6 +172,19 @@ public class ResourceTypeConditionHardExample extends Optimization {
     INode aachen =
         new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
     this.addElement(aachen);
+
+    // We are defining which Qualification ("plumbing") a Resource needs to have in order to be preferred by a certain
+    // Node
+    IConstraint typeConstraint = new TypeConstraint();
+    ((TypeConstraint) typeConstraint).addType("plumbing");
+
+    // Since we are setting the Constraint to hard, the Node does not prefer Resources with the Qualification anymore
+    // but sets it as an absolute condition in order to be served
+    typeConstraint.setIsHard(true);
+
+    // We add the Constraint to the Node. Since only "Jack" has the Qualification "plumbing", only he can serve this
+    // Node
+    koeln.addConstraint(typeConstraint);
   }
 
   @Override

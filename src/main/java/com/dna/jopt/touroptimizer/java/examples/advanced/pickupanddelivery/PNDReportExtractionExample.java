@@ -62,10 +62,10 @@ import java.util.Collection;
 
 /**
  * The Class PNDReportExtractionExample. In this example we parse the PND-Report. For this purpose,
- * we create static parsers for NodeDepot, ResourceDepot, and all their Members.
+ * we create static parsers for NodeDepot, ResourceDepot, and all their members.
  *
  * @author Jens Richter
- * @version Jul 27, 2020
+ * @version Mar 08, 2021
  * @since Jul 27, 2020
  *     <p>Example of pick up and delivery optimization problem.
  */
@@ -116,7 +116,7 @@ public class PNDReportExtractionExample extends Optimization {
     this.addNodes();
     this.addRes();
 
-    // 3.) start the optimization
+    // Start the optimization
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
     // Subscribe to events
@@ -137,7 +137,7 @@ public class PNDReportExtractionExample extends Optimization {
    */
   public static String parseOptimizationResult(IOptimizationResult result) {
 
-    // Getting all route from the solution
+    // Getting all Routes from the solution
     StringBuilder routeSB = new StringBuilder();
 
     result
@@ -151,7 +151,7 @@ public class PNDReportExtractionExample extends Optimization {
   }
 
   /**
-   * Parses a single route.
+   * Parses a single Route.
    *
    * @param r the r
    * @return the string
@@ -342,7 +342,7 @@ public class PNDReportExtractionExample extends Optimization {
     props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000");
 
-    // We have to tell the optimizer that we have an high interest in capacity planning, Default is
+    // We have to tell the optimizer that we have an high interest in capacity planning, the default is
     // 100
     props.setProperty("JOptWeight.Capacity", "200");
     this.addElement(props);
@@ -387,12 +387,12 @@ public class PNDReportExtractionExample extends Optimization {
      *
      */
 
-    // We can store a maximum of 10 DeliverGood on our track (assuming that no other load is
+    // We can store a maximum of 10 DeliverGood on our track (assuming that no other Load is
     // present)
     // Further, we start with an initial load of 5 DeliverGoods.
     ILoadCapacity deliverGoodCapacity = new SimpleLoadCapacity("DeliverGood", 10, 5);
 
-    // We can store a maximum of 5 PickupGood on our track (assuming that no other load is present)
+    // We can store a maximum of 5 PickupGood on our track (assuming that no other Load is present)
     ILoadCapacity pickupGoodCapacity = new SimpleLoadCapacity("PickupGood", 5, 0);
 
     // Our depot can store a maximum of 10 total items. For example, 7 DeliverGoods

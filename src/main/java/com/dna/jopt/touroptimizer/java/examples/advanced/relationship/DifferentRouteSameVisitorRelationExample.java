@@ -45,12 +45,11 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tec.units.ri.quantity.Quantities;
 
 /**
- * Example DifferentRouteSameVisitorRelationExample. In this example two nodes should be visited in
- * a different route (Aachen and Dueren). We accept that these different routes, are routes of the
- * same resource (visitor).
+ * Example DifferentRouteSameVisitorRelationExample. In this example two Nodes (Aachen and Dueren) should be visited in
+ * a different Route . We accept that these Routes have the same Resource (visitor).
  *
  * @author jrich
- * @version Dec 23, 2020
+ * @version Mar 08, 2020
  * @since Dec 23, 2020
  */
 public class DifferentRouteSameVisitorRelationExample extends Optimization {
@@ -75,7 +74,7 @@ public class DifferentRouteSameVisitorRelationExample extends Optimization {
    * @return the string
    */
   public String toString() {
-    return "Visiting two nodes in different routes by the same or a different Resource by using relations.";
+    return "Visiting two Nodes in different Routes by the same or a different Resource by using Relations.";
   }
 
   /**
@@ -92,7 +91,7 @@ public class DifferentRouteSameVisitorRelationExample extends Optimization {
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set the Properties
     this.setProperties();
 
     this.addNodes();
@@ -102,7 +101,7 @@ public class DifferentRouteSameVisitorRelationExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     System.out.println(resultFuture.get());
   }
 
@@ -163,7 +162,7 @@ public class DifferentRouteSameVisitorRelationExample extends Optimization {
 
     Duration visitDuration = Duration.ofMinutes(150);
 
-    // Without any relation, Aachen and Dueren would cluster together in the same route
+    // Without setting any Relation, Aachen and Dueren would cluster together in the same Route
 
     // Define some nodes
     TimeWindowGeoNode koeln =
@@ -187,12 +186,11 @@ public class DifferentRouteSameVisitorRelationExample extends Optimization {
     this.addElement(aachen);
 
     // Create relation
-    // We want that Aachen and Dueren are visited in different routes
     INode2NodeVisitorRelation rel = new RelativeVisitor2RelatedNodeRelation();
     rel.setMasterNode(dueren);
     rel.setRelatedNode(aachen);
 
-    // We also accept, that the same resource is visiting the nodes
+    // We want that Aachen and Dueren are visited in different Routes, but allow the same Resource
     boolean isForcedDifferentVisitor = false;
 
     rel.setIsForcedDifferentRoute(isForcedDifferentVisitor);

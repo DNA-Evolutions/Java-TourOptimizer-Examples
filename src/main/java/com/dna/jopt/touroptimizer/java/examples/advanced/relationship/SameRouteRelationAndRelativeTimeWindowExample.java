@@ -47,12 +47,12 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tec.units.ri.quantity.Quantities;
 
 /**
- * Example SameVisitorRelationExample. In this example two nodes should be visited by the same
- * route. Further, another relation defines a relative TimeWindow between the two nodes, effectively
- * defining the order of visitation within the route.
+ * In the SameVisitorRelationExample two Nodes should be visited by the same
+ * Route and Resource. Further, another Relation defines a relative TimeWindow between the two
+ * Nodes, effectively defining the order of visit within the route.
  *
  * @author jrich
- * @version Dec 23, 2020
+ * @version Mar 14, 2021
  * @since Dec 23, 2020
  */
 public class SameRouteRelationAndRelativeTimeWindowExample extends Optimization {
@@ -77,7 +77,7 @@ public class SameRouteRelationAndRelativeTimeWindowExample extends Optimization 
    * @return the string
    */
   public String toString() {
-    return "Visiting two nodes in the same route in a predefined relative time window  by using relations.";
+    return "Visiting two Nodes in the same Route in a predefined relative time window  by using Relations.";
   }
 
   /**
@@ -94,7 +94,7 @@ public class SameRouteRelationAndRelativeTimeWindowExample extends Optimization 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set the properties
     this.setProperties();
 
     this.addNodes();
@@ -104,7 +104,7 @@ public class SameRouteRelationAndRelativeTimeWindowExample extends Optimization 
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     System.out.println(resultFuture.get());
   }
 
@@ -175,12 +175,7 @@ public class SameRouteRelationAndRelativeTimeWindowExample extends Optimization 
 
     Duration visitDuration = Duration.ofMinutes(150);
 
-    // Without any relation, Aachen->Dueren->Koeln would cluster together in the same route
-    // and Essen, Wupeprtal would cluster in the other route.
-
-    // However, here we want that Aachen and Essen is visited in the same route
-
-    // Define some nodes
+    // Define some Nodes
     TimeWindowGeoNode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     this.addElement(koeln);
@@ -201,16 +196,23 @@ public class SameRouteRelationAndRelativeTimeWindowExample extends Optimization 
         new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
     this.addElement(aachen);
 
-    // Create relation
+    // Without any Relation, Aachen->Dueren->Koeln would cluster together in the same Route for geographic reasons.
+    // Essen, Wupppertal would cluster in the other Route.
+    // Since we want to accomplish that Aachen and Essen are visited in the same Route we need to define Relations
+    // between these Nodes
+
+    // Create Relation
     INode2NodeVisitorRelation relSameRoute = new RelativeVisitor2RelatedNodeRelation();
     relSameRoute.setMasterNode(essen);
     relSameRoute.setRelatedNode(aachen);
     relSameRoute.setIsForcedSameRoute();
 
+    // Add the Relation to the respective Nodes
     essen.addNode2NodeRelation(relSameRoute);
     aachen.addNode2NodeRelation(relSameRoute);
 
-    // Create a relative timeWindowRelation as delta based on master node
+    // Create a relative timeWindowRelation as delta based on master node in order to set the order of the visits
+    // As of here, the relatedNode needs to arrive 1000 minutes after the masterNode has arrived.
     INode2NodeTempusRelation relRelativeTimeWindow =
         new RelativeTimeWindow2RelatedNodeRelation(Duration.ofMinutes(0), Duration.ofMinutes(1000));
     relRelativeTimeWindow.setMasterNode(essen);
