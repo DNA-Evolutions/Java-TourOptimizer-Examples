@@ -47,10 +47,10 @@ import com.dna.jopt.touroptimizer.java.examples.util.progressparser.ParsedProgre
 import tec.units.ri.quantity.Quantities;
 
 /**
- * Example on how to access progress information via util PorgressParser".
+ * Example on how to access progress information via util ProgressParser.
  *
  * @author jrich
- * @version Oct 23, 2020
+ * @version Mar 23, 2021
  * @since Oct 23, 2020
  */
 public class ReadOutFullProgressWithUtilExample extends Optimization {
@@ -75,7 +75,7 @@ public class ReadOutFullProgressWithUtilExample extends Optimization {
    * @return the string
    */
   public String toString() {
-    return "Example on how to access progress information via util PorgressParser.";
+    return "Example on how to access progress information via util ProgressParser.";
   }
 
   /**
@@ -92,7 +92,7 @@ public class ReadOutFullProgressWithUtilExample extends Optimization {
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set the Properties
     this.setProperties();
 
     this.addNodes();
@@ -102,11 +102,11 @@ public class ReadOutFullProgressWithUtilExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     System.out.println(resultFuture.get());
   }
 
-  /** Sets the properties. */
+  /** Sets the Properties. */
   private void setProperties() {
 
     Properties props = new Properties();
@@ -119,7 +119,7 @@ public class ReadOutFullProgressWithUtilExample extends Optimization {
     this.addElement(props);
   }
 
-  /** Adds the resources. */
+  /** Adds the Resources. */
   private void addResources() {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
@@ -143,7 +143,7 @@ public class ReadOutFullProgressWithUtilExample extends Optimization {
     this.addElement(rep1);
   }
 
-  /** Adds the nodes. */
+  /** Adds the Nodes. */
   private void addNodes() {
 
     List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
@@ -159,7 +159,7 @@ public class ReadOutFullProgressWithUtilExample extends Optimization {
 
     Duration visitDuration = Duration.ofMinutes(20);
 
-    // Define some nodes
+    // Define some Nodes
     TimeWindowGeoNode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     this.addElement(koeln);
@@ -182,9 +182,9 @@ public class ReadOutFullProgressWithUtilExample extends Optimization {
   }
 
   /**
-   * Attach to observables.
+   * We subscribe to Observables of the Optimization and print out the progress by using ParsedProgress
    *
-   * @param opti the opti
+   * @param opti the optimization
    */
   private static void attachToObservables(IOptimization opti) {
 

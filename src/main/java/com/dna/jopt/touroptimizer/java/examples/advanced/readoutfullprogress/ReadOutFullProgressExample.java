@@ -45,10 +45,10 @@ import tec.units.ri.quantity.Quantities;
 
 /**
  * Example on how to access progress information via static method <code>
- * toProgressString(IOptimizationProgress p)</code>".
+ * toProgressString(IOptimizationProgress p)</code>" during the optimization process.
  *
  * @author jrich
- * @version Oct 23, 2020
+ * @version Mar 23, 2021
  * @since Oct 23, 2020
  */
 public class ReadOutFullProgressExample extends Optimization {
@@ -90,7 +90,7 @@ public class ReadOutFullProgressExample extends Optimization {
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set the Properties
     this.setProperties();
 
     this.addNodes();
@@ -100,11 +100,11 @@ public class ReadOutFullProgressExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     System.out.println(resultFuture.get());
   }
 
-  /** Sets the properties. */
+  /** Sets the Properties. */
   private void setProperties() {
 
     Properties props = new Properties();
@@ -117,7 +117,7 @@ public class ReadOutFullProgressExample extends Optimization {
     this.addElement(props);
   }
 
-  /** Adds the resources. */
+  /** Adds the Resources. */
   private void addResources() {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
@@ -141,7 +141,7 @@ public class ReadOutFullProgressExample extends Optimization {
     this.addElement(rep1);
   }
 
-  /** Adds the nodes. */
+  /** Adds the Nodes. */
   private void addNodes() {
 
     List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
@@ -157,7 +157,7 @@ public class ReadOutFullProgressExample extends Optimization {
 
     Duration visitDuration = Duration.ofMinutes(20);
 
-    // Define some nodes
+    // Define some Nodes
     TimeWindowGeoNode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     this.addElement(koeln);
@@ -180,13 +180,15 @@ public class ReadOutFullProgressExample extends Optimization {
   }
 
   /**
-   * To progress string.
+   * In this method we define which information of the respective best solution we want to see during the ongoing
+   * optimization process.
    *
-   * @param p the p
+   * @param p the progress of the optimization
    * @return the string
    */
   private static String toProgressString(IOptimizationProgress p) {
 
+    // Gets the best solution of the current optimization iteration
     IEntity winner = p.getResultEntity();
 
     StringBuilder progressSB = new StringBuilder();
