@@ -54,8 +54,8 @@ import tec.units.ri.quantity.Quantities;
  * <p>In this example, we look at two Resources, "Jack" and "Clara". They need to visit four Nodes with a default visit
  * duration of 30 minutes. However, two Nodes have a minimum visit duration of 20 minutes and for one of the Nodes,
  * "Essen - fixed duration", the duration cannot be modified. "Clara" is more experienced than Jack, and therefore only
- * needs about 50% time for the same Job. "Clara" show her true potential of 15 Minutes per job only at one Node, since
- * only "Dueren - unlimited" does not have a minimum visitDuration.
+ * needs about 50% time for the same Job. "Clara" can show her true potential of 15 minutes per job only at one Node,
+ * since only "Dueren - unlimited" does not have a minimum visitDuration.
  *
  * <p>We expect that Clara gets all the jobs assigned.
  *
