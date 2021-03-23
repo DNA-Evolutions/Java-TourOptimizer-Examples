@@ -100,7 +100,8 @@ public class ReloadBaseWithUnloadAllExample extends Optimization {
   }
 
   /**
-   * Here we define a Resource that has a total Capacity of 30 goods it can carry.
+   * Here we define a Resource that has a total Capacity of 30 goods it can carry. Since we will later define the
+   * pick up jobs at the Nodes at values -10 and -15, the Resource will be at full capacity after 2-3 Nodes.
    */
   private void addResources() {
 

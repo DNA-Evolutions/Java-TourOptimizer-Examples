@@ -45,22 +45,22 @@ import tec.units.ri.quantity.Quantities;
 
 /**
  * In a real-life scenario, it is common that Resources have a different performance that influences
- * their time taken for the same Job. Therefore we introduced the Resource-Efficiency-Factor.
- * Assuming the originally defined duration of a Node is 30 minutes, an efficiency-factor of 0.5
- * means a Resource can finish the Job in 50% of the time (15 minutes). However, sometimes it is not
- * possible to modify a Node's duration (for example, think of a break you want to define). Besides,
- * sometimes a minimum duration is necessary.
+ * their time taken for the same job. Therefore we introduced the resource-efficiency-factor.
+ * Assuming the originally defined duration of a job at a Node is 30 minutes, an efficiency-factor of 0.5
+ * means a Resource can finish the job in 50% of the time (15 minutes). However, sometimes it is not
+ * possible to modify the duration, for example when defining a break) or when a minimum duration is necessary at a
+ * job.
  *
- * <p>In this example, we look at two Resources, "Jack" and "Clara. They need to visit four nodes
- * with a default visit duration of 30 minutes and a minimum visit duration of 20 minutes each.
- * Further, for one of the nodes, "Essen - fixed duration", the duration cannot be modified. Clara
- * is more experienced than Jack, and therefore only needs about 50% of the same Job.."
+ * <p>In this example, we look at two Resources, "Jack" and "Clara". They need to visit four Nodes with a default visit
+ * duration of 30 minutes. However, two Nodes have a minimum visit duration of 20 minutes and for one of the Nodes,
+ * "Essen - fixed duration", the duration cannot be modified. "Clara" is more experienced than Jack, and therefore only
+ * needs about 50% time for the same Job. "Clara" show her true potential of 15 Minutes per job only at one Node, since
+ * only "Dueren - unlimited" does not have a minimum visitDuration.
  *
- * <p>We expect that Clara gets all the Jobs assigned. Further, three Nodes have a visit duration of
- * 20 minutes and Essen has a visit duration of 30 minutes.
+ * <p>We expect that Clara gets all the jobs assigned.
  *
  * @author jrich
- * @version Dec 11, 2020
+ * @version Mar 23, 2021
  * @since Dec 11, 2020
  */
 public class ResourceVisitDurationEfficiencyExample extends Optimization {
@@ -103,7 +103,7 @@ public class ResourceVisitDurationEfficiencyExample extends Optimization {
       throws IOException, InvalidLicenceException, InterruptedException, ExecutionException,
           TimeoutException {
 
-    // Properties!
+    // Setting the Properties
     this.setProperties();
 
     this.addNodes();
@@ -114,7 +114,7 @@ public class ResourceVisitDurationEfficiencyExample extends Optimization {
     // Subscribe to events
     subscribeToEvents(this);
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     resultFuture.get(1, TimeUnit.MINUTES);
   }
 
@@ -131,7 +131,7 @@ public class ResourceVisitDurationEfficiencyExample extends Optimization {
     this.addElement(props);
   }
 
-  /** Adds the resources. */
+  /** Adds the Resources. */
   private void addResources() {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
@@ -152,16 +152,18 @@ public class ResourceVisitDurationEfficiencyExample extends Optimization {
         new CapacityResource(
             "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
 
+    // "Clara" gets an efficiency factor of 0.5 and subsequently needs only half the time for a Job
+    // in comparison to "Jack"
     CapacityResource resClara =
         new CapacityResource(
             "Clara", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
-    resClara.setOverallVisitDurationEfficiencyFactor(0.5);
+    resClara.setOverallVisitDurationEfficiencyFactor(0.5); // Default 1.0
 
     this.addElement(resClara);
     this.addElement(resJack);
   }
 
-  /** Adds the nodes. */
+  /** Adds the Nodes. */
   private void addNodes() {
 
     List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
@@ -181,7 +183,9 @@ public class ResourceVisitDurationEfficiencyExample extends Optimization {
     // The minimum visit duration
     Duration minVisitDuration = Duration.ofMinutes(20);
 
-    // Define some nodes
+    // Define some Nodes
+    // "Koeln" and "Oberhausen" allow the visitDurationEfficiency to come into play, but limit "Claras" skills by
+    // setting a minimum visit duration
     TimeWindowGeoNode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     koeln.setHasRouteDependentVisitDuration(true);
@@ -194,17 +198,18 @@ public class ResourceVisitDurationEfficiencyExample extends Optimization {
     oberhausen.setMinimalVisitDuration(minVisitDuration);
     this.addElement(oberhausen);
 
+    // "Essen" has the visitDurationEfficiency disabled
     TimeWindowGeoNode essen =
         new TimeWindowGeoNode(
             "Essen - fixed duration", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
     essen.setHasRouteDependentVisitDuration(false); // We do not allow a modification
-    essen.setMinimalVisitDuration(minVisitDuration);
     this.addElement(essen);
 
+    // "Dueren - unlimited" is the only Node that is not limited by a minimum visitDuration or a fixed visitDuration.
+    // We expect "Clara" to be able to do this job in 15 minutes.
     TimeWindowGeoNode dueren =
-        new TimeWindowGeoNode("Dueren", 50.8, 6.48333, weeklyOpeningHours, visitDuration, 1);
+        new TimeWindowGeoNode("Dueren - unlimited", 50.8, 6.48333, weeklyOpeningHours, visitDuration, 1);
     dueren.setHasRouteDependentVisitDuration(true);
-    dueren.setMinimalVisitDuration(minVisitDuration);
     this.addElement(dueren);
   }
 

@@ -44,7 +44,13 @@ import com.dna.jopt.member.unit.resource.CapacityResource;
 
 import tec.units.ri.quantity.Quantities;
 
-/** Doing an asynch run. Getting an completable future of the OptimizationResult. */
+/**
+ * In this example we are customizing the Properties on how often the progress updates should be made.
+ *
+ * @author DNA
+ * @version Mar 23, 2021
+ * @since Mar 23, 2021
+ */
 public class ChangeOnProgressDefaultFrequencyExample extends Optimization {
 
   public static void main(String[] args)
@@ -59,7 +65,7 @@ public class ChangeOnProgressDefaultFrequencyExample extends Optimization {
   public void example()
       throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
 
-    // Properties!
+    // Setting the Properties
     this.setProperties(this);
 
     this.addNodes(this);
@@ -67,7 +73,7 @@ public class ChangeOnProgressDefaultFrequencyExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     resultFuture.get();
   }
 

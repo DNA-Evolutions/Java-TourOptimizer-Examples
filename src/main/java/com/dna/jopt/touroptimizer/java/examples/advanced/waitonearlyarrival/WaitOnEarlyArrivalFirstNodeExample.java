@@ -43,12 +43,12 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tec.units.ri.quantity.Quantities;
 
 /**
- * Example WaitOnEarlyArrivalFirstNodeExample. If any of the defined nodes of this example is the
- * first node of the route, the Resource needs to wait at the node till its open to start working.
- * If the node is NOT the first node, the Resource is allowed to start working right away.
+ * Example WaitOnEarlyArrivalFirstNodeExample. If any of the defined Nodes of this example is the
+ * first Node of the Route, the Resource needs to wait at the Node and introduce idle time until the start of the
+ * WorkingHours. If the Node is NOT the first Node, the Resource is allowed to start working right away.
  *
  * @author jrich
- * @version Dec 23, 2020
+ * @version Mar 23, 2021
  * @since Dec 23, 2020
  */
 public class WaitOnEarlyArrivalFirstNodeExample extends Optimization {
@@ -90,7 +90,7 @@ public class WaitOnEarlyArrivalFirstNodeExample extends Optimization {
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set the Properties
     this.setProperties();
 
     this.addNodes();
@@ -100,7 +100,7 @@ public class WaitOnEarlyArrivalFirstNodeExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     System.out.println(resultFuture.get());
   }
 
@@ -156,13 +156,16 @@ public class WaitOnEarlyArrivalFirstNodeExample extends Optimization {
 
     /*
      *
-     * If any of the defined nodes is the first node of the route, the Resource needs to wait at
-     * the node till its open to start working. If the node is NOT the first node, it is allowed
+     * If any of the defined Nodes is the first Node of the Route, the Resource needs to wait at
+     * the Node until the start of the WorkingHours. If the Node is NOT the first Node, it is allowed
      * to start working right away.
      *
      */
 
-    // Define some nodes
+    // Define some Nodes
+    // By setting setWaitOnEarlyArrival(false) Resources are generally allowed to start working at a Node as soon as
+    // they arrive. Only in the case of the first Node of a Route do they need to introduce some idle time if they
+    // are too early since we also set setWaitOnEarlyArrivalFirstNode(true).
     TimeWindowGeoNode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHoursEarly, visitDuration, 1);
     koeln.setWaitOnEarlyArrival(false);
@@ -189,9 +192,8 @@ public class WaitOnEarlyArrivalFirstNodeExample extends Optimization {
     this.addElement(aachen);
 
     /*
-     * Wuppertal is open from 14-19. We will reach this node early. However, as this will not become
-     * the first node, we are allowed to start working right away
-     *
+     * Wuppertal is open from 14-19. We will reach this Node too early. However, as this will not become
+     * the first node, we will be allowed to start working right away.
      */
     TimeWindowGeoNode wuppertal =
         new TimeWindowGeoNode(

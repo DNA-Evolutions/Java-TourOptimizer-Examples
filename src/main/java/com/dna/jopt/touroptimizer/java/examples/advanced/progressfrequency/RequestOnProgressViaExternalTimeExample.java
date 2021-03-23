@@ -46,7 +46,14 @@ import com.dna.jopt.member.unit.resource.CapacityResource;
 
 import tec.units.ri.quantity.Quantities;
 
-/** Doing an asynch run. Getting an completable future of the OptimizationResult. */
+/**
+ * In this example we are requesting a progress update after a fixed amount of time.
+ *
+ *
+ * @author DNA
+ * @version Mar 23, 2021
+ * @since Mar 23, 2021
+ */
 public class RequestOnProgressViaExternalTimeExample extends Optimization {
 
   public static void main(String[] args)
@@ -61,17 +68,18 @@ public class RequestOnProgressViaExternalTimeExample extends Optimization {
   public void example()
       throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
 
-    // Properties!
+    // Set the Properties
     RequestOnProgressViaExternalTimeExample.setProperties(this);
 
     RequestOnProgressViaExternalTimeExample.addNodes(this);
     RequestOnProgressViaExternalTimeExample.addResources(this);
 
+    // We are adding the external timer that requests a progress update
     RequestOnProgressViaExternalTimeExample.createAndAttachTimeForResultRequest(this);
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     resultFuture.get();
   }
 
@@ -88,6 +96,11 @@ public class RequestOnProgressViaExternalTimeExample extends Optimization {
     opti.addElement(props);
   }
 
+  /**
+   * When added to the example this method will request a progress update in a fixed time frequency.
+   *
+   * @param opti the optimization
+   */
   private static void createAndAttachTimeForResultRequest(IOptimization opti) {
 
     Timer timer = new Timer();
@@ -151,7 +164,6 @@ public class RequestOnProgressViaExternalTimeExample extends Optimization {
 
     Duration visitDuration = Duration.ofMinutes(20);
 
-    // Define some nodes
     INode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     opti.addElement(koeln);

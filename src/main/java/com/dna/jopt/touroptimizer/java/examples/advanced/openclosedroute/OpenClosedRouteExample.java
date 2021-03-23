@@ -48,7 +48,15 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 import tec.units.ri.quantity.Quantities;
 
-/** In an open route the resource does not have to go back to its starting location. */
+/**
+ * In this example we are enabling open Routes by the appropriate setting in the WorkingHours.
+ * In an open route the Resource does not have to go back to it’s starting location.
+ *
+ *
+ * @author DNA
+ * @version Mar 23, 2021
+ * @since Mar 23, 2021
+ */
 public class OpenClosedRouteExample extends Optimization {
 
   public static void main(String[] args) throws InvalidLicenceException, IOException, InterruptedException, ExecutionException {
@@ -56,7 +64,7 @@ public class OpenClosedRouteExample extends Optimization {
   }
 
   public String toString() {
-    return "In an open route the resource does not have to go back to its starting location.";
+    return "In an open Route the Resource does not have to go back to its starting location.";
   }
 
   public void example() throws InvalidLicenceException, IOException, InterruptedException, ExecutionException {
@@ -64,7 +72,7 @@ public class OpenClosedRouteExample extends Optimization {
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set the Properties
     this.setProperties();
 
     this.addNodes();
@@ -72,7 +80,7 @@ public class OpenClosedRouteExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     resultFuture.get();
   }
 
@@ -101,7 +109,8 @@ public class OpenClosedRouteExample extends Optimization {
             ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-    // All workingshours should result in a open route
+    // All WorkingHours should result in a open Route
+    // Per default WorkingHours are closed
     workingHours.stream().forEach(w -> w.setIsClosedRoute(false));
 
     Duration maxWorkingTime = Duration.ofHours(13);
@@ -129,7 +138,7 @@ public class OpenClosedRouteExample extends Optimization {
 
     Duration visitDuration = Duration.ofMinutes(20);
 
-    // Define some nodes
+    // Define some Nodes
     TimeWindowGeoNode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     this.addElement(koeln);
