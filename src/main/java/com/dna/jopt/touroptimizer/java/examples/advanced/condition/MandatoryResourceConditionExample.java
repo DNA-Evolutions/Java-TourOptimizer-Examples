@@ -55,8 +55,8 @@ import tec.units.ri.quantity.Quantities;
  * In this example we are setting a mandatory Resource for a Node through a hard constraint.
  *
  * @author Jens Richter
- * @version 15/03/2021
- * @since 15/03/2021
+ * @version Mar 23, 2021
+ * @since Mar 15, 2021
  */
 public class MandatoryResourceConditionExample extends Optimization {
 

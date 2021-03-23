@@ -59,8 +59,8 @@ import tec.units.ri.quantity.Quantities;
  * Resource needs to have. Any other Resource with the Qualification "plumbing" would be able to visit the Node.
  *
  * @author Jens Richter
- * @version 15/03/2021
- * @since 15/03/2021
+ * @version Mar 23, 2021
+ * @since Mar 15, 2021
  */
 public class ResourceTypeConditionHardExample extends Optimization {
 

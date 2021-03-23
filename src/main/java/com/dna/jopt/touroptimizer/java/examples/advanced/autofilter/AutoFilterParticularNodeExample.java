@@ -54,8 +54,8 @@ import tec.units.ri.quantity.Quantities;
  * will exclude "Nuernberg" from the optimization.
  *
  * @author DNA
- * @version 18/03/2021
- * @since 18/03/2021
+ * @version Mar 23, 2021
+ * @since Mar 18, 2021
  */
 public class AutoFilterParticularNodeExample extends Optimization {
 

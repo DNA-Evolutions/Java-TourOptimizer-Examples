@@ -51,8 +51,8 @@ import tec.units.ri.quantity.Quantities;
  * at late by Resources over several solutions will be filtered out of the optimization in this example.
  *
  * @author DNA
- * @version 18/03/2021
- * @since 18/03/2021
+ * @version Mar 23, 2021
+ * @since Mar 18, 2021
  */
 public class AutoFilterLateExample extends Optimization {
 
