@@ -38,7 +38,14 @@ import com.dna.jopt.member.unit.node.INode;
 import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
-/** Loading the current optimization state from a file using JSON file. */
+/**
+ * In this example we are loading the current optimization state from a file using JSON file and
+ * add some further Nodes to the Optimization.
+ *
+ * @author DNA
+ * @version Mar 26, 2021
+ * @since Mar 26, 2021
+ */
 public class LoadOptimizationFromJsonAndReassignNodes extends Optimization {
 
   public static void main(String[] args)
@@ -48,8 +55,8 @@ public class LoadOptimizationFromJsonAndReassignNodes extends Optimization {
   }
 
   public String toString() {
-    return "Loading the current optimization state from a file using JSON file. Further "
-        + "add nodes via reassignment.";
+    return "Loading the current optimization state from a file using JSON file. We’re adding further "
+        + "Nodes via reassignment.";
   }
 
   public void example()
@@ -62,9 +69,10 @@ public class LoadOptimizationFromJsonAndReassignNodes extends Optimization {
     String jsonFile = "myopti.json.bz2";
     this.invokeFromJson(new FileInputStream(jsonFile), this);
 
+    // Additional Nodes are assigned to the Optimization
     this.addReassignNodes(getAdditionalNodes());
 
-    // Properties!
+    // Set the Properties
     this.setProperties();
 
     this.startRunAsync().get();
@@ -99,7 +107,7 @@ public class LoadOptimizationFromJsonAndReassignNodes extends Optimization {
 
     Duration visitDuration = Duration.ofMinutes(20);
 
-    // Define some nodes
+    // Define some Nodes
     TimeWindowGeoNode koeln =
         new TimeWindowGeoNode("Koeln2", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     myNodesAdditonal.add(koeln);

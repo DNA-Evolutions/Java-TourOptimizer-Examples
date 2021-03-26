@@ -47,7 +47,11 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tec.units.ri.quantity.Quantities;
 
 /**
- * Doing an asynch run and subscribe to different events.
+ * We are doing an asynchronous run and subscribe to events.
+ *
+ * @author DNA
+ * @version Mar 26, 2021
+ * @since Mar 26, 2021
  */
 public class RecommendedImplementationReactiveJavaExample extends Optimization {
 
@@ -60,29 +64,30 @@ public class RecommendedImplementationReactiveJavaExample extends Optimization {
   }
   
   public String toString() {
-	  return "Getting an completable future of the OptimizationResult and subscribe to call-back methods.";
+	  return "Getting a completable future of the OptimizationResult and subscribe to call-back methods.";
   }
 
   public void example()
       throws InterruptedException, ExecutionException, FileNotFoundException, IOException, InvalidLicenceException {
 
-    // Set license via helper
+    // Set the license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set the Properties
     this.setProperties(this);
     this.addNodes(this);
     this.addResources(this);
 
     /*
-     *  Use reactive java, in case synch run is used all subscription have to be done before calling
-     *  start, otherwise data from subscription will be triggered after run is done
+     *  We use reactive java here and start an asynchronous run. In case synchronous run is used all subscription
+     * have to be done before calling start, otherwise data from the subscription will be triggered after the run is
+     * done
      */
 
-    // Use asynch run here
+    // Use asynchronous run here
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // Subscribe to events
+    // Subscribe to Events
     this.getOptimizationEvents()
         .progress
         .subscribe(
@@ -105,7 +110,7 @@ public class RecommendedImplementationReactiveJavaExample extends Optimization {
               System.out.println(s.getDescription() + " " + s.getCode());
             });
 
-    // Get result - This also blocking the execution
+    // Get result - this is also blocking the execution
     IOptimizationResult result = resultFuture.get();
     System.out.println(result);
   }
@@ -124,6 +129,7 @@ public class RecommendedImplementationReactiveJavaExample extends Optimization {
 
   private void addResources(IOptimization opti) {
 
+    // Define the WorkingHours
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
         new WorkingHours(
@@ -138,6 +144,7 @@ public class RecommendedImplementationReactiveJavaExample extends Optimization {
     Duration maxWorkingTime = Duration.ofHours(13);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
+    // Define the Resource
     IResource rep1 =
         new CapacityResource(
             "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
@@ -147,6 +154,7 @@ public class RecommendedImplementationReactiveJavaExample extends Optimization {
 
   private void addNodes(IOptimization opti) {
 
+    // Define the OpeningHours
     List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
     weeklyOpeningHours.add(
         new OpeningHours(
@@ -160,7 +168,7 @@ public class RecommendedImplementationReactiveJavaExample extends Optimization {
 
     Duration visitDuration = Duration.ofMinutes(20);
 
-    // Define some nodes
+    // Define some Nodes
     INode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     opti.addElement(koeln);

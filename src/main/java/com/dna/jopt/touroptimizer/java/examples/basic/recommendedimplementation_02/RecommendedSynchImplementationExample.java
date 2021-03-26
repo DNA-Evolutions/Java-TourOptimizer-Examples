@@ -47,7 +47,14 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 import tec.units.ri.quantity.Quantities;
 
-/** Doing a synch run. */
+/**
+ * In this asynchronous run we are setting a time-out.
+ * If exceeding the set limits the Optimization is canceled.
+ *
+ * @author DNA
+ * @version Mar 26, 2021
+ * @since Mar 26, 2021
+ */
 public class RecommendedSynchImplementationExample extends Optimization {
 
   public static void main(String[] args)
@@ -68,13 +75,14 @@ public class RecommendedSynchImplementationExample extends Optimization {
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set the Properties
     this.setProperties(this);
 
     this.addNodes(this);
     this.addResources(this);
 
-    // We want to get the final result or timeout
+    // We are starting an asynchronous run. If the run is not finished within the set time-out a TimeoutException is
+    // thrown and no result will be presented.
     IOptimizationResult result = this.startRunSync(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
     System.out.println(result);
   }
@@ -93,6 +101,7 @@ public class RecommendedSynchImplementationExample extends Optimization {
 
   private void addResources(IOptimization opti) {
 
+    // Define the WorkingHours
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
         new WorkingHours(
@@ -107,6 +116,7 @@ public class RecommendedSynchImplementationExample extends Optimization {
     Duration maxWorkingTime = Duration.ofHours(13);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
+    // Define the Resource
     CapacityResource rep1 =
         new CapacityResource(
             "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
@@ -116,6 +126,7 @@ public class RecommendedSynchImplementationExample extends Optimization {
 
   private void addNodes(IOptimization opti) {
 
+    // Define the OpeningHours
     List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
     weeklyOpeningHours.add(
         new OpeningHours(
@@ -129,7 +140,7 @@ public class RecommendedSynchImplementationExample extends Optimization {
 
     Duration visitDuration = Duration.ofMinutes(20);
 
-    // Define some nodes
+    // Define some Nodes
     INode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     opti.addElement(koeln);

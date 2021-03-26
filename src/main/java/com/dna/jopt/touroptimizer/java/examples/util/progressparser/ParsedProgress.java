@@ -16,24 +16,24 @@ import tec.units.ri.quantity.Quantities;
  * The Class ParsedProgress helps to parse an existing Progress object received by the Optimizer.
  *
  * @author jrich
- * @version Dec 15, 2020
+ * @version Mar 26, 2021
  * @since Dec 15, 2020
  */
 public class ParsedProgress {
 
-  /** The cur opti progress. */
+  /** The current optimization progress. */
   private final IOptimizationProgress curOptiProgress;
   
   /** The full route time millis excluding flex time. */
   private final long fullRouteTimeMillisExcludingFlexTime;
   
-  /** The winner. */
+  /** The winning best Entity. */
   private final IEntity winner;
 
   /**
    * Instantiates a new parsed progress object from an existing progress object.
    *
-   * @param p the p
+   * @param p the optimizationProgress
    */
   public ParsedProgress(IOptimizationProgress p) {
 
@@ -79,7 +79,7 @@ public class ParsedProgress {
   }
 
   /**
-   * Gets the number of routes of the solution.
+   * Gets the number of Routes of the solution.
    *
    * @return the route count
    */
@@ -88,16 +88,16 @@ public class ParsedProgress {
   }
 
   /**
-   * Gets the optimizable elements count.
+   * Gets the optimizable Elements count.
    *
-   * @return the optimizable elements count
+   * @return the optimizable Elements count
    */
   public int getOptimizableElementsCount() {
     return this.winner.getTotalRoutesOptimizableElementsCount();
   }
 
   /**
-   * Gets the elements count (e.g. Resources + optimizable elements).
+   * Gets the Elements count (e.g. Resources + optimizable Elements).
    *
    * @return the elements count
    */
@@ -106,7 +106,7 @@ public class ParsedProgress {
   }
 
   /**
-   * Gets the full time time needed by all routes.
+   * Gets the full time time needed by all Routes.
    *
    * @return the time
    */
@@ -115,7 +115,7 @@ public class ParsedProgress {
   }
 
   /**
-   * Gets the average utilization of resource of all routes.
+   * Gets the average utilization of Resource of all Routes.
    *
    * @return the utilization
    */
@@ -133,7 +133,7 @@ public class ParsedProgress {
   }
 
   /**
-   * Gets the total distance of all routes.
+   * Gets the total distance of all Routes.
    *
    * @return the distance
    */
@@ -147,7 +147,7 @@ public class ParsedProgress {
    */
 
   /**
-   * Gets the total productive time of all routes.
+   * Gets the total productive time of all Routes.
    *
    * @return the productive time
    */
@@ -156,7 +156,7 @@ public class ParsedProgress {
   }
 
   /**
-   * Gets the total idle time  of all routes.
+   * Gets the total idle time  of all Routes.
    *
    * @return the idle time
    */
@@ -165,7 +165,7 @@ public class ParsedProgress {
   }
 
   /**
-   * Gets the total flex-time of all routes.
+   * Gets the total flex-time of all Routes.
    *
    * @return the flex time
    */
@@ -174,7 +174,7 @@ public class ParsedProgress {
   }
 
   /**
-   * Gets the total transit time of all routes.
+   * Gets the total transit time of all Routes.
    *
    * @return the transit time
    */
@@ -183,7 +183,7 @@ public class ParsedProgress {
   }
 
   /**
-   * Gets the total termination transit time  of all routes.
+   * Gets the total termination transit time  of all Routes.
    *
    * @return the termination transit time
    */
@@ -192,7 +192,7 @@ public class ParsedProgress {
   }
 
   /**
-   * Gets the total termination transit distance of all routes.
+   * Gets the total termination transit distance of all Routes.
    *
    * @return the termination transit distance
    */

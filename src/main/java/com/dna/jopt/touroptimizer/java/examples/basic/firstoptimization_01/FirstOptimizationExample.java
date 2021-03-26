@@ -45,7 +45,7 @@ import com.dna.jopt.member.unit.resource.IResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 /**
- * Tutorial: Create a first optimization.
+ * In this example we are starting a simple Optimization.
  *
  * @author jrich
  * @version Apr 6, 2020
@@ -68,7 +68,7 @@ public class FirstOptimizationExample extends Optimization {
   }
 
   /**
-   * Method which executes the necessary parts for the optimization.
+   * The method which executes the necessary parts for the Optimization.
    *
    * @throws InterruptedException the interrupted exception
    * @throws ExecutionException the execution exception
@@ -78,34 +78,30 @@ public class FirstOptimizationExample extends Optimization {
   public void example()
       throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
 
-    // We use the free mode for the example - modify ExampleLicenseHelper in case you have a valid
+    // We use the free mode for the example - please modify the ExampleLicenseHelper in case you have a valid
     // license.
 
     ExampleLicenseHelper.setLicense(this);
 
-    // Will be filled out as part of this tutorial
-
-    // Setting properties, adding all elements, and attaching to observables
+    // Setting Properties, adding all Elements, and attaching to Observables
     //    (1) Adding properties
     FirstOptimizationExample.addProperties(this);
 
-    //    (2) Adding nodes
+    //    (2) Adding Nodes
     FirstOptimizationExample.addNodes(this);
 
-    //    (3) Adding resources
+    //    (3) Adding Resources
     FirstOptimizationExample.addResources(this);
 
-    //    (4) Attach to Observables
+    //    (4) Attaching to Observables
     FirstOptimizationExample.attachToObservables(this);
 
-    // Starting the optimization via Completable Future
-    // and presenting the result
-    //    (5) Starting the optimization and presenting the result
+    //    (5) Starting the Optimization completable Future and presenting the results
     FirstOptimizationExample.startAndPresentResult(this);
   }
 
   /**
-   * Start the optimization and present the result.
+   * Start the Optimization and present the result.
    *
    * @param opti the optimization instance
    * @throws InvalidLicenceException the invalid licence exception
@@ -114,10 +110,11 @@ public class FirstOptimizationExample extends Optimization {
    */
   private static void startAndPresentResult(IOptimization opti)
       throws InvalidLicenceException, InterruptedException, ExecutionException {
-    // Extracting a completable future for the optimization result
+
+    // Extracting a completable Future for the optimization result
     CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the Optimization will be terminated
     IOptimizationResult result = resultFuture.get();
 
     // Presenting the result
@@ -125,7 +122,7 @@ public class FirstOptimizationExample extends Optimization {
   }
 
   /**
-   * Adds the properties to the optimization.
+   * Adds the Properties to the Optimization.
    *
    * @param opti the optimization instance
    */
@@ -142,12 +139,13 @@ public class FirstOptimizationExample extends Optimization {
   }
 
   /**
-   * Adds the nodes to the optimization.
+   * Adds the Nodes to the Optimization.
    *
    * @param opti the optimization instance
    */
   private static void addNodes(IOptimization opti) {
 
+    // Define the OpeningHours
     List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
     weeklyOpeningHours.add(
         new OpeningHours(
@@ -163,7 +161,7 @@ public class FirstOptimizationExample extends Optimization {
 
     int importance = 1;
 
-    // Define some nodes
+    // Define some Nodes
     INode koeln =
         new TimeWindowGeoNode(
             "Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, importance);
@@ -201,12 +199,13 @@ public class FirstOptimizationExample extends Optimization {
   }
 
   /**
-   * Adds the resources to the optimization.
+   * Adds the Resources to the Optimization.
    *
    * @param opti the optimization instance
    */
   private static void addResources(IOptimization opti) {
 
+    // Define the WorkingHours
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
         new WorkingHours(
@@ -221,6 +220,7 @@ public class FirstOptimizationExample extends Optimization {
     Duration maxWorkingTime = Duration.ofHours(9);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
+    // Define the Resource
     IResource jack =
         new CapacityResource(
             "Jack from Aachen", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
@@ -228,7 +228,7 @@ public class FirstOptimizationExample extends Optimization {
   }
 
   /**
-   * Attach to different events (observables) of the optimization instance.
+   * Attach to different Events (Observables) of the optimization instance.
    *
    * @param opti the optimization instance
    */

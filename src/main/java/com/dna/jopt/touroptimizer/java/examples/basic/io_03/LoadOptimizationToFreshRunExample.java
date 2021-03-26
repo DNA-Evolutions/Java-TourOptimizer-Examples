@@ -29,8 +29,12 @@ import com.dna.jopt.io.importing.json.OptimizationJSONImporter;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 /**
- * Using a JSON file only as database and ignore the solution. This way a new Optimization can be
- * started, not biased by the result of the last run's solution.
+ * Here, we are using a JSON file only as database and ignore the solution. This way a new Optimization with the
+ * same Elements can be started, not biased by the result of the last run's solution.
+ *
+ * @author DNA
+ * @version Mar 26, 2021
+ * @since Mar 26, 2021
  */
 public class LoadOptimizationToFreshRunExample extends Optimization {
 
