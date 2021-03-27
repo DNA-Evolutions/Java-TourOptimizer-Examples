@@ -65,8 +65,8 @@ import java.util.ArrayList;
  * sensitive. They can be stored in the normal part of the truck, but also in the compartment for the "DelicateFruit".
  *
  * @author Philipp Eichenberger
- * @version 2021/03/16
- * @since 2021/03/16
+ * @version Mar 23, 2021
+ * @since Mar 16, 2021
  *     <p>Example of pick up and delivery optimization problem.
  */
 public class PNDDifferentTotalCapacityUtilization extends Optimization {

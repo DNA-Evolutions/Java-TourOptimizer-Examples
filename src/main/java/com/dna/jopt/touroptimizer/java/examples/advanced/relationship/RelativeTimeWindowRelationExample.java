@@ -53,8 +53,8 @@ import tec.units.ri.quantity.Quantities;
  * the tasks or setting a loose timeframe within which both tasks have to be done.
  *
  * @author DNA
- * @version 11/03/2021
- * @since 11/03/2021
+ * @version Mar 23, 20211
+ * @since Mar 11, 2021
  */
 public class RelativeTimeWindowRelationExample extends Optimization {
 

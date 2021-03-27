@@ -60,8 +60,8 @@ import tec.units.ri.quantity.Quantities;
  * still set to the Nodes tough.
  *
  * @author DNA
- * @version 15/03/2021
- * @since 15/03/2021
+ * @version Mar 23, 2021
+ * @since Mar 15, 2021
  */
 public class SelectiveTypeConditionExample extends Optimization {
 

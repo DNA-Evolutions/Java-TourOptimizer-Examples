@@ -53,7 +53,13 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 import tec.units.ri.quantity.Quantities;
 
-/** Using UK Post codes */
+/**
+ * An example in which we demonstrate the UK Post codes.
+ *
+ * @author DNA
+ * @version Mar 23, 2021
+ * @since Mar 23, 2021
+ */
 public class UKPostCodeExample extends Optimization {
 
   public static void main(String[] args)
@@ -74,7 +80,7 @@ public class UKPostCodeExample extends Optimization {
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Setting the Properties
     this.setProperties(this);
     this.addElements(this);
 
@@ -108,7 +114,7 @@ public class UKPostCodeExample extends Optimization {
               System.out.println(s.getDescription() + " " + s.getCode());
             });
 
-    // Get result - This also blocking the execution
+    // Get result - This is also blocking the execution
     IOptimizationResult result = resultFuture.get();
 
     // Print result
@@ -125,9 +131,8 @@ public class UKPostCodeExample extends Optimization {
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
     props.setProperty("JOpt.NumCPUCores", "4");
 
-    // This property can be used adjust the cost for violating PostCode conditions for the use as
-    // soft constraint
-    // (10 is the default value)
+    // This property can be used to adjust the cost for violating PostCode conditions in the case of a
+    // soft constraint. 10 is the default value.
     props.setProperty("JOptWeight.ZoneCode", "10.0");
 
     opti.addElement(props);
@@ -137,11 +142,11 @@ public class UKPostCodeExample extends Optimization {
 
     /*
      *
-     *  Defining a resource which is allowed (hard constrained) to visit:
+     *  Defining a Resource which is allowed (hard constrained) to visit:
      *  B37 and B48 on the first day
      *  B36         on the second day
      *
-     *  Further, there is one node which has no matching post code, therefore it will be unassigned.
+     * Note that the Node "KoelnNoMatchingPostCode" will not be assigned for reasons of the hard Constraint.
      */
 
     // Defining UK Post codes with:
@@ -172,21 +177,21 @@ public class UKPostCodeExample extends Optimization {
     weeklyWorkingHours.add(woh1);
     weeklyWorkingHours.add(woh2);
 
-    // Crating/Adding constraints
+    // Creating/Adding Constraints
     UKPostCodeConstraint postCodeConstraintWoh1 = new UKPostCodeConstraint();
 
-    postCodeConstraintWoh1.setIsHard(false); // Use as soft constraint
+    postCodeConstraintWoh1.setIsHard(true); // Use as hard Constraint
     postCodeConstraintWoh1.addZoneCode(b37);
     postCodeConstraintWoh1.addZoneCode(b48);
     woh1.addConstraint(postCodeConstraintWoh1);
 
     UKPostCodeConstraint postCodeConstraintWoh2 = new UKPostCodeConstraint();
 
-    postCodeConstraintWoh2.setIsHard(false); // Use as soft constraint
+    postCodeConstraintWoh2.setIsHard(true); // Use as hard Constraint
     postCodeConstraintWoh2.addZoneCode(b36);
     woh2.addConstraint(postCodeConstraintWoh2);
 
-    // Creating/Adding resource
+    // Creating/Adding Resource
     Duration maxWorkingTime = Duration.ofHours(13);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
@@ -196,7 +201,7 @@ public class UKPostCodeExample extends Optimization {
     rep1.setCost(0, 1, 1);
     opti.addElement(rep1);
 
-    // Creating/Adding nodes
+    // Creating/Adding Nodes
     List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
     weeklyOpeningHours.add(
         new OpeningHours(
@@ -210,7 +215,10 @@ public class UKPostCodeExample extends Optimization {
 
     Duration visitDuration = Duration.ofMinutes(20);
 
-    // Define some nodes and adding post codes
+    // Define some Nodes and adding post codes Qualifications
+
+    // As can be seen in the report after the optimization "KoelnNoMatchingPostCode" will not have been assigned
+    // since we enforced the post code Qualifications of the Resource by hard Constraint.
     INode koeln =
         new TimeWindowGeoNode(
             "KoelnNoMatchingPostCode", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);

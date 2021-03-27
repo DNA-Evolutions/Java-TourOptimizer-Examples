@@ -48,10 +48,16 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tec.units.ri.quantity.Quantities;
 
 /**
- * In the case nodes share the same geographical location the visitDuration for each node may become different.
- * Therefore, a joint visitiDuration can be defined. In case nodes (sharing the same geoLocation) are visited
- * directly after each other only the first node gets the full visitDuration. All following nodes get the
- * joined visit duration. By default, the joint visit duration equals the "normal" visit duration.
+ * In the case where Nodes share the same geographical location the visitDuration for each Node may become
+ * different. Therefore, a joint visitiDuration can be defined. In case Nodes (sharing the same
+ * geoLocation) are visited directly after another only the first Node gets the full
+ * visitDuration. All following Nodes get the joint visit duration. By default, the joint visit
+ * duration equals the "normal" visit duration. In this example the joint visitDuration is shortened.
+ *
+ *
+ * @author DNA
+ * @version Mar 23, 2021
+ * @since Mar 23, 2021
  */
 public class JointVisitDurationExample extends Optimization {
 
@@ -60,8 +66,8 @@ public class JointVisitDurationExample extends Optimization {
   }
   
   public String toString() {
-	  return "In the case nodes share the same geographical location the visitDuration for each node may become different.\r\n" + 
-	      " Therefore, a joint visitiDuration can be defined. In case nodes (sharing the same geoLocation) are visited\r\n" + 
+	  return "In the case nodes share the same geographical location the visitDuration for each node may become different.\r\n" +
+	      " Therefore, a joint visitDuration can be defined. In case nodes (sharing the same geoLocation) are visited\r\n" +
 	      " directly after each other only the first node gets the full visitDuration. All following nodes get the\r\n" + 
 	      " joined visit duration. By default, the joint visit duration equals the \"normal\" visit duration.";
   }
@@ -71,7 +77,7 @@ public class JointVisitDurationExample extends Optimization {
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set the Properties
     this.setProperties();
 
     this.addNodes();
@@ -79,7 +85,7 @@ public class JointVisitDurationExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     resultFuture.get();
   }
 
@@ -134,7 +140,9 @@ public class JointVisitDurationExample extends Optimization {
     Duration visitDuration = Duration.ofMinutes(30);
     Duration jointVisitDuration = Duration.ofMinutes(15);
 
-    // Define some nodes
+    // Define some Nodes
+    // We are setting the jointVisitDuration. This shortened visitDuration only comes into play when two Nodes
+    // sharing the same geolocation (as defined by longitude and latitude) are visited back to back.
     TimeWindowGeoNode koeln1 =
         new TimeWindowGeoNode("Koeln1", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     koeln1.setJointVisitDuration(jointVisitDuration);

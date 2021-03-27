@@ -51,7 +51,14 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 import tec.units.ri.quantity.Quantities;
 
-/** Set an alternate destination for a resource at the end of the route. */
+/**
+ * Set an alternate destination for a Resource at the end of the Route. The Resource has to end it’s Route there but
+ * will start working from the original location again the next morning.
+ *
+ * @author DNA
+ * @version Mar 23, 2021
+ * @since Mar 23, 2021
+ */
 public class AlternateDestinationExample extends Optimization {
 
   public static void main(String[] args)
@@ -69,7 +76,7 @@ public class AlternateDestinationExample extends Optimization {
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set the Properties
     this.setProperties();
 
     this.addNodes();
@@ -77,7 +84,7 @@ public class AlternateDestinationExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     resultFuture.get();
   }
 
@@ -113,6 +120,9 @@ public class AlternateDestinationExample extends Optimization {
         new CapacityResource(
             "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
 
+    // Setting the location of the alternate destination. The Route of the Resource will terminate here at the end of
+    // the day. However, the Resource drive to it’s home location outside of the WorkingHours and start working there
+    // again the next morning.
     rep1.setDestinationLatitude(51.45);
     rep1.setDestinationLongitude(7.01667);
     rep1.setAlternateDestination(true);
@@ -136,7 +146,7 @@ public class AlternateDestinationExample extends Optimization {
 
     Duration visitDuration = Duration.ofMinutes(20);
 
-    // Define some nodes
+    // Define some Nodes
     INode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     this.addElement(koeln);

@@ -50,7 +50,14 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 import tec.units.ri.quantity.Quantities;
 
-/** Doing an asynch run. Getting an completable future of the OptimizationResult. */
+/**
+ * This class exemplifies our recommendation of how to do an asynchronous run and getting a completable future of
+ * the OptimizationResult.
+ *
+ * @author DNA
+ * @version Mar 26, 2021
+ * @since Mar 26, 2021
+ */
 public class RecommendedAsynchImplementationExample extends Optimization {
 
   public static void main(String[] args)
@@ -59,16 +66,16 @@ public class RecommendedAsynchImplementationExample extends Optimization {
   }
 
   public String toString() {
-    return "Getting an completable future of the OptimizationResult.";
+    return "Getting a completable future of the OptimizationResult.";
   }
 
   public void example()
       throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
 
-    // Set license via helper
+    // Set the license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set the Properties!
     this.setProperties(this);
 
     this.addNodes(this);
@@ -76,7 +83,7 @@ public class RecommendedAsynchImplementationExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the Optimization will be terminated
     resultFuture.get();
   }
 
@@ -94,6 +101,7 @@ public class RecommendedAsynchImplementationExample extends Optimization {
 
   private void addResources(IOptimization opti) {
 
+    // Define the WorkingHours
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
         new WorkingHours(
@@ -108,6 +116,7 @@ public class RecommendedAsynchImplementationExample extends Optimization {
     Duration maxWorkingTime = Duration.ofHours(13);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
+    // Define the Resource
     CapacityResource rep1 =
         new CapacityResource(
             "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
@@ -117,6 +126,7 @@ public class RecommendedAsynchImplementationExample extends Optimization {
 
   private void addNodes(IOptimization opti) {
 
+    // Define the OpeningHours
     List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
     weeklyOpeningHours.add(
         new OpeningHours(
@@ -130,7 +140,7 @@ public class RecommendedAsynchImplementationExample extends Optimization {
 
     Duration visitDuration = Duration.ofMinutes(20);
 
-    // Define some nodes
+    // Define some Nodes
     INode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     opti.addElement(koeln);

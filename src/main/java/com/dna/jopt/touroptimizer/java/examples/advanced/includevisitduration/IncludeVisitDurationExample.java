@@ -48,8 +48,13 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tec.units.ri.quantity.Quantities;
 
 /**
- * Setting a node to use a defined timeWindow as access window. Meaning, a resource should arrive
- * during the defined timeWindow but does not need to leave in the defined timeWindow.
+ * Setting a Node to use a defined timeWindow as access window. Meaning, a Resource should arrive
+ * during the defined timeWindow but does not need to be finished with the job during this timeWindow. Usually, but
+ * explicitly not in this case, the job should be finished within the alotted time.
+ *
+ * @author DNA
+ * @version Mar 23, 2021
+ * @since Mar 23, 2021
  */
 public class IncludeVisitDurationExample extends Optimization {
 
@@ -58,8 +63,8 @@ public class IncludeVisitDurationExample extends Optimization {
   }
   
   public String toString() {
-	  return "Setting a node to use a defined timeWindow as access window. Meaning, a resource should arrive\r\n" + 
-	      " during the defined timeWindow but does not need to leave in the defined timeWindow.";
+	  return "Setting a Node to use a defined timeWindow as access window. Meaning, a Resource should arrive\r\n" +
+	      " during the timeWindow but does not need to be finished with the job during the timewindow.";
   }
 
   public void example() throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
@@ -67,7 +72,7 @@ public class IncludeVisitDurationExample extends Optimization {
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set the Properties
     this.setProperties();
 
     this.addNodes();
@@ -75,7 +80,7 @@ public class IncludeVisitDurationExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     resultFuture.get();
   }
 
@@ -129,10 +134,11 @@ public class IncludeVisitDurationExample extends Optimization {
 
     Duration visitDuration = Duration.ofMinutes(20);
 
-    // Define some nodes
+    // Define some Nodes
     TimeWindowGeoNode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-    // By default a node needs to be visited and left during its openingHours
+    // By default a Node needs to be visited and have it’s job done during the OpeningHours. Here, the Resource needs
+    // merely to arrive during the OpeningHours. The visit duration can extend until afterwards.
     koeln.setIsDutyHoursIncludesVisitDuration(false); // Default would be true
     this.addElement(koeln);
 

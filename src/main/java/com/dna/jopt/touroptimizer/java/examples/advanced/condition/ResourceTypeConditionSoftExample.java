@@ -57,8 +57,8 @@ import tec.units.ri.quantity.Quantities;
  * comply with this condition, but it will not be enforced.
  *
  * @author DNA
- * @version 15/03/2021
- * @since 15/03/2021
+ * @version Mar 23, 2021
+ * @since Mar 15, 2021
  */
 public class ResourceTypeConditionSoftExample extends Optimization {
 

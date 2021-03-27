@@ -44,7 +44,15 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tec.units.ri.quantity.Quantities;
 
 /**
- * Instead of going home a resource may stay at a location (hotel) till the next workingDay.
+ * In this example we are enabling over night stays. Instead of going home a Resource may stay at a location (hotel)
+ * till the next workingDay. We are also setting a custom policy for the Resource to be able to use overnight stays
+ * and are setting a minimum recovery time.In contrary to open Routes or when setting custom last Nodes the Resource is starting
+ * the next work day at the location where it ended the previous one when using over night stays.
+ *
+ *
+ * @author DNA
+ * @version Mar 23, 2021
+ * @since Mar 23, 2021
  */
 public class OvernightStayExample extends Optimization {
 
@@ -53,7 +61,7 @@ public class OvernightStayExample extends Optimization {
   }
   
   public String toString() {
-	  return "Instead of going home a resource may stay at a location (hotel) till the next workingDay.";
+	  return "Instead of going home a Resource may stay at a location (hotel) till the next workingDay.";
   }
 
   public void example() throws IOException, InvalidLicenceException, InterruptedException, ExecutionException, TimeoutException {
@@ -61,7 +69,7 @@ public class OvernightStayExample extends Optimization {
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set the Properties
     this.setProperties();
 
     this.addNodes();
@@ -93,7 +101,7 @@ public class OvernightStayExample extends Optimization {
             ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 6, 20, 0, 0, 0, ZoneId.of("Europe/Berlin")));
 
-    forbiddenStayOutWOH.setIsAvailableForStay(false);
+    forbiddenStayOutWOH.setIsAvailableForStay(false); // Default is true
     workingHours.add(forbiddenStayOutWOH);
 
     workingHours.add(
@@ -133,7 +141,7 @@ public class OvernightStayExample extends Optimization {
      * Policy
      */
 
-    // We want at least 100 kilometers distance for an overnight stay or 4 hours of traveling
+    // We want at least 100 kilometers distance or 4 hours of traveling time from the Resource’s starting location
     // to allow an overnight stay
     Quantity<Length> minDistanceForStayOut = Quantities.getQuantity(100, KILO(METRE));
     Duration minTimeForStayOut = Duration.ofHours(4);
@@ -145,8 +153,8 @@ public class OvernightStayExample extends Optimization {
      */
 
     int totalStaysOut = -1; // We allow as many total stays out as necessary
-    int staysOutInRow = 4; // After three stays out in a row we have to return to our home location
-    int minRecoverHours = 2; // We want at least to stay 2 times in a row at home for recovering
+    int staysOutInRow = 4; // After three stays out in a row the Resource has to return to it’s home location
+    int minRecoverHours = 2; // We want the recovery time at home to last at minimum 2 nights in a row
     rep1.setStaysOut(totalStaysOut, staysOutInRow, minRecoverHours);
 
     this.addElement(rep1);

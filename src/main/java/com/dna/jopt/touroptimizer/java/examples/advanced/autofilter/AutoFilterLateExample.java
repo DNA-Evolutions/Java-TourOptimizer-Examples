@@ -46,7 +46,14 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 import tec.units.ri.quantity.Quantities;
 
-/** Simple example for using the selective autofilter for late violations */
+/**
+ * Simple example showing how to use the selective autofilter for late violations. Nodes that are prone to be arrived
+ * at late by Resources over several solutions will be filtered out of the optimization in this example.
+ *
+ * @author DNA
+ * @version Mar 23, 2021
+ * @since Mar 18, 2021
+ */
 public class AutoFilterLateExample extends Optimization {
 
   public static void main(String[] args)
@@ -64,7 +71,7 @@ public class AutoFilterLateExample extends Optimization {
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set the Properties
     this.setProperties();
 
     this.addNodes();
@@ -72,7 +79,7 @@ public class AutoFilterLateExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     resultFuture.get();
   }
 
@@ -84,16 +91,16 @@ public class AutoFilterLateExample extends Optimization {
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
 
-    props.setProperty("JOpt.SelectiveAutoFilter", "TRUE"); // This activates the filter mechanism
-    // It is also possible to call (This will enable all filter properties);
-    
-    // props.setProperty("JOpt.AutoFilter", "TRUE");
+    // This activates the filter mechanism
+    props.setProperty("JOpt.SelectiveAutoFilter", "TRUE");
 
-    // This defines which violations shell be filtered out
+    // It is also possible to call
+    // props.setProperty("JOpt.AutoFilter", "TRUE"); //This will enable all filter properties
 
+    // This defines which violations should be filtered out
     props.setProperty("JOpt.SelectiveAutoFilter.TimeWindow.Late", "TRUE");
 
-    // Other options would be:
+    // Other autofilter options are:
     /* ========================
 	     props.setProperty("JOpt.SelectiveAutoFilter.TimeWindow.Early", "TRUE");
 	     props.setProperty("JOpt.SelectiveAutoFilter.MaximalRouteDistanceExceeded", "TRUE");

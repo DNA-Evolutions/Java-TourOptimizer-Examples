@@ -25,8 +25,15 @@ import com.dna.jopt.framework.outcomewrapper.IOptimizationProgress;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
 import com.dna.jopt.io.importing.IOptimizationImporter;
 import com.dna.jopt.io.importing.json.OptimizationJSONImporter;
+import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
-/** Loading the current optimization state from a file using JSON file. */
+/**
+ * This example shows how to load an optimization state from a JSON file.
+ *
+ * @author DNA
+ * @version Mar 26, 2021
+ * @since Mar 26, 2021
+ */
 public class LoadOptimizationFromJsonExample extends Optimization {
 
   public static void main(String[] args)
@@ -36,20 +43,21 @@ public class LoadOptimizationFromJsonExample extends Optimization {
   }
 
   public String toString() {
-    return "Loading the current optimization state from a file using JSON file.";
+    return "Loading the current optimization state from a JSON file.";
   }
 
   public void example()
       throws InterruptedException, ExecutionException, InvalidLicenceException, ConvertException,
           SerializationException, IOException {
 
-    // Set license via helper
-    // ExampleLicenseHelper.setLicense(this);
+    // Set the license via helper
+     ExampleLicenseHelper.setLicense(this);
 
+    // Set the file to load
     String jsonFile = "myopti.json.bz2";
     this.invokeFromJson(new FileInputStream(jsonFile), this);
 
-    // Properties!
+    // Set the Properties
     this.setProperties();
 
     this.startRunAsync().get();

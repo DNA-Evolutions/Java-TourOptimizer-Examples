@@ -56,8 +56,8 @@ import tec.units.ri.quantity.Quantities;
  * which both tasks have to be fulfilled.
  *
  * @author DNA
- * @version 11/03/2021
- * @since 11/03/2021
+ * @version Mar 23, 2021
+ * @since Mar 11, 2021
  */
 public class RelativeTimeWindowRelationWithInducedIdleTimeExample extends Optimization {
 

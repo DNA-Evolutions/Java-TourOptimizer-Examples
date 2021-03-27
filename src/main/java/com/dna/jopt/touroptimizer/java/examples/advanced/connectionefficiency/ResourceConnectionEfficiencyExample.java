@@ -48,7 +48,13 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 import tec.units.ri.quantity.Quantities;
 
-/** Setting a mandatory resource for a node */
+/**
+ * In this example we are setting an overexaggerated efficiency factor, allowing the Resource to drive very fast.
+ *
+ * @author DNA
+ * @version Mar 23, 2021
+ * @since Mar 23, 2021
+ */
 public class ResourceConnectionEfficiencyExample extends Optimization {
 
   public static void main(String[] args)
@@ -57,8 +63,8 @@ public class ResourceConnectionEfficiencyExample extends Optimization {
   }
 
   public String toString() {
-    return "Simple example of setting a a resource connection efficiency factor. By setting a value smaller than one, the "
-        + "resource can drive faster compared to what is defined in the connection.";
+    return "Simple example of setting a Resource connection efficiency factor. By setting a value smaller than one, " +
+            "the resource can drive faster compared to what is defined in the connection.";
   }
 
   public void example()
@@ -72,7 +78,7 @@ public class ResourceConnectionEfficiencyExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     resultFuture.get();
   }
 
@@ -96,7 +102,10 @@ public class ResourceConnectionEfficiencyExample extends Optimization {
     IResource rep1 =
         new CapacityResource(
             "Jack", 50.775346, 6.083887, maxWorkingTimeJack, maxDistanceKmW, workingHours);
-    rep1.setConnectionTimeEfficiencyFactor(0.2); // We need only 20% of the time, as we have a veeery fast car
+
+    //The default connectionEfficiencyFactor is 1.0. Setting it to 0.2 means we onl need 20% of the time between
+    // Nodes, as we have a veeery fast car
+    rep1.setConnectionTimeEfficiencyFactor(0.2);
     rep1.setCost(0, 1, 1);
 
     this.addElement(rep1);

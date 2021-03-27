@@ -53,11 +53,11 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tec.units.ri.quantity.Quantities;
 
 /**
- *  Using ZoneNumber to divide nodes into areas. A Resource is allowed to visit different areas
+ *  Using ZoneNumber to divide Nodes into areas. A Resource is allowed to visit different areas
  *  on different workingDays.
  *
  * @author jrich
- * @version Aug 14, 2020
+ * @version Mar 23, 2021
  * @since Aug 14, 2020
  */
 public class ZoneNumberConstraintExample extends Optimization {
@@ -108,7 +108,7 @@ public class ZoneNumberConstraintExample extends Optimization {
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set the Properties
     this.setProperties(this);
     this.addElements(this);
 
@@ -163,9 +163,8 @@ public class ZoneNumberConstraintExample extends Optimization {
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
     props.setProperty("JOpt.NumCPUCores", "4");
 
-    // This property can be used adjust the cost for violating PostCode conditions for the use as
-    // soft constraint
-    // (10 is the default value)
+    // This property can be used to adjust the cost for violating PostCode conditions when using
+    // soft Constraints. 10 is the default value.
     props.setProperty("JOptWeight.ZoneCode", "10.0");
 
     opti.addElement(props);
@@ -186,11 +185,11 @@ public class ZoneNumberConstraintExample extends Optimization {
     ZoneNumber zoneThree = new ZoneNumber(3);
 
     /*
-     *  Defining workingHours and attach constraints based on the zones we created
+     *  Defining WorkingHours and attach Constraints based on the Zones we created
      *  
-     *  For example: the first WorkingHour gets ZoneOne and ZoneTwo as constraint. This means
-     *  the resource holding this workingHour should only visit ZoneOne and ZoneTwo during
-     *  this workingHour 
+     *  For example: the first WorkingHour gets zoneOne and zoneTwo as Constraint. This means
+     *  the Resource holding this WorkingHour should only visit ZoneOne and ZoneTwo during
+     *  this WorkingHour.
      */
     IWorkingHours woh1 =
         new WorkingHours(
@@ -206,23 +205,23 @@ public class ZoneNumberConstraintExample extends Optimization {
     weeklyWorkingHours.add(woh1);
     weeklyWorkingHours.add(woh2);
 
-    // Creating/Adding Zones as constraints
+    // Creating/Adding Zones as Constraints
     ZoneNumberConstraint zoneNumberConstraintWOHOne = new ZoneNumberConstraint();
 
-    zoneNumberConstraintWOHOne.setIsHard(true); // Use as hard constraint
+    zoneNumberConstraintWOHOne.setIsHard(true); // Use as hard Constraint
     zoneNumberConstraintWOHOne.addZoneCode(zoneOne);
     zoneNumberConstraintWOHOne.addZoneCode(zoneTwo);
     woh1.addConstraint(zoneNumberConstraintWOHOne);
 
     ZoneNumberConstraint zoneNumberConstraintWOHTwo = new ZoneNumberConstraint();
 
-    zoneNumberConstraintWOHTwo.setIsHard(true); // Use as soft constraint
+    zoneNumberConstraintWOHTwo.setIsHard(true); // Use as hard Constraint
     zoneNumberConstraintWOHTwo.addZoneCode(zoneThree);
     woh2.addConstraint(zoneNumberConstraintWOHTwo);
 
     /*
      * 
-     *  Creating/Adding the resource and attach constrained workingHours
+     *  Creating/Adding the Resource and attach constrained WorkingHours
      *  
      */
     
@@ -235,7 +234,7 @@ public class ZoneNumberConstraintExample extends Optimization {
     rep1.setCost(0, 1, 1);
     opti.addElement(rep1);
 
-    // Creating/Adding nodes
+    // Creating/Adding Nodes
     List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
     weeklyOpeningHours.add(
         new OpeningHours(
@@ -250,12 +249,12 @@ public class ZoneNumberConstraintExample extends Optimization {
 
     /*
      * 
-     *  Define some nodes and add ZoneNumberQualifications based on ZoneNumber we created.
+     *  Define some Nodes and add ZoneNumberQualifications based on the ZoneNumbers we created.
      *  
-     *  For example: If a node gets a qualification for zoneOne, it should be only visited by a resource
-     *  holding a ZoneNumberOne constraint along its constraints. 
+     *  For example: If a Node gets a Qualification for zoneOne, it should only be visited by a Resource
+     *  holding a ZoneNumberOne Constraint along its Constraints.
      *  
-     *  Note: If a resource is not holding any ZoneNumerConstraint it is free to visit all nodes.
+     *  Note: If a Resource is not holding any ZoneNumberConstraint it is free to visit all nodes.
      *  
      *  
      */
@@ -270,12 +269,12 @@ public class ZoneNumberConstraintExample extends Optimization {
     //
     INode koeln =
         new TimeWindowGeoNode("Koeln-Z1", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-    koeln.addQualification(zoneOneQuali); // Adding qualification for zoneOne
+    koeln.addQualification(zoneOneQuali); // Adding Qualification for zoneOne
     opti.addElement(koeln);
 
-    // Note: Oberhausen has a qualification for zoneOne AND zoneTwo. Usually, this makes sense, if a node
-    //       is located at the geographical boundary of two zones. This way, Resources holding a constraint
-    //       for zoneOne and Resources holding a constraint for zoneTwo are allowed to visit the node
+    // Note: Oberhausen has a Qualification for zoneOne AND zoneTwo. This makes sense if a Node
+    //       is located at the geographical boundary of two zones. This way, Resources holding a Constraint
+    //       for zoneOne and Resources holding a Constraint for zoneTwo are both allowed to visit the Node
     INode oberhausen =
         new TimeWindowGeoNode(
             "Oberhausen-Z1-Z2", 51.4667, 6.85, weeklyOpeningHours, visitDuration, 1);

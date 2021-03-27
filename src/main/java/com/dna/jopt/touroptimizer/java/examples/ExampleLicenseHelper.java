@@ -29,7 +29,7 @@ public class ExampleLicenseHelper {
 
     File myLicFile = new File(ExampleLicenseHelper.LICENSE_PATH);
     
-    // Check that file exists, otherwise use free mode implicitly by not setting any license
+    // Checks whether license file exists, otherwise uses free mode by not setting any license
     if (myLicFile.exists()) {
       opti.setLicenseJSON(myLicFile);
     }

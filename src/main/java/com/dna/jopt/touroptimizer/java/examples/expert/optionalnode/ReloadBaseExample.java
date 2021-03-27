@@ -51,8 +51,12 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tec.units.ri.quantity.Quantities;
 
 /**
- * In this example optional nodes can be used to reload, unload or load goods. If a node is set to
- * be optional, the optimizer can choose to schedule it or not.
+ * In this example optional Nodes can be used to restock or unload goods that need to be delivered/were picked up
+ * elsewhere. If a Node is set to be optional, the optimizer can choose to schedule it or not.
+ *
+ * @author DNA
+ * @version Mar 23, 2021
+ * @since Mar 23, 2021
  */
 public class ReloadBaseExample extends Optimization {
 
@@ -62,7 +66,7 @@ public class ReloadBaseExample extends Optimization {
   }
 
   public String toString() {
-    return "In this example optional nodes can be used to reload, unload or load goods. If a node is set to be\r\n"
+    return "In this example optional Nodes can be used to unload or load goods. If a Node is set to be\r\n"
         + " optional, the optimizer can choose to schedule it or not. THIS EXAMPLE CAN BE ONLY RUN WITH A VALID FULL LICENSE!";
   }
 
@@ -72,7 +76,7 @@ public class ReloadBaseExample extends Optimization {
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set the Properties
     this.setProperties();
 
     this.addNodes();
@@ -80,7 +84,7 @@ public class ReloadBaseExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the Optimization will be terminated
     resultFuture.get();
   }
 
@@ -135,13 +139,13 @@ public class ReloadBaseExample extends Optimization {
             ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-    // Nodes
     Duration visitDuration = Duration.of(20, MINUTES);
 
     double[] loadPerNode = {10};
     double[] unloadPerOptionalNode = {-20};
 
-    // 1.) add the nodes to be visited
+    // Define and add the Nodes to be visited. Note, that only "KoelnOptional", "OberhausenOptional",
+    // "OberhausenOptional2" and "DresdenFarAwayOptional" are defined as optional Nodes
     INode koelnOptional =
         new TimeWindowGeoNode("KoelnOptional", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     koelnOptional.setIsOptional(true);

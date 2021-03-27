@@ -46,10 +46,16 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 import tec.units.ri.quantity.Quantities;
 
-/** Doing an asynch run. Getting an completable future of the OptimizationResult. */
+/**
+ * In this example we are setting a custom loop count and exit the default optimization afterwards.
+ *
+ * @author DNA
+ * @version Mar 23, 2021
+ * @since Mar 23, 2021
+ */
 public class RunOptimizationInLoopExample extends Optimization {
 
-  // We stop the genetic phase after three loops
+  // We stop the genetic algorithm phase after three loops
   private static final int MAX_LOOP_COUNT_GE = 3;
 
   private int currentLoopCount = 0;
@@ -60,7 +66,7 @@ public class RunOptimizationInLoopExample extends Optimization {
   }
 
   public String toString() {
-    return "Run an optimization in a loop until it is stopped externaly.";
+    return "Run an optimization in a loop until it is stopped externally.";
   }
 
   public void example()
@@ -69,7 +75,7 @@ public class RunOptimizationInLoopExample extends Optimization {
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Set the Properties
     RunOptimizationInLoopExample.setProperties(this);
 
     RunOptimizationInLoopExample.addNodes(this);
@@ -79,7 +85,7 @@ public class RunOptimizationInLoopExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     resultFuture.get();
   }
 
@@ -139,7 +145,6 @@ public class RunOptimizationInLoopExample extends Optimization {
 
     Duration visitDuration = Duration.ofMinutes(20);
 
-    // Define some nodes
     INode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     opti.addElement(koeln);
@@ -201,7 +206,7 @@ public class RunOptimizationInLoopExample extends Optimization {
   @Override
   public void onProgress(IOptimizationProgress rapoptProgress) {
 	  
-	  // We couple the loop counter to stage 2 (Genetic phase) and increase the counter when we reached
+	  // We couple the loop counter to stage 2 (genetic phase) and increase the counter when we reach
 	  // 99.0 % of progress
     if (rapoptProgress.getOptimizationStage() == 2 && rapoptProgress.getProgress() == 99.0) {
       this.currentLoopCount++;

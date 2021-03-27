@@ -43,7 +43,13 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 import tec.units.ri.quantity.Quantities;
 
-/** Request an optimization result during runtime and before optimization finishes. */
+/**
+ * Request an optimization result during runtime and before optimization finishes.
+ *
+ * @author DNA
+ * @version Mar 23, 2021
+ * @since Mar 23, 2021
+ */
 public class RequestResultExample extends Optimization {
 
   public static void main(String[] args)
@@ -66,7 +72,7 @@ public class RequestResultExample extends Optimization {
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    // It is important to block the call, otherwise optimization will be terminated
+    // It is important to block the call, otherwise the optimization will be terminated
     resultFuture.get();
   }
 
@@ -116,7 +122,7 @@ public class RequestResultExample extends Optimization {
 
     Duration visitDuration = Duration.ofMinutes(20);
 
-    // Define some nodes
+    // Define some Nodes
 
     INode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
@@ -174,6 +180,11 @@ public class RequestResultExample extends Optimization {
     System.out.println(winnerProgressString);
   }
 
+  /**
+   * We are requesting a new result after every 20% of the total optimization iterations.
+   *
+   * @param winner the iOptimizationProgress of the best entity
+   */
   @Override
   public void onProgress(IOptimizationProgress winner) {
 

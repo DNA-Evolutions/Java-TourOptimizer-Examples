@@ -54,8 +54,8 @@ import tec.units.ri.quantity.Quantities;
  * (hard constraint) it is not guaranteed that the Resource is chosen if the cost for doing so is getting too high.
  *
  * @author Jens Richter
- * @version 15/03/2021
- * @since 15/03/2021
+ * @version Mar 23, 2021
+ * @since Mar 15, 2021
  */
 public class PreferredResourceConditionExample extends Optimization {
 

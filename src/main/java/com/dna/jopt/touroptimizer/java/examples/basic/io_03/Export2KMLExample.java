@@ -43,9 +43,16 @@ import com.dna.jopt.member.unit.node.INode;
 import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.resource.CapacityResource;
 import com.dna.jopt.member.unit.resource.IResource;
+import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tec.units.ri.quantity.Quantities;
 
-/** Saving the current optimization state to a file using JSON-file. */
+/**
+ * In this example we are saving the current optimization state to a JSON-file.
+ *
+ * @author DNA
+ * @version Mar 26, 2021
+ * @since Mar 26, 2021
+ */
 public class Export2KMLExample extends Optimization {
 
   public static void main(String[] args)
@@ -54,16 +61,16 @@ public class Export2KMLExample extends Optimization {
   }
 
   public String toString() {
-    return "Saving the current optimization state to a file using JSON-file.";
+    return "Saving the current optimization state to a JSON-file.";
   }
 
   public void example()
       throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
 
     // Set license via helper
-    // ExampleLicenseHelper.setLicense(this);
+     ExampleLicenseHelper.setLicense(this);
 
-    // Properties!
+    // Setting the Properties
     this.setProperties();
 
     this.addNodes();
@@ -87,6 +94,7 @@ public class Export2KMLExample extends Optimization {
 
   private void addResources() {
 
+    // Define the WorkingHours
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
         new WorkingHours(
@@ -102,6 +110,7 @@ public class Export2KMLExample extends Optimization {
     Duration maxWorkingTimeJohn = Duration.ofHours(14);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
+    // Define the Resource
     IResource rep1 =
         new CapacityResource(
             "Jack", 50.775346, 6.083887, maxWorkingTimeJack, maxDistanceKmW, workingHours);
@@ -118,6 +127,7 @@ public class Export2KMLExample extends Optimization {
 
   private void addNodes() {
 
+    //  Define the OpeningHours
     List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
     weeklyOpeningHours.add(
         new OpeningHours(
@@ -131,8 +141,7 @@ public class Export2KMLExample extends Optimization {
 
     Duration visitDuration = Duration.ofMinutes(20);
 
-    // Define some nodes
-
+    // Define some Nodes
     INode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     this.addElement(koeln);
@@ -192,6 +201,11 @@ public class Export2KMLExample extends Optimization {
     //
   }
 
+  /**
+   * Saves the results of the Optimization.
+   *
+   * @param rapoptResult the optimizationResult
+   */
   @Override
   public void onAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {
     System.out.println(rapoptResult);
