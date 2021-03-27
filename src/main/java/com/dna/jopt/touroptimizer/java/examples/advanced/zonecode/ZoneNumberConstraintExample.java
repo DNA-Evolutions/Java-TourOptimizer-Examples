@@ -215,7 +215,7 @@ public class ZoneNumberConstraintExample extends Optimization {
 
     ZoneNumberConstraint zoneNumberConstraintWOHTwo = new ZoneNumberConstraint();
 
-    zoneNumberConstraintWOHTwo.setIsHard(true); // Use as hard Constraint
+    zoneNumberConstraintWOHTwo.setIsHard(true); // Use as hard constraint
     zoneNumberConstraintWOHTwo.addZoneCode(zoneThree);
     woh2.addConstraint(zoneNumberConstraintWOHTwo);
 
