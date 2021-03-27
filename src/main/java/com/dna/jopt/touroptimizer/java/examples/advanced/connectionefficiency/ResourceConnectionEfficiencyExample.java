@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.connectionefficiency;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -82,7 +82,7 @@ public class ResourceConnectionEfficiencyExample extends Optimization {
     resultFuture.get();
   }
 
-  private void addResources() {
+  private static List<IWorkingHours> getDefaultWorkingHours() {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
@@ -95,13 +95,18 @@ public class ResourceConnectionEfficiencyExample extends Optimization {
             ZonedDateTime.of(2020, MARCH.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MARCH.getValue(), 7, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
+    return workingHours;
+  }
+
+  private void addResources() {
+
     Duration maxWorkingTimeJack = Duration.ofHours(8);
     Duration maxWorkingTimeJohn = Duration.ofHours(14);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
     IResource rep1 =
         new CapacityResource(
-            "Jack", 50.775346, 6.083887, maxWorkingTimeJack, maxDistanceKmW, workingHours);
+            "Jack", 50.775346, 6.083887, maxWorkingTimeJack, maxDistanceKmW, getDefaultWorkingHours());
 
     //The default connectionEfficiencyFactor is 1.0. Setting it to 0.2 means we onl need 20% of the time between
     // Nodes, as we have a veeery fast car
@@ -112,7 +117,12 @@ public class ResourceConnectionEfficiencyExample extends Optimization {
 
     IResource rep2 =
         new CapacityResource(
-            "John", 50.775346, 6.083887, maxWorkingTimeJohn, maxDistanceKmW, workingHours);
+            "John",
+            50.775346,
+            6.083887,
+            maxWorkingTimeJohn,
+            maxDistanceKmW,
+            getDefaultWorkingHours());
     rep2.setCost(0, 1, 1);
     this.addElement(rep2);
   }

@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.jointvisitduration;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -61,10 +61,11 @@ import tec.units.ri.quantity.Quantities;
  */
 public class JointVisitDurationExample extends Optimization {
 
-  public static void main(String[] args) throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+  public static void main(String[] args)
+      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
     new JointVisitDurationExample().example();
   }
-  
+
   public String toString() {
 	  return "In the case nodes share the same geographical location the visitDuration for each node may become different.\r\n" +
 	      " Therefore, a joint visitDuration can be defined. In case nodes (sharing the same geoLocation) are visited\r\n" +
@@ -72,7 +73,8 @@ public class JointVisitDurationExample extends Optimization {
 	      " joined visit duration. By default, the joint visit duration equals the \"normal\" visit duration.";
   }
 
-  public void example() throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+  public void example()
+      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
@@ -103,7 +105,7 @@ public class JointVisitDurationExample extends Optimization {
 
   private void addResources() {
 
-    List<IWorkingHours> workingHours = new ArrayList<IWorkingHours>();
+    List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
         new WorkingHours(
             ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
@@ -126,7 +128,7 @@ public class JointVisitDurationExample extends Optimization {
 
   private void addNodes() {
 
-    List<IOpeningHours> weeklyOpeningHours = new ArrayList<IOpeningHours>();
+    List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
     weeklyOpeningHours.add(
         new OpeningHours(
             ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),

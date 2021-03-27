@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.condition;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -50,8 +50,9 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tec.units.ri.quantity.Quantities;
 
 /**
- * In this example we are setting a preferred resource (soft constraint) for a Node. In contrast to a mandatory resource
- * (hard constraint) it is not guaranteed that the Resource is chosen if the cost for doing so is getting too high.
+ * In this example we are setting a preferred resource (soft constraint) for a Node. In contrast to
+ * a mandatory resource (hard constraint) it is not guaranteed that the Resource is chosen if the
+ * cost for doing so is getting too high.
  *
  * @author Jens Richter
  * @version Mar 23, 2021
@@ -59,7 +60,8 @@ import tec.units.ri.quantity.Quantities;
  */
 public class PreferredResourceConditionExample extends Optimization {
 
-  public static void main(String[] args) throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+  public static void main(String[] args)
+      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
     new PreferredResourceConditionExample().example();
   }
 
@@ -83,7 +85,7 @@ public class PreferredResourceConditionExample extends Optimization {
     resultFuture.get();
   }
 
-  private void addResources() {
+  private static List<IWorkingHours> getDefaultWorkingHours() {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
@@ -96,20 +98,35 @@ public class PreferredResourceConditionExample extends Optimization {
             ZonedDateTime.of(2020, MARCH.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MARCH.getValue(), 7, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
+    return workingHours;
+  }
+
+  private void addResources() {
+
     Duration maxWorkingTimeJack = Duration.ofHours(8);
     Duration maxWorkingTimeJohn = Duration.ofHours(14);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
     IResource rep1 =
         new CapacityResource(
-            "Jack", 50.775346, 6.083887, maxWorkingTimeJack, maxDistanceKmW, workingHours);
+            "Jack",
+            50.775346,
+            6.083887,
+            maxWorkingTimeJack,
+            maxDistanceKmW,
+            getDefaultWorkingHours());
     rep1.setCost(0, 1, 1);
 
     this.addElement(rep1);
 
     IResource rep2 =
         new CapacityResource(
-            "John", 50.775346, 6.083887, maxWorkingTimeJohn, maxDistanceKmW, workingHours);
+            "John",
+            50.775346,
+            6.083887,
+            maxWorkingTimeJohn,
+            maxDistanceKmW,
+            getDefaultWorkingHours());
     rep2.setCost(0, 1, 1);
     this.addElement(rep2);
   }
@@ -155,7 +172,6 @@ public class PreferredResourceConditionExample extends Optimization {
         new TimeWindowGeoNode("Nuernberg", 49.4478, 11.0683, weeklyOpeningHours, visitDuration, 1);
     this.addElement(nuernberg);
 
-
     TimeWindowGeoNode stuttgart =
         new TimeWindowGeoNode("Stuttgart", 48.7667, 9.18333, weeklyOpeningHours, visitDuration, 1);
     this.addElement(stuttgart);
@@ -164,10 +180,12 @@ public class PreferredResourceConditionExample extends Optimization {
         new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
     this.addElement(aachen);
 
-    // Since we do not want to enforce the Resource constraints against all reasons (costs) as in the case of mandatory
+    // Since we do not want to enforce the Resource constraints against all reasons (costs) as in
+    // the case of mandatory
     // resource constraints, we are only setting preferred resource constraints
 
-    // Defining the preferred resource constraints, adding the respective Resource and add the Constraint to the Node
+    // Defining the preferred resource constraints, adding the respective Resource and add the
+    // Constraint to the Node
     IConstraintResource jackPrefConstraint = new PreferredResourceConstraint();
     jackPrefConstraint.addResource("Jack", 10);
     koeln.addConstraint(jackPrefConstraint);
@@ -197,7 +215,6 @@ public class PreferredResourceConditionExample extends Optimization {
   public void onProgress(String winnerProgressString) {
     System.out.println(winnerProgressString);
   }
-
 
   @Override
   public void onAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {

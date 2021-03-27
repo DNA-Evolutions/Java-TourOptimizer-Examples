@@ -1,4 +1,5 @@
 package com.dna.jopt.touroptimizer.java.examples.advanced.relationship;
+
 /*-
  * #%L
  * JOpt TourOptimizer Examples
@@ -45,8 +46,9 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tec.units.ri.quantity.Quantities;
 
 /**
- * Example DifferentRouteDifferentVisitorRelationExample. In this example two Nodes (Aachen and Dueren) should be
- * visited in a different Route. Further, we want these Routes to be served by different Resources (visitors).
+ * Example DifferentRouteDifferentVisitorRelationExample. In this example two Nodes (Aachen and
+ * Dueren) should be visited in a different Route. Further, we want these Routes to be served by
+ * different Resources (visitors).
  *
  * @author jrich
  * @version Mar 11, 2021
@@ -122,8 +124,7 @@ public class DifferentRouteDifferentVisitorRelationExample extends Optimization 
     this.addElement(props);
   }
 
-  /** Adds the resources. */
-  private void addResources() {
+  private static List<IWorkingHours> getDefaultWorkingHours() {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
@@ -136,18 +137,24 @@ public class DifferentRouteDifferentVisitorRelationExample extends Optimization 
             ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 7, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
+    return workingHours;
+  }
+
+  /** Adds the resources. */
+  private void addResources() {
+
     Duration maxWorkingTime = Duration.ofHours(10);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
     CapacityResource rep1 =
         new CapacityResource(
-            "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
+            "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, getDefaultWorkingHours());
     rep1.setCost(0, 1, 1);
     this.addElement(rep1);
 
     CapacityResource rep2 =
         new CapacityResource(
-            "John", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
+            "John", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, getDefaultWorkingHours());
     rep2.setCost(0, 1, 1);
     this.addElement(rep2);
   }

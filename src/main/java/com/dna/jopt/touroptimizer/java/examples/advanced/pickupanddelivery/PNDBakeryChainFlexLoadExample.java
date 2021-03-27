@@ -8,7 +8,7 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.pickupanddelivery;
  * %%
  * This file is subject to the terms and conditions defined in file 'LICENSE.txt',
  * which is part of this source code package.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/agb-conditions-and-terms/>.
  * #L%
  */
@@ -61,11 +61,11 @@ import java.util.ArrayList;
  * In this example two Resource called "JackTruckCologne" and "JohnTruckAachen" are employees of a
  * bakery chain and have to deliver "Bread" to different supermarkets.
  *
- * <p>Each of the Resources is bound to a different bakery. The optimizer takes over
- * the manufacturing planning. The goal is to find the optimal number
- * of bread each bakery has to prepare to satisfy the request of all supermarkets. To achieve this,
- * two SupplyFlexLoad are used. The optimized load of each SupplyFlexLoad describes the optimal number of bread
- * each bakery has to prepare.
+ * <p>Each of the Resources is bound to a different bakery. The optimizer takes over the
+ * manufacturing planning. The goal is to find the optimal number of bread each bakery has to
+ * prepare to satisfy the request of all supermarkets. To achieve this, two SupplyFlexLoad are used.
+ * The optimized load of each SupplyFlexLoad describes the optimal number of bread each bakery has
+ * to prepare.
  *
  * <p>Hint: This concept can also be combined with the optional Node concept.
  *
@@ -75,7 +75,6 @@ import java.util.ArrayList;
  *     <p>Example of pick up and delivery optimization problem.
  */
 public class PNDBakeryChainFlexLoadExample extends Optimization {
-
 
   /**
    * The main method.
@@ -130,9 +129,8 @@ public class PNDBakeryChainFlexLoadExample extends Optimization {
 
     // It is important to block the call, otherwise the optimization will be terminated
     IOptimizationResult result = resultFuture.get(2, TimeUnit.MINUTES);
-    
-    System.out.println(result);
 
+    System.out.println(result);
   }
 
   /** Sets the properties. */
@@ -148,18 +146,22 @@ public class PNDBakeryChainFlexLoadExample extends Optimization {
     this.addElement(props);
   }
 
-  /** Adds the res. */
-  public void addRes() {
-
-    /*
-     * Setting the resource JackTruck
-     */
+  private static List<IWorkingHours> getDefaultWorkingHours() {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
         new WorkingHours(
             ZonedDateTime.of(2020, MARCH.getValue(), 11, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MARCH.getValue(), 11, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+    return workingHours;
+  }
+
+  /** Adds the res. */
+  public void addRes() {
+
+    /*
+     * Setting the resource JackTruck
+     */
 
     Duration maxWorkingTime = Duration.ofHours(10);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(2800.0, KILO(METRE));
@@ -171,7 +173,12 @@ public class PNDBakeryChainFlexLoadExample extends Optimization {
 
     IResource truckJack =
         new CapacityResource(
-            "JackTruckCologne", 50.9333, 6.95, maxWorkingTime, maxDistanceKmW, workingHours);
+            "JackTruckCologne",
+            50.9333,
+            6.95,
+            maxWorkingTime,
+            maxDistanceKmW,
+            getDefaultWorkingHours());
 
     // Setting a depot to our truck
     truckJack.setResourceDepot(this.createResourceDepot("JackTruckCologneDepot"));
@@ -186,7 +193,12 @@ public class PNDBakeryChainFlexLoadExample extends Optimization {
 
     IResource truckJohn =
         new CapacityResource(
-            "JohnTruckAachen", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
+            "JohnTruckAachen",
+            50.775346,
+            6.083887,
+            maxWorkingTime,
+            maxDistanceKmW,
+            getDefaultWorkingHours());
 
     // Setting a depot to our truck
     truckJohn.setResourceDepot(this.createResourceDepot("JohnTruckAachenDepot"));
@@ -211,7 +223,8 @@ public class PNDBakeryChainFlexLoadExample extends Optimization {
     // present)
     ILoadCapacity breadCapacity = new SimpleLoadCapacity("Bread", 20, 0);
 
-    // Adding the capacities to our depot, as we only transport a single good, the maxCapacity equals
+    // Adding the capacities to our depot, as we only transport a single good, the maxCapacity
+    // equals
     // the individual capacity of the bread capacity.
     IResourceDepot depot = new SimpleResourceDepot(depotId, 20);
     depot.add(breadCapacity);
@@ -278,11 +291,11 @@ public class PNDBakeryChainFlexLoadExample extends Optimization {
         new TimeWindowGeoNode(
             "SupplyFlexNodeAachen", 50.77577, 6.08177, weeklyOpeningHours, visitDuration, 1);
     supplyFlexNodeAachen.setNodeDepot(this.createSupplyFlexDepot("SupplyFlexNodeAachenDepot"));
-    
+
     // Could also be an optional Node, which allows offloading cargo, if desired
     boolean isAachenOptional = false;
     supplyFlexNodeAachen.setIsOptional(isAachenOptional);
-    
+
     this.addElement(supplyFlexNodeAachen);
 
     INode supplyFlexNodeCologne =
@@ -313,7 +326,6 @@ public class PNDBakeryChainFlexLoadExample extends Optimization {
 
     return customerNodeDepot;
   }
-
 
   /**
    * Creates the supply flex depot.

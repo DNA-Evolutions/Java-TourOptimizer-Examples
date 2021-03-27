@@ -95,8 +95,8 @@ public class ExternalNodeConnectionExample extends Optimization {
     resultFuture.get();
   }
 
-  private void addResources() {
-
+  private static List<IWorkingHours> getDefaultWorkingHours() {
+	  
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
         new WorkingHours(
@@ -108,20 +108,27 @@ public class ExternalNodeConnectionExample extends Optimization {
             ZonedDateTime.of(2020, MARCH.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MARCH.getValue(), 7, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
+    return workingHours;
+  }
+
+  private void addResources() {
+
+
+
     Duration maxWorkingTimeJack = Duration.ofHours(8);
     Duration maxWorkingTimeJohn = Duration.ofHours(14);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
     IResource rep1 =
         new CapacityResource(
-            "Jack", 50.775346, 6.083887, maxWorkingTimeJack, maxDistanceKmW, workingHours);
+            "Jack", 50.775346, 6.083887, maxWorkingTimeJack, maxDistanceKmW, getDefaultWorkingHours());
     rep1.setCost(0, 1, 1);
 
     this.addElement(rep1);
 
     IResource rep2 =
         new CapacityResource(
-            "John", 50.775346, 6.083887, maxWorkingTimeJohn, maxDistanceKmW, workingHours);
+            "John", 50.775346, 6.083887, maxWorkingTimeJohn, maxDistanceKmW, getDefaultWorkingHours());
     rep2.setCost(0, 1, 1);
     this.addElement(rep2);
   }

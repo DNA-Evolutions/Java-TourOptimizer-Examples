@@ -1,4 +1,6 @@
 package com.dna.jopt.touroptimizer.java.examples.advanced.visitdurationefficiency;
+
+import static java.time.Month.MARCH;
 /*-
  * #%L
  * JOpt TourOptimizer Examples
@@ -131,8 +133,7 @@ public class ResourceVisitDurationEfficiencyExample extends Optimization {
     this.addElement(props);
   }
 
-  /** Adds the Resources. */
-  private void addResources() {
+  private static List<IWorkingHours> getDefaultWorkingHours() {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
@@ -145,19 +146,25 @@ public class ResourceVisitDurationEfficiencyExample extends Optimization {
             ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
+    return workingHours;
+  }
+
+  /** Adds the resources. */
+  private void addResources() {
+
     Duration maxWorkingTime = Duration.ofHours(13);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
     CapacityResource resJack =
         new CapacityResource(
-            "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
+            "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, getDefaultWorkingHours());
 
     // "Clara" gets an efficiency factor of 0.5 and subsequently needs only half the time for a Job
     // in comparison to "Jack"
     CapacityResource resClara =
         new CapacityResource(
-            "Clara", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
-    resClara.setOverallVisitDurationEfficiencyFactor(0.5); // Default 1.0
+            "Clara", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, getDefaultWorkingHours());
+    resClara.setOverallVisitDurationEfficiencyFactor(0.5);
 
     this.addElement(resClara);
     this.addElement(resJack);

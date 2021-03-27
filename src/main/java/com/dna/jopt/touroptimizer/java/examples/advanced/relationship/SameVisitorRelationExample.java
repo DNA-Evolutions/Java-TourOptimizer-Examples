@@ -45,8 +45,8 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tec.units.ri.quantity.Quantities;
 
 /**
- * In this example two Nodes should be visited by the same Resource (Aachen and Essen), but we do not enforce the same
- * same day/route.
+ * In this example two Nodes should be visited by the same Resource (Aachen and Essen), but we do
+ * not enforce the same same day/route.
  *
  * @author jrich
  * @version Mar 15, 2021
@@ -122,8 +122,7 @@ public class SameVisitorRelationExample extends Optimization {
     this.addElement(props);
   }
 
-  /** Adds the Resources. */
-  private void addResources() {
+  private static List<IWorkingHours> getDefaultWorkingHours() {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
@@ -131,18 +130,24 @@ public class SameVisitorRelationExample extends Optimization {
             ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 6, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
+    return workingHours;
+  }
+
+  /** Adds the Resources. */
+  private void addResources() {
+
     Duration maxWorkingTime = Duration.ofHours(10);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
     CapacityResource rep1 =
         new CapacityResource(
-            "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
+            "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, getDefaultWorkingHours());
     rep1.setCost(0, 1, 1);
     this.addElement(rep1);
 
     CapacityResource rep2 =
         new CapacityResource(
-            "John", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
+            "John", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, getDefaultWorkingHours());
     rep2.setCost(0, 1, 1);
     this.addElement(rep2);
   }
@@ -179,9 +184,11 @@ public class SameVisitorRelationExample extends Optimization {
         new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
     this.addElement(aachen);
 
-    // Without any Relation, Aachen->Dueren->Koeln would cluster together in the same Route for geographic reasons.
+    // Without any Relation, Aachen->Dueren->Koeln would cluster together in the same Route for
+    // geographic reasons.
     // Essen, Wupppertal would cluster in the other Route.
-    // Since we want Aachen and Essen to be visited by the same Resource (= same visitor) we have to set the
+    // Since we want Aachen and Essen to be visited by the same Resource (= same visitor) we have to
+    // set the
     // appropriate Relations using setIsForcedSameVisitor().
 
     // Create relation

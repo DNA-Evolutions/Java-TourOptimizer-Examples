@@ -7,11 +7,12 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.requestresult;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
 import static java.time.Month.MARCH;
+import static java.time.Month.MAY;
 import static tec.units.ri.unit.MetricPrefix.KILO;
 import static tec.units.ri.unit.Units.METRE;
 
@@ -76,7 +77,7 @@ public class RequestResultExample extends Optimization {
     resultFuture.get();
   }
 
-  private void addResources() {
+  private static List<IWorkingHours> getDefaultWorkingHours() {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
@@ -88,6 +89,10 @@ public class RequestResultExample extends Optimization {
         new WorkingHours(
             ZonedDateTime.of(2020, MARCH.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MARCH.getValue(), 7, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+    return workingHours;
+  }
+
+  private void addResources() {
 
     Duration maxWorkingTimeJack = Duration.ofHours(8);
     Duration maxWorkingTimeJohn = Duration.ofHours(14);
@@ -95,20 +100,30 @@ public class RequestResultExample extends Optimization {
 
     IResource rep1 =
         new CapacityResource(
-            "Jack", 50.775346, 6.083887, maxWorkingTimeJack, maxDistanceKmW, workingHours);
+            "Jack",
+            50.775346,
+            6.083887,
+            maxWorkingTimeJack,
+            maxDistanceKmW,
+            getDefaultWorkingHours());
     rep1.setCost(0, 1, 1);
 
     this.addElement(rep1);
 
     IResource rep2 =
         new CapacityResource(
-            "John", 50.775346, 6.083887, maxWorkingTimeJohn, maxDistanceKmW, workingHours);
+            "John",
+            50.775346,
+            6.083887,
+            maxWorkingTimeJohn,
+            maxDistanceKmW,
+            getDefaultWorkingHours());
     rep2.setCost(0, 1, 1);
     this.addElement(rep2);
   }
 
   private void addNodes() {
-	  
+
     List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
     weeklyOpeningHours.add(
         new OpeningHours(

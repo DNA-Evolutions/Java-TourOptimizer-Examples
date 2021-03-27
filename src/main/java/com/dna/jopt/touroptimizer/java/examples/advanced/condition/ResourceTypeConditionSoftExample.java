@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.condition;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -52,9 +52,10 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tec.units.ri.quantity.Quantities;
 
 /**
- * Setting a Qualification ("efficient") that a Node would prefer if the visiting Resource had it. We do not set
- * this as a hard constraint but as a soft constraint. Therefore, the Optimizer will add additional costs to solutions that do not
- * comply with this condition, but it will not be enforced.
+ * Setting a Qualification ("efficient") that a Node would prefer if the visiting Resource had it.
+ * We do not set this as a hard constraint but as a soft constraint. Therefore, the Optimizer will
+ * add additional costs to solutions that do not comply with this condition, but it will not be
+ * enforced.
  *
  * @author DNA
  * @version Mar 23, 2021
@@ -86,7 +87,7 @@ public class ResourceTypeConditionSoftExample extends Optimization {
     resultFuture.get();
   }
 
-  private void addResources() {
+  private static List<IWorkingHours> getDefaultWorkingHours() {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
@@ -99,15 +100,24 @@ public class ResourceTypeConditionSoftExample extends Optimization {
             ZonedDateTime.of(2020, MARCH.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MARCH.getValue(), 7, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
+    return workingHours;
+  }
+
+  private void addResources() {
+
     Duration maxWorkingTimeJack = Duration.ofHours(8);
     Duration maxWorkingTimeJohn = Duration.ofHours(14);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
     IResource rep1 =
         new CapacityResource(
-            "Jack", 50.775346, 6.083887, maxWorkingTimeJack, maxDistanceKmW, workingHours);
+            "Jack",
+            50.775346,
+            6.083887,
+            maxWorkingTimeJack,
+            maxDistanceKmW,
+            getDefaultWorkingHours());
     rep1.setCost(0, 1, 1);
-
 
     // We are defining the Qualification "super efficient" and add it to "Jack".
     IQualification typeQualification = new TypeQualification();
@@ -115,11 +125,17 @@ public class ResourceTypeConditionSoftExample extends Optimization {
     rep1.addQualification(typeQualification);
     this.addElement(rep1);
 
-    // Note that "John" does not have the above-defined Qualification. Nodes with the respective typeConstraint will
+    // Note that "John" does not have the above-defined Qualification. Nodes with the respective
+    // typeConstraint will
     // therefore prefer the "efficient" "Jack".
     IResource rep2 =
         new CapacityResource(
-            "John", 50.775346, 6.083887, maxWorkingTimeJohn, maxDistanceKmW, workingHours);
+            "John",
+            50.775346,
+            6.083887,
+            maxWorkingTimeJohn,
+            maxDistanceKmW,
+            getDefaultWorkingHours());
     rep2.setCost(0, 1, 1);
     this.addElement(rep2);
   }
@@ -172,14 +188,16 @@ public class ResourceTypeConditionSoftExample extends Optimization {
         new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
     this.addElement(aachen);
 
-    // We are defining the typeConstraint "efficient" and add it to the Node "Koeln". Since we do not declare
-    // this typeConstraint as hard (typeConstraint.setisHard(true)), "Koeln" will prefer the Resource "Jack" that has
-    // the Qualification, but it will be content with the Resource "John" if the cost for getting "Jack" is too high.
+    // We are defining the typeConstraint "efficient" and add it to the Node "Koeln". Since we do
+    // not declare
+    // this typeConstraint as hard (typeConstraint.setisHard(true)), "Koeln" will prefer the
+    // Resource "Jack" that has
+    // the Qualification, but it will be content with the Resource "John" if the cost for getting
+    // "Jack" is too high.
     // Efficiency has it’s price after all.
     IConstraint typeConstraint = new TypeConstraint();
     ((TypeConstraint) typeConstraint).addType("efficient");
     koeln.addConstraint(typeConstraint);
-
   }
 
   @Override
@@ -202,7 +220,6 @@ public class ResourceTypeConditionSoftExample extends Optimization {
   public void onProgress(String winnerProgressString) {
     System.out.println(winnerProgressString);
   }
-
 
   @Override
   public void onAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {

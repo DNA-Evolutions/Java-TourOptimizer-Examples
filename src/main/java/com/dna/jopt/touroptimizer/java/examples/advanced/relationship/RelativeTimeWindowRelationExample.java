@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.relationship;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -47,10 +47,11 @@ import tec.units.ri.quantity.Quantities;
 
 /**
  * In this example we show how to connect Nodes by a relative timeWindow. This can be applied in use
- * cases where tasks have to be tiered in a pre-defined order. In this example we want the tasks to be done
- * as fast as possible. The relatedNode has to start working as soon as the masterNode is finished with it’s
- * task. The function is very flexible. Separate variables would allow to set a minimal time that has to pass between
- * the tasks or setting a loose timeframe within which both tasks have to be done.
+ * cases where tasks have to be tiered in a pre-defined order. In this example we want the tasks to
+ * be done as fast as possible. The relatedNode has to start working as soon as the masterNode is
+ * finished with it’s task. The function is very flexible. Separate variables would allow to set a
+ * minimal time that has to pass between the tasks or setting a loose timeframe within which both
+ * tasks have to be done.
  *
  * @author DNA
  * @version Mar 23, 20211
@@ -58,20 +59,23 @@ import tec.units.ri.quantity.Quantities;
  */
 public class RelativeTimeWindowRelationExample extends Optimization {
 
-  public static void main(String[] args) throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+  public static void main(String[] args)
+      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
     new RelativeTimeWindowRelationExample().example();
   }
-  
+
   public String toString() {
-	  return "Connecting Nodes with each other by defining a relative timeWindow. A use case would be that a " +
-              "certain\r\n" + " workOrder needs to be fulfilled before another one can start. It is also possible to " +
-              "define that\r\n" + " two hours have topass before another workOrder can start."
-	      + " In this example we want the Nodes Aachen and Essen to start within a timeWindow of maximal 20 minutes " +
-              "(start in unison).";
+    return "Connecting Nodes with each other by defining a relative timeWindow. A use case would be that a "
+        + "certain\r\n"
+        + " workOrder needs to be fulfilled before another one can start. It is also possible to "
+        + "define that\r\n"
+        + " two hours have topass before another workOrder can start."
+        + " In this example we want the Nodes Aachen and Essen to start within a timeWindow of maximal 20 minutes "
+        + "(start in unison).";
   }
 
-
-  public void example() throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+  public void example()
+      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
@@ -101,7 +105,7 @@ public class RelativeTimeWindowRelationExample extends Optimization {
     this.addElement(props);
   }
 
-  private void addResources() {
+  private static List<IWorkingHours> getDefaultWorkingHours() {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
@@ -114,18 +118,23 @@ public class RelativeTimeWindowRelationExample extends Optimization {
             ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
+    return workingHours;
+  }
+
+  private void addResources() {
+
     Duration maxWorkingTime = Duration.ofHours(13);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
     IResource rep1 =
         new CapacityResource(
-            "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
+            "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, getDefaultWorkingHours());
     rep1.setCost(0, 1, 1);
     this.addElement(rep1);
 
     IResource rep2 =
         new CapacityResource(
-            "John", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
+            "John", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, getDefaultWorkingHours());
     rep2.setCost(0, 1, 1);
     this.addElement(rep2);
   }
@@ -166,7 +175,6 @@ public class RelativeTimeWindowRelationExample extends Optimization {
         new TimeWindowGeoNode("Nuernberg", 49.4478, 11.0683, weeklyOpeningHours, visitDuration, 1);
     this.addElement(nuernberg);
 
-
     TimeWindowGeoNode stuttgart =
         new TimeWindowGeoNode("Stuttgart", 48.7667, 9.18333, weeklyOpeningHours, visitDuration, 1);
     this.addElement(stuttgart);
@@ -182,7 +190,8 @@ public class RelativeTimeWindowRelationExample extends Optimization {
     // Create a relative timeWindowRelation as delta based on the masterNode
     // The task of the relatedNode has to start 20 minutes after the masterNode has arrived
     // Since we set a visitDuration of 20 minutes, work has to proceed immediately
-    INode2NodeTempusRelation rel = new RelativeTimeWindow2RelatedNodeRelation(Duration.ofMinutes(0), Duration.ofMinutes(20));
+    INode2NodeTempusRelation rel =
+        new RelativeTimeWindow2RelatedNodeRelation(Duration.ofMinutes(0), Duration.ofMinutes(20));
     rel.setMasterNode(essen);
     rel.setRelatedNode(aachen);
     // Defining the arrival times of the Nodes to be the relevant timestamps for the settings above

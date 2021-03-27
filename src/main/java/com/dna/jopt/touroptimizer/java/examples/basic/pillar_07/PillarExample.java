@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.basic.pillar_07;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -28,7 +28,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static java.time.Month.JUNE;
-
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 
@@ -57,7 +56,8 @@ import tec.units.ri.quantity.Quantities;
 /** Doing an asynch run and defining pillar nodes */
 public class PillarExample extends Optimization {
 
-  public static void main(String[] args) throws InterruptedException, ExecutionException, IOException, InvalidLicenceException {
+  public static void main(String[] args)
+      throws InterruptedException, ExecutionException, IOException, InvalidLicenceException {
     new PillarExample().example();
   }
 
@@ -68,7 +68,8 @@ public class PillarExample extends Optimization {
     return "Positioing a pillar node, attached to a resource.";
   }
 
-  public void example() throws InterruptedException, ExecutionException, IOException, InvalidLicenceException {
+  public void example()
+      throws InterruptedException, ExecutionException, IOException, InvalidLicenceException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
@@ -78,7 +79,7 @@ public class PillarExample extends Optimization {
 
     // Create res
     this.addResources(this);
-    
+
     this.addNodes(this);
     this.addPillars(this);
 
@@ -86,7 +87,6 @@ public class PillarExample extends Optimization {
 
     // It is important to block the call, otherwise optimization will be terminated
     resultFuture.get();
-
   }
 
   private void setProperties(IOptimization opti) {
@@ -101,7 +101,7 @@ public class PillarExample extends Optimization {
     opti.addElement(props);
   }
 
-  private void addResources(IOptimization opti) {
+  private static List<IWorkingHours> getDefaultWorkingHours() {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
@@ -119,18 +119,23 @@ public class PillarExample extends Optimization {
             ZonedDateTime.of(2019, JUNE.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2019, JUNE.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
+    return workingHours;
+  }
+
+  private void addResources(IOptimization opti) {
+
     Duration maxWorkingTime = Duration.ofHours(13);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
     this.johnRes =
         new CapacityResource(
-            "John", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
+            "John", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, getDefaultWorkingHours());
     johnRes.setCost(0, 1, 1);
     opti.addElement(johnRes);
 
     this.jackRes =
         new CapacityResource(
-            "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
+            "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, getDefaultWorkingHours());
     jackRes.setCost(0, 1, 1);
     opti.addElement(jackRes);
   }
@@ -166,7 +171,6 @@ public class PillarExample extends Optimization {
             "Oberhausen", 51.4667, 6.85, weeklyOpeningHoursNormalNodes, visitDuration, 1);
     opti.addElement(oberhausen);
 
-
     INode nuernberg =
         new TimeWindowGeoNode(
             "Nuernberg", 49.4478, 11.0683, weeklyOpeningHoursNormalNodes, visitDuration, 1);
@@ -176,7 +180,6 @@ public class PillarExample extends Optimization {
         new TimeWindowGeoNode(
             "Heilbronn", 49.1403, 9.22, weeklyOpeningHoursNormalNodes, visitDuration, 1);
     opti.addElement(heilbronn);
-
 
     INode aachen =
         new TimeWindowGeoNode(
