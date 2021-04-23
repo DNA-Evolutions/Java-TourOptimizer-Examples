@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -26,9 +26,13 @@ public class ExampleLicenseHelper {
 
   public static boolean setLicense(IOptimization opti) throws IOException {
 
+    return setLicense(opti, ExampleLicenseHelper.LICENSE_PATH);
+  }
 
-    File myLicFile = new File(ExampleLicenseHelper.LICENSE_PATH);
-    
+  public static boolean setLicense(IOptimization opti, String path) throws IOException {
+
+    File myLicFile = new File(path);
+
     // Checks whether license file exists, otherwise uses free mode by not setting any license
     if (myLicFile.exists()) {
       opti.setLicenseJSON(myLicFile);
