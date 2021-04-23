@@ -101,11 +101,13 @@ public class CustomSolutionExample extends Optimization {
     firstRoute.setRouteStart(myRes);
     firstRoute.setRouteTermination(myRes);
     firstRoute.addAllToOptimizableElements(this.getNodeSet1());
+    firstRoute.setRouteId(0);
 
     secondRoute.setCurrentVisitingResource(myRes, 1);
     secondRoute.setRouteStart(myRes);
     secondRoute.setRouteTermination(myRes);
     secondRoute.addAllToOptimizableElements(this.getNodeSet2());
+    secondRoute.setRouteId(1);
 
     // Create entity
     IEntity entity = new Entity();
