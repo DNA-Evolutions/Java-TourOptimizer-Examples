@@ -57,7 +57,7 @@ import tec.units.ri.quantity.Quantities;
 /**
  * ATTENTION: This example contains more than 10 elements therefore a valid license is required.
  *
- * <p>Example of clustering construction. Multiple nodes within the City Cologne needs to be
+ * <p>Example of clustering construction. Multiple nodes within the City Cologne need to be
  * visited. Resources are also spread around Cologne. The Nodes and Resources are positioned in a
  * Phyllotaxis pattern. The task is to create a solution purely based on clustering construction
  * without using optimization algorithms.
