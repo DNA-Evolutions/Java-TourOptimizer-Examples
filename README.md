@@ -33,12 +33,43 @@ Click, to open video:
 <a href="https://www.youtube.com/watch?v=U4mDQGnZGZs" target="_blank"><img src="https://dna-evolutions.com/wp-content/uploads/2021/02/joptIntrox169_small.png" width="500"
 title="Introduction Video for DNA's JOpt" alt="Introduction Video for DNA's JOpt"></a>
 
-## Getting Started
+## Getting Started with the Examples
 
-### Clone this repository
-Clone this repository and start any example file.
+You can start using our example in different ways.
 
-### Download the jar
+* [Use our sandbox in your browser (Docker required)](#use-our-sandbox-in-your-browser-docker-required)
+* [Clone this repository](#clone-this-repository)
+* [Download the Jar directly or as Dependency](#download-the-jar-directly-or-as-dependency)
+* [Download our .NET legacy version](#download-our-net-legacy-version)
+
+## Use our sandbox in your browser (Docker required)
+In case you want to get started without the hassle of installing Java, Maven and an IDE, we provide a sandbox. The sandbox is an extension of [code-server](https://github.com/cdr/code-server) and can be used inside your browser, the interface itself is based on Visual Code. You have to host it in your local Docker environment (Please provide at least 2-4Gb of Ram and 2 Cores). You can pull the sandbox from our DockerHub account (The Dockerfile for creating the sandbox is included in this repository). The latest version of our examples is cloned by default on launching the Docker container, and you can start testing JOpt right away.
+
+### Starting the sandbox and persist your changes
+You must mount a volume to which the examples of this project are downloaded on the container's startup. After re-launching the container, the latest version of our examples is only cloned if the folder is not already existing, keeping your files safe from being overridden.
+
+Launching a sanbox and mount your current directory ('$PWD') or any other directory you want:
+
+```
+docker run -it -d --name jopt-examples -p 127.0.0.1:8042:8080 -v "$PWD:/home/coder/project" dnaevolutions/jopt_example_server:latest
+```
+
+### Using the sandbox
+
+After starting the container, you can open [http://localhost:8042/](http://localhost:8042) with your browser and login with the password:
+
+```
+jopt
+```
+
+During the run of your first example file, some dependencies are downloaded, and it will take some time (below 1 minute depending on your internet connection). In case you need help, contact us.
+
+**In the future, we will further provide an introduction video at this place.**
+
+## Clone this repository
+Clone this repository, import it as Maven project in your IDE and start any example.
+
+## Download the Jar directly or as Dependency
 The latest native java library of JOpt-TourOptimizer can be either downloaded via our official
 <a href="https://public.repo.dna-evolutions.com/#browse/browse:maven-releases" target="_blank">nexus repository</a>, from our <a href="https://www.dna-evolutions.com/" target="_blank">company website</a> or as a a direct download from here (always links the latest release):
 
@@ -70,10 +101,11 @@ or latest (recommended)
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.7-rc2</version>
+   <version>7.4.7-rc3</version>
   <classifier>shaded</classifier>
 </dependency>
 ```
+ 
 
 **We are recommending always using the latest version of JOpt (rc).**
 
@@ -96,7 +128,7 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.7-rc2</version>
+   <version>7.4.7-rc3</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
@@ -124,7 +156,7 @@ In your ``pom.xml`` add the following repository:
 
 <br>
 
-### .NET legacy version
+## Download our .NET legacy version
 
 We still support a legacy .NET version of JOpt. We utilize <a href="https://en.wikipedia.org/wiki/IKVM.NET" target="_blank">IKVM.NET</a> that is effectively a Java framework running on top of the .NET's framework.
 
@@ -134,11 +166,11 @@ The latest dll (archived as zip) as download:
 The IKVM.NET framework as download:
 - <a href="https://shared.dna-evolutions.com/legacy/net/ikvm_env/ikvm-8.1.5717.0.zip" target="_blank">IKVM.NET Framework</a>
 
-### Non-Maven projects
+## Non-Maven projects
 
 In case you use *Gradle*, *SBT*, *IVY*, *Grape*, *Leiningen*, *Builder*, or others, you can browse our <a href="https://public.repo.dna-evolutions.com/#browse/browse:maven-releases" target="_blank">nexus-repository</a>, select the desired dependency, and look out for the Usage container. Alternatively, you can use an online conversion tool to convert the Maven dependency into your desired format. Please keep in mind that you will have to add our repository in any case.
 
 
-### Prerequisites
+## Prerequisites
 
-* As native Java dependency - Install at least Java 8
+* As native Java dependency - Install at least Java 8 and Maven
