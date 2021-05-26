@@ -1,6 +1,5 @@
 package com.dna.jopt.touroptimizer.java.examples.advanced.visitdurationefficiency;
 
-import static java.time.Month.MARCH;
 /*-
  * #%L
  * JOpt TourOptimizer Examples

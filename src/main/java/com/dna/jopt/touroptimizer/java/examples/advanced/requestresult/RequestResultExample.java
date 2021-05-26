@@ -12,7 +12,6 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.requestresult;
  * #L%
  */
 import static java.time.Month.MARCH;
-import static java.time.Month.MAY;
 import static tec.units.ri.unit.MetricPrefix.KILO;
 import static tec.units.ri.unit.Units.METRE;
 
