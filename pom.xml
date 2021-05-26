@@ -59,13 +59,13 @@
 		<dependency>
 			<groupId>jopt</groupId>
 			<artifactId>jopt.core.pg</artifactId>
-			<version>7.4.7-rc2</version>
-			 <classifier>shaded</classifier>
+			<version>7.4.7-rc3</version>
+			<classifier>shaded</classifier>
 		</dependency>
 		<dependency>
 			<groupId>jopt</groupId>
 			<artifactId>jopt.core.pg</artifactId>
-			<version>7.4.7-rc2</version>
+			<version>7.4.7-rc3</version>
 			<classifier>javadoc</classifier>
 		</dependency>
 		<dependency>
@@ -97,12 +97,12 @@
 			<artifactId>commonmark</artifactId>
 			<version>0.14.0</version>
 		</dependency>
-		
-		
+
+
 		<dependency>
-		    <groupId>org.apache.logging.log4j</groupId>
-		    <artifactId>log4j-core</artifactId>
-		    <version>2.13.3</version>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.13.3</version>
 		</dependency>
 	</dependencies>
 
