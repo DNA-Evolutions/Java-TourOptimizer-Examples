@@ -176,4 +176,7 @@ In case you use *Gradle*, *SBT*, *IVY*, *Grape*, *Leiningen*, *Builder*, or othe
 
 ## Prerequisites
 
-* As native Java dependency - Install at least Java 8 and Maven
+* In your IDE as native Java dependency: Install at least Java 8 and Maven
+* In our sandbox: Working Docker environment
+* In your IDE as .NET legacy version: IKVM libraries imported in your project and a working .NET 4.X Framework.
+
