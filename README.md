@@ -51,7 +51,7 @@ You must mount a volume to which the examples of this project are downloaded on 
 Launching a sanbox and mount your current directory ('$PWD') or any other directory you want:
 
 ```
-docker run -it -d --name jopt-examples -p 127.0.0.1:8042:8080 -v "$PWD:/home/coder/project" dnaevolutions/jopt_example_server:latest
+docker run -it -d --name jopt-examples -p 127.0.0.1:8042:8080 -v "$PWD/:/home/coder/project" dnaevolutions/jopt_example_server:latest
 ```
 
 ### Using the sandbox
