@@ -45,6 +45,11 @@ You can start using our example in different ways.
 ## Use our sandbox in your browser (Docker required)
 In case you want to get started without the hassle of installing Java, Maven and an IDE, we provide a sandbox. The sandbox is based on  [code-server](https://github.com/cdr/code-server) and can be used inside your browser, the interface itself is based on Visual Code. The sandbox is available via DockerHub ([here](https://hub.docker.com/r/dnaevolutions/jopt_touroptimizer)). You have to host the sandbox in your Docker environment (Please provide at least 2-4Gb of Ram and 2 Cores). You can pull the sandbox from our DockerHub account (The Dockerfile for creating the sandbox is included in this repository). The latest version of our examples is cloned by default on launching the Docker container, and you can start testing JOpt right away.
 
+Preview:
+
+<a href="https://docs.dna-evolutions.com/indexres/coderserver.png" target="_blank"><img src="https://docs.dna-evolutions.com/indexres/coderserver.png" width="50%"
+title="Preview of JOpt-Example-Server"></a>
+
 ### Starting the sandbox and persist your changes
 You must mount a volume to which the examples of this project are downloaded on the container's startup. After re-launching the container, the latest version of our examples is only cloned if the folder is not already existing, keeping your files safe from being overridden.
 
