@@ -47,7 +47,7 @@ In case you want to get started without the hassle of installing Java, Maven and
 
 Preview:
 
-<a href="https://docs.dna-evolutions.com/indexres/coderserver.png" target="_blank"><img src="https://docs.dna-evolutions.com/indexres/coderserver.png" width="50%"
+<a href="https://docs.dna-evolutions.com/indexres/coderserver.png" target="_blank"><img src="https://docs.dna-evolutions.com/indexres/coderserver.png" width="75%"
 title="Preview of JOpt-Example-Server"></a>
 
 ### Starting the sandbox and persist your changes
