@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.basic.firstoptimization_01;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -45,7 +45,10 @@ import com.dna.jopt.member.unit.resource.IResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 /**
- * In this example we are starting a simple Optimization.
+ * In this example we are starting a simple Optimization. Visit 
+ * <a
+ * href="https://docs.dna-evolutions.com/java_examples/tutorials/tutorial_beginner/first_optimization/first_optimization.html">https://docs.dna-evolutions.com/java_examples/tutorials/tutorial_beginner/first_optimization/first_optimization.html</a>
+ * for a detailed explanation.
  *
  * @author jrich
  * @version Apr 6, 2020
@@ -67,6 +70,12 @@ public class FirstOptimizationExample extends Optimization {
     new FirstOptimizationExample().example();
   }
 
+  public String toString() {
+    return "The first Optimization example. Visit "
+        + "https://docs.dna-evolutions.com/java_examples/tutorials/tutorial_beginner/first_optimization/first_optimization.html "
+        + "for a detailed explanation.";
+  }
+
   /**
    * The method which executes the necessary parts for the Optimization.
    *
@@ -78,7 +87,8 @@ public class FirstOptimizationExample extends Optimization {
   public void example()
       throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
 
-    // We use the free mode for the example - please modify the ExampleLicenseHelper in case you have a valid
+    // We use the free mode for the example - please modify the ExampleLicenseHelper in case you
+    // have a valid
     // license.
 
     ExampleLicenseHelper.setLicense(this);

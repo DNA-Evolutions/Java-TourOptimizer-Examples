@@ -4,13 +4,14 @@
 <a href="https://dna-evolutions.com/" target="_blank"><img src="https://docs.dna-evolutions.com/indexres/dna-temp-logo.png" width="110"
 title="DNA-Evolutions" alt="DNA-Evolutions"></a>
 
-This repository is part of our JOpt-TourOptimizer-Suite for Java. It includes an extensive collection of examples (written in Java). This fully functional Maven project can be cloned and can be used as a base for starting with JOpt-TourOptimizer.
+This repository is part of our JOpt-TourOptimizer-Suite for Java. It includes an extensive collection of examples (written in Java). This fully functional Maven project can be cloned and used as a base for starting with JOpt-TourOptimizer. Further, a sandbox can be utilized (requiring a running Docker environment), lifting the challenge to set up an IDE.
 
-The project is subdivided into three major types of examples:
+The project is subdivided into four major types of examples:
 
 1. <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic" target="_blank">Basic Examples</a>
 2. <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced" target="_blank">Advanced Examples</a>
 3. <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert" target="_blank">Expert Examples</a>
+4. <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/restful" target="_blank">RESTful Examples</a>
 
 Each of the examples sections has its README.
 
@@ -82,7 +83,7 @@ The latest native java library of JOpt-TourOptimizer can be either downloaded vi
 - <a href="https://public.repo.dna-evolutions.com/service/rest/v1/search/assets/download?sort=version&repository=maven-releases&group=jopt&maven.artifactId=jopt.core.pg&maven.extension=jar&maven.classifier=javadoc" target="_blank">Javadoc jar</a>
 
 ### As Dependency (Recommended)
-However, it is recommended to use our nexus-endpoint as a repository and download the jars as a dependency into your project.
+However, it is recommended to use our nexus-endpoint as a repository and download the jars as a dependency into your project. You can also search for older versions of JOpt in our <a href="https://public.repo.dna-evolutions.com/#browse/browse:maven-releases" target="_blank">nexus repository</a>.
 
 ### Snippet for Maven
 
@@ -106,7 +107,7 @@ or latest (recommended)
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.7-rc3</version>
+   <version>7.4.7-rc4</version>
   <classifier>shaded</classifier>
 </dependency>
 ```
@@ -133,7 +134,7 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.7-rc3</version>
+   <version>7.4.7-rc4</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
