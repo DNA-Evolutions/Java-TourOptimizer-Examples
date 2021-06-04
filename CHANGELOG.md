@@ -6,6 +6,12 @@ Summarized changelogs for this example repository and the underlying JOpt Librar
 * [Changelog of this example repository](#changelog-examples)
 * [Changelog of JOpt Library](#changelog-jopt-library)
 
+Explanations of keys:
+- **Deprecated:** Remove, or mark a deprecated method/class
+- **Feature:** Add new code or a new behaviour
+- **Fix:** Resolve a bug
+- **Improvement:** Improve existing code
+- **Update:** Update/add a dependency
 
 ## Changelog - Examples
 
