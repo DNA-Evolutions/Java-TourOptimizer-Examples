@@ -13,7 +13,7 @@ Explanations of keys:
 - **Improvement:** Improve existing code
 - **Update:** Update/add a dependency
 
-## Changelog - Examples
+## Changelog Examples
 
 **v7.4.7-rc4**
 - Improvement: Different README modifications
@@ -84,7 +84,7 @@ Explanations of keys:
 - Feature: Starting repository with a stack of Examples
 
 
-## Changelog - JOpt Library
+## Changelog JOpt Library
 
 **v7.4.7-rc4**
 - Fix: Avoid using "oneOf" in schema definition, as OpenApiGenerator can't handle it correctly.
