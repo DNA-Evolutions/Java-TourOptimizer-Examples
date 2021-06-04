@@ -13,7 +13,10 @@ The project is subdivided into four major types of examples:
 3. <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert" target="_blank">Expert Examples</a>
 4. <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/restful" target="_blank">RESTful Examples</a>
 
-Each of the examples sections has its README.
+Each of the example-sections has its own README. 
+
+The changelog of this repository and the underlying JOpt library is available in 
+<a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/CHANGELOG.md" target="_blank">CHANGELOG.md</a>.
 
 # Further Documentation and Links
 
