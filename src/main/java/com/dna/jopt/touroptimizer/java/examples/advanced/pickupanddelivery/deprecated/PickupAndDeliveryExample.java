@@ -130,11 +130,11 @@ public class PickupAndDeliveryExample extends Optimization {
         new CapacityResource(
             "truck1", 50.1167, 7.68333, maxWorkingTime, maxDistanceKmW, workingHours);
 
-    double[] truck1InitialLoad = {0};
+    double[] truck1InitialLoad = {10};
     truck1.setInitialLoad(truck1InitialLoad);
 
     // Add the capacity
-    double truck1Capacity = 3;
+    double truck1Capacity = 10;
     truck1.setCapacity(new double[] {truck1Capacity});
 
     this.addElement(truck1);
