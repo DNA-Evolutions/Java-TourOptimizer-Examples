@@ -52,7 +52,6 @@ import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.google.common.collect.ImmutableList;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class BuilderPatternExample. Use a builder to create an Optimization and launch it via
  * JSONOptimization engine.
