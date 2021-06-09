@@ -73,7 +73,7 @@ jopt
 
 During the run of your first example file, some dependencies are downloaded, and it will take some time (below 1 minute depending on your internet connection). In case you need help, contact us.
 
-**In the future, we will further provide an introduction video at this place.**
+Please visit our **[tutorial video](https://www.youtube.com/watch?v=Jk9ONloaNlk)** (approx. 3 minutes duration) hosted on YouTube on how to use our sandbox.
 
 ## Clone this repository
 Clone this repository, import it as Maven project in your IDE and start any example.
