@@ -6,6 +6,14 @@ title="DNA-Evolutions" alt="DNA-Evolutions"></a>
 
 This repository is part of our JOpt-TourOptimizer-Suite for Java. It includes an extensive collection of examples (written in Java). This fully functional Maven project can be cloned and used as a base for starting with JOpt-TourOptimizer. Further, a sandbox can be utilized (requiring a running Docker environment), lifting the challenge to set up an IDE.
 
+
+# Contact
+
+If you need any help, please contact us via our company website <a href="https://www.dna-evolutions.com" target="_blank">www.dna-evolutions.com</a> or write an email to <a href="mailto:info@dna-evolutions.com">info@dna-evolutions.com</a>.
+
+
+# Outline
+
 The project is subdivided into four major types of examples:
 
 1. <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic" target="_blank">Basic Examples</a>
@@ -22,7 +30,6 @@ The changelog of this repository and the underlying JOpt library is available in
 
 - Further documentation 	- <a href="https://docs.dna-evolutions.com" target="_blank">docs.dna-evolutions.com</a>
 - Special features 	- <a href="https://docs.dna-evolutions.com/overview_docs/special_features/Special_Features.html" target="_blank">Overview of special features</a>
-- Our company website 	- <a href="https://www.dna-evolutions.com" target="_blank">www.dna-evolutions.com</a>
 - Our official repository 	- <a href="https://public.repo.dna-evolutions.com" target="_blank">public.repo.dna-evolutions.com</a>
 - Our official JavaDocs 		- <a href="https://public.javadoc.dna-evolutions.com" target="_blank">public.javadoc.dna-evolutions.com</a>
 - Our YouTube channel - <a href="https://www.youtube.com/channel/UCzfZjJLp5Rrk7U2UKsOf8Fw" target="_blank">DNA Tutorials</a>
