@@ -240,7 +240,7 @@ public class PNDReportExtractionExample extends Optimization {
     StringBuilder routeSB = new StringBuilder();
 
     routeSB.append("Id: " + depot.getDepotId());
-    routeSB.append(" / Type: " + depot.getTypeName());
+    routeSB.append(" / Type: " + depot.typeName());
 
     Collection<ILoad> loads = depot.getItems();
 
@@ -261,7 +261,7 @@ public class PNDReportExtractionExample extends Optimization {
 
     routeSB.append(" Id: " + load.getId() + " /");
 
-    routeSB.append(" Type: " + load.getTypeName() + " /");
+    routeSB.append(" Type: " + load.typeName() + " /");
 
     routeSB.append(" Desired Load Exchange: " + load.getLoadValue() + " /");
 
@@ -291,7 +291,7 @@ public class PNDReportExtractionExample extends Optimization {
     StringBuilder routeSB = new StringBuilder();
 
     routeSB.append("Id: " + depot.getDepotId());
-    routeSB.append(" / Type: " + depot.getTypeName() + " ");
+    routeSB.append(" / Type: " + depot.typeName() + " ");
     routeSB.append(" / MaxTotalCapacity: " + depot.getMaximalTotalCapacity());
     routeSB.append(" / UsedCapacity: " + depot.getCurrentTotalMatchedLoad());
 
@@ -323,7 +323,7 @@ public class PNDReportExtractionExample extends Optimization {
     StringBuilder routeSB = new StringBuilder();
 
     routeSB.append(" Id: " + loadCap.getId() + " /");
-    routeSB.append(" Type: " + loadCap.getTypeName() + " /");
+    routeSB.append(" Type: " + loadCap.typeName() + " /");
     routeSB.append(" Load: " + loadCap.getCurrentLoad() + " /");
     routeSB.append(" maxCapacity: " + loadCap.getMaximalIndividualLoadCapacity() + " /");
 

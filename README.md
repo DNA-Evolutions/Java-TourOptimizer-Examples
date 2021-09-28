@@ -119,7 +119,7 @@ or latest (recommended)
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.7-rc4</version>
+   <version>7.4.7-rc5</version>
   <classifier>shaded</classifier>
 </dependency>
 ```
@@ -135,7 +135,7 @@ In case you want to add our JavaDocs to your project, further add the following 
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-  <version>7.4.6</version>
+  <version>7.4.7</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
@@ -146,7 +146,7 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.7-rc4</version>
+   <version>7.4.7-rc5</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
