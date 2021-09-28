@@ -15,6 +15,15 @@ Explanation of keys:
 
 ## Changelog Examples
 
+**v7.4.7-rc5**
+- Update: Refactor PND-Depot method "getTypeName()" to "typeName()"; 
+- Feature: Add examples for CO2 emission and Return2Start
+- Improvement: Add dockerhub and linkedin channel link
+- Improvement: Add sandbox tutorial youtube link
+- Feature: Add builder pattern example
+- Improvement: Improve PickupAndDeliveryExample.java by setting meaningful initial load values
+
+
 **v7.4.7-rc4**
 - Improvement: Different README modifications
 - Feature: Add restful examples
@@ -85,6 +94,28 @@ Explanation of keys:
 
 
 ## Changelog JOpt Library
+
+**v7.4.7-rc5**
+- Improvement: Use graceful late-filtering in combination with 2Opt-Optimization and violation revalidation to improve filtering behavior
+- Fix: Fix vulnerability in commons-compress by upgrading to version 1.21
+- Fix: Check null in genetic evolution before accessing cost of entity and make RouteClusterController synchronized
+- Improvement: Refactor schema definitions to allow better swagger TourOptimizer support
+- Improvement: Give direct access to SolutionHeader creation
+- Improvement: Improve JSON handling
+- Improvement: Add non-generic wrapper for OptimizationConfig
+- Improvement: Let nodes be in a "real" violation state as a precondition for auto-filtering
+- Feature: Margin for pillar lateness
+- Improvement: Also return elements via "getAllElements()" if Optimization was not started yet
+- Fix: Fix bug where asynchronous execution logic is partially executed on every iteration
+- Improvement: Add new correction logic for Resources with too many dutyHours on custom solution usage
+- Improvement: Set "50" as default value for "JOptWeight.Capacity"
+- Feature: Add CO2 calculation
+- Fix: Protect internal connection table from concurrent access
+- Feature:  Add "overload" capacity filtering
+- Feature: Add late and early violation detection for forcefilter
+- Fix: Add asynchronous request with external timeout and remove synchronous block to fix issue of concurrent save and request result
+- Fix: Do not create initial generation in genetic evolution before run really starts as the loaded snapshot data can change
+- Fix: Avoid oneOf annotation by using DiscriminatorMapping
 
 **v7.4.7-rc4**
 - Fix: Avoid using "oneOf" in schema definition, as OpenApiGenerator can't handle it correctly.
