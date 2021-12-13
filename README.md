@@ -119,7 +119,7 @@ or latest (recommended)
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.7-rc5</version>
+   <version>7.4.7-rc6</version>
   <classifier>shaded</classifier>
 </dependency>
 ```
@@ -146,7 +146,7 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.7-rc5</version>
+   <version>7.4.7-rc6</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
