@@ -113,13 +113,13 @@ For adding the JOpt dependency to your ``pom.xml`` you can use the following sni
 </dependency>
 ```
 
-or latest (recommended)
+or latest (recommended - including log4j-core fix)
 
 ```xml
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.7-rc6</version>
+   <version>7.4.7-rc7</version>
   <classifier>shaded</classifier>
 </dependency>
 ```
@@ -146,7 +146,7 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.7-rc6</version>
+   <version>7.4.7-rc7</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
