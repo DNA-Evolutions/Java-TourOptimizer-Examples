@@ -18,7 +18,7 @@ import com.dna.jopt.framework.body.IOptimization;
 
 public class ExampleLicenseHelper {
 
-  private static final String LICENSE_PATH = "src/main/resources/YOUR_LICENSE.jli";
+  private static final String LICENSE_PATH = "src/main/resources/license/YOUR_LICENSE.jli";
 
   private ExampleLicenseHelper() {
     // Nothing to do
