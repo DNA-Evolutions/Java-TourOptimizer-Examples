@@ -108,7 +108,7 @@ For adding the JOpt dependency to your ``pom.xml`` you can use the following sni
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.6</version>
+   <version>7.4.8</version>
   <classifier>shaded</classifier>
 </dependency>
 ```
@@ -119,7 +119,7 @@ or latest (recommended - including log4j-core fix)
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.7-rc7</version>
+   <version>7.4.8</version>
   <classifier>shaded</classifier>
 </dependency>
 ```
@@ -135,7 +135,7 @@ In case you want to add our JavaDocs to your project, further add the following 
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-  <version>7.4.7</version>
+  <version>7.4.8</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
@@ -146,7 +146,7 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.7-rc7</version>
+   <version>7.4.8</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
@@ -178,11 +178,12 @@ In your ``pom.xml`` add the following repository:
 
 We still support a legacy .NET version of JOpt. We utilize <a href="https://en.wikipedia.org/wiki/IKVM.NET" target="_blank">IKVM.NET</a> that is effectively a Java framework running on top of the .NET's framework.
 
-The latest release dll (archived as zip) as download (7.4.6-legacy):
-- <a href="https://shared.dna-evolutions.com/legacy/net/jopt.core.pg-7.4.6-shaded/jopt.core.pg-7.4.6-shaded.zip" target="_blank">JOpt .Net - 7.4.6</a>
 
-The latest dll (archived as zip) as download (7.4.7-rc3-legacy):
-- <a href="https://shared.dna-evolutions.com/legacy/net/jopt.core-7.4.7-rc3-with-dep-pg-legacy/jopt.core-7.4.7-rc3-with-dep-pg-legacy.zip" target="_blank">JOpt .Net - 7.4.7-rc3</a>
+The latest release dll (archived as zip) as download (7.4.8-legacy):
+- <a href="https://shared.dna-evolutions.com/legacy/net/jopt.core-7.4.8-with-dep-pg-legacy/jopt.core-7.4.8-with-dep-pg-legacy.zip" target="_blank">JOpt .Net - 7.4.8</a>
+
+The previous release dll (archived as zip) as download (7.4.6-legacy):
+- <a href="https://shared.dna-evolutions.com/legacy/net/jopt.core.pg-7.4.6-shaded/jopt.core.pg-7.4.6-shaded.zip" target="_blank">JOpt .Net - 7.4.6</a>
 
 The IKVM.NET framework as download:
 - <a href="https://shared.dna-evolutions.com/legacy/net/ikvm_env/ikvm-8.1.5717.0.zip" target="_blank">IKVM.NET Framework</a>

@@ -179,12 +179,13 @@ public class PNDTimedLoadExample extends Optimization {
      *
      */
 
-    // We add each potential passenger to our depot. Notice the currentLoad is 0, the passengers still need to be
+    // We add each potential passenger to our depot. Notice, if the currentLoad is 0, the passengers still need to be
     // picked up.
     ILoadCapacity maxCapacity = new SimpleLoadCapacity("Max", 1, 0);
 
     ILoadCapacity peterCapacity = new SimpleLoadCapacity("Peter", 1, 0);
 
+    // Lars is already on board
     ILoadCapacity larsCapacity = new SimpleLoadCapacity("Lars", 1, 1);
 
     // Our passenger cabin can host a maximum of 3 passengers

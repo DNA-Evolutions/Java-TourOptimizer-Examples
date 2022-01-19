@@ -15,6 +15,16 @@ Explanation of keys:
 
 ## Changelog Examples
 
+**v7.4.8**
+- Fix:  Use subfolder by default for license location
+
+**v7.4.7-rc7**
+- Fix:  Solve medium critical vulnerability in dependency in log4j-core by further bumping version to 2.17.1
+
+**v7.4.7-rc6**
+- Fix: Solve highly critical vulnerability in log4j-core by bumping version
+- Feature: Add example for reading out headers
+
 **v7.4.7-rc5**
 - Update: Refactor PND-Depot method "getTypeName()" to "typeName()"; 
 - Feature: Add examples for CO2 emission and Return2Start
@@ -94,6 +104,39 @@ Explanation of keys:
 
 
 ## Changelog JOpt Library
+
+**v7.4.8**
+- Improvement: Increase build number for licenses
+- Improvement: Allow possibility to disable start update in Workinghours
+- Fix: Solve xml errors
+- Fix: Solve medium critical vulnerability in log4j-core by further bumping version to 2.17.1
+- Improvement: Add methods for extracting potential lateness when dropping pillars
+
+**v7.4.7-rc7**
+- Fix: Solve medium critical vulnerability in log4j-core by further bumping version to 2.17.0
+- Fix: Solve medium critical vulnerability in log4j-core by further bumping version
+
+
+**v7.4.7-rc6**
+- Fix: Solve highly critical vulnerability in log4j-core by bumping version
+- Feature: Add constructors to define strength and other values for Goal tuning
+- Feature: Add Bound WeightBalancer with flexible initial weight adjustment
+- Improvement: Exchange order of node filtering categories in AutoFilter
+- Fix: Solve Nullpointer when using no depot on a resource
+- Feature: Add AutoFitlerCoupling for more restrictions
+- Feature: Add filtering to depot capacity logic
+- Improvement: Add an empty dummy chunk to let the GracefulFilter do an evaluation of the unmodified route.
+- Feature: Couple AutoFilter WorkingHours exceedance to late filtering
+- Feature: Extend onlyApplyPostFlexTimeWhenOvertime to Resource level
+- Feature: Only apply post flex-time cutting if onlyApplyPostFlexTimeWhenOvertime is set to true
+- Fix: Solve bug in route time calculation during force filtering
+- Feature: Allow post time reduction time only on route overtime, if desired
+- Fix: Do not allow negative visit durations
+- Improvement: Add test for combined reduction- and post-flex-time
+- Fix: Solve potential concurrency exception when streaming over list with optimization elements
+- Improvement: Further improve behavior of Graceful AutoFilter logic
+- Fix: Solve bug where max. margin is not honored and add partial margin concept
+
 
 **v7.4.7-rc5**
 - Improvement: Use graceful late-filtering in combination with 2Opt-Optimization and violation revalidation to improve filtering behavior
