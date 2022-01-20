@@ -55,5 +55,6 @@ Yes, there are two ways, you can test JOpt TourOptimizer without any installatio
 
 - You can check out our Demo-Application: <a href="https://dna-evolutions.com/example-application/" target="_blank">dna-evolutions.com/example-application/</a>
 
-
+**What is a suitable license for me, and what is the price?**
+- Please visit <a href="https://dna-evolutions.com/products/#jopt-touroptimizer-lic" target="_blank">dna-evolutions.com/products/#jopt-touroptimizer-lic</a> or contact us directly.
 
