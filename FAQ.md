@@ -27,7 +27,7 @@
 - Please visit <a href="https://docs.dna-evolutions.com/overview_docs/license/License.html" target="_blank">docs.dna-evolutions.com/overview_docs/license/License.html</a> 
 
 **How do I get in contact with DNA evolutions?**
-- Contact us via our company website <a href="https://www.dna-evolutions.com" target="_blank">www.dna-evolutions.com</a>  or write an email to <a href="mailto:info@dna-evolutions.com">info@dna-evolutions.com</a> info@dna-evolutions.com.
+- Contact us via our company website <a href="https://www.dna-evolutions.com" target="_blank">www.dna-evolutions.com</a>  or write an email to <a href="mailto:info@dna-evolutions.com">info@dna-evolutions.com</a>.
 
 **Who else is using JOpt-TourOptimizer?**
 - Check our at a glance website at <a href="https://dna-evolutions.com/at-a-glance/" target="_blank">https://dna-evolutions.com/at-a-glance/</a>
