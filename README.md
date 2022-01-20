@@ -23,8 +23,6 @@ The project is subdivided into four major types of examples:
 
 Each of the example-sections has its own README. 
 
-The changelog of this repository and the underlying JOpt library is available in 
-<a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/CHANGELOG.md" target="_blank">CHANGELOG.md</a>.
 
 # Further Documentation and Links
 
@@ -36,6 +34,12 @@ The changelog of this repository and the underlying JOpt library is available in
 - Documentation - <a href="https://docs.dna-evolutions.com/rest/touroptimizer/rest_touroptimizer.html" target="_blank">DNA's RESTful Spring-TourOptimizer in Docker </a>
 - Our DockerHub channel - <a href="https://hub.docker.com/u/dnaevolutions" target="_blank">DNA DockerHub</a>
 - Our LinkedIn channel - <a href="https://www.linkedin.com/company/dna-evolutions/" target="_blank">DNA LinkedIn</a>
+
+The changelog of this repository and the underlying JOpt library is available in 
+<a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/CHANGELOG.md" target="_blank">CHANGELOG.md</a>.
+
+The FAQ of this repository is available in 
+<a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/FAQ.md" target="_blank">FAQ.md</a>.
 
 
 # Short Introduction
