@@ -21,7 +21,7 @@
 - Please visit our overview of <a href="https://docs.dna-evolutions.com/overview_docs/special_features/Special_Features.html" target="_blank">special features</a> to get some inspiration.
 
 **I'm using the legacy .NET version of JOpt. Where do I get it?**
-- Please visit <a href="https://docs.dna-evolutions.com/readme/README.html#net-legacy-version" target="_blank">docs.dna-evolutions.com/readme/README.html#net-legacy-version</a> and follow the instructions.
+- Please visit <a href="https://docs.dna-evolutions.com/readme/readme.html#net-legacy-version" target="_blank">docs.dna-evolutions.com/readme/readme.html#net-legacy-version</a> and follow the instructions.
 
 **How do I use my license file?**
 - Please visit <a href="https://docs.dna-evolutions.com/overview_docs/license/License.html" target="_blank">docs.dna-evolutions.com/overview_docs/license/License.html</a> 
