@@ -1,4 +1,5 @@
 package com.dna.jopt.touroptimizer.java.examples.advanced.clustering;
+
 /*-
  * #%L
  * JOpt TourOptimizer Examples
@@ -55,12 +56,15 @@ import com.google.common.collect.ImmutableList;
 import tec.units.ri.quantity.Quantities;
 
 /**
- * ATTENTION: This example contains more than 10 elements therefore a valid license is required.
+ * ATTENTION: This example contains more than 10 elements therefore a valid
+ * license is required.
  *
- * <p>Example of clustering construction. Multiple nodes within the City Cologne need to be
- * visited. Resources are also spread around Cologne. The Nodes and Resources are positioned in a
- * Phyllotaxis pattern. The task is to create a solution purely based on clustering construction
- * without using optimization algorithms.
+ * <p>
+ * Example of clustering construction. Multiple nodes within the City Cologne
+ * need to be visited. Resources are also spread around Cologne. The Nodes and
+ * Resources are positioned in a Phyllotaxis pattern. The task is to create a
+ * solution purely based on clustering construction without using optimization
+ * algorithms.
  *
  * @author jrich
  * @version Mar 26, 2021
@@ -68,219 +72,204 @@ import tec.units.ri.quantity.Quantities;
  */
 public class ClusteringInnerCityExample extends Optimization {
 
-  /**
-   * The main method.
-   *
-   * @param args the arguments
-   * @throws IOException Signals that an I/O exception has occurred.
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws InterruptedException the interrupted exception
-   * @throws ExecutionException the execution exception
-   */
-  public static void main(String[] args)
-      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
-    new ClusteringInnerCityExample().example();
-  }
+    // 1/10 coordinate difference shifts by roughly 12km = 10min driving
+    private static final double RES_SPACING = 0.004 + 0.006;
+    private static final double NODE_SPACING = 0.002;
 
-  /**
-   * To string.
-   *
-   * @return the string
-   */
-  public String toString() {
-    return "Example of clustering construction - InnerCity.";
-  }
+    private static final int NUM_RESS = 50;
+    private static final int NUM_NODES = 1000;
 
-  /**
-   * Example.
-   *
-   * @throws IOException Signals that an I/O exception has occurred.
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws InterruptedException the interrupted exception
-   * @throws ExecutionException the execution exception
-   */
-  public void example()
-      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+    private static final boolean ADD_EVEN_ODD_SPLITTING = !true;
 
-    // Set license via helper
-    ExampleLicenseHelper.setLicense(this);
-
-    // Properties!
-    this.setProperties();
-
-    this.addNodes();
-    this.addResources();
-
-    // Attach to observables
-    ClusteringInnerCityExample.attachToObservables(this);
-
-    CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
-
-    // It is important to block the call, otherwise optimization will be terminated
-    IOptimizationResult result = resultFuture.get();
-
-    // Show result
-    System.out.println(result);
-
-    // Export to kml
-    try {
-      String jsonFile = "" + this.getClass().getSimpleName() + ".kml";
-
-      IEntityExporter exporter = new EntityKMLExporter();
-      exporter.export(result.getContainer(), new FileOutputStream(jsonFile));
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     * @throws IOException             Signals that an I/O exception has occurred.
+     * @throws InvalidLicenceException the invalid licence exception
+     * @throws InterruptedException    the interrupted exception
+     * @throws ExecutionException      the execution exception
+     */
+    public static void main(String[] args)
+	    throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+	new ClusteringInnerCityExample().example();
     }
-  }
 
-  /** Sets the properties. */
-  private void setProperties() {
+    /**
+     * To string.
+     *
+     * @return the string
+     */
+    public String toString() {
+	return "Example of clustering construction - InnerCity.";
+    }
 
-    Properties props = new Properties();
+    /**
+     * Example.
+     *
+     * @throws IOException             Signals that an I/O exception has occurred.
+     * @throws InvalidLicenceException the invalid licence exception
+     * @throws InterruptedException    the interrupted exception
+     * @throws ExecutionException      the execution exception
+     */
+    public void example() throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
 
-    // Set Algorithms to zero iterations => Pure Construction
-    props.setProperty("JOptExitCondition.JOptGenerationCount", "0");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "0");
+	// Set license via helper
+	ExampleLicenseHelper.setLicense(this);
 
-    this.addElement(props);
-  }
+	// Properties!
+	this.setProperties();
 
-  /** Adds the resources. */
-  private void addResources() {
+	this.addNodes();
+	this.addResources();
 
-    getResources().stream().forEach(this::addElement);
-  }
+	// Attach to observables
+	ClusteringInnerCityExample.attachToObservables(this);
 
-  public static List<IWorkingHours> getWorkingHours() {
+	CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
-    List<IWorkingHours> workingHoursOne = new ArrayList<>();
-    workingHoursOne.add(
-        new WorkingHours(
-            ZonedDateTime.of(2020, MAY, 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY, 6, 22, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+	// It is important to block the call, otherwise optimization will be terminated
+	IOptimizationResult result = resultFuture.get();
 
-    return workingHoursOne;
-  }
+	// Show result
+	System.out.println(result);
 
-  public List<IResource> getResources() {
+	// Export to kml
+	try {
+	    String jsonFile = "" + this.getClass().getSimpleName() + "_nr-" + NUM_RESS + "_sr-" + RES_SPACING + "_nn-"
+		    + NUM_NODES + "_sn-" + NODE_SPACING + ".kml";
 
-    // 1.) add the nodes to be visited
-    Position koelnCenterPos = Position.of(50.9333, 6.95);
+	    IEntityExporter exporter = new EntityKMLExporter();
+	    exporter.export(result.getContainer(), new FileOutputStream(jsonFile));
+	} catch (FileNotFoundException e) {
+	    e.printStackTrace();
+	}
+    }
 
-    // Create other positions
-    // 1/10 coordinate difference shifts by roughly 12km = 10min driving
+    /** Sets the properties. */
+    private void setProperties() {
 
-    double spacing = 0.004;
-    List<Position> poss = samplePhyllotaxis(koelnCenterPos, 5, spacing);
+	Properties props = new Properties();
 
-    Duration maxWorkingTime = Duration.ofHours(12);
-    Quantity<Length> maxDistanceKmW = Quantities.getQuantity(2200.0, KILO(METRE));
+	// Set Algorithms to zero iterations => Pure Construction
+	props.setProperty("JOptExitCondition.JOptGenerationCount", "0");
+	props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "0");
 
-    // Create the Resources and return
-    return IntStream.range(0, poss.size())
-        .mapToObj(
-            ii -> {
-              List<IWorkingHours> workingHoursOne = new ArrayList<>();
-              workingHoursOne.add(
-                  new WorkingHours(
-                      ZonedDateTime.of(2020, MAY, 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-                      ZonedDateTime.of(2020, MAY, 6, 22, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+	this.addElement(props);
+    }
 
-              IResource rep =
-                  new CapacityResource(
-                      "R_" + ii,
-                      poss.get(ii).latitude(),
-                      poss.get(ii).longitude(),
-                      maxWorkingTime,
-                      maxDistanceKmW,
-                      getWorkingHours());
-              rep.setCost(0, 1, 1);
+    /** Adds the resources. */
+    private void addResources() {
 
-              return rep;
-            })
-        .collect(Collectors.toList());
-  }
+	getResources().stream().forEach(this::addElement);
+    }
 
-  /** Adds the nodes. */
-  private void addNodes() {
+    public static List<IWorkingHours> getWorkingHours(boolean addDay) {
 
-    getNodes().stream().forEach(this::addElement);
-  }
+	List<IWorkingHours> workingHoursOne = new ArrayList<>();
+	workingHoursOne.add(new WorkingHours(
+		ZonedDateTime.of(2023, MAY, 6 + (addDay ? (ADD_EVEN_ODD_SPLITTING ? 1 : 0) : 0), 8, 0, 0, 0,
+			ZoneId.of("Europe/Berlin")),
+		ZonedDateTime.of(2023, MAY, 6 + (addDay ? (ADD_EVEN_ODD_SPLITTING ? 1 : 0) : 0), 22, 0, 0, 0,
+			ZoneId.of("Europe/Berlin"))));
 
-  public static List<INode> getNodes() {
+	return workingHoursOne;
+    }
 
-    Duration visitDuration = Duration.ofMinutes(20);
+    public List<IResource> getResources() {
 
-    // 1.) add the nodes to be visited
-    Position koelnCenterPos = Position.of(50.9333, 6.95);
+	// 1.) add the nodes to be visited
+	Position koelnCenterPos = Position.of(50.9333, 6.85);
 
-    // Create other positions
-    // 1/10 coordinate difference shifts by roughly 12km = 10min driving
+	// Create other positions
+	// 1/10 coordinate difference shifts by roughly 12km = 10min driving
 
-    double spacing = 0.002;
-    List<Position> poss = samplePhyllotaxis(koelnCenterPos, 100, spacing);
+	List<Position> poss = samplePhyllotaxis(koelnCenterPos, NUM_RESS, RES_SPACING);
 
-    // Create the nodes and return
-    return IntStream.range(0, poss.size())
-        .mapToObj(
-            ii -> {
-              List<IOpeningHours> weeklyOpeningHoursOne = new ArrayList<>();
+	Duration maxWorkingTime = Duration.ofHours(12);
+	Quantity<Length> maxDistanceKmW = Quantities.getQuantity(2200.0, KILO(METRE));
 
-              weeklyOpeningHoursOne.add(
-                  new OpeningHours(
-                      ZonedDateTime.of(2020, MAY, 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-                      ZonedDateTime.of(2020, MAY, 6, 22, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+	// Create the Resources and return
+	return IntStream.range(0, poss.size()).mapToObj(ii -> {
 
-              return new TimeWindowGeoNode(
-                  "N_" + ii,
-                  poss.get(ii).latitude(),
-                  poss.get(ii).longitude(),
-                  weeklyOpeningHoursOne,
-                  visitDuration,
-                  1);
-            })
-        .collect(Collectors.toList());
-  }
+	    boolean addDay = ii % 2 == 0;
 
-  public static List<Position> samplePhyllotaxis(Position centerPos, int n, double spacing) {
+	    IResource rep = new CapacityResource("R_" + ii, poss.get(ii).latitude(), poss.get(ii).longitude(),
+		    maxWorkingTime, maxDistanceKmW, getWorkingHours(addDay));
+	    rep.setCost(0, 1, 1);
 
-    return samplePhyllotaxis(centerPos.latitude(), centerPos.longitude(), n, spacing);
-  }
+	    return rep;
+	}).collect(Collectors.toList());
+    }
 
-  public static List<Position> samplePhyllotaxis(
-      double centerLat, double centerLon, int n, double spacing) {
-    double theta = Math.PI * (3 - Math.sqrt(5));
+    /** Adds the nodes. */
+    private void addNodes() {
 
-    return IntStream.range(0, n)
-        .mapToObj(
-            i -> {
-              double radius = spacing * Math.sqrt(i);
-              double angle = i * theta;
-              double x = radius * Math.cos(angle);
-              double y = radius * Math.sin(angle);
+	getNodes().stream().forEach(this::addElement);
+    }
 
-              return Position.of(centerLat + y, centerLon + x);
-            })
-        .collect(ImmutableList.toImmutableList());
-  }
+    public static List<INode> getNodes() {
 
-  /**
-   * Attach to observables.
-   *
-   * @param opti the opti
-   */
-  private static void attachToObservables(IOptimization opti) {
+	Duration visitDuration = Duration.ofMinutes(5);
 
-    PrintStream out = System.out;
+	// 1.) add the nodes to be visited
+	Position koelnCenterPos = Position.of(50.9333, 6.85);
 
-    opti.getOptimizationEvents()
-        .progressSubject()
-        .subscribe(p -> out.println(p.getProgressString()));
+	// Create other positions
+	// 1/10 coordinate difference shifts by roughly 12km = 10min driving
 
-    opti.getOptimizationEvents().warningSubject().subscribe(w -> out.println(w.toString()));
+	List<Position> poss = samplePhyllotaxis(koelnCenterPos, NUM_NODES, NODE_SPACING);
 
-    opti.getOptimizationEvents().statusSubject().subscribe(s -> out.println(s.toString()));
+	// Create the nodes and return
+	return IntStream.range(0, poss.size()).mapToObj(ii -> {
+	    List<IOpeningHours> weeklyOpeningHoursOne = new ArrayList<>();
 
-    opti.getOptimizationEvents().errorSubject().subscribe(e -> out.println(e.toString()));
-  }
+	    boolean addDay = ii % 2 == 0;
+
+	    weeklyOpeningHoursOne.add(new OpeningHours(
+		    ZonedDateTime.of(2023, MAY, 6 + (addDay ? (ADD_EVEN_ODD_SPLITTING ? 1 : 0) : 0), 8, 0, 0, 0,
+			    ZoneId.of("Europe/Berlin")),
+		    ZonedDateTime.of(2023, MAY, 6 + (addDay ? (ADD_EVEN_ODD_SPLITTING ? 1 : 0) : 0), 22, 0, 0, 0,
+			    ZoneId.of("Europe/Berlin"))));
+
+	    return new TimeWindowGeoNode("N_" + ii, poss.get(ii).latitude(), poss.get(ii).longitude(),
+		    weeklyOpeningHoursOne, visitDuration, 1);
+	}).collect(Collectors.toList());
+    }
+
+    public static List<Position> samplePhyllotaxis(Position centerPos, int n, double spacing) {
+
+	return samplePhyllotaxis(centerPos.latitude(), centerPos.longitude(), n, spacing);
+    }
+
+    public static List<Position> samplePhyllotaxis(double centerLat, double centerLon, int n, double spacing) {
+	double theta = Math.PI * (3 - Math.sqrt(5));
+
+	return IntStream.range(0, n).mapToObj(i -> {
+	    double radius = spacing * Math.sqrt(i);
+	    double angle = i * theta;
+	    double x = radius * Math.cos(angle);
+	    double y = radius * Math.sin(angle);
+
+	    return Position.of(centerLat + y, centerLon + x);
+	}).collect(ImmutableList.toImmutableList());
+    }
+
+    /**
+     * Attach to observables.
+     *
+     * @param opti the opti
+     */
+    private static void attachToObservables(IOptimization opti) {
+
+	PrintStream out = System.out;
+
+	opti.getOptimizationEvents().progressSubject().subscribe(p -> out.println(p.getProgressString()));
+
+	opti.getOptimizationEvents().warningSubject().subscribe(w -> out.println(w.toString()));
+
+	opti.getOptimizationEvents().statusSubject().subscribe(s -> out.println(s.toString()));
+
+	opti.getOptimizationEvents().errorSubject().subscribe(e -> out.println(e.toString()));
+    }
 }
