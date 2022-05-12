@@ -123,7 +123,7 @@ or latest (recommended - including log4j-core fix)
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.8</version>
+   <version>7.4.9-rc2</version>
   <classifier>shaded</classifier>
 </dependency>
 ```
@@ -150,7 +150,7 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.8</version>
+   <version>7.4.9-rc2</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
