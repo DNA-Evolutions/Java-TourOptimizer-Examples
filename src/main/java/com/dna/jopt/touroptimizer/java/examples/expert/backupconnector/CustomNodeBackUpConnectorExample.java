@@ -314,6 +314,9 @@ public class CustomNodeBackUpConnectorExample extends Optimization {
           NodeEdgeConnector.distancePlacePlaceFlatEarth(
                   fromElementLon, fromElementLat, toElementLon, toElementLat)
               * 1.2;
+      
+      
+      System.out.println(fromElementId+"=>"+toElementId);
 
       return Quantities.getQuantity(distance, METRE);
     }
