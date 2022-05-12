@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
@@ -64,9 +66,10 @@ public class FirstOptimizationExample extends Optimization {
    * @throws ExecutionException the execution exception
    * @throws InvalidLicenceException the invalid licence exception
    * @throws IOException
+   * @throws TimeoutException 
    */
   public static void main(String[] args)
-      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
+      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException, TimeoutException {
     new FirstOptimizationExample().example();
   }
 
@@ -83,9 +86,10 @@ public class FirstOptimizationExample extends Optimization {
    * @throws ExecutionException the execution exception
    * @throws InvalidLicenceException the invalid licence exception
    * @throws IOException
+   * @throws TimeoutException 
    */
   public void example()
-      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
+      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException, TimeoutException {
 
     // We use the free mode for the example - please modify the ExampleLicenseHelper in case you
     // have a valid
@@ -117,15 +121,16 @@ public class FirstOptimizationExample extends Optimization {
    * @throws InvalidLicenceException the invalid licence exception
    * @throws InterruptedException the interrupted exception
    * @throws ExecutionException the execution exception
+ * @throws TimeoutException 
    */
   private static void startAndPresentResult(IOptimization opti)
-      throws InvalidLicenceException, InterruptedException, ExecutionException {
+      throws InvalidLicenceException, InterruptedException, ExecutionException, TimeoutException {
 
     // Extracting a completable Future for the optimization result
     CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
 
     // It is important to block the call, otherwise the Optimization will be terminated
-    IOptimizationResult result = resultFuture.get();
+    IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
 
     // Presenting the result
     System.out.println(result);
@@ -140,8 +145,8 @@ public class FirstOptimizationExample extends Optimization {
 
     Properties props = new Properties();
 
-    props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "10000");
+    props.setProperty("JOptExitCondition.JOptGenerationCount", "20000");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
     props.setProperty("JOpt.NumCPUCores", "4");
 
