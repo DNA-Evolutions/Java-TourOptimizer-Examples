@@ -183,6 +183,10 @@ In your ``pom.xml`` add the following repository:
 We still support a legacy .NET version of JOpt. We utilize <a href="https://en.wikipedia.org/wiki/IKVM.NET" target="_blank">IKVM.NET</a> that is effectively a Java framework running on top of the .NET's framework.
 
 
+The latest release candidate dll (archived as zip) as download (7.4.9-rc2-legacy):
+- <a href="https://shared.dna-evolutions.com/legacy/net/jopt.core-7.4.9-rc2-SNAPSHOT-with-dep-pg-legacy/jopt.core-7.4.9-rc2-SNAPSHOT-with-dep-pg-legacy.zip" target="_blank">JOpt .Net - 7.4.9-rc2-SNAPSHOT</a>
+
+
 The latest release dll (archived as zip) as download (7.4.8-legacy):
 - <a href="https://shared.dna-evolutions.com/legacy/net/jopt.core-7.4.8-with-dep-pg-legacy/jopt.core-7.4.8-with-dep-pg-legacy.zip" target="_blank">JOpt .Net - 7.4.8</a>
 
@@ -202,4 +206,14 @@ In case you use *Gradle*, *SBT*, *IVY*, *Grape*, *Leiningen*, *Builder*, or othe
 * In your IDE as native Java dependency: Install at least Java 8 and Maven
 * In our sandbox: Working Docker environment
 * In your IDE as .NET legacy version: IKVM libraries imported in your project and a working .NET 4.X Framework.
+
+---
+
+## Agreement
+For reading our license agreement and for further information about license plans, please visit <a href="https://www.dna-evolutions.com" target="_blank">www.dna-evolutions.com</a>.
+
+--- 
+
+## Authors
+A product by [dna-evolutions ](https://www.dna-evolutions.com)&copy;
 
