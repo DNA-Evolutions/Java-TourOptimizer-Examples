@@ -15,6 +15,22 @@ Explanation of keys:
 
 ## Changelog Examples
 
+**v7.4.9-rc4**
+- Feature: Add new examples
+
+**v7.4.9-rc3**
+- No entry
+
+**v7.4.9-rc2**
+- Feature: Add export as JSON for Rest
+- Improvement: Work on examples
+- Feature: Add public JSON license
+- Fix: Some README typos
+- Feature: Add FAQ
+
+**v7.4.9-rc1**
+- No entry
+
 **v7.4.8**
 - Fix:  Use subfolder by default for license location
 
@@ -104,6 +120,62 @@ Explanation of keys:
 
 
 ## Changelog JOpt Library
+
+**v7.4.9-rc4**
+- Fix: LocationId is not correctly used in NodeConnector
+- Update: RXJava3 migration
+- Update: Guava, Imuutables, Jackson, Swagger Log4j, Commons, Proguard
+- Improvement: Try to prevent lockdown of unchanged routes
+- Fix: Creating a shallow copy of routes during JSON serialization
+- Fix: Make finalized elements synchronized
+- Fix: Protect OperatorController and check for null entities
+- Feature: Add hook with reduced connection item
+- Fix: As pillars may be jumping within their own list, we need to use real arrival items during map creation
+- Feature: By default suppress costs of routes that are inactive
+- Feature: Add another entrypoint for JSONOptimization
+- Feature: Test average cost instead of sum to avoid high cost numbers
+- Improvement: JSON improvements
+- Fix: Use sync. methods or blocks to avoid concurrency problems
+- Fix: Fix route start time calculation for hook
+- Improvement: Add static method to remove elements without informing unassigned list
+- Feature: Add start time hook to JSON
+- Improvement: Add applied hook time in route result report
+
+**v7.4.9-rc3**
+- Fix: Check that loadIds are none-zero
+- Fix: Javadoc
+- Improvement: Internally, use milliseconds precision for visit duration
+- Fix: Importance is not correctly converted from Config to Optimization
+- Fix: Multiple JSON issues
+- Fix:  Do not allow to unassign finalized pillars
+- Improvement: Add element details for JSONOptimization export
+
+**v7.4.9-rc2**
+- No entry
+
+**v7.4.9-rc1**
+- Improvement: Add helpers and improvements, license updates, bug fixes
+- Improvement: Config updates
+- Fix: During likely connection analysis ignore Resource to Resource connection
+- Feature: Enable LikleyConnectionManager
+- Feature: Add utility to deep copy nodes
+- Feature: Optionally save positions in element connections
+- Update: Swagger core
+- Fix: Bug where the first node is in falsy joined visit duration state if the start point is at the same position
+- Feature: Enable ConnectionProvider
+- Improvement: Allow cluster resource split value to be modifiable
+- Improvement: Add additional JSON parameters to config
+- Update: Guava version
+- Feature: Prepare MultiLayer Construction is a separate algorithm
+- Fix: Make sure that  the clusterIndex is not smaller than zero
+- Improvement: Use implausibility score for nodes that are orphaned. Add invocation index to know the number of clusters that tried to collect a certain node. Add method to directly unassign after construction
+- Improvement: Small distances should be likely. Introduce threshold to avoid neglecting good connections
+- Improvement: Allow debug output via status stream
+- Fix: Honor start time hook during pillar dropping (OPT-5520)
+- Improvement: Rewrite takeOverProperties logic for WorkingHours
+- Improvement: Remove unused info from snapshot
+- Fix:  Add possibility to ignore start/end comparison during pillar dropping as otherwise pillars can get lost if they are also the termination element of  a route
+- Fix: Remove unmappable UTF8 characters
 
 **v7.4.8**
 - Improvement: Increase build number for licenses
