@@ -53,7 +53,7 @@ import static tec.units.ri.unit.MetricPrefix.KILO;
 import static tec.units.ri.unit.Units.METRE;
 
 /**
- * The Class RapotTestOptiNodeConnection.
+ * The Class ExternalNodeConnectionExample.
  *
  * @author Jens Richter
  * @version Jan 16, 2019
@@ -185,8 +185,7 @@ public class ExternalNodeConnectionExample extends Optimization {
         new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
     this.addElement(aachen);
 
-    // Ass some connection items => The rest will be generated as fall back solution to bird
-    // distances.
+    // Add some connection items => The rest of the connections will be generated as fall back solution using haversine distances
     INodeConnectorItem connectionKolenOberhausen = new NodeEdgeConnectorItem();
     connectionKolenOberhausen.setFromOptimizationElement(koeln);
     connectionKolenOberhausen.setToOptimizationElement(oberhausen);
