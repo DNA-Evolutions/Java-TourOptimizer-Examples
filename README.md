@@ -123,7 +123,7 @@ or latest (recommended - including log4j-core fix)
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.9-rc2</version>
+   <version>7.4.9-rc4</version>
   <classifier>shaded</classifier>
 </dependency>
 ```
@@ -150,7 +150,7 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.4.9-rc2</version>
+   <version>7.4.9-rc4</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
@@ -184,6 +184,9 @@ We still support a legacy .NET version of JOpt. We utilize <a href="https://en.w
 
 
 The latest release candidate dll (archived as zip) as download (7.4.9-rc2-legacy):
+- <a href="https://shared.dna-evolutions.com/legacy/net/jopt.core-7.4.9-rc4-SNAPSHOT-with-dep-pg-legacy/jopt.core-7.4.9-rc4-SNAPSHOT-with-dep-pg-legacy.zip" target="_blank">JOpt .Net - 7.4.9-rc4-SNAPSHOT</a>
+
+The previous release candidate dll (archived as zip) as download (7.4.9-rc2-legacy):
 - <a href="https://shared.dna-evolutions.com/legacy/net/jopt.core-7.4.9-rc2-SNAPSHOT-with-dep-pg-legacy/jopt.core-7.4.9-rc2-SNAPSHOT-with-dep-pg-legacy.zip" target="_blank">JOpt .Net - 7.4.9-rc2-SNAPSHOT</a>
 
 
