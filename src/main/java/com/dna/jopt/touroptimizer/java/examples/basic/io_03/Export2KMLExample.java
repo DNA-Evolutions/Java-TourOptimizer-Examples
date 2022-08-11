@@ -226,10 +226,10 @@ public class Export2KMLExample extends Optimization {
     System.out.println(rapoptResult);
 
     try {
-      String jsonFile = "myopti.kml";
+      String kmlFile = "myopti.kml";
 
       IEntityExporter exporter = new EntityKMLExporter();
-      exporter.export(rapoptResult.getContainer(), new FileOutputStream(jsonFile));
+      exporter.export(rapoptResult.getContainer(), new FileOutputStream(kmlFile));
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
