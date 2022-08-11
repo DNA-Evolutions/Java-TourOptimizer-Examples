@@ -183,7 +183,7 @@ In your ``pom.xml`` add the following repository:
 We still support a legacy .NET version of JOpt. We utilize <a href="https://en.wikipedia.org/wiki/IKVM.NET" target="_blank">IKVM.NET</a> that is effectively a Java framework running on top of the .NET's framework.
 
 
-The latest release candidate dll (archived as zip) as download (7.4.9-rc2-legacy):
+The latest release candidate dll (archived as zip) as download (7.4.9-rc4-legacy):
 - <a href="https://shared.dna-evolutions.com/legacy/net/jopt.core-7.4.9-rc4-SNAPSHOT-with-dep-pg-legacy/jopt.core-7.4.9-rc4-SNAPSHOT-with-dep-pg-legacy.zip" target="_blank">JOpt .Net - 7.4.9-rc4-SNAPSHOT</a>
 
 The previous release candidate dll (archived as zip) as download (7.4.9-rc2-legacy):
