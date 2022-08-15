@@ -1,6 +1,6 @@
-FROM codercom/code-server:latest
+FROM codercom/code-server:4.2.0
 
-ARG  DEBIAN_FRONTEND=noninteractive 
+ARG DEBIAN_FRONTEND=noninteractive 
 
 # Latest Java version, change, if desired, to other version including hotspot 
 ARG ADOPT_OPENJDK=adoptopenjdk-16-hotspot
