@@ -56,7 +56,7 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
  */
 public class CapacityCheckExample extends Optimization {
 
-    private static final boolean DO_DEACTIVATE_CAPACITY_CHECK = true;
+    private static final boolean DO_DEACTIVATE_CAPACITY_CHECK = false;
 
     /**
      * The main method.
@@ -153,7 +153,7 @@ public class CapacityCheckExample extends Optimization {
 	props.setProperty("JOpt.NumCPUCores", "4");
 
 	if (DO_DEACTIVATE_CAPACITY_CHECK) {
-	    props.setProperty(" JOpt.plausibility.doInputCheck.doCapacityCheck", "FALSE");
+	    props.setProperty("JOpt.plausibility.doInputCheck.doCapacityCheck", "FALSE");
 	}
 
 	opti.addElement(props);
