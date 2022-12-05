@@ -96,7 +96,7 @@ public class CustomNodeLevelImportanceOrderExample extends Optimization {
 
   private void addResources() {
 
-    List<IWorkingHours> workingHours = new ArrayList<IWorkingHours>();
+    List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
         new WorkingHours(
             ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
@@ -119,7 +119,7 @@ public class CustomNodeLevelImportanceOrderExample extends Optimization {
 
   private void addNodes() {
 
-    List<IOpeningHours> weeklyOpeningHours = new ArrayList<IOpeningHours>();
+    List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
     weeklyOpeningHours.add(
         new OpeningHours(
             ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
