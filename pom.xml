@@ -68,6 +68,11 @@
 			<version>7.4.9-rc4</version>
 			<classifier>javadoc</classifier>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.18.0</version>
+		</dependency>
 	</dependencies>
 
 
