@@ -1,4 +1,4 @@
-FROM codercom/code-server:latest
+FROM codercom/code-server:4.7.1
 
 ARG DEBIAN_FRONTEND=noninteractive 
 
@@ -35,7 +35,8 @@ ENV PASSWORD=jopt
 
 USER coder
 
-# Install java pack extension
+# Install java pack extension 
+# TODO versions >= code-server:4.8.0 are leading to infinite install loop
 RUN code-server --install-extension vscjava.vscode-java-pack
 
 WORKDIR /home/coder/project
