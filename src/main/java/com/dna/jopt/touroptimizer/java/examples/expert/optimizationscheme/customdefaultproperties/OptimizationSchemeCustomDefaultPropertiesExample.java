@@ -1,4 +1,4 @@
-package com.dna.jopt.touroptimizer.java.examples.expert.optimizationscheme.selectalgorithms;
+package com.dna.jopt.touroptimizer.java.examples.expert.optimizationscheme.customdefaultproperties;
 
 /*-
  * #%L
@@ -27,7 +27,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -36,10 +35,6 @@ import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
 import com.dna.jopt.framework.body.scheme.DefaultOptimizationScheme;
 import com.dna.jopt.framework.body.scheme.IOptimizationScheme;
-import com.dna.jopt.framework.body.scheme.helper.AbstractConstructionOptimizationAlgorithmConfig.ConstructionOptimizationAlgorithm;
-import com.dna.jopt.framework.body.scheme.helper.AbstractHeuristicOptimizationAlgorithmConfig.OptimizationAlgorithmConfig;
-import com.dna.jopt.framework.body.scheme.helper.ConstructionOptimizationAlgorithmConfig;
-import com.dna.jopt.framework.body.scheme.helper.HeuristicOptimizationAlgorithmConfig;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
 import com.dna.jopt.member.unit.hours.IWorkingHours;
@@ -53,16 +48,16 @@ import com.dna.jopt.member.unit.resource.IResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 /**
- * Tutorial: Create an optimization and use a custom scheme.
- *
- * @author jrich
- * @version Apr 6, 2020
- * @since Apr 6, 2020
+ * The Class OptimizationSchemeCustomDefaultPropertiesExample.
+ * 
+ *  Create an optimization and use a custom scheme to inject custom default properties.
+ * 
  */
-public class OptimizationSchemeAlgorithmSelectionExample extends Optimization {
+public class OptimizationSchemeCustomDefaultPropertiesExample extends Optimization {
 
     /**
      * The main method.
+     * 
      *
      * @param args the arguments
      * @throws InterruptedException    the interrupted exception
@@ -72,12 +67,13 @@ public class OptimizationSchemeAlgorithmSelectionExample extends Optimization {
      */
     public static void main(String[] args)
 	    throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
-	new OptimizationSchemeAlgorithmSelectionExample().example();
+	new OptimizationSchemeCustomDefaultPropertiesExample().example();
+    }
+    
+    public String toString() {
+	return "Create an optimization and use a custom scheme to inject custom default properties.";
     }
 
-    public String toString() {
-	return "Create an optimization and use a custom scheme for selecting the algorithms used for optimization.";
-    }
 
     /**
      * Method which executes the necessary parts for the optimization.
@@ -96,26 +92,28 @@ public class OptimizationSchemeAlgorithmSelectionExample extends Optimization {
 	ExampleLicenseHelper.setLicense(this);
 
 	// Setting a modified optimization scheme
-	// (1) Setting scheme
-	OptimizationSchemeAlgorithmSelectionExample.setScheme(this);
+	// (1a) Setting scheme
+	OptimizationSchemeCustomDefaultPropertiesExample.setScheme(this);
 
 	// Setting properties, adding all elements, and attaching to observables
-	// (1a) Adding properties
-	OptimizationSchemeAlgorithmSelectionExample.addProperties(this);
+	// (1) Adding properties. Properties directly set to via addElement getting
+	// priority over the custom default properties
+	// set via scheme.
+	OptimizationSchemeCustomDefaultPropertiesExample.addProperties(this);
 
 	// (2) Adding nodes
-	OptimizationSchemeAlgorithmSelectionExample.addNodes(this);
+	OptimizationSchemeCustomDefaultPropertiesExample.addNodes(this);
 
 	// (3) Adding resources
-	OptimizationSchemeAlgorithmSelectionExample.addResources(this);
+	OptimizationSchemeCustomDefaultPropertiesExample.addResources(this);
 
 	// (4) Attach to Observables
-	OptimizationSchemeAlgorithmSelectionExample.attachToObservables(this);
+	OptimizationSchemeCustomDefaultPropertiesExample.attachToObservables(this);
 
 	// Starting the optimization via Completable Future
 	// and presenting the result
 	// (5) Starting the optimization and presenting the result
-	OptimizationSchemeAlgorithmSelectionExample.startAndPresentResult(this);
+	OptimizationSchemeCustomDefaultPropertiesExample.startAndPresentResult(this);
     }
 
     /**
@@ -125,55 +123,18 @@ public class OptimizationSchemeAlgorithmSelectionExample extends Optimization {
      */
     public static void setScheme(IOptimization opti) {
 
-	/*
-	 * Select a construction algo - Default would be
-	 * "SIMULTANEOUS_SPACE_SAVINGS_ALGO"
-	 */
-	ConstructionOptimizationAlgorithmConfig constructionAlgo = ConstructionOptimizationAlgorithmConfig.builder()
-		.algorithm(ConstructionOptimizationAlgorithm.SEQUENTIAL_SPACE_SAVINGS_ALGO).build();
+	IOptimizationScheme myScheme = new DefaultOptimizationScheme(opti);
 
-	/*
-	 * Select heuristic algos
-	 */
+	// Seting default custom properties. Properties directly set to via addElement
+	// getting priority over the custom default properties
+	// set via scheme.
+	Properties customDefaultProps = new Properties();
 
-	List<HeuristicOptimizationAlgorithmConfig> myHeursticAlgoConfigs = new ArrayList<>();
+	// This setting will force Optimizer into overtime, as distance saving becomes
+	// by far most important
+	customDefaultProps.setProperty("JOptWeight.TotalDistance", "10000.0"); // Default is 1.0 (!)
 
-	/*
-	 * For this optimization we would like to have a quick simulated annealing
-	 * optimization, before a longer additional simulated annealing starts.
-	 *
-	 * Note: AutoFiltering is disabled, not matter what properties are set for the
-	 * optimization if hasAutoFilter(boolean hasAutoFilter) is set to false
-	 */
-
-	HeuristicOptimizationAlgorithmConfig heuristicAlgoZero = HeuristicOptimizationAlgorithmConfig.builder()
-		.algorithm(OptimizationAlgorithmConfig.SIMULATED_ANNEALING_ALGO)
-		.simulatedAnnealingOverrideNumIterationsValue(1000).hasAutoFilter(false).build();
-
-	// When not providing "simulatedAnnealingOverrideNumIterationsValue", the value
-	// will be taken
-	// from the property "JOpt.Algorithm.PreOptimization.SA.NumIterations"
-
-	HeuristicOptimizationAlgorithmConfig heuristicAlgoOne = HeuristicOptimizationAlgorithmConfig.builder()
-		.algorithm(OptimizationAlgorithmConfig.SIMULATED_ANNEALING_ALGO).hasAutoFilter(false).build();
-
-	HeuristicOptimizationAlgorithmConfig heuristicAlgoTwo = HeuristicOptimizationAlgorithmConfig.builder()
-		.algorithm(OptimizationAlgorithmConfig.GENETIC_EVOLUTION_ALGO).hasAutoFilter(true).build();
-
-	// Construct modified scheme based on default scheme
-	myHeursticAlgoConfigs.add(heuristicAlgoZero);
-	myHeursticAlgoConfigs.add(heuristicAlgoOne);
-	myHeursticAlgoConfigs.add(heuristicAlgoTwo);
-
-	/*
-	 * Note: In case the constructionAlgoConfigOpt isn't present, the default
-	 * construction algorithm is used. In case the algoConfigsOpt isn't present, the
-	 * default heuristic algorithms are used. If algoConfigsOpt is present, but
-	 * contains an empty list, no heuristic algorithms are used at all.
-	 *
-	 */
-	IOptimizationScheme myScheme = new DefaultOptimizationScheme(opti, Optional.of(constructionAlgo),
-		Optional.of(myHeursticAlgoConfigs));
+	myScheme.setCustomDefaultProperties(customDefaultProps);
 
 	// Set scheme
 	opti.setOptimizationScheme(myScheme);
@@ -294,20 +255,12 @@ public class OptimizationSchemeAlgorithmSelectionExample extends Optimization {
      */
     private static void attachToObservables(IOptimization opti) {
 
-	opti.getOptimizationEvents().progressSubject().subscribe(p -> {
-	    System.out.println(p.getProgressString());
-	});
+	opti.getOptimizationEvents().progressSubject().subscribe(p -> System.out.println(p.getProgressString()));
 
-	opti.getOptimizationEvents().warningSubject().subscribe(w -> {
-	    System.out.println(w.toString());
-	});
+	opti.getOptimizationEvents().warningSubject().subscribe(w -> System.out.println(w.toString()));
 
-	opti.getOptimizationEvents().statusSubject().subscribe(s -> {
-	    System.out.println(s.toString());
-	});
+	opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s.toString()));
 
-	opti.getOptimizationEvents().errorSubject().subscribe(e -> {
-	    System.out.println(e.toString());
-	});
+	opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
     }
 }

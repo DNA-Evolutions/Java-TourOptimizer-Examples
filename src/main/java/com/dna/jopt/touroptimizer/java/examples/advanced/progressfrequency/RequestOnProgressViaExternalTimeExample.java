@@ -14,7 +14,6 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.progressfrequency;
 import static tec.units.ri.unit.MetricPrefix.KILO;
 import static tec.units.ri.unit.Units.METRE;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -57,7 +56,7 @@ import tec.units.ri.quantity.Quantities;
 public class RequestOnProgressViaExternalTimeExample extends Optimization {
 
   public static void main(String[] args)
-      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
+      throws InterruptedException, ExecutionException, InvalidLicenceException {
     new RequestOnProgressViaExternalTimeExample().example();
   }
 
@@ -66,7 +65,7 @@ public class RequestOnProgressViaExternalTimeExample extends Optimization {
   }
 
   public void example()
-      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
+      throws InterruptedException, ExecutionException, InvalidLicenceException {
 
     // Set the Properties
     RequestOnProgressViaExternalTimeExample.setProperties(this);
@@ -75,12 +74,15 @@ public class RequestOnProgressViaExternalTimeExample extends Optimization {
     RequestOnProgressViaExternalTimeExample.addResources(this);
 
     // We are adding the external timer that requests a progress update
-    RequestOnProgressViaExternalTimeExample.createAndAttachTimeForResultRequest(this);
+    Timer progressRequestTimer = RequestOnProgressViaExternalTimeExample.createAndAttachTimeForResultRequest(this);
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
     // It is important to block the call, otherwise the optimization will be terminated
     resultFuture.get();
+    
+    // Stop timer
+    progressRequestTimer.cancel();
   }
 
   private static void setProperties(IOptimization opti) {
@@ -100,14 +102,17 @@ public class RequestOnProgressViaExternalTimeExample extends Optimization {
    * When added to the example this method will request a progress update in a fixed time frequency.
    *
    * @param opti the optimization
+ * @return 
    */
-  private static void createAndAttachTimeForResultRequest(IOptimization opti) {
+  private static Timer createAndAttachTimeForResultRequest(IOptimization opti) {
 
     Timer timer = new Timer();
 
     TimerTask task = new MyRequestProgressTimerTask(opti);
 
     timer.schedule(task, 0L, 500L);
+    
+    return timer;
   }
 
   static class MyRequestProgressTimerTask extends TimerTask {
