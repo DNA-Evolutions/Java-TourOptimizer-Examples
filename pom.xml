@@ -13,6 +13,11 @@
 	<description>Collection of Java examples for JOpt-TourOptimizer.</description>
 
 	<properties>
+	
+		<jopt.core.pg.version>7.4.9-rc6</jopt.core.pg.version>
+		<log4j-core.version>2.19.0</log4j-core.version>
+		<maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+	
 		<project.build.sourceEncoding>cp1252</project.build.sourceEncoding>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -56,22 +61,22 @@
 
 
 	<dependencies>
-		 <dependency>
+		<dependency>
 			<groupId>jopt</groupId>
 			<artifactId>jopt.core.pg</artifactId>
-			<version>7.4.9-rc4</version>
+			<version>${jopt.core.pg.version}</version>
 			<classifier>shaded</classifier>
 		</dependency>
 		<dependency>
 			<groupId>jopt</groupId>
 			<artifactId>jopt.core.pg</artifactId>
-			<version>7.4.9-rc4</version>
+			<version>${jopt.core.pg.version}</version>
 			<classifier>javadoc</classifier>
-		</dependency>
+		</dependency> 
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
-			<version>2.18.0</version>
+			<version>${log4j-core.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -81,10 +86,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
+				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
 				</configuration>
 			</plugin>
 		</plugins>
