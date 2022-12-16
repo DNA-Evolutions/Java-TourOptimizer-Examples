@@ -15,6 +15,14 @@ Explanation of keys:
 
 ## Changelog Examples
 
+**v7.4.9-rc6**
+- Update: Update log4j-core version
+- Feature: Add new example for custom default properties
+- Update: Use JDK 17 in sandbox
+
+**v7.4.9-rc5**
+- No entry
+
 **v7.4.9-rc4**
 - Feature: Add new examples
 
@@ -32,10 +40,10 @@ Explanation of keys:
 - No entry
 
 **v7.4.8**
-- Fix:  Use subfolder by default for license location
+- Fix: Use subfolder by default for license location
 
 **v7.4.7-rc7**
-- Fix:  Solve medium critical vulnerability in dependency in log4j-core by further bumping version to 2.17.1
+- Fix: Solve medium critical vulnerability in dependency in log4j-core by further bumping version to 2.17.1
 
 **v7.4.7-rc6**
 - Fix: Solve highly critical vulnerability in log4j-core by bumping version
@@ -120,6 +128,33 @@ Explanation of keys:
 
 
 ## Changelog JOpt Library
+
+**v7.4.9-rc6**
+- Improvement: Resetting some default properties
+- Improvement: Ignore zero items in max free path length calculation during construction
+
+**v7.4.9-rc5**
+- Update: Immutables, Jackson, swagger annotations, spring data, mongo-db, TestNG, log4j, commons-compress, etc.
+- Improvement: Do not allow none-compatible schemes
+- Improvement: Improve Insertion Operator
+- Fix: Fix disappearing early cost when using flex time
+- Fix: Avoid the use of deputy resources as a start or termination element in a route, as this can cause JSON serialization problems
+- Improvement: Use offset for time-window overlap calculations in LikelyConnectionAnalyzer
+- Improvement: Allow integration of pillars in the construction
+- Fix: Do not restrict relationship weight in simulated annealing, as it can cause cost fluctuation
+- Feature: Add optional "required-overlap" helper for Operators
+- Fix: Honour acceptable overtime during constraint state evaluation in AutoFilterlogic
+- Feature: Inject custom default properties via a scheme
+- Fix: Stay-out cycle exception when start lies beyond the end of last working hours
+- Feature: Allow to use average cost instead of absolute cost- Feature: Enable moving eventNodes- Fix: Remove the typo in "getDepartureTime"
+- Fix: Check via an internal loop, if an event without geolocation is existing
+- Fix: Use effective last position to avoid invisible pillar lateness
+- Improvement: Increase values for 2Opt Threshold
+- Improvement: Let COG (centre-of-gravity) move during clustering.
+- Improvement: Introduce a small cluster size threshold and increase likely neighbourhood value to 50km. (Construction)
+- Improvement: Faster and more efficient 2Opt behaviour for long routes
+- Fix: Fix some backwards compatibility issues during JSON Snapshot loading
+- Fix: In case the first pillar is an event pillar, do not remove optimizable elements in the route
 
 **v7.4.9-rc4**
 - Fix: LocationId is not correctly used in NodeConnector
