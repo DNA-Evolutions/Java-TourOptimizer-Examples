@@ -8,7 +8,7 @@ pipelines:
           - docker
         script:
           - cd ./sandbox/java/
-          - myVersion=1.0 
+          - myVersion=1.1 
           - docker version
           - docker build -t dnaevolutions/jopt_example_server:${myVersion} .
           - docker tag dnaevolutions/jopt_example_server:${myVersion} dnaevolutions/jopt_example_server:latest
