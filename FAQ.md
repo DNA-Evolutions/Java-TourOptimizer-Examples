@@ -27,6 +27,11 @@
 - Please visit <a href="https://docs.dna-evolutions.com/readme/readme.html#net-legacy-version" target="_blank">docs.dna-evolutions.com/readme/readme.html#net-legacy-version</a> and follow the instructions.
 
 
+**I want to use your containerized version of JOpt. Do you know what I can do?**
+- Please follow the link to get more information on our <a href="https://docs.dna-evolutions.com/rest/touroptimizer/rest_touroptimizer.html" target="_blank">containerized JOpt.TourOptimizer</a>
+- Please select this link to get more information on our <a href="https://docs.dna-evolutions.com/rest/client/rest_client_touroptimizer.html" target="_blank">JOpt.TourOptimizer REST-clients</a>
+
+
 **How do I use my license file?**
 - Please visit <a href="https://docs.dna-evolutions.com/overview_docs/license/License.html" target="_blank">docs.dna-evolutions.com/overview_docs/license/License.html</a> 
 
