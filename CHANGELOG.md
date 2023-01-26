@@ -15,6 +15,9 @@ Explanation of keys:
 
 ## Changelog Examples
 
+**v7.5.0**
+- Update: Update version information
+
 **v7.4.9-rc6**
 - Update: Update log4j-core version
 - Feature: Add new example for custom default properties
@@ -128,6 +131,14 @@ Explanation of keys:
 
 
 ## Changelog JOpt Library
+
+**v7.5.0**
+- Fix: Fix bug where the route can not be shown when using location id and improve the description of placemark points
+- Update: Update to required mode in swagger annotations
+- Improvement: In case the input file is not a bzip file, fallback to non-zipped read in
+- Fix: Solve potential memory issue by using pure stream transformation in JSONOptimization
+- Improvement: Modify the "Total cost" String in the result
+
 
 **v7.4.9-rc6**
 - Improvement: Resetting some default properties
