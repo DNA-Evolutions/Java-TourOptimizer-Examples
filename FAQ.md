@@ -3,6 +3,7 @@
 
 **How do I get JOpt?**
 - Please visit <a href="https://docs.dna-evolutions.com/readme/readme.html" target="_blank">https://docs.dna-evolutions.com/readme/readme.html</a> and follow the instructions.
+- Or directly use the instructions <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples#getting-started-with-the-examples" target="_blank">in this repository</a>.
 
 
 **I'm new to JOpt. Where do I get documentation and examples?**
