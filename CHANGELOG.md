@@ -15,6 +15,13 @@ Explanation of keys:
 
 ## Changelog Examples
 
+**v7.5.0-rc1**
+- Update: Update version information
+- Improvement: Add fallback to public license in ExampleLicenseHelper
+- Update: FAQ
+- Improvement: Readme
+- Feature: Add example for saving Optimization to JSON string
+
 **v7.5.0**
 - Update: Update version information
 
@@ -131,6 +138,45 @@ Explanation of keys:
 
 
 ## Changelog JOpt Library
+
+**v7.5.0-rc1**
+- Fix: DutyHoursIncludesVisitDuration in Pillar Constructor is not checked
+- Improvement: Check if initial load of Resource is negative in legacy PND
+- Fix: Correct annotation name for "saveError". 
+- Improvement: Replace deprecated annotations in JSONConfig
+- Fix: GeoPillar can get into lateness if positioned after EventPillar
+- Improvement: Couple default WHE-NoViolation call to holder lateness
+- Update: Set the default for stayNode-boolean to false for WorkingHours
+- Improvement:  Add filter that also checks if any resource is allowed to perform an overnight stay, before activating routeTerminationMutator
+- Fix: Fix bug where protected nodes can become substitutes
+- Improvement: Partial clean up of Construction Algorithm
+- Feature: Add operator reselect feature
+- Fix: Fix empty optimization NullPointerException bug
+- Improvement: Performance Algorithm Quality improvements
+- Improvement: Performance Operator improvements
+- Improvement: General Performance improvements by utilizing Profiler
+- Improvement: Improve selection process of routes in various Operators 
+- Improvement: Auto-reduce starting temperature of SA phase after snapshot loading
+- Feature: Add Operator for joined nodes
+- Fix: Fix bug, "where insertion after the last element" is not supported in multiple Operators
+- Fix: Fix bug where zoneId is not taken from input
+- Feature: Add shift node flexTime feature alias GlueFeature via ShiftNodeOperator
+- Feature: Add custom extra info to Optimization
+- Fix: Fix bug where GeoAddress is not correctly loaded
+- Fix: NoCapacityOverloadViolation cannot be increased in Node
+- Improvement: Also try graceful filtering if curKickNodes has a single element
+- Improvement: Do not try to move pillars if no pillar is movable 
+- Fix: Overlap just needs to be equal to base visit duration during construction
+- Improvement: Allow flexible order of resource moves during construction
+- Improvement: Allow creation of single node routes during construction
+- Improvement: Use smart construction algorithm as default construction algorithm
+- Improvement: Modify misleading debug message about "creation of class failed"
+- Improvement: Allow higher initial utilization in case resources are empty during construction
+- Feature: Allow to externally set PerformanceMode state
+- Improvement: Tune probabilities of Operators to be selected to improve runtime performance
+- Improvement: Make probability scores of Operators performance dependent
+- Improvement: Remove some dead code
+- Improvement: Adding auto-triggered performance mode, updating GE after the init phase, letting 2Opt not run for zero setting
 
 **v7.5.0**
 - Fix: Fix bug where the route can not be shown when using location id and improve the description of placemark points
