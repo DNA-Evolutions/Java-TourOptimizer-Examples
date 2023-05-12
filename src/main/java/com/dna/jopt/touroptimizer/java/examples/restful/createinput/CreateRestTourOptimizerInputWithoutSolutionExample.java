@@ -135,6 +135,20 @@ public class CreateRestTourOptimizerInputWithoutSolutionExample {
 	System.out.println(json);
     }
 
+    public static String jsonFromOptimization(IOptimization opti)
+	    throws IOException, ConvertException, SerializationException {
+
+	String licenseKey = ExampleLicenseHelper.PUBLIC_JSON_LICENSE; // Replace by your license key
+
+	Duration timeOut = Duration.ofMinutes(10);
+
+	JSONConfig myExtension = JSONConfig.builder().keySetting(OptimizationKeySetting.of(licenseKey)).timeOut(timeOut)
+		.build();
+
+	return JSONOptimization.asJSON(JSONOptimization.fromOptization(opti, Optional.of(myExtension)));
+
+    }
+
     /*
      *
      * Helper
