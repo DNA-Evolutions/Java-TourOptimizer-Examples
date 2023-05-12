@@ -48,6 +48,9 @@ public class ExampleLicenseHelper {
 	// any license
 	if (myLicFile.exists()) {
 	    opti.setLicenseJSON(myLicFile);
+	}else {
+	    // Try with public license
+	    opti.setLicenseJSON(PUBLIC_JSON_LICENSE);
 	}
 
 	return true;
