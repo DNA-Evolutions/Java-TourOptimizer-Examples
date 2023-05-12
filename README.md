@@ -126,7 +126,7 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.5.0</version>
+   <version>7.5.0-rc1</version>
   <classifier>shaded</classifier>
 </dependency>
 ```
@@ -153,7 +153,7 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.5.0</version>
+   <version>7.5.0-rc1</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
