@@ -121,8 +121,8 @@ public class BuilderPatternExample {
     attachToObservables(myOpti);
 
     // 4) Start the Optimization by providing the immutable config object
-    CompletableFuture<OptimizationConfig<JSONConfig>> resultFuture =
-        myOpti.startAsynchConfigFuture(myConfig);
+    CompletableFuture<OptimizationConfig<JSONConfig>> resultFuture = 
+	    myOpti.startAsynchConfigFuture(myConfig, Optional.empty());
 
     // 5) We call get() on the future to wait until the Optimization is done
     OptimizationConfig<JSONConfig> result = resultFuture.get();
