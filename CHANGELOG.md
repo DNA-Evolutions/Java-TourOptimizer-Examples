@@ -15,6 +15,22 @@ Explanation of keys:
 
 ## Changelog Examples
 
+**v7.5.0-rc5 - v7.5.0-rc8**
+- Update: Changelog
+- Update: Update version in Readme
+- Feature: Add example for constraint alias id
+- Feature: Add example for reading in spring JSON and running optimization with JOpt Java core
+- Update: JOpt Java Core version
+
+**v7.5.0-rc2 - v7.5.0-rc4**
+- Update: Readme
+- Update: JOpt Java Core version
+- Update: Docker file from common base file for sandbox
+- Update: Docker file for sandbox
+- Update: Update code server version for sandbox
+- Update: Changelog
+- Update: FAQ
+
 **v7.5.0-rc1**
 - Update: Update version information
 - Improvement: Add fallback to public license in ExampleLicenseHelper
@@ -138,6 +154,60 @@ Explanation of keys:
 
 
 ## Changelog JOpt Library
+
+**v7.5.0-rc8**
+- Feature: Per hour production cost
+- Improvement: Improve SmartSimualtedAnnealing
+- Update: Update the version of commons-compress to solve a vulnerability
+- Improvement: Allow back-transformation (JSON to JOpt) of relations without related nodes and anchor details
+- Feature: Distance divider feature for joint visit duration clusters
+- Improvement: Check if overtime/overdistance increased before adding PILLAR_DROP_NOTOK_SOFT_ROUTEOVERTIME flag
+- Fix: Fix a JSON loading bug when unlocated idle time is in use
+- Fix: Avoid potential null-pointer in ShiftNodeOperator
+- Update: Add SmartSimulatedAnnealingAlgo and make it the default
+- Improvement: Improve PillarDropper
+
+**v7.5.0-rc7**
+- Feature: Add plugin manager
+- Improvement: Improve CostAssessor
+- Improvement: Improve PillarDropper
+- Fix: Consider reduction time when choosing the opening hour index of a node to avoid bad hours selection
+
+**v7.5.0-rc6**
+- Fix: Fix obfuscation issue for cluster result object
+
+**v7.5.0-rc5**
+- Feature: Use settings object during pillar dropping to acknowledge soft constraints if desired
+- Fix: Do not create/remove reduced Pom
+- Update: Update the guava version to solve a vulnerability 
+
+**v7.5.0-rc4**
+- Improvement: Improve Pom and OptimizationCutter
+
+**v7.5.0-rc3**
+- Improvement: Improve Pom and ClusterUtil
+
+**v7.5.0-rc2**
+- Improvement: Add new initial construction improvements
+- Fix: Fix a bug where the wrong entity is sent to the result stream
+- Fix: Copy unassigned node manager for old results to uncouple unassigned lists
+- Feature: Add before and after filtering result callback
+- Feature: Add property for max duration and max utilization values during cluster construction
+- Fix: Fix missing cost for solo cluster nodes
+- Fix: Fix potential null pointer in the toString method of the Entity class
+- Update: Only throw a warning if the connection is quasi-orphaned
+- Improvement: Make the scheme customizable in JSONOptimization
+- Improvement: Add constraint alias id concept
+- Fix: Fix bug where hard constrained skill is not honoured when using RouteSeedOperator
+- Fix: If an anchor-Item is present, allow empty related items
+- Fix: Use route object instead of route index during finalization
+- Fix: Avoid potential null pointer in DetailController
+- Fix: Fix to remove already unassigned elements during force filtering
+- Improvement: Add the concept of drops and try different pillar list sorting strategies
+- Improvement: During pillar dropping, first sort by location, then compare by duration flexibility
+- Fix: Check if the master node is also a related node during JSON conversion
+- Fix: Arrange pillars with location first
+- Fix: Fix build warning by adding compiler args
 
 **v7.5.0-rc1**
 - Fix: DutyHoursIncludesVisitDuration in Pillar Constructor is not checked
