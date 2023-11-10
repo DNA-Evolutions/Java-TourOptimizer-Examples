@@ -20,4 +20,4 @@ title="Preview of Swagger Interface"></a>
 ## RESTful Examples
 
 - Package `createinput`: Creating JSON test-input to be used with our swagger interface.
-
+- Package `readinput`: Read JSON non-optimized test-input and optimize with JOpt Java core.
