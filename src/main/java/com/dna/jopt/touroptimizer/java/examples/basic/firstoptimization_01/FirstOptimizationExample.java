@@ -3,7 +3,7 @@ package com.dna.jopt.touroptimizer.java.examples.basic.firstoptimization_01;
  * #%L
  * JOpt TourOptimizer Examples
  * %%
- * Copyright (C) 2017 - 2020 DNA Evolutions GmbH
+ * Copyright (C) 2017 - 2023 DNA Evolutions GmbH
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
