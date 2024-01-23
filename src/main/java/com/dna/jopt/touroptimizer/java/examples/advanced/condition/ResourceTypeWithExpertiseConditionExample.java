@@ -28,7 +28,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static java.time.Month.MARCH;
 import static java.time.Month.MAY;
 
 import javax.measure.Quantity;
@@ -60,7 +59,7 @@ import tec.units.ri.quantity.Quantities;
  * indicated by their individual Expertise level of 10 (Jack), 2 (John), and 4 (Paula). Two Nodes
  * "Koeln" and "Oberhausen", need a Resource providing the RepairType. However, "Koeln" needs at
  * least a Resource with expertise-level 8 (as a hard constraint) and "Oberhausen" at least need an
- * expertise-level of 3 (soft constraint) to be successfully served,
+ * expertise-level of 3 (soft constraint) to be successfully served.
  *
  * @author DNA
  * @version Mar 23, 2021
@@ -77,7 +76,7 @@ public class ResourceTypeWithExpertiseConditionExample extends Optimization {
   }
 
   public String toString() {
-    return "Setting a type/skill with Expertise for a Resources.";
+    return "Setting a type/skill with Expertise for resources.";
   }
 
   public void example()
@@ -123,8 +122,8 @@ public class ResourceTypeWithExpertiseConditionExample extends Optimization {
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
         new WorkingHours(
-            ZonedDateTime.of(2020, MARCH.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MARCH.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+            ZonedDateTime.of(2025, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2025, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
     return workingHours;
   }
@@ -196,8 +195,8 @@ public class ResourceTypeWithExpertiseConditionExample extends Optimization {
     List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
     weeklyOpeningHours.add(
         new OpeningHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+            ZonedDateTime.of(2025, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2025, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
     Duration visitDuration = Duration.ofMinutes(60);
 

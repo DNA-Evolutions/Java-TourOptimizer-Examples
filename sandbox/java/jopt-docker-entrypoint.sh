@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-echo "Trying to download Jopt Examples"
+echo "Trying to download JOpt Examples"
 
 folder="/home/coder/project/jopt.examples/"
 url="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples.git"

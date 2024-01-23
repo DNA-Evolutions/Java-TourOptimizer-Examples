@@ -1,4 +1,4 @@
-FROM dnaevolutions/jopt_example_base_server:4.13.0
+FROM dnaevolutions/jopt_example_base_server:4.20.1
 
 USER root
 # Copy entrypoint for pulling example from GitHub on start up
@@ -9,12 +9,6 @@ RUN ["chmod", "+x", "/usr/bin/jopt-docker-entrypoint.sh"]
 ENV PASSWORD=jopt
 
 USER coder
-
-# Install java pack extension 
-RUN code-server --install-extension vscjava.vscode-maven
-RUN code-server --install-extension vscjava.vscode-java-dependency
-RUN code-server --install-extension vscjava.vscode-java-debug
-RUN code-server --install-extension redhat.java
 
 WORKDIR /home/coder/project
 

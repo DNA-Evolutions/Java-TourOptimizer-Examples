@@ -35,6 +35,9 @@ Each of the example-sections has its own README.
 - Our DockerHub channel - <a href="https://hub.docker.com/u/dnaevolutions" target="_blank">DNA DockerHub</a>
 - Our LinkedIn channel - <a href="https://www.linkedin.com/company/dna-evolutions/" target="_blank">DNA LinkedIn</a>
 
+The release notes of this repository
+<a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/RELEASE_NOTES.md" target="_blank">RELEASE_NOTES.md</a>.
+
 The changelog of this repository and the underlying JOpt library is available in 
 <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/CHANGELOG.md" target="_blank">CHANGELOG.md</a>.
 
@@ -108,6 +111,9 @@ However, it is recommended to use our nexus-endpoint as a repository and downloa
 
 **We are recommending always using the latest version of JOpt.**
 
+**Major Changes (version 7.5.1+):**
+- **Java Version Upgrade**: Our core library has been moved from Java 8 to Java 17. Version 7.5.1 will be the **last version to include a Java 8 compatible version** along with a corresponding legacy dll version. Future updates will require users who are still on Java 8 or prefer to use dll to switch to our JOpt.TourOptimizer, which is a Spring Application with a Swagger interface. This allows for building clients in a desired language and version.
+
 For adding the JOpt dependency to your ``pom.xml`` you can use the following snippet (for help on how to set dependencies, please visit the <a href="https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html" target="_blank">official Maven documentation</a>):
 
 
@@ -115,7 +121,7 @@ For adding the JOpt dependency to your ``pom.xml`` you can use the following sni
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.5.0</version>
+   <version>7.5.1-j17</version>
   <classifier>shaded</classifier>
 </dependency>
 ```
@@ -126,13 +132,13 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.5.0-rc8</version>
+   <version>7.5.1-j17</version>
   <classifier>shaded</classifier>
 </dependency>
 ```
  
 
-**We are recommending always using the latest version of JOpt (rc).**
+**We are recommending always using the latest version of JOpt (rc) (if present).**
 
 ### JavaDocs
 
@@ -142,7 +148,7 @@ In case you want to add our JavaDocs to your project, further add the following 
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-  <version>7.5.0</version>
+  <version>7.5.1-j17</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
@@ -153,7 +159,7 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.5.0-rc8</version>
+   <version>7.5.1-j17</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
@@ -181,9 +187,36 @@ In your ``pom.xml`` add the following repository:
 
 <br>
 
+## Java 8 legacy version
+
+Version 7.5.1 will be the **last version to include a Java 8 compatible version** along with a corresponding legacy dll version. Future updates will require users who are still on Java 8 or prefer to use dll to switch to our JOpt.TourOptimizer, which is a Spring Application with a Swagger interface. This allows for building clients in a desired language and version.
+
+```xml
+<dependency>
+  <groupId>jopt</groupId>
+  <artifactId>jopt.core.pg</artifactId>
+  <version>7.5.1</version>
+  <classifier>javadoc</classifier>
+</dependency>
+```
+
+or latest
+
+```xml
+<dependency>
+  <groupId>jopt</groupId>
+  <artifactId>jopt.core.pg</artifactId>
+   <version>7.5.1</version>
+  <classifier>javadoc</classifier>
+</dependency>
+```
+
 ## Download our .NET legacy version
 
 We still support a legacy .NET version of JOpt. We utilize <a href="https://en.wikipedia.org/wiki/IKVM.NET" target="_blank">IKVM.NET</a> that is effectively a Java framework running on top of the .NET's framework.
+
+Release dll (archived as zip) as download (7.5.1-legacy):
+- <a href="https://shared.dna-evolutions.com/legacy/net/jopt.core-7.5.1-SNAPSHOT-with-dep-pg-legacy/jopt.core-7.5.1-SNAPSHOT-with-dep-pg-legacy.zip" target="_blank">JOpt .Net - 7.5.1</a>
 
 Release dll (archived as zip) as download (7.5.0-legacy):
 - <a href="https://shared.dna-evolutions.com/legacy/net/jopt.core-7.5.0-SNAPSHOT-with-dep-pg-legacy/jopt.core-7.5.0-SNAPSHOT-with-dep-pg-legacy.zip" target="_blank">JOpt .Net - 7.5.0</a>
@@ -211,8 +244,9 @@ In case you use *Gradle*, *SBT*, *IVY*, *Grape*, *Leiningen*, *Builder*, or othe
 
 ## Prerequisites
 
-* In your IDE as native Java dependency: Install at least Java 8 and Maven
+* In your IDE as native Java dependency: Install at least Java 17 and Maven
 * In our sandbox: Working Docker environment
+* Till and including version 7.5.1: Legacy verion Java 8
 * In your IDE as .NET legacy version: IKVM libraries imported in your project and a working .NET 4.X Framework.
 
 ---
