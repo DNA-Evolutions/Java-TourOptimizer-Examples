@@ -1,4 +1,4 @@
-image: maven:3.6-jdk-8-alpine
+image: maven:3.8.8-eclipse-temurin-17-alpine
 
 pipelines:
   default:
@@ -8,7 +8,7 @@ pipelines:
           - docker
         script:
           - cd ./sandbox/java/
-          - myVersion=1.1 
+          - myVersion=1.2 
           - docker version
           - docker build -t dnaevolutions/jopt_example_server:${myVersion} .
           - docker tag dnaevolutions/jopt_example_server:${myVersion} dnaevolutions/jopt_example_server:latest
