@@ -132,7 +132,7 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.5.1-j17</version>
+   <version>7.5.1-rc1-j17</version>
   <classifier>shaded</classifier>
 </dependency>
 ```
@@ -159,7 +159,7 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.5.1-j17</version>
+   <version>7.5.1-rc1-j17</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
@@ -196,17 +196,6 @@ Version 7.5.1 will be the **last version to include a Java 8 compatible version*
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
   <version>7.5.1</version>
-  <classifier>javadoc</classifier>
-</dependency>
-```
-
-or latest
-
-```xml
-<dependency>
-  <groupId>jopt</groupId>
-  <artifactId>jopt.core.pg</artifactId>
-   <version>7.5.1</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
