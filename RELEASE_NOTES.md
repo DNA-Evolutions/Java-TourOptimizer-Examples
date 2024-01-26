@@ -6,7 +6,7 @@ We are excited to announce the release of version 7.5.1 of our core library. Thi
 - **Java Version Upgrade**: Our core library has been moved from Java 8 to Java 17. This will be the **last version to include a Java 8 compatible version** along with a corresponding legacy dll version. Future updates will require users who are still on Java 8 or prefer to use dll to switch to our JOpt.TourOptimizer, which is a Spring Application with a Swagger interface. This allows for building clients in a desired language and version.
 
 ## New Additions
-- **Python Example Client**: We've added a new example client in Python for JOpt.TourOptimizer, providing more flexibility and accessibility for Python developers.
+- **Python Example Client**: We've added a new example client in Python for JOpt.TourOptimizer, providing more flexibility and accessibility for Python developers. Please contact us for more information, as using the client requires some personal instructions (<a href="mailto:info@dna-evolutions.com">info@dna-evolutions.com</a>).
 
 - **New Core Library Features**:
   - We are introducing two new features in our core library:

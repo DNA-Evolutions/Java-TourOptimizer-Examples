@@ -15,6 +15,11 @@ Explanation of keys:
 
 ## Changelog Examples
 
+**v7.5.1 - v7.5.1-rc1**
+- Feature: Add example for extrainfo usage
+- Feature: Add example for expertise with level and cost model
+- Update: Improve some examples
+
 **v7.5.0-rc5 - v7.5.0-rc8**
 - Update: Changelog
 - Update: Update version in Readme
@@ -154,6 +159,19 @@ Explanation of keys:
 
 
 ## Changelog JOpt Library
+
+**v7.5.1-rc1-j17**
+- Fix JSON bug in ResourceDepot
+
+**v7.5.1-j17**
+- Update: Using Java 17 by default and depdendcy updates
+- Feature:  Add filter ident string for NodeFilterReason
+- Fix: Solve assessor event-pillar related dead-loop problem
+- Improvement: Make sure that start-anchors are always dropped before end-anchors in pillar dropper
+- Update: Dependency updates for almost all versions to solve multiple performance and vulnerability issues
+- Fix: Solve bug where JSONFormat shape set to Shape.String is causing boolean format problem
+- Improvement: Multiple Schema/JSON description fixes
+- Improvement: Allow a missing "Z" in UTC format during JSON serialization
 
 **v7.5.0-rc8**
 - Feature: Per hour production cost
