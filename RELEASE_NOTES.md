@@ -15,7 +15,7 @@ We've added a new [example client in Python ](https://github.com/DNA-Evolutions/
 
 **New Core Library Features**:
   - We are introducing two new features in our core library:
-    - The first feature includes the use of [skills with skill levels and cost models](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/condition/ResourceTypeWithExpertiseConditionAndCostModelExample.java). 
+    - The first feature includes the use of [skills with skill levels and cost models](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/condition/ResourceTypeWithExpertiseConditionAndCostModelExample.java). Please also visit our [docs page](https://docs.dna-evolutions.com/overview_docs/skills/Skill_costmodel.html).
     - The second feature introduces the [extra-info functionality](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/extrainfo/ExtraInfoExample.java), which allows for saving custom strings in an OptimizationElement, such as a Node or a Resource.
   - Standalone examples for these new features will be available in our [Java-TourOptimizer-Examples GitHub repository](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples).
   
