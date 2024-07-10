@@ -15,7 +15,7 @@ Explanation of keys:
 
 ## Changelog Examples
 
-**v7.5.1 - v7.5.1-rc1**
+**v7.5.1 - v7.5.1-rc2**
 - Feature: Add example for extrainfo usage
 - Feature: Add example for expertise with level and cost model
 - Update: Improve some examples
@@ -159,6 +159,32 @@ Explanation of keys:
 
 
 ## Changelog JOpt Library
+
+**v7.5.1-rc2-j17**
+- Fix: Return empty cluster instead of null in ClusterFilterHelper
+- Fix: Collision map for unintended late event pillars is not correctly tested
+- Update: Update versions of several dependencies
+- Improvement: Override toString method for OptimizationProgress object
+- Fix: Couple thread pool start of optimization and optimization preparation state
+- Fix: Fix potential concurrent modification exception in route containing pillars
+- Fix: Add error for null entity during construction
+- Fix: Add nesting limit for relationship-networks
+- Fix: Add uncaught exception handler to the optimization preparation phase
+- Feature: Use method to do rounding of times and distances
+- Fix: Also use default overtime margin during pillar dropping
+- Feature: Add route start and termination modification task
+- Feature: Add a method to get the centre of a time window
+- Improvement: Improve the cost model of the node schedule
+- Improvement: Remove route time item from work distribution CostBucket
+- Fix: Relationshipcost in tuning is wrong and can fluctuate
+- Fix: Fix vulnerabilities in commons-compress by updating version
+- Improvement: Allow to skip pillar drop during linear entity creation and add optionally definable limit in OptimizationSetup
+- Fix: Only use the maximal three construction cycles by default
+- Fix: Keep a maximum of a hundred 2-Opt iterations during construction
+- Improvement: During construction, by default, add all pillars with attached resources
+- Fix: Only invoke cluster advantage calculation if resource load is not null and not empty
+- Fix: Add build-filter for log4j2.xml
+- Improvement: Do not add all pillars by default during construction, as this leads to big clusters and low performance
 
 **v7.5.1-rc1-j17**
 - Fix JSON bug in ResourceDepot
