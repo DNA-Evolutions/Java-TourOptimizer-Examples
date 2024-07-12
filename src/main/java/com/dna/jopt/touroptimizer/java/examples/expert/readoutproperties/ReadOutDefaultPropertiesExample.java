@@ -56,6 +56,7 @@ public class ReadOutDefaultPropertiesExample extends Optimization {
     categories.add("CATEGORY_OPTIMIZATION_AUTOFILTER");
     categories.add("CATEGORY_OPTIMIZATION_CO_SETUP");
     categories.add("CATEGORY_OPTIMIZATION_DEPRECATED");
+    categories.add("CATEGORY_INJECTION");
 
     IOptimization myDummyOptimization = new Optimization();
 
