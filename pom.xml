@@ -14,9 +14,9 @@
 
 	<properties>
 	
-		<jopt.core.pg.version>7.5.1-rc2-j17</jopt.core.pg.version>
-		<log4j-core.version>2.23.1</log4j-core.version>
-		<maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
+		<jopt.core.pg.version>7.5.2-j17</jopt.core.pg.version>
+		<log4j-core.version>2.24.3</log4j-core.version>
+		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
 	
 		<project.build.sourceEncoding>cp1252</project.build.sourceEncoding>
 		<maven.compiler.target>17</maven.compiler.target>
@@ -61,18 +61,22 @@
 
 
 	<dependencies>
+	
 		<dependency>
 			<groupId>jopt</groupId>
 			<artifactId>jopt.core.pg</artifactId>
 			<version>${jopt.core.pg.version}</version>
 			<classifier>shaded</classifier>
 		</dependency>
+		
 		<dependency>
 			<groupId>jopt</groupId>
 			<artifactId>jopt.core.pg</artifactId>
 			<version>${jopt.core.pg.version}</version>
 			<classifier>javadoc</classifier>
-		</dependency> 
+		</dependency>
+		
+		
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
