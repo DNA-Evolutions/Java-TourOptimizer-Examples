@@ -46,6 +46,9 @@ The changelog of this repository and the underlying JOpt library is available in
 The FAQ of this repository is available in 
 <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/FAQ.md" target="_blank">FAQ.md</a>.
 
+Overview of available sandboxes is available in <a href="https://github.com/DNA-Evolutions/Docker-REST-TourOptimizer/blob/main/Sandboxes.md" target="_blank">Sandboxes.md</a>.
+
+
 <a href="https://sourceforge.net/software/product/JOpt.TourOptimizer/?pk_campaign=badge&amp;pk_source=vendor" target="_blank" rel="nofollow">
 		<img alt="Partner 2025" src="https://sourceforge.net/cdn/syndication/badge_img/3636727/light-partner" height="120px" width="120px;"></a>
 
