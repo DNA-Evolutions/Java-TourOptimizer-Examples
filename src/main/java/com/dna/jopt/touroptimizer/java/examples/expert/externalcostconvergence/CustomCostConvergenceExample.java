@@ -91,7 +91,7 @@ public class CustomCostConvergenceExample extends Optimization {
     // Create external CostConverger
     ICostConverger myJoinedCostConverger = new MyCostConverger(this);
     myJoinedCostConverger.addExecutionAlgorithm("GeneticEvolution");
-    myJoinedCostConverger.addExecutionAlgorithm("SimulatedAnnealing");
+    myJoinedCostConverger.addExecutionAlgorithm("SmartSimulatedAnnealingAlgo");
     myJoinedCostConverger.setConvergenceThreshold(5);
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
