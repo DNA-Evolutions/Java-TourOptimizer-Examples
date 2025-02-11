@@ -65,7 +65,7 @@ The **Optimization Solution Comparison Tool** allows users to **modify an existi
   - This tool allows for **comparing the original optimizer result** with a **modified version** (e.g., changing visit orders of nodes).  
   - The tool generates a **comparison report**, showing the impact on **costs, violations, and performance**.
 
-**Read more about this feature in our [docs](https://docs.dna-evolutions.com/overview_docs/comparison_tool/comparison_tool.html">https://docs.dna-evolutions.com/overview_docs/comparison_tool/comparison_tool.html).** Further, get an **[example](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/compareresult/).**
+**Read more about this feature in our [docs](https://docs.dna-evolutions.com/overview_docs/comparison_tool/comparison_tool.html).** Further, get an **[example](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/compareresult/).**
 
 ---
 
@@ -86,7 +86,7 @@ We introduce **Performance Mode**, an **optional setting** that allows optimizat
 ```java
 props.setProperty("JOpt.PerformanceMode", "true");
 ```
-**Read more about Performance Mode in our [docs](https://docs.dna-evolutions.com/overview_docs/performancemode/performance_mode.html">https://docs.dna-evolutions.com/overview_docs/performancemode/performance_mode.html).** Further, get an **[example](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/performancemode/).**
+**Read more about Performance Mode in our [docs](https://docs.dna-evolutions.com/overview_docs/performancemode/performance_mode.html).** Further, get an **[example](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/performancemode/).**
 
 ---
 
@@ -105,7 +105,7 @@ In many real-world scenarios, **crossing between different zones** (e.g., via **
 props.setProperty("JOpt.Clustering.PenlalizeZoneCodeCrossing", true);
 props.setProperty("JOpt.Clustering.PenlalizeZoneCodeCrossingMultiplier", "3.0");
 ```
-**Read more about the Zone Crossing Penalty in our [docs](https://docs.dna-evolutions.com/overview_docs/zonecrossing/zonecrossing.html">https://docs.dna-evolutions.com/overview_docs/zonecrossing/zonecrossing.html).**
+**Read more about the Zone Crossing Penalty in our [docs](https://docs.dna-evolutions.com/overview_docs/zonecrossing/zonecrossing.html).**
 Further, get an **[example](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/zonecrossing/).**
 
 ## Improvements
