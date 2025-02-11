@@ -36,7 +36,7 @@ We are currently running a **closed beta program** for our **LLM-powered feature
 ---
 
 ## **Updated REST API Specification**
-Generating a REST client based on a complex schema can be challenging. To improve the experience, we now provide **two different schema definitions**, starting from **core version 1.3.0-SNAPSHOT**:
+Generating a REST client based on a complex schema can be challenging. To improve the experience, we now provide **two different schema definitions**, starting from **JOpt TourOptimizer schema version 1.3.0-SNAPSHOT**:
 
 1. **Full Schema**  
    - **Includes the original stricter definition** with additional `"oneOf"` keys.  
