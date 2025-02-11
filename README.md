@@ -26,6 +26,7 @@ Each of the example-sections has its own README.
 
 # Further Documentation and Links
 
+- Our website - <a href="https://www.dna-evolutions.com" target="_blank">www.dna-evolutions.com</a>
 - Further documentation 	- <a href="https://docs.dna-evolutions.com" target="_blank">docs.dna-evolutions.com</a>
 - Special features 	- <a href="https://docs.dna-evolutions.com/overview_docs/special_features/Special_Features.html" target="_blank">Overview of special features</a>
 - Our official repository 	- <a href="https://public.repo.dna-evolutions.com" target="_blank">public.repo.dna-evolutions.com</a>
@@ -34,6 +35,7 @@ Each of the example-sections has its own README.
 - Documentation - <a href="https://docs.dna-evolutions.com/rest/touroptimizer/rest_touroptimizer.html" target="_blank">DNA's RESTful Spring-TourOptimizer in Docker </a>
 - Our DockerHub channel - <a href="https://hub.docker.com/u/dnaevolutions" target="_blank">DNA DockerHub</a>
 - Our LinkedIn channel - <a href="https://www.linkedin.com/company/dna-evolutions/" target="_blank">DNA LinkedIn</a>
+- Our Sourceforge channel - <a href="https://sourceforge.net/software/product/JOpt.TourOptimizer/?pk_campaign=badge&amp;pk_source=vendor" target="_blank">DNA SourceForge</a>
 
 The release notes of this repository
 <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/RELEASE_NOTES.md" target="_blank">RELEASE_NOTES.md</a>.
@@ -43,6 +45,9 @@ The changelog of this repository and the underlying JOpt library is available in
 
 The FAQ of this repository is available in 
 <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/FAQ.md" target="_blank">FAQ.md</a>.
+
+<a href="https://sourceforge.net/software/product/JOpt.TourOptimizer/?pk_campaign=badge&amp;pk_source=vendor" target="_blank" rel="nofollow">
+		<img alt="Partner 2025" src="https://sourceforge.net/cdn/syndication/badge_img/3636727/light-partner" height="120px" width="120px;"></a>
 
 
 # Short Introduction
@@ -112,7 +117,9 @@ However, it is recommended to use our nexus-endpoint as a repository and downloa
 **We are recommending always using the latest version of JOpt.**
 
 **Major Changes (version 7.5.1+):**
-- **Java Version Upgrade**: Our core library has been moved from Java 8 to Java 17. Version 7.5.1 will be the **last version to include a Java 8 compatible version** along with a corresponding legacy dll version. Future updates will require users who are still on Java 8 or prefer to use dll to switch to our JOpt.TourOptimizer, which is a Spring Application with a Swagger interface. This allows for building clients in a desired language and version.
+- **Java Version Upgrade**: Our core library has been moved from Java 8 to Java 17. Version 7.5.2 will be the **last version we guarantee to include a Java 8 compatible version** along with a corresponding legacy **dll** version. 
+
+Future updates will require users who are still on Java 8 or prefer to use dll to switch to our JOpt.TourOptimizer, which is a Spring Application with a Swagger interface. This allows for building clients in a desired language and version.
 
 For adding the JOpt dependency to your ``pom.xml`` you can use the following snippet (for help on how to set dependencies, please visit the <a href="https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html" target="_blank">official Maven documentation</a>):
 
@@ -121,7 +128,7 @@ For adding the JOpt dependency to your ``pom.xml`` you can use the following sni
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.5.1-j17</version>
+   <version>7.5.2-j17</version>
   <classifier>shaded</classifier>
 </dependency>
 ```
@@ -132,7 +139,7 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.5.1-rc2-j17</version>
+   <version>7.5.2-j17</version>
   <classifier>shaded</classifier>
 </dependency>
 ```
@@ -148,7 +155,7 @@ In case you want to add our JavaDocs to your project, further add the following 
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-  <version>7.5.1-j17</version>
+  <version>7.5.2-j17</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
@@ -159,7 +166,7 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.5.1-rc2-j17</version>
+   <version>7.5.2-j17</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
@@ -189,13 +196,13 @@ In your ``pom.xml`` add the following repository:
 
 ## Java 8 legacy version
 
-Version 7.5.1 will be the **last version to include a Java 8 compatible version** along with a corresponding legacy dll version. Future updates will require users who are still on Java 8 or prefer to use dll to switch to our JOpt.TourOptimizer, which is a Spring Application with a Swagger interface. This allows for building clients in a desired language and version.
+Version 7.5.2 will be the **last version to include a Java 8 compatible version** along with a corresponding legacy dll version. Future updates will require users who are still on Java 8 or prefer to use dll to switch to our JOpt.TourOptimizer, which is a Spring Application with a Swagger interface. This allows for building clients in a desired language and version.
 
 ```xml
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-  <version>7.5.1</version>
+  <version>7.5.2-j8</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
@@ -203,6 +210,15 @@ Version 7.5.1 will be the **last version to include a Java 8 compatible version*
 ## Download our .NET legacy version
 
 We still support a legacy .NET version of JOpt. We utilize <a href="https://en.wikipedia.org/wiki/IKVM.NET" target="_blank">IKVM.NET</a> that is effectively a Java framework running on top of the .NET's framework.
+
+Release dll (archived as zip) as download (7.5.2-legacy):
+- <a href="https://shared.dna-evolutions.com/legacy/net/jopt.core-7.5.2-SNAPSHOT-with-dep-pg-legacy/jopt.core-7.5.2-SNAPSHOT-with-dep-pg-legacy.zip" target="_blank">JOpt .Net - 7.5.2</a>
+
+
+The IKVM.NET framework as download:
+- <a href="https://shared.dna-evolutions.com/legacy/net/ikvm_env/ikvm-8.1.5717.0.zip" target="_blank">IKVM.NET Framework</a>
+
+### Older versions:
 
 Release dll (archived as zip) as download (7.5.1-legacy):
 - <a href="https://shared.dna-evolutions.com/legacy/net/jopt.core-7.5.1-SNAPSHOT-with-dep-pg-legacy/jopt.core-7.5.1-SNAPSHOT-with-dep-pg-legacy.zip" target="_blank">JOpt .Net - 7.5.1</a>
@@ -223,8 +239,6 @@ Release dll (archived as zip) as download (7.4.8-legacy):
 Release dll (archived as zip) as download (7.4.6-legacy):
 - <a href="https://shared.dna-evolutions.com/legacy/net/jopt.core.pg-7.4.6-shaded/jopt.core.pg-7.4.6-shaded.zip" target="_blank">JOpt .Net - 7.4.6</a>
 
-The IKVM.NET framework as download:
-- <a href="https://shared.dna-evolutions.com/legacy/net/ikvm_env/ikvm-8.1.5717.0.zip" target="_blank">IKVM.NET Framework</a>
 
 ## Non-Maven projects
 
@@ -247,4 +261,3 @@ For reading our license agreement and for further information about license plan
 
 ## Authors
 A product by [dna-evolutions ](https://www.dna-evolutions.com)&copy;
-
