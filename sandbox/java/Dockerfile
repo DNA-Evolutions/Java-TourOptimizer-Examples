@@ -1,4 +1,4 @@
-FROM dnaevolutions/jopt_example_base_server:4.91.0
+FROM dnaevolutions/jopt_example_base_server:4.96.4
 
 USER root
 # Copy entrypoint for pulling example from GitHub on start up
