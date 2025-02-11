@@ -15,6 +15,19 @@ Explanation of keys:
 
 ## Changelog Examples
 
+**v7.5.1-rc2 - v7.5.2**
+- Update: Changelog
+- Update: Update version in Readme, Release Notes
+- Update to latest core release 7.5.3
+- Fix: Fix wrong algorithm title in CustomConvergenCost example
+- Feature: Add example for performance mode
+- Feature: Add example for zone crossing penalty
+- Feature: Add example for result comparison tool
+- Improvement: Avoid some container problems by forcing LF instead of CRLF
+- Improvement: Update license to allow 20 elements in free mode
+- Update: Update base-image for sandbox
+
+
 **v7.5.1 - v7.5.1-rc2**
 - Feature: Add example for extrainfo usage
 - Feature: Add example for expertise with level and cost model
@@ -159,6 +172,39 @@ Explanation of keys:
 
 
 ## Changelog JOpt Library
+
+**v7.5.2-j17**
+- Update: Update dependencies and build images
+- Update: Add some missing class headers
+- Improvement: Multiple fixes for new stricter schema definitions
+- Improvement: Make most methods static in the comparison tool
+- Improvement: Check also for cost equality in the comparison tool to generate a correct report
+- Fix: Create a copy of the provided resource list to avoid unintended modification in the picker
+- Feature: Add optimization identifier for easier identification on runtime to outcome objects
+- Fix: Fix the wrong expected value type for some properties
+- Feature: Add unassigned nodes count to job violation controller
+- Improvement: Add method to create a new position object from a delta latitude and longitude
+- Update: Cost comparison tool improvements
+- Improvement: Allow silent mode in Unassigner
+- Fix: Make several entry points protected in the abstract node EdgeConnector class
+- Fix: Delete base values during comparison and set to zero if a violation does not provide a cost
+- Update: Add new entry points for the cluster picker
+- Improvement: Set unassign manager to protected, to only allow access in the validation algorithm
+- Improvement: Add ZoneCodeTravel restriction by default
+- Improvement: Read out the performance mode setting first and adjust the population size
+- Improvement: Provide used node connection in EvaulatedNodeDataHolder during assessment
+- Improvement: Performance improvements in thread management
+- Update: Exclude Recombine3Operator in performance mode
+- Fix: Fix the missing main code in the schema description
+- Improvement: Improve the Ucaught exception handler to allow for easier extension
+- Improvement: Throw invalid entity exception in case the correction failed
+- Improvement: Check success in preparation. If no valid entity is present, return an empty result.
+- Improvement: Add empty IOptimizationResult concept
+- Fix: Fix shadow-cost in company route
+- Update: Adding tests for solitude nodes
+- Feature: Enable fix-cost for nodes
+- Feature: Enable in-company concept for RouteTermination-Anchors
+- Fix: Close stream during BZip correctly
 
 **v7.5.1-rc2-j17**
 - Fix: Return empty cluster instead of null in ClusterFilterHelper
