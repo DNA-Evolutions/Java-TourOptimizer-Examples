@@ -12,9 +12,28 @@ This repository is part of our JOpt-TourOptimizer-Suite for Java. It includes an
 If you need any help, please contact us via our company website <a href="https://www.dna-evolutions.com" target="_blank">www.dna-evolutions.com</a> or write an email to <a href="mailto:info@dna-evolutions.com">info@dna-evolutions.com</a>.
 
 
-# Outline
+# **Outline**
 
-The project is subdivided into four major types of examples:
+- [Introduction](#java-jopt-touroptimizer-examples) - Overview of the repository and its role in the JOpt-TourOptimizer-Suite.  
+- [Contact](#contact) - How to reach out for help or inquiries.  
+- [Architecture](#architecture) - Breakdown of the four major example categories (Basic, Advanced, Expert, RESTful).  
+- [Further Documentation and Links](#further-documentation-and-links) - Quick access to official documentation, JavaDocs, DockerHub, SourceForge, and more.  
+- [Short Introduction](#short-introduction) - Overview of JOpt and its capabilities in solving tour optimization problems.  
+- [Getting Started](#getting-started-with-the-examples) - Different ways to begin using JOpt-TourOptimizer examples.  
+- [Using the Sandbox](#use-our-sandbox-in-your-browser-docker-required) - Steps to set up and run the sandbox using Docker.  
+- [Cloning the Repository](#clone-this-repository) - Instructions for cloning and using the examples.  
+- [Downloading Dependencies](#download-the-jar-directly-or-as-dependency) - How to download the latest JOpt-TourOptimizer JAR or include it as a Maven dependency.  
+- [Legacy Support](#java-8-legacy-version) - Java 8 compatibility details and .NET legacy support.  
+- [Non-Maven Projects](#non-maven-projects) - Using JOpt with Gradle, SBT, IVY, and other build tools.  
+- [Prerequisites](#prerequisites) - System requirements for running JOpt-TourOptimizer.  
+- [License Agreement](#agreement) - Information on licensing and terms.  
+- [Authors](#authors) - DNA-Evolutions company information.  
+
+
+
+# Architecture
+
+This Java project is subdivided into four major types of examples:
 
 1. <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic" target="_blank">Basic Examples</a>
 2. <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced" target="_blank">Advanced Examples</a>
