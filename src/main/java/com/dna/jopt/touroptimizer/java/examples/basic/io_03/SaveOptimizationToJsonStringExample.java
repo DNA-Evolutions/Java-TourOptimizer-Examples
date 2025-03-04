@@ -16,7 +16,9 @@ import static java.time.Month.MARCH;
 import static tec.units.ri.unit.MetricPrefix.KILO;
 import static tec.units.ri.unit.Units.METRE;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -64,7 +66,8 @@ public class SaveOptimizationToJsonStringExample extends Optimization {
     }
 
     public String toString() {
-	return "Printing the current optimization state to a string using JSON";
+	return "Printing the current optimization state to a string using JSON. Be careful: Optimization snapshots can be very big and usually are highly "
+		+ "compressed and loaded on the fly.";
     }
 
     public void example() throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
@@ -98,12 +101,12 @@ public class SaveOptimizationToJsonStringExample extends Optimization {
 
 	List<IWorkingHours> workingHours = new ArrayList<>();
 	workingHours.add(
-		new WorkingHours(ZonedDateTime.of(2020, MARCH.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-			ZonedDateTime.of(2020, MARCH.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+		new WorkingHours(ZonedDateTime.of(2030, MARCH.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+			ZonedDateTime.of(2030, MARCH.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
 	workingHours.add(
-		new WorkingHours(ZonedDateTime.of(2020, MARCH.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-			ZonedDateTime.of(2020, MARCH.getValue(), 7, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+		new WorkingHours(ZonedDateTime.of(2030, MARCH.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+			ZonedDateTime.of(2030, MARCH.getValue(), 7, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
 	return workingHours;
     }
@@ -125,8 +128,8 @@ public class SaveOptimizationToJsonStringExample extends Optimization {
 
 	List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
 	weeklyOpeningHours.add(
-		new OpeningHours(ZonedDateTime.of(2020, MARCH.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-			ZonedDateTime.of(2020, MARCH.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+		new OpeningHours(ZonedDateTime.of(2030, MARCH.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+			ZonedDateTime.of(2030, MARCH.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
 	Duration visitDuration = Duration.ofMinutes(20);
 
@@ -186,8 +189,11 @@ public class SaveOptimizationToJsonStringExample extends Optimization {
 	    exportedConfig = exportedConfig.withCoreBuildOptions(Optional.empty())
 		    .withElementConnections(new ArrayList<>()).withSolution(Optional.empty());
 
-	    String serializedExportedConfig = ConfigSerialization.serialize(exportedConfig);
-
+	   // Without pretty directly call:
+	   // String serializedExportedConfig = ConfigSerialization.serialize(exportedConfig);
+	    
+	    String serializedExportedConfig = prettySerialize(exportedConfig);
+	    
 	    System.out.println(serializedExportedConfig);
 
 	} catch (SerializationException | ConvertException e) {
@@ -195,5 +201,17 @@ public class SaveOptimizationToJsonStringExample extends Optimization {
 	    e.printStackTrace();
 	}
 
+    }
+    
+    public static String prettySerialize(OptimizationConfig<CoreConfig> exportedConfig) throws SerializationException {
+
+	ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+	try {
+	    ConfigSerialization.objectMapper().writerWithDefaultPrettyPrinter().writeValue(outStream, exportedConfig);
+	} catch (IOException e) {
+	    throw new SerializationException("Cannot serialize Config: " + e.getMessage());
+	}
+
+	return new String(outStream.toByteArray(), StandardCharsets.UTF_8);
     }
 }
