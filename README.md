@@ -225,6 +225,18 @@ Version 7.5.2 will be the **last version to include a Java 8 compatible version*
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
   <version>7.5.2-j8</version>
+  <classifier>shaded</classifier>
+</dependency>
+```
+
+
+and docs:
+
+```xml
+<dependency>
+  <groupId>jopt</groupId>
+  <artifactId>jopt.core.pg</artifactId>
+  <version>7.5.2-j8</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
