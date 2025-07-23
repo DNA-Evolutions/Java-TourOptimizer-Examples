@@ -150,7 +150,7 @@ For adding the JOpt dependency to your ``pom.xml`` you can use the following sni
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.5.2-rc1-j17</version>
+   <version>7.5.2-j17</version>
   <classifier>shaded</classifier>
 </dependency>
 ```
@@ -161,7 +161,7 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.5.2-j17</version>
+   <version>7.5.2-rc1-j17</version>
   <classifier>shaded</classifier>
 </dependency>
 ```
@@ -177,7 +177,7 @@ In case you want to add our JavaDocs to your project, further add the following 
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-  <version>7.5.2-rc1-j17</version>
+  <version>7.5.2-j17</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
@@ -188,7 +188,7 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.5.2-j17</version>
+   <version>7.5.2-rc1-j17</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
