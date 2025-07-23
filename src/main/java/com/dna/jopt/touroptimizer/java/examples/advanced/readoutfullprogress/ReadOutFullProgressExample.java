@@ -12,8 +12,8 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.readoutfullprogress;
  * #L%
  */
 import static java.time.Month.MAY;
-import static tec.units.ri.unit.MetricPrefix.KILO;
-import static tec.units.ri.unit.Units.METRE;
+import static javax.measure.MetricPrefix.KILO;
+import static tech.units.indriya.unit.Units.METRE;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -41,7 +41,7 @@ import com.dna.jopt.member.unit.hours.OpeningHours;
 import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.resource.CapacityResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
-import tec.units.ri.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 /**
  * Example on how to access progress information via static method <code>

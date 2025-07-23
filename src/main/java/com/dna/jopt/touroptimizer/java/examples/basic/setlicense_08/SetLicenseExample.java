@@ -11,8 +11,8 @@ package com.dna.jopt.touroptimizer.java.examples.basic.setlicense_08;
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
-import static tec.units.ri.unit.MetricPrefix.KILO;
-import static tec.units.ri.unit.Units.METRE;
+import static javax.measure.MetricPrefix.KILO;
+import static tech.units.indriya.unit.Units.METRE;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -45,7 +45,7 @@ import com.dna.jopt.member.unit.hours.WorkingHours;
 import com.dna.jopt.member.unit.hours.OpeningHours;
 import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.resource.CapacityResource;
-import tec.units.ri.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 /** Reading the JOpt-license from a file. */
 public class SetLicenseExample extends Optimization {

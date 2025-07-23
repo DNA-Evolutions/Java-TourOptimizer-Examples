@@ -11,8 +11,8 @@ package com.dna.jopt.touroptimizer.java.examples.expert.externalcostconvergence;
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
-import static tec.units.ri.unit.MetricPrefix.KILO;
-import static tec.units.ri.unit.Units.METRE;
+import static javax.measure.MetricPrefix.KILO;
+import static tech.units.indriya.unit.Units.METRE;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -48,7 +48,7 @@ import com.dna.jopt.member.unit.resource.CapacityResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import com.dna.jopt.util.costconverger.AbstractCostConverger;
 import com.dna.jopt.util.costconverger.ICostConverger;
-import tec.units.ri.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 /**
  * Defining a cost convergence criteria, which will cause the optimization to gracefully stop once

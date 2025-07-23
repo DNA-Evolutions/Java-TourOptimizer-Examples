@@ -1,6 +1,6 @@
 package com.dna.jopt.touroptimizer.java.examples.util.progressparser;
 
-import static tec.units.ri.unit.Units.METRE;
+import static tech.units.indriya.unit.Units.METRE;
 
 import java.time.Duration;
 
@@ -10,7 +10,7 @@ import javax.measure.quantity.Length;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationProgress;
 import com.dna.jopt.member.bucket.entity.IEntity;
 
-import tec.units.ri.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 /**
  * The Class ParsedProgress helps to parse an existing Progress object received by the Optimizer.

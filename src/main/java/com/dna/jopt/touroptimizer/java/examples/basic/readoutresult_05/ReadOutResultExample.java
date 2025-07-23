@@ -12,8 +12,8 @@ package com.dna.jopt.touroptimizer.java.examples.basic.readoutresult_05;
  * #L%
  */
 import static java.time.Month.MAY;
-import static tec.units.ri.unit.MetricPrefix.KILO;
-import static tec.units.ri.unit.Units.METRE;
+import static javax.measure.MetricPrefix.KILO;
+import static tech.units.indriya.unit.Units.METRE;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -42,7 +42,7 @@ import com.dna.jopt.member.unit.resource.CapacityResource;
 import com.dna.jopt.member.unit.violation.IViolation;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
-import tec.units.ri.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 /** Example on how to access route information and details from result object. */
 public class ReadOutResultExample extends Optimization {

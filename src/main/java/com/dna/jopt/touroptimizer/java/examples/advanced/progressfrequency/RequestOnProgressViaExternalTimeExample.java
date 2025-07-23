@@ -11,8 +11,8 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.progressfrequency;
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
-import static tec.units.ri.unit.MetricPrefix.KILO;
-import static tec.units.ri.unit.Units.METRE;
+import static javax.measure.MetricPrefix.KILO;
+import static tech.units.indriya.unit.Units.METRE;
 
 import java.time.Duration;
 import java.time.ZoneId;
@@ -43,7 +43,7 @@ import com.dna.jopt.member.unit.node.INode;
 import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.resource.CapacityResource;
 
-import tec.units.ri.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 /**
  * In this example we are requesting a progress update after a fixed amount of time.

@@ -12,8 +12,8 @@ package com.dna.jopt.touroptimizer.java.examples.expert.openassessor.nodelevel;
  * #L%
  */
 import static java.util.Calendar.MAY;
-import static tec.units.ri.unit.MetricPrefix.KILO;
-import static tec.units.ri.unit.Units.METRE;
+import static javax.measure.MetricPrefix.KILO;
+import static tech.units.indriya.unit.Units.METRE;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,7 +46,7 @@ import com.dna.jopt.member.unit.resource.CapacityResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import com.dna.jopt.touroptimizer.java.examples.expert.openassessor.nodelevel.custom.OpenCostAssessorOptimizationSchemeWithMRestriction;
 
-import tec.units.ri.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 /**
  * Inject a custom restriction for the assessor. Here, nodes which start with a "M" in their id need to be

@@ -11,11 +11,11 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.co2emission;
  * If not, see <https://www.dna-evolutions.com/agb-conditions-and-terms/>.
  * #L%
  */
-import static tec.units.ri.unit.MetricPrefix.KILO;
-import static tec.units.ri.unit.Units.METRE;
+import static javax.measure.MetricPrefix.KILO;
+import static tech.units.indriya.unit.Units.METRE;
 import static java.time.Month.MAY;
 
-import tec.units.ri.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;

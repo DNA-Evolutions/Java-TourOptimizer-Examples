@@ -14,7 +14,7 @@
 
 	<properties>
 	
-		<jopt.core.pg.version>7.5.2-j17</jopt.core.pg.version>
+		<jopt.core.pg.version>7.5.2-rc1-j17</jopt.core.pg.version>
 		<log4j-core.version>2.24.3</log4j-core.version>
 		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
 	

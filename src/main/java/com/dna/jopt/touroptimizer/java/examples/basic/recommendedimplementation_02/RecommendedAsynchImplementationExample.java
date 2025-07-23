@@ -11,8 +11,8 @@ package com.dna.jopt.touroptimizer.java.examples.basic.recommendedimplementation
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
-import static tec.units.ri.unit.MetricPrefix.KILO;
-import static tec.units.ri.unit.Units.METRE;
+import static javax.measure.MetricPrefix.KILO;
+import static tech.units.indriya.unit.Units.METRE;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -43,7 +43,7 @@ import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.resource.CapacityResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
-import tec.units.ri.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 /**
  * This class exemplifies our recommendation of how to do an asynchronous run and getting a completable future of

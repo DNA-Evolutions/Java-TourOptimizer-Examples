@@ -12,8 +12,8 @@ package com.dna.jopt.touroptimizer.java.examples.expert.customsolution;
  * #L%
  */
 import static java.time.Month.MAY;
-import static tec.units.ri.unit.MetricPrefix.KILO;
-import static tec.units.ri.unit.Units.METRE;
+import static javax.measure.MetricPrefix.KILO;
+import static tech.units.indriya.unit.Units.METRE;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -53,7 +53,7 @@ import com.dna.jopt.member.unit.resource.CapacityResource;
 import com.dna.jopt.member.unit.resource.IResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
-import tec.units.ri.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 /** Setting a custom solution for starting the optimization. */
 public class CustomSolutionWithAdditionalNodesAndResourcesExample extends Optimization {

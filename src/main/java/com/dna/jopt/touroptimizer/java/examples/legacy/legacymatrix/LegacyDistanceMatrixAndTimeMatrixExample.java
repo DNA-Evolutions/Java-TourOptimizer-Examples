@@ -12,8 +12,8 @@ package com.dna.jopt.touroptimizer.java.examples.legacy.legacymatrix;
  * #L%
  */
 import static java.time.Month.MARCH;
-import static tec.units.ri.unit.MetricPrefix.KILO;
-import static tec.units.ri.unit.Units.METRE;
+import static javax.measure.MetricPrefix.KILO;
+import static tech.units.indriya.unit.Units.METRE;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,7 +46,7 @@ import com.dna.jopt.member.unit.resource.CapacityResource;
 import com.dna.jopt.member.unit.resource.IResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
-import tec.units.ri.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 /** Defining a time and distance matrix. (Legacy use NodeConnector instead) */
 public class LegacyDistanceMatrixAndTimeMatrixExample extends Optimization {

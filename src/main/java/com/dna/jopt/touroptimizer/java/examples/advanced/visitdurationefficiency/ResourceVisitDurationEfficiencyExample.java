@@ -13,8 +13,8 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.visitdurationefficienc
  * #L%
  */
 import static java.time.Month.MAY;
-import static tec.units.ri.unit.MetricPrefix.KILO;
-import static tec.units.ri.unit.Units.METRE;
+import static javax.measure.MetricPrefix.KILO;
+import static tech.units.indriya.unit.Units.METRE;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -42,7 +42,7 @@ import com.dna.jopt.member.unit.hours.WorkingHours;
 import com.dna.jopt.member.unit.hours.OpeningHours;
 import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.resource.CapacityResource;
-import tec.units.ri.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 /**
  * In a real-life scenario, it is common that Resources have a different performance that influences

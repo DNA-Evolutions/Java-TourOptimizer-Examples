@@ -11,8 +11,8 @@ package com.dna.jopt.touroptimizer.java.examples.basic.pillar_07;
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
-import static tec.units.ri.unit.MetricPrefix.KILO;
-import static tec.units.ri.unit.Units.METRE;
+import static javax.measure.MetricPrefix.KILO;
+import static tech.units.indriya.unit.Units.METRE;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -51,7 +51,7 @@ import com.dna.jopt.member.unit.resource.CapacityResource;
 import com.dna.jopt.member.unit.resource.IResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
-import tec.units.ri.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 /** Doing an asynch run and defining pillar nodes */
 public class PillarExample extends Optimization {

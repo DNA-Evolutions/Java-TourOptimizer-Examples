@@ -12,8 +12,8 @@ package com.dna.jopt.touroptimizer.java.examples.basic.io_03;
  * #L%
  */
 import static java.time.Month.MARCH;
-import static tec.units.ri.unit.MetricPrefix.KILO;
-import static tec.units.ri.unit.Units.METRE;
+import static javax.measure.MetricPrefix.KILO;
+import static tech.units.indriya.unit.Units.METRE;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -41,7 +41,7 @@ import com.dna.jopt.member.unit.node.INode;
 import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.resource.CapacityResource;
 import com.dna.jopt.member.unit.resource.IResource;
-import tec.units.ri.quantity.Quantities;
+import tech.units.indriya.quantity.Quantities;
 
 /** Saving the current optimization state to a file using JSON-file. */
 public class SaveOptimizationDuringRunToJsonExample extends Optimization {
