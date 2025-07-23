@@ -5,6 +5,7 @@ Summarized changelogs for this example repository and the underlying JOpt Librar
 
 * [Changelog of this example repository](#changelog-examples)
 * [Changelog of JOpt Library](#changelog-jopt-library)
+* [Indriya Dependency Replacement Summary](#indriya-dependency-replacement-summary)
 
 Explanation of keys:
 - **Deprecated:** Remove, or mark a deprecated method/class
@@ -14,6 +15,15 @@ Explanation of keys:
 - **Update:** Update/add a dependency
 
 ## Changelog Examples
+
+**v7.5.2 - v7.5.2-rc1**
+- Update: Update depedency and use indriya ([summary](#indriya-dependency-replacement-summary))
+- Feature: Add example to pretty print Optimization to JSON
+- Feature: Add example to load optimization from JSON string
+- Improvement: Improve Readme
+- Improvement: Add link to sandbox overview
+- Fix: Fix wrong description in release notes
+- Fix: Fix bad links in release notes
 
 **v7.5.1-rc2 - v7.5.2**
 - Update: Changelog
@@ -172,6 +182,26 @@ Explanation of keys:
 
 
 ## Changelog JOpt Library
+
+**v7.5.2-rc1-j17**
+- Feature: ZoneManager as part of the NodeConnector 
+- Fix: Do NOT exclude services in META-INF do avoid exception in indriya
+- Improvement: Cleanup of several classes
+- Update: Create NodeConnector on the fly even before the start of an optimization.
+- Update: Replacing deprecated unit-ri by recommended indriya
+- Improvement: ZoneCode adjustments
+- Feature: Add BitTypeWithExpertise
+- Fix: Solve comparison contract violation bug
+- Improvement: Add more information to Reassign/Injection Point
+- Improvement: Add helper method to transform single working hours
+- Fix: Do not mix available processors and num cores
+- Fix: Add code to avoid exception for negative entity creation limit
+- Improvement: Add test for very old snapshots legacy
+- Improvement: Report missing types in violation
+- Improvement: Add owner and choosenOpeninghoursIndex to json node details
+- Fix: Solve bug where nodes can get duplicated
+- Improvement: Add optimization scheme to json
+- Feature: Add MagnetoConstraint
 
 **v7.5.2-j17**
 - Update: Update dependencies and build images
@@ -700,3 +730,43 @@ Explanation of keys:
 - Fix: OnProgress count is not correct
 - Feature: Adding adjustable onPorgress frequency and requestProgress call
 - Fix: Avoid duplicate flags in the result
+
+
+
+## Indriya Dependency Replacement Summary
+
+### Dependency Replacement Summary
+
+The following changes were made to update unit-related dependencies:
+
+#### Metric Prefixes
+
+| **Old Reference**                              | **New Reference**                          |
+|------------------------------------------------|---------------------------------------------|
+| `tec.units.ri.unit.MetricPrefix.KILO`          | `javax.measure.MetricPrefix.KILO`          |
+| `tec.units.ri.unit.MetricPrefix.CENTI`         | `javax.measure.MetricPrefix.CENTI`         |
+| `tec.units.ri.unit.MetricPrefix.MILLI`         | `javax.measure.MetricPrefix.MILLI`         |
+| `tec.units.ri.unit.MetricPrefix.GIGA`          | `javax.measure.MetricPrefix.GIGA`          |
+| `tec.units.ri.unit.MetricPrefix.TERA`          | `javax.measure.MetricPrefix.TERA`          |
+| *(all references to)* `tec.units.ri.unit.MetricPrefix` | `javax.measure.MetricPrefix`       |
+
+#### Units
+
+| **Old Reference**                              | **New Reference**                            |
+|------------------------------------------------|-----------------------------------------------|
+| `tec.units.ri.unit.Units.METRE`                | `tech.units.indriya.unit.Units.METRE`         |
+| `tec.units.ri.unit.Units.METRE_PER_SECOND`     | `tech.units.indriya.unit.Units.METRE_PER_SECOND` |
+| *(all references to)* `tec.units.ri.unit.Units`| `tech.units.indriya.unit.Units`               |
+
+#### Quantities
+
+| **Old Reference**                       | **New Reference**                          |
+|----------------------------------------|---------------------------------------------|
+| `tec.units.ri.quantity.Quantities`     | `tech.units.indriya.quantity.Quantities`   |
+
+#### Quantity Format
+
+| **Old Reference**                              | **New Reference**                          |
+|------------------------------------------------|---------------------------------------------|
+| `tec.units.ri.format.QuantityFormat`           | `javax.measure.format.QuantityFormat`      |
+| `QuantityFormat.getInstance()`                 | `SimpleQuantityFormat.getInstance()`       |
