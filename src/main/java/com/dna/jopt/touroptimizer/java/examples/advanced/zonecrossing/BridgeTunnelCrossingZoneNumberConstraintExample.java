@@ -137,10 +137,13 @@ public class BridgeTunnelCrossingZoneNumberConstraintExample extends Optimizatio
 
 	// (4) Attaching to Observables
 	BridgeTunnelCrossingZoneNumberConstraintExample.attachToObservables(this);
+	
+	// (5) Add zoneConnections
+	BridgeTunnelCrossingZoneNumberConstraintExample.addZoneConnections(this);
 
 	// Starting the optimization via Completable Future
 	// and presenting the result
-	// (5) Starting the optimization and presenting the result
+	// (6) Starting the optimization and presenting the result
 	IOptimizationResult result = BridgeTunnelCrossingZoneNumberConstraintExample.startAndPresentResult(this);
 
 	// Export to kml
@@ -194,6 +197,28 @@ public class BridgeTunnelCrossingZoneNumberConstraintExample extends Optimizatio
 	props.setProperty("JOpt.Clustering.PenlalizeZoneCodeCrossing", "" + doPenalizeZoneCrossings);
 
 	opti.addElement(props);
+    }
+    
+    private static void addZoneConnections(IOptimization opti) {
+	IZoneManager zm = opti.getNodeConnector().getZoneManager();
+
+	// The crossingPenaltyMultiplier of 5.0 will act an additional cost multiplier for going from Zone 1 to Zone 3 when zone-crossing
+	// penalization is turned on.
+	
+	// Add a dummy connection for Zone 1 => 3
+	ZoneConnection zoneConnectionItem13 = ZoneConnection.builder().fromZoneId("1").toZoneId("3")
+		.crossingPenaltyMultiplier(5.0).build();
+	
+	zm.putZoneConnection(zoneConnectionItem13);
+	
+	
+	// The crossingPenaltyMultiplier of 0.0 will act an additional cost multiplier for going from Zone 3 to Zone 1 when zone-crossing
+	// penalization is turned on. Here 0.0 will effectively deactivate the zone crossing penalty in this direction. 
+	
+	ZoneConnection zoneConnectionItem31 = ZoneConnection.builder().fromZoneId("3").toZoneId("1")
+		.crossingPenaltyMultiplier(0.0).build();
+	
+	zm.putZoneConnection(zoneConnectionItem31);
     }
 
     private static void addNodes(IOptimization opti) {
