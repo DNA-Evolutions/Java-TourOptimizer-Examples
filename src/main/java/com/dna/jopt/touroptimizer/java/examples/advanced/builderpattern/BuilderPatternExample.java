@@ -243,7 +243,6 @@ public class BuilderPatternExample {
     propMap.put("JOptExitCondition.JOptGenerationCount", "2000");
     propMap.put("JOpt.Algorithm.PreOptimization.SA.NumIterations", "10000");
     propMap.put("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
-    propMap.put("JOpt.NumCPUCores", "4");
 
     return OptimizationOptions.of(propMap);
   }
