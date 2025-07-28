@@ -56,6 +56,7 @@ import com.dna.jopt.member.unit.resource.IResource;
 import com.dna.jopt.member.unit.zonemanager.IZoneManager;
 import com.dna.jopt.member.unit.zonemanager.ZoneConnection;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
+import com.dna.jopt.touroptimizer.java.examples.util.jsonprinter.ResultJsonPrinter;
 
 import tech.units.indriya.quantity.Quantities;
 
@@ -149,6 +150,31 @@ public class BridgeTunnelCrossingZoneNumberConstraintExample extends Optimizatio
 	// Export to kml
 	BridgeTunnelCrossingZoneNumberConstraintExample
 		.exportToKml("BridgeCrossingZoneNumberConstraintExample-" + doPenalizeZoneCrossings + ".kml", result);
+	
+	
+	/*
+	 * 
+	 * 
+	 */
+	
+	
+	// Print JSON - Do we want to keep the optimised solution as part of the JSON?
+	boolean keepSolutionInJson = false;
+	
+	// The feature of ZoneConnections works regardless of the normal connection settings. Here, we remove the connections to generate a
+	// shorter JSON
+	boolean keepNodeConnectionsInJson = false; 
+	
+	// The license that will be used, if we use the JSON as input for the TourOptimizer
+	String tourOptimizerLic = ExampleLicenseHelper.PUBLIC_JSON_LICENSE;
+	
+	// The timeOut that will be used, if we use the JSON as input for the TourOptimizer
+	Duration timeOut = Duration.ofMinutes(10);
+	
+	String jsonInput = ResultJsonPrinter.toJsonOptimizationString(ResultJsonPrinter.toJsonOptimization(this,
+		tourOptimizerLic, timeOut, keepSolutionInJson, keepNodeConnectionsInJson));
+	
+	System.out.print(jsonInput);
 
     }
 

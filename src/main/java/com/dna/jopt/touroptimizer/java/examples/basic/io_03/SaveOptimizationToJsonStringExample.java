@@ -54,6 +54,7 @@ import com.dna.jopt.member.unit.relation.node2node.tempus.NegativeRelativeTimeWi
 import com.dna.jopt.member.unit.resource.CapacityResource;
 import com.dna.jopt.member.unit.resource.IResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
+import com.dna.jopt.touroptimizer.java.examples.util.jsonprinter.ResultJsonPrinter;
 
 import tech.units.indriya.quantity.Quantities;
 
@@ -179,39 +180,12 @@ public class SaveOptimizationToJsonStringExample extends Optimization {
     @Override
     public void onAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {
 
-	// Serialize
 	try {
-
-	    OptimizationConfig<CoreConfig> exportedConfig = OptimizationConfiguration
-		    .exportConfig(ExportTarget.of(this), new CoreExtensionManifest());
-
-	    // Strip some info
-	    exportedConfig = exportedConfig.withCoreBuildOptions(Optional.empty())
-		    .withElementConnections(new ArrayList<>()).withSolution(Optional.empty());
-
-	   // Without pretty directly call:
-	   // String serializedExportedConfig = ConfigSerialization.serialize(exportedConfig);
-	    
-	    String serializedExportedConfig = prettySerialize(exportedConfig);
-	    
-	    System.out.println(serializedExportedConfig);
-
-	} catch (SerializationException | ConvertException e) {
-
+	    ResultJsonPrinter.printResultAsJson(this);
+	} catch (IOException | ConvertException e) {
 	    e.printStackTrace();
 	}
 
     }
-    
-    public static String prettySerialize(OptimizationConfig<CoreConfig> exportedConfig) throws SerializationException {
 
-	ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-	try {
-	    ConfigSerialization.objectMapper().writerWithDefaultPrettyPrinter().writeValue(outStream, exportedConfig);
-	} catch (IOException e) {
-	    throw new SerializationException("Cannot serialize Config: " + e.getMessage());
-	}
-
-	return new String(outStream.toByteArray(), StandardCharsets.UTF_8);
-    }
 }

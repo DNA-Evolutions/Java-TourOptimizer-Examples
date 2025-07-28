@@ -29,7 +29,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -37,13 +36,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import com.dna.jopt.config.convert.ConvertException;
-import com.dna.jopt.config.convert.ExportTarget;
-import com.dna.jopt.config.convert.OptimizationConfiguration;
 import com.dna.jopt.config.serialize.ConfigSerialization;
 import com.dna.jopt.config.serialize.SerializationException;
 import com.dna.jopt.config.types.CoreConfig;
 import com.dna.jopt.config.types.OptimizationConfig;
-import com.dna.jopt.config.types.ext.CoreExtensionManifest;
 import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
@@ -66,6 +62,8 @@ import com.dna.jopt.member.unit.nodeedge.time.DayDef;
 import com.dna.jopt.member.unit.nodeedge.time.RangeDef;
 import com.dna.jopt.member.unit.resource.CapacityResource;
 import com.dna.jopt.member.unit.resource.IResource;
+import com.dna.jopt.touroptimizer.java.examples.util.jsonprinter.ResultJsonPrinter;
+
 import tech.units.indriya.quantity.Quantities;
 import tech.units.indriya.unit.Units;
 
@@ -162,7 +160,11 @@ public class ConnectionStoreExample extends Optimization {
 	ConnectionStoreExample.startAndPresentResult(this);
 
 	// (5) Show the JSON representation of the result
-	ConnectionStoreExample.presentJsonResult(this);
+	try {
+	    ResultJsonPrinter.printResultAsJson(this);
+	} catch (IOException | ConvertException e) {
+	    e.printStackTrace();
+	}
     }
 
     /**
@@ -189,35 +191,6 @@ public class ConnectionStoreExample extends Optimization {
 
     }
 
-    /**
-     * Present json result.
-     *
-     * @param opti the opti
-     * @throws InvalidLicenceException the invalid licence exception
-     * @throws InterruptedException the interrupted exception
-     * @throws ExecutionException the execution exception
-     * @throws TimeoutException the timeout exception
-     * @throws ConvertException the convert exception
-     * @throws SerializationException the serialization exception
-     */
-    private static void presentJsonResult(IOptimization opti) throws InvalidLicenceException, InterruptedException,
-	    ExecutionException, TimeoutException, ConvertException, SerializationException {
-
-	OptimizationConfig<CoreConfig> exportedConfig = OptimizationConfiguration.exportConfig(ExportTarget.of(opti),
-		new CoreExtensionManifest());
-
-	// Strip some info
-	exportedConfig = exportedConfig.withCoreBuildOptions(Optional.empty()).withSolution(Optional.empty());
-
-	// Without pretty directly call:
-	// String serializedExportedConfig =
-	// ConfigSerialization.serialize(exportedConfig);
-
-	String serializedExportedConfig = prettySerialize(exportedConfig);
-
-	System.out.println(serializedExportedConfig);
-
-    }
 
     /**
      * Adds the Properties to the Optimization.
