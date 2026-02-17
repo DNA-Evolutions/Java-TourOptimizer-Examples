@@ -26,15 +26,20 @@ public class ResultJsonPrinter {
 	// Nothing to do
     }
 
-    public static void printResultAsJson(IOptimization opti) throws IOException, ConvertException {
+    public static void printResultAsJson(IOptimization opti, boolean keepNodeConnectionsInJson) throws IOException, ConvertException {
 	// Serialize
 
 	OptimizationConfig<CoreConfig> exportedConfig = OptimizationConfiguration.exportConfig(ExportTarget.of(opti),
 		new CoreExtensionManifest());
-
+	
 	// Strip some info
-	exportedConfig = exportedConfig.withCoreBuildOptions(Optional.empty()).withElementConnections(new ArrayList<>())
+	exportedConfig = exportedConfig.withCoreBuildOptions(Optional.empty())
 		.withSolution(Optional.empty());
+	
+	
+	 if(!keepNodeConnectionsInJson) {
+	     exportedConfig = exportedConfig.withElementConnections(new ArrayList<>());
+	 }
 
 	// Without pretty directly call:
 	// String serializedExportedConfig =
