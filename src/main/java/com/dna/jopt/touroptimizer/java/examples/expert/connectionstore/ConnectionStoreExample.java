@@ -161,7 +161,7 @@ public class ConnectionStoreExample extends Optimization {
 
 	// (5) Show the JSON representation of the result
 	try {
-	    ResultJsonPrinter.printResultAsJson(this);
+	    ResultJsonPrinter.printResultAsJson(this, true);
 	} catch (IOException | ConvertException e) {
 	    e.printStackTrace();
 	}
