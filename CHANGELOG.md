@@ -5,7 +5,6 @@ Summarized changelogs for this example repository and the underlying JOpt Librar
 
 * [Changelog of this example repository](#changelog-examples)
 * [Changelog of JOpt Library](#changelog-jopt-library)
-* [Indriya Dependency Replacement Summary](#indriya-dependency-replacement-summary)
 
 Explanation of keys:
 - **Deprecated:** Remove, or mark a deprecated method/class
@@ -16,26 +15,16 @@ Explanation of keys:
 
 ## Changelog Examples
 
-**v7.5.2 - v7.5.2-rc1**
-- Update: Update depedency and use indriya ([summary](#indriya-dependency-replacement-summary))
-- Feature: Add example to pretty print Optimization to JSON
-- Feature: Add example to load optimization from JSON string
-- Improvement: Improve Readme
-- Improvement: Add link to sandbox overview
-- Fix: Fix wrong description in release notes
-- Fix: Fix bad links in release notes
-
-**v7.5.1-rc2 - v7.5.2**
-- Update: Changelog
-- Update: Update version in Readme, Release Notes
-- Update to latest core release 7.5.3
-- Fix: Fix wrong algorithm title in CustomConvergenCost example
-- Feature: Add example for performance mode
-- Feature: Add example for zone crossing penalty
-- Feature: Add example for result comparison tool
-- Improvement: Avoid some container problems by forcing LF instead of CRLF
-- Improvement: Update license to allow 20 elements in free mode
-- Update: Update base-image for sandbox
+**v7.5.3*
+- Update: Update version in README and add new nexus endpoint
+- Update: Remove FAQ and move to www.dna-evolutions.com
+- Feature: Add new examples for v7.5.3 (Magnetoonstraint, BitTypeConstraints)
+- Improvement: Add markdown documentation for every example
+- Update: Remove old files
+- Improvement: Improve some examples
+- Fix: Remove problematic very long JSON string
+- Fix: Remove bad characters in some examples
+- Improvement: Update depedency versions
 
 
 **v7.5.1 - v7.5.1-rc2**
@@ -183,25 +172,57 @@ Explanation of keys:
 
 ## Changelog JOpt Library
 
-**v7.5.2-rc1-j17**
-- Feature: ZoneManager as part of the NodeConnector 
-- Fix: Do NOT exclude services in META-INF do avoid exception in indriya
-- Improvement: Cleanup of several classes
-- Update: Create NodeConnector on the fly even before the start of an optimization.
-- Update: Replacing deprecated unit-ri by recommended indriya
-- Improvement: ZoneCode adjustments
-- Feature: Add BitTypeWithExpertise
-- Fix: Solve comparison contract violation bug
-- Improvement: Add more information to Reassign/Injection Point
-- Improvement: Add helper method to transform single working hours
-- Fix: Do not mix available processors and num cores
-- Fix: Add code to avoid exception for negative entity creation limit
-- Improvement: Add test for very old snapshots legacy
-- Improvement: Report missing types in violation
-- Improvement: Add owner and choosenOpeninghoursIndex to json node details
-- Fix: Solve bug where nodes can get duplicated
-- Improvement: Add optimization scheme to json
-- Feature: Add MagnetoConstraint
+**v7.5.3-j17**
+- Fix: Throw warning instead of error for MagnetoConstraint when setting to true
+- Update: Update all dependcies
+- Improvement: Let TimeWindow accept touching start-end in access hours mode
+- Improvement: Modify PREDICATE_IS_BLOCKED_ROUTE
+- Improvement: Add preferred and unpreferred resources to validation
+- Improvement: Add values to violation by default
+- Fix: Fix bug where cost is added to wrong category
+- Fix: Fixing deserialization problems
+- Fix: Fix potential out of bounds exception
+- Fix: Add warning if hard constraint violation is detected
+- Fix: Fix bug in moving event test. Distinguish better between hub and field mode
+- Fix: Synch default value of isStayNode in JSON with core lib
+- Feature: Add service hub feature
+- Fix: Only throw warning once for each call.
+- Fix: Let the route know, it is in unassessed state
+- Fix: Fix unvalidated hard constraint violating routes
+- Improvement: Actively generate TypeDicts
+- Improvement: Move initial dictionary creation into static helper method in TypeDictionaryManager
+- Fix: Do on the fly preparation of OptimizationScheme to guaranty an existing cost assessor
+- Fix: Allow Timewindow key to avoid ignored property after stricter property checking
+- Improvement:  Make creator public
+- Improvement: NodeAutoFilterReason should not include non-default values
+- Improvement: Do not match properties that are obviously wrong
+- Improvement: Use custom propertyprovider with optional property warning streamer
+- Improvement: Use toString explicitly and use System.err as backup print stream
+- Improvement: Allow to activate the autoFilter notification of the Reassigner separetely and allow to keep invalid test points to extract rejection reason of Reassigner
+- Improvement: Move streamer attachment to abstract super class
+- Improvement: Add AutoNodeFilterReason transformation
+- Fix: Fix bug where property is not taken over
+- Improvement: Add new parameters for database interaction
+- Improvement: Allow direct access to cost calculation
+- Improvement: Use linked hash map to preserve order
+- Improvement: Add some new header values e.g. duration of all nodes including unassigned nodes
+- Improvement: Distinguish between lazyInjectionOverlap maxOvertime and InjectionPoint validation maxOvertime
+- Improvement: Use route helper for overtime
+- Improvement: Add constraint conveter, heat mapper and cleanup
+- Improvement:Add Interface to identify type constraints
+- Improvement: Secure route ident creation wiht URLEncoder
+- Update: Dependency update
+- Feature: Add some examples
+- Feature: CoupledFlexLoad
+- Feature: Reinforcement learining
+- Feature: Validation and hotspot assessment settings and some refactoring
+- Improvement: If new distance would be negative set it to zero
+- Improvement: More ng parallel tests to speed up build
+- Improvement: Tranform repo to utf8
+- Improvement: New bitbucket pipeline that is faster
+- Improvement: Better parallel performance
+- Update: Add construction hooks for maxdistance modification
+- Update: Small construction algorithm improvement for single node clusters
 
 **v7.5.2-j17**
 - Update: Update dependencies and build images
@@ -730,43 +751,3 @@ Explanation of keys:
 - Fix: OnProgress count is not correct
 - Feature: Adding adjustable onPorgress frequency and requestProgress call
 - Fix: Avoid duplicate flags in the result
-
-
-
-## Indriya Dependency Replacement Summary
-
-### Dependency Replacement Summary
-
-The following changes were made to update unit-related dependencies:
-
-#### Metric Prefixes
-
-| **Old Reference**                              | **New Reference**                          |
-|------------------------------------------------|---------------------------------------------|
-| `tec.units.ri.unit.MetricPrefix.KILO`          | `javax.measure.MetricPrefix.KILO`          |
-| `tec.units.ri.unit.MetricPrefix.CENTI`         | `javax.measure.MetricPrefix.CENTI`         |
-| `tec.units.ri.unit.MetricPrefix.MILLI`         | `javax.measure.MetricPrefix.MILLI`         |
-| `tec.units.ri.unit.MetricPrefix.GIGA`          | `javax.measure.MetricPrefix.GIGA`          |
-| `tec.units.ri.unit.MetricPrefix.TERA`          | `javax.measure.MetricPrefix.TERA`          |
-| *(all references to)* `tec.units.ri.unit.MetricPrefix` | `javax.measure.MetricPrefix`       |
-
-#### Units
-
-| **Old Reference**                              | **New Reference**                            |
-|------------------------------------------------|-----------------------------------------------|
-| `tec.units.ri.unit.Units.METRE`                | `tech.units.indriya.unit.Units.METRE`         |
-| `tec.units.ri.unit.Units.METRE_PER_SECOND`     | `tech.units.indriya.unit.Units.METRE_PER_SECOND` |
-| *(all references to)* `tec.units.ri.unit.Units`| `tech.units.indriya.unit.Units`               |
-
-#### Quantities
-
-| **Old Reference**                       | **New Reference**                          |
-|----------------------------------------|---------------------------------------------|
-| `tec.units.ri.quantity.Quantities`     | `tech.units.indriya.quantity.Quantities`   |
-
-#### Quantity Format
-
-| **Old Reference**                              | **New Reference**                          |
-|------------------------------------------------|---------------------------------------------|
-| `tec.units.ri.format.QuantityFormat`           | `javax.measure.format.QuantityFormat`      |
-| `QuantityFormat.getInstance()`                 | `SimpleQuantityFormat.getInstance()`       |
