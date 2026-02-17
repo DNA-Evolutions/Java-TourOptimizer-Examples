@@ -179,7 +179,7 @@ public class MandatoryResourceConditionExample extends Optimization {
         new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
     this.addElement(aachen);
 
-    // In order to ensure Köln is visited by the Resource "John" we are defining a mandatory
+    // In order to ensure KÃ¶ln is visited by the Resource "John" we are defining a mandatory
     // resource constraint
     // and add the respective Resource and Node
     IConstraintResource johnMandConstraint = new MandatoryResourceConstraint();
