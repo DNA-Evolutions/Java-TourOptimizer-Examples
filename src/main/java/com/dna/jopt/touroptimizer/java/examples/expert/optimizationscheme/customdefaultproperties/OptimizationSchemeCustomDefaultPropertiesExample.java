@@ -127,7 +127,7 @@ public class OptimizationSchemeCustomDefaultPropertiesExample extends Optimizati
 
 	// Seting default custom properties. Properties directly set to via addElement
 	// getting priority over the custom default properties
-	// set via scheme.
+	// set via scheme. This can be valuable to add hooks to existing pipelines or for debugging purpose
 	Properties customDefaultProps = new Properties();
 
 	// This setting will force Optimizer into overtime, as distance saving becomes
