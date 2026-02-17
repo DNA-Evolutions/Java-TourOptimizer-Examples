@@ -16,15 +16,12 @@ import static java.time.Month.MARCH;
 import static javax.measure.MetricPrefix.KILO;
 import static tech.units.indriya.unit.Units.METRE;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
@@ -32,13 +29,6 @@ import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 
 import com.dna.jopt.config.convert.ConvertException;
-import com.dna.jopt.config.convert.ExportTarget;
-import com.dna.jopt.config.convert.OptimizationConfiguration;
-import com.dna.jopt.config.serialize.ConfigSerialization;
-import com.dna.jopt.config.serialize.SerializationException;
-import com.dna.jopt.config.types.CoreConfig;
-import com.dna.jopt.config.types.OptimizationConfig;
-import com.dna.jopt.config.types.ext.CoreExtensionManifest;
 import com.dna.jopt.framework.body.Optimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationProgress;
@@ -181,7 +171,7 @@ public class SaveOptimizationToJsonStringExample extends Optimization {
     public void onAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {
 
 	try {
-	    ResultJsonPrinter.printResultAsJson(this);
+	    ResultJsonPrinter.printResultAsJson(this, false);
 	} catch (IOException | ConvertException e) {
 	    e.printStackTrace();
 	}
