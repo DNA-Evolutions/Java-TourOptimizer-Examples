@@ -3,10 +3,135 @@
 
 
 ## **Overview**
+- [Release Notes for Core Release 7.5.3](#release-notes-for-core-release-7-5-3)
 - [Release Notes for Core Release 7.5.2](#release-notes-for-core-release-7-5-2)
 - [Release Notes for Core Release 7.5.1](#release-notes-for-core-release-7-5-1)
 - [General Notes](#general-notes)
 
+---
+
+
+# **Release Notes for Core Release 7.5.3**
+
+We are pleased to announce the release of version **7.5.3** of our **JOpt Core Library**.
+This release introduces powerful new modeling capabilities, major internal performance refinements, and extensive updates across our client models and server components.
+
+---
+
+## **Before You Start**
+
+To help you integrate our JOpt library effectively, please visit:
+
+- [Java Example Repository](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples) – Learn how to integrate JOpt natively into your Java application.
+
+**REST-Repos:**
+- [Java REST Client Examples repo](https://github.com/DNA-Evolutions/Java-REST-Client-Examples) 
+- [Python REST Client Examples repo](https://github.com/DNA-Evolutions/Python-REST-Client-Examples)
+- [C# REST Client Examples repo](https://github.com/DNA-Evolutions/C-Sharp-REST-Client-Examples)
+
+**Spring JOpt.TourOptimizer Server:**
+- [Docker REST TourOptimizer repo](https://github.com/DNA-Evolutions/Docker-REST-TourOptimizer)
+
+
+If you are working with JOpt.TourOptimizer via REST, ensure you are using the latest client models and schema versions.
+
+---
+
+## **Major Changes and Achievements**
+
+### **1. MagnetoCondition (MagnetoNodeConstraint)**
+
+MagnetoCondition introduces soft attraction and repulsion logic between nodes, enabling preference-driven routing without breaking feasibility.
+
+This feature allows you to:
+
+* Encourage selected nodes to appear on the **same route** (attraction)
+* Encourage selected nodes to be on **different routes** (repulsion)
+* Optionally influence **front/back positioning** within the attracted node stack
+
+MagnetoCondition is designed to improve **operational acceptance** by aligning optimized routes with dispatcher expectations while preserving full optimization flexibility.
+
+Documentation:
+[https://docs.dna-evolutions.com/overview_docs/magneto_condition/magnetoCondition.html](https://docs.dna-evolutions.com/overview_docs/magneto_condition/magnetoCondition.html)
+
+---
+
+### **2. BitType – High-Performance Skill & Eligibility Matching**
+
+BitType introduces a high-performance, dictionary-backed bitset model for ultra-fast eligibility and skill matching.
+
+Instead of string-based skill comparisons, BitType:
+
+* Maps skills to dictionary IDs
+* Stores skill sets as compact bitsets
+* Performs eligibility checks using CPU-efficient bit operations
+
+This results in **multiple order-of-magnitude runtime improvements** in skill-heavy optimization scenarios—without changing modeling semantics or feasibility behavior.
+
+BitType fully supports:
+
+* Hard and soft skill constraints
+* Expertise levels (minimum/maximum thresholds)
+* Cost models for structured soft penalties
+
+Ideal for large-scale routing and dispatch problems with intensive eligibility logic.
+
+Documentation:
+[https://docs.dna-evolutions.com/overview_docs/bittype/bittype_condition.html](https://docs.dna-evolutions.com/overview_docs/bittype/bittype_condition.html)
+
+---
+
+## **Core Library Improvements**
+
+This release includes substantial internal improvements across the optimization engine:
+
+* Performance optimizations in the move evaluation pipeline
+* Refinements in constraint handling and internal cost evaluation
+* Stability improvements across multiple solver components
+* General architectural cleanups and robustness enhancements
+
+These updates improve runtime stability and scalability, particularly in large enterprise scenarios.
+
+---
+
+## **Client Model Updates**
+
+We have updated and aligned our data models across all official client implementations:
+
+* **Java Client**
+* **C# Client**
+* **Python Client**
+* **Angular Client**
+
+The updated models ensure full compatibility with Core 7.5.3 and the latest schema definitions.
+
+---
+
+## **JOpt.TourOptimizer Server Updates**
+
+* Updates and fixes for **JOpt.TourOptimizer (Spring Server)**
+* Dependency updates to latest stable versions
+* Improved schema consistency
+* Stability and compatibility fixes
+
+---
+
+## **Improvements & Fixes**
+
+* Numerous core bug fixes and refinements
+* Stability improvements across client integrations
+* Minor performance optimizations throughout the platform
+
+For a detailed technical change list, please refer to our
+[CHANGELOG.md](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/CHANGELOG.md).
+
+---
+---
+---
+
+# Previous Releases
+---
+---
 ---
 
 # **Release Notes for Core Release 7.5.2**
@@ -17,7 +142,7 @@ We are excited to announce the release of version **7.5.2** of our **JOpt Core L
 
 ## **Before You Start**
 To help you integrate our JOpt library effectively, please visit:
-- **[Java Example Repository](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples)** � Learn how to integrate JOpt **natively** into your **Java application**.
+- **[Java Example Repository](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples)** – Learn how to integrate JOpt **natively** into your **Java application**.
 - **[REST Client Example Repositories](https://github.com/DNA-Evolutions)** - Find REST client examples for various languages.
 
 If you are developing a **REST application**, check out our **updated OpenAPI schema** for better **client generation support**.
@@ -125,11 +250,7 @@ Further, get an **[example](https://github.com/DNA-Evolutions/Java-TourOptimizer
 
 Of course you can create your own client in the language of your choice utilizing our OpenAPI description for JOpt TourOptimizer [here](https://github.com/DNA-Evolutions/Java-REST-Client-Examples/blob/master/src/main/resources/swagger/touroptimizer/spec/touroptimizer_spec.json).
 
----
----
----
 
-# Previous Releases
 
 ---
 ---
