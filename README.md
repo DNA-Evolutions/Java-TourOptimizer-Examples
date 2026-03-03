@@ -126,13 +126,13 @@ Clone this repository, import it as Maven project in your IDE and start any exam
 
 ## Download the Jar directly or as Dependency
 The latest native java library of JOpt-TourOptimizer can be either downloaded via our official
-<a href="https://public.nexus.dna-evolutions.net/#browse/browse:maven-releases" target="_blank">nexus repository</a>, from our <a href="https://www.dna-evolutions.com/" target="_blank">company website</a> or as a a direct download from here (always links the latest release):
+<a href="https://nexus.dna-evolutions.net/#browse/browse:maven-releases" target="_blank">nexus repository</a>, from our <a href="https://www.dna-evolutions.com/" target="_blank">company website</a> or as a a direct download from here (always links the latest release):
 
 - <a href="https://public.repo.dna-evolutions.com/service/rest/v1/search/assets/download?sort=version&repository=maven-releases&group=jopt&maven.artifactId=jopt.core.pg&maven.extension=jar&maven.classifier=shaded" target="_blank">Shaded jar</a>
 - <a href="https://public.repo.dna-evolutions.com/service/rest/v1/search/assets/download?sort=version&repository=maven-releases&group=jopt&maven.artifactId=jopt.core.pg&maven.extension=jar&maven.classifier=javadoc" target="_blank">Javadoc jar</a>
 
 ### As Dependency (Recommended)
-However, it is recommended to use our nexus-endpoint as a repository and download the jars as a dependency into your project. You can also search for older versions of JOpt in our <a href="https://public.nexus.dna-evolutions.net/#browse/browse:maven-releases" target="_blank">nexus repository</a>.
+However, it is recommended to use our nexus-endpoint as a repository and download the jars as a dependency into your project. You can also search for older versions of JOpt in our <a href="https://nexus.dna-evolutions.net/#browse/browse:maven-releases" target="_blank">nexus repository</a>.
 
 ### Snippet for Maven
 
@@ -204,7 +204,7 @@ In your ``pom.xml`` add the following repository:
 ```xml
 <repository>
 	<id>jopt4-maven</id>
-	<url>https://public.nexus.dna-evolutions.net/repository/maven-public/</url>
+	<url>https://nexus.dna-evolutions.net/repository/maven-public/</url>
 	<releases>
 		<enabled>true</enabled>
 	</releases>

@@ -218,7 +218,7 @@ If you do not supply external edges, fallback connectors are used. Review:
 ## Further documentation & links
 
 - [Official documentation hub](https://www.dna-evolutions.com/docs/getting-started/home/home)
-- [Public Nexus repository](https://public.nexus.dna-evolutions.net/)
+- [Public Nexus repository](https://nexus.dna-evolutions.net/)
 - [Public JavaDocs](https://public.javadoc.dna-evolutions.com)
 - [Special features overview](https://www.dna-evolutions.com/docs/learn-and-explore/special/special_features)
 - Repository meta docs:
