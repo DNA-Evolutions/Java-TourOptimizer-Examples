@@ -16,7 +16,7 @@ If you need any help, please contact us via our company website <a href="https:/
 
 - [Introduction](#java-jopt-touroptimizer-examples) - Overview of the repository and its role in the JOpt-TourOptimizer-Suite.  
 - [Contact](#contact) - How to reach out for help or inquiries.  
-- [Architecture](#architecture) - Breakdown of the four major example categories (Basic, Advanced, Expert, RESTful).  
+- [Architecture of this repository](#architecture) - Breakdown of the four major example categories (Basic, Advanced, Expert, RESTful).  
 - [Further Documentation and Links](#further-documentation-and-links) - Quick access to official documentation, JavaDocs, DockerHub, SourceForge, and more.  
 - [Short Introduction](#short-introduction) - Overview of JOpt and its capabilities in solving tour optimization problems.  
 - [Getting Started](#getting-started-with-the-examples) - Different ways to begin using JOpt-TourOptimizer examples.  
@@ -40,21 +40,35 @@ This Java project is subdivided into four major types of examples:
 3. <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert" target="_blank">Expert Examples</a>
 4. <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/restful" target="_blank">RESTful Examples</a>
 
-Each of the example-sections has its own README. 
+Each of the example-sections has its own README. Furthermore, each examples has its own markdown documentation.
 
 
 # Further Documentation and Links
 
+## Docs and Website
 - Our website - <a href="https://www.dna-evolutions.com" target="_blank">www.dna-evolutions.com</a>
-- Further documentation 	- <a href="https://docs.dna-evolutions.com" target="_blank">docs.dna-evolutions.com</a>
-- Special features 	- <a href="https://docs.dna-evolutions.com/overview_docs/special_features/Special_Features.html" target="_blank">Overview of special features</a>
-- Our official repository 	- <a href="https://public.repo.dna-evolutions.com" target="_blank">public.repo.dna-evolutions.com</a>
+- Documentations Hub 	- <a href="https://www.dna-evolutions.com/docs/getting-started" target="_blank">dna-evolutions.com/docs/getting-started</a>
+- Special features 	- <a href="https://dna-evolutions.com/docs/learn-and-explore/special/special_features" target="_blank">Overview of special features</a>
 - Our official JavaDocs 		- <a href="https://public.javadoc.dna-evolutions.com" target="_blank">public.javadoc.dna-evolutions.com</a>
-- Our YouTube channel - <a href="https://www.youtube.com/channel/UCzfZjJLp5Rrk7U2UKsOf8Fw" target="_blank">DNA Tutorials</a>
-- Documentation - <a href="https://docs.dna-evolutions.com/rest/touroptimizer/rest_touroptimizer.html" target="_blank">DNA's RESTful Spring-TourOptimizer in Docker </a>
-- Our DockerHub channel - <a href="https://hub.docker.com/u/dnaevolutions" target="_blank">DNA DockerHub</a>
+- REST and interactive testing 		- <a href="https://dna-evolutions.com/api/" target="_blank">https://dna-evolutions.com/api/</a>
+
+## DNA Evolution Portal
+
+Get an extended free license designed for small businesses and customers looking to evaluate our features (sign-in required):
+- DNA Evolutions portal 	- <a href="https://www.dna-evolutions.com/portal" target="_blank">https://www.dna-evolutions.com/portal</a>
+
+## Registry etc.
+- Our official nexus repository 	- <a href="https://nexus.dna-evolutions.net" target="_blank">nexus.dna-evolutions.net</a>
+
+## Social
 - Our LinkedIn channel - <a href="https://www.linkedin.com/company/dna-evolutions/" target="_blank">DNA LinkedIn</a>
+- Our DockerHub channel - <a href="https://hub.docker.com/u/dnaevolutions" target="_blank">DNA DockerHub</a>
 - Our Sourceforge channel - <a href="https://sourceforge.net/software/product/JOpt.TourOptimizer/?pk_campaign=badge&amp;pk_source=vendor" target="_blank">DNA SourceForge</a>
+- Our YouTube channel - <a href="https://www.youtube.com/channel/UCzfZjJLp5Rrk7U2UKsOf8Fw" target="_blank">DNA Tutorials</a>
+
+If you need any help, please contact us via our company website <a href="https://www.dna-evolutions.com/contact" target="_blank">www.dna-evolutions.com/contact</a>.
+
+## Repo Properties
 
 The release notes of this repository
 <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/RELEASE_NOTES.md" target="_blank">RELEASE_NOTES.md</a>.
@@ -77,7 +91,7 @@ JOpt is a flexible routing optimization-engine written in Java, allowing to solv
 
 Click, to open video:
 
-<a href="https://www.youtube.com/watch?v=U4mDQGnZGZs" target="_blank"><img src="https://dna-evolutions.com/wp-content/uploads/2022/10/jopt_intro_prev.gif" width="600"
+<a href="https://www.youtube.com/watch?v=U4mDQGnZGZs" target="_blank"><img src="https://dna-evolutions.com/images/docs/home/jopt_intro_prev.gif" width="600"
 title="Introduction Video for DNA's JOpt" alt="Introduction Video for DNA's JOpt"></a>
 
 ## Getting Started with the Examples
@@ -97,7 +111,7 @@ In case you want to get started without the hassle of installing Java, Maven and
 
 Preview (click to enlarge):
 
-<a href="https://docs.dna-evolutions.com/indexres/coderserver.png" target="_blank"><img src="https://docs.dna-evolutions.com/indexres/coderserver.png" width="85%"
+<a href="https://dna-evolutions.com/images/docs/home/coderserver.png" target="_blank"><img src="https://docs.dna-evolutions.com/indexres/coderserver.png" width="85%"
 title="Preview of JOpt-Example-Server"></a>
 
 ### Starting the sandbox and persist your changes
@@ -161,7 +175,7 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.5.3-j17</version>
+   <version>7.5.3-rc1-j17</version>
   <classifier>shaded</classifier>
 </dependency>
 ```
@@ -188,7 +202,7 @@ or latest
 <dependency>
   <groupId>jopt</groupId>
   <artifactId>jopt.core.pg</artifactId>
-   <version>7.5.3-j17</version>
+   <version>7.5.3-rc1-j17</version>
   <classifier>javadoc</classifier>
 </dependency>
 ```
