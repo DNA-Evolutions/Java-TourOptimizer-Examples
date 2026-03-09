@@ -52,7 +52,7 @@ Each of the example-sections has its own README. Furthermore, each examples has 
 - Our official JavaDocs 		- <a href="https://public.javadoc.dna-evolutions.com" target="_blank">public.javadoc.dna-evolutions.com</a>
 - REST and interactive testing 		- <a href="https://dna-evolutions.com/api/" target="_blank">https://dna-evolutions.com/api/</a>
 
-## DNA Evolution Portal
+## DNA Evolutions Portal
 
 Get an extended free license designed for small businesses and customers looking to evaluate our features (sign-in required):
 - DNA Evolutions portal 	- <a href="https://www.dna-evolutions.com/portal" target="_blank">https://www.dna-evolutions.com/portal</a>
