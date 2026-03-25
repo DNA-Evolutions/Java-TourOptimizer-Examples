@@ -52,7 +52,7 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tech.units.indriya.quantity.Quantities;
 
 /**
- * Set an alternate destination for a Resource at the end of the Route. The Resource has to end it’s Route there but
+ * Set an alternate destination for a Resource at the end of the Route. The Resource has to end its Route there but
  * will start working from the original location again the next morning.
  *
  * @author DNA
@@ -121,7 +121,7 @@ public class AlternateDestinationExample extends Optimization {
             "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
 
     // Setting the location of the alternate destination. The Route of the Resource will terminate here at the end of
-    // the day. However, the Resource drive to it’s home location outside of the WorkingHours and start working there
+    // the day. However, the Resource drive to its home location outside of the WorkingHours and start working there
     // again the next morning.
     rep1.setDestinationLatitude(51.45);
     rep1.setDestinationLongitude(7.01667);

@@ -49,7 +49,7 @@ import tech.units.indriya.quantity.Quantities;
  * In this example we show how to connect Nodes by a relative timeWindow. This can be applied in use
  * cases where tasks have to be tiered in a pre-defined order. In this example we want the tasks to
  * be done as fast as possible. The relatedNode has to start working as soon as the masterNode is
- * finished with it’s task. The function is very flexible. Separate variables would allow to set a
+ * finished with its task. The function is very flexible. Separate variables would allow to set a
  * minimal time that has to pass between the tasks or setting a loose timeframe within which both
  * tasks have to be done.
  *

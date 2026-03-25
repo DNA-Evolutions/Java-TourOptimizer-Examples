@@ -50,7 +50,7 @@ import tech.units.indriya.quantity.Quantities;
 
 /**
  * In this example we are enabling open Routes by the appropriate setting in the WorkingHours.
- * In an open route the Resource does not have to go back to it’s starting location.
+ * In an open route the Resource does not have to go back to its starting location.
  *
  *
  * @author DNA

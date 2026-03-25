@@ -407,11 +407,11 @@ public class ConnectionStoreExample extends Optimization {
      * 
      * <p>Example profile:
      * <ul>
-     *   <li><b>6:00</b> — Normal traffic (multiplier 1.0)</li>
-     *   <li><b>7:00–9:00</b> — Morning rush hour (multiplier 1.8)</li>
-     *   <li><b>13:00</b> — Normal midday traffic (multiplier 1.0)</li>
-     *   <li><b>16:00–19:00</b> — Evening rush hour (multiplier 1.6)</li>
-     *   <li><b>20:00</b> — Night traffic (multiplier 1.0)</li>
+     *   <li><b>6:00</b> Normal traffic (multiplier 1.0)</li>
+     *   <li><b>7:00-9:00</b> Morning rush hour (multiplier 1.8)</li>
+     *   <li><b>13:00</b> Normal midday traffic (multiplier 1.0)</li>
+     *   <li><b>16:00-19:00</b> Evening rush hour (multiplier 1.6)</li>
+     *   <li><b>20:00</b> Night traffic (multiplier 1.0)</li>
      * </ul>
      * 
      * @param distance The base distance between two nodes.

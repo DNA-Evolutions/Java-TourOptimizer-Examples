@@ -70,7 +70,7 @@ import java.util.ArrayList;
  * to be delivered (customer request).
  *
  * <p>It is obvious that a truck can load more units of "Cups" than units of "Pianos". Let's assume the
- * "Cups" are transported on pallets with a size of 1219 × 1016 mm (48 × 40 inches). We do not allow
+ * "Cups" are transported on pallets with a size of 1219, 1016 mm (48, 40 inches). We do not allow
  * to stack the pallets as otherwise, "Cups" could break. Each customer is only allowed to request or
  * provide pallets of "Cups".
  *

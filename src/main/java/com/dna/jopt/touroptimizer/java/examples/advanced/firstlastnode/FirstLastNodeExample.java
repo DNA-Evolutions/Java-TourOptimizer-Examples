@@ -180,7 +180,7 @@ public class FirstLastNodeExample extends Optimization {
     this.addElement(dueren);
 
     // "Wuppertal" is set as the last Node in the Route. The only reason for the Optimizer to consider alternatives is,
-    // if there is a solution which’s cost savings are higher than the penalty for not using "Wuppertal" as the last Node.
+    // if there is a solution which cost savings are higher than the penalty for not using "Wuppertal" as the last Node.
     TimeWindowGeoNode wuppertal =
         new TimeWindowGeoNode("Wuppertal", 51.2667, 7.18333, weeklyOpeningHours, visitDuration, 1);
     wuppertal.setLastNodeInRouteImportance(10);

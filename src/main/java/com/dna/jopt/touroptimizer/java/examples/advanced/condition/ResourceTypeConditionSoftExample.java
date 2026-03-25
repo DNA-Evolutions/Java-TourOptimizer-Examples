@@ -194,7 +194,7 @@ public class ResourceTypeConditionSoftExample extends Optimization {
     // Resource "Jack" that has
     // the Qualification, but it will be content with the Resource "John" if the cost for getting
     // "Jack" is too high.
-    // Efficiency has it’s price after all.
+    // Efficiency has its price after all.
     IConstraint typeConstraint = new TypeConstraint();
     ((TypeConstraint) typeConstraint).addType("efficient");
     koeln.addConstraint(typeConstraint);

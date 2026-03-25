@@ -55,7 +55,7 @@ public class LoadOptimizationFromJsonAndReassignNodes extends Optimization {
   }
 
   public String toString() {
-    return "Loading the current optimization state from a file using JSON file. We’re adding further "
+    return "Loading the current optimization state from a file using JSON file. We're adding further "
         + "Nodes via reassignment.";
   }
 

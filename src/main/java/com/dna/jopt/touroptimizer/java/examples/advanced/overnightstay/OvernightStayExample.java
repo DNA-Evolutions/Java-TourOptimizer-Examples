@@ -141,7 +141,7 @@ public class OvernightStayExample extends Optimization {
      * Policy
      */
 
-    // We want at least 100 kilometers distance or 4 hours of traveling time from the Resource’s starting location
+    // We want at least 100 kilometers distance or 4 hours of traveling time from the Resources starting location
     // to allow an overnight stay
     Quantity<Length> minDistanceForStayOut = Quantities.getQuantity(100, KILO(METRE));
     Duration minTimeForStayOut = Duration.ofHours(4);
@@ -153,7 +153,7 @@ public class OvernightStayExample extends Optimization {
      */
 
     int totalStaysOut = -1; // We allow as many total stays out as necessary
-    int staysOutInRow = 4; // After three stays out in a row the Resource has to return to it’s home location
+    int staysOutInRow = 4; // After three stays out in a row the Resource has to return to its home location
     int minRecoverHours = 2; // We want the recovery time at home to last at minimum 2 nights in a row
     rep1.setStaysOut(totalStaysOut, staysOutInRow, minRecoverHours);
 

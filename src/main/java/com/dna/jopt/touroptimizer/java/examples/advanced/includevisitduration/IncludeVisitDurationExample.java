@@ -137,7 +137,7 @@ public class IncludeVisitDurationExample extends Optimization {
     // Define some Nodes
     TimeWindowGeoNode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-    // By default a Node needs to be visited and have it’s job done during the OpeningHours. Here, the Resource needs
+    // By default a Node needs to be visited and have its job done during the OpeningHours. Here, the Resource needs
     // merely to arrive during the OpeningHours. The visit duration can extend until afterwards.
     koeln.setIsDutyHoursIncludesVisitDuration(false); // Default would be true
     this.addElement(koeln);
