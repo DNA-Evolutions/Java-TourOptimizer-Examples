@@ -95,14 +95,11 @@ public class OvernightStayExample extends Optimization {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
 
-    // We do not want to allow to have a stay out on this day
-    IWorkingHours forbiddenStayOutWOH =
-        new WorkingHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 20, 0, 0, 0, ZoneId.of("Europe/Berlin")));
-
-    forbiddenStayOutWOH.setIsAvailableForStay(false); // Default is true
-    workingHours.add(forbiddenStayOutWOH);
+   
+    workingHours.add(
+       new WorkingHours
+	    (ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+	    ZonedDateTime.of(2020, MAY.getValue(), 6, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
     workingHours.add(
         new WorkingHours(
@@ -128,6 +125,10 @@ public class OvernightStayExample extends Optimization {
         new WorkingHours(
             ZonedDateTime.of(2020, MAY.getValue(), 11, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 11, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+    
+    // By default every woringHour is NOT allowed for an overnight stay, so we explicitly have to enable it
+    workingHours.forEach(w->w.setIsAvailableForStay(true)); 
+   
 
     Duration maxWorkingTime = Duration.ofHours(12);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));

@@ -52,19 +52,20 @@ The resource is created with WorkingHours spanning multiple days:
 - May 6–11, 2020
 - each day from 08:00 to 20:00 (Europe/Berlin)
 
-### 2) Disallow overnight on a specific day
-The example explicitly forbids staying out on **May 6**:
+### 2) Explicitly enable overnight stays for all working days
+Because `WorkingHours` are **not available for stay by default**, the example explicitly enables overnight stays across all six working days:
 
 ```java
-forbiddenStayOutWOH.setIsAvailableForStay(false); // Default is true
+// By default every WorkingHours is NOT allowed for an overnight stay,
+// so we explicitly have to enable it
+workingHours.forEach(w -> w.setIsAvailableForStay(true));
 ```
 
 Meaning:
-- the route may operate that day,
-- but it must not end the day “out” (i.e., an overnight stay is not allowed for that day’s WorkingHours block).
+- without this call, the resource would never be permitted to stay out — even if stay nodes exist and policy thresholds are met,
+- enabling it per-day gives you fine-grained control: you can selectively call `setIsAvailableForStay(false)` on individual `WorkingHours` objects for days where the resource must return home (maintenance day, rest day, depot day).
 
-This is a powerful control lever in practice:
-- forbid staying out on days where a resource must return (maintenance day, rest day, depot day).
+This opt-in default is intentional: overnight stays are a significant operational decision and should be consciously enabled, not accidentally inherited.
 
 ### 3) Define a “stay out policy” threshold
 The example sets a threshold that must be met before staying out is permitted:
@@ -167,8 +168,14 @@ The example’s min distance/time thresholds are a best-practice:
 - and “how much recovery is required”.
 
 ### Pattern D — Control stay-out allowance per day using WorkingHours
-If certain days must end at home:
-- set `workingHours.setIsAvailableForStay(false)` for those days.
+Because `WorkingHours` are **not available for stay by default**, you must explicitly call `setIsAvailableForStay(true)` for each day on which overnight stays should be allowed. To then forbid staying out on specific days, simply omit the call (or explicitly call `setIsAvailableForStay(false)`) for those `WorkingHours` objects:
+
+```java
+// Enable stay for most days
+workingHours.forEach(w -> w.setIsAvailableForStay(true));
+// Then selectively forbid it for a specific day
+workingHoursMonday.setIsAvailableForStay(false);
+```
 
 This is very clean and avoids complicated custom constraints.
 
@@ -205,8 +212,6 @@ Multi-day routing needs downstream support:
   - by policy thresholds (`setStayOutPolicy(minDistance, minTime)`),
   - and by multi-day limits (`setStaysOut(total, inRow, minRecoverHours)`).
 - The example demonstrates:
-  - forbidding stay out on May 6,
-  - allowing multi-day work May 7–11,
+  - explicitly enabling overnight stays for all six working days (May 6–11) via `setIsAvailableForStay(true)` — required because the default is `false`,
   - permitting stay out only beyond 100 km or 4 hours from home,
   - limiting consecutive nights out and requiring recovery at home.
-
