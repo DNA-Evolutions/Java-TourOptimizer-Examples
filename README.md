@@ -147,7 +147,7 @@ The sandbox is a browser-based IDE ([code-server](https://github.com/cdr/code-se
 
 Preview (click to enlarge):
 
-<a href="https://dna-evolutions.com/images/docs/home/coderserver.png" target="_blank"><img src="https://docs.dna-evolutions.com/indexres/coderserver.png" width="85%"
+<a href="https://dna-evolutions.com/images/docs/home/coderserver.png" target="_blank"><img src="https://www.dna-evolutions.com/images/docs/home/coderserver.png" width="85%"
 title="JOpt Example Sandbox" alt="JOpt Example Sandbox"></a>
 
 ### Start the sandbox
