@@ -34,6 +34,8 @@ import com.dna.jopt.config.json.framework.JSONOptimization;
 import com.dna.jopt.config.json.types.JSONConfig;
 import com.dna.jopt.config.json.types.OptimizationKeySetting;
 import com.dna.jopt.config.serialize.SerializationException;
+import com.dna.jopt.config.types.ElementConnection;
+import com.dna.jopt.config.types.OptimizationConfig;
 import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
@@ -142,7 +144,14 @@ public class CreateRestTourOptimizerInputWithoutSolutionExample {
 	JSONConfig myExtension = JSONConfig.builder().keySetting(OptimizationKeySetting.of(licenseKey)).timeOut(timeOut)
 		.build();
 
-	String json = JSONOptimization.asJSON(JSONOptimization.fromOptization(myOpti, Optional.of(myExtension)));
+	
+	OptimizationConfig<JSONConfig> jsonOptimization = JSONOptimization.fromOptization(myOpti, Optional.of(myExtension));
+	
+	List<ElementConnection> connections = new ArrayList<ElementConnection>(); // SOME
+	
+	jsonOptimization.withElementConnections(connections);
+	
+	String json = JSONOptimization.asJSON(jsonOptimization);
 
 	// Print out the json
 	System.out.println(json);
