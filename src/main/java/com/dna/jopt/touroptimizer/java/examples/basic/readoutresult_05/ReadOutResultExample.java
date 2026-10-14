@@ -33,6 +33,8 @@ import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationProgress;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
 import com.dna.jopt.member.unit.hours.IWorkingHours;
+import com.dna.jopt.member.bucket.entity.controller.costandviolation.IEntityCostAndViolationController;
+import com.dna.jopt.member.bucket.route.controller.costandviolation.ILogicRouteCostAndViolationController;
 import com.dna.jopt.member.bucket.route.controller.detail.ILogicRouteElementDetailItem;
 import com.dna.jopt.member.unit.hours.IOpeningHours;
 import com.dna.jopt.member.unit.hours.WorkingHours;
@@ -187,38 +189,48 @@ public class ReadOutResultExample extends Optimization {
   @Override
   public void onAsynchronousOptimizationResult(IOptimizationResult result) {
 
+      // Job level
+      IEntityCostAndViolationController entityCostAndViolationController = result.getResultEntity()
+	      .getEntityCostAndViolationController();
 
+      System.out.println("\nNumber Unassigned Nodes: " + entityCostAndViolationController.getNumUnassignedNodes());
+      System.out.println("\nRelationShip Cost: " + entityCostAndViolationController.getCostRelationship());
 
-    // Access the data about each route
-    result
-        .getRoutes()
-        .stream()
-        .forEach(
-            r -> {
+      // Access the data about each route
+      result.getRoutes().stream().forEach(r -> {
 
-              // Get e.g. cost of a route
-              System.out.println("\nRouteCost: "+result.getRouteCost(r));
+	  // Route Level
 
-              // Get details of the route
-              List<ILogicRouteElementDetailItem> details = result.getOrderedRouteItems(r);
-              details.forEach(System.out::println);
+	  ILogicRouteCostAndViolationController curRouteCostAndViolationController = r
+		  .getRouteCostAndViolationController();
 
-              // Get route violations
-              List<IViolation> violations = result.getRouteViolations(r);
-              violations.forEach(System.out::println);
+	  // Get e.g. cost of a route
+	  System.out.println("\nRouteCost: " + curRouteCostAndViolationController.getCost());
 
-              // Get node Violations
-              details
-                  .stream()
-                  .forEach(
-                      d -> {
-                        List<IViolation> nodeVios =
-                            r.getRouteCostAndViolationController()
-                                .getNodeViolations(d.getElement().getId());
-                        if (!nodeVios.isEmpty()) {
-                          System.out.println(d.getElement().getId() + ": " + nodeVios);
-                        }
-                      });
-            });
+	  /*
+	   * 
+	   * And many more costs...
+	   * 
+	   */
+
+	  // Get details of the route ordered by arrival
+	  List<ILogicRouteElementDetailItem> details = result.getOrderedRouteItems(r);
+	  details.forEach(System.out::println);
+
+	  // Get route violations
+	  List<IViolation> violations = curRouteCostAndViolationController.getRouteViolations();
+	  violations.forEach(System.out::println);
+
+	  // E.g. distance cost
+	  System.out.println("\nRouteDistanceCost: " + curRouteCostAndViolationController.getCostDistance());
+
+	  // Get node Violations
+	  details.stream().forEach(d -> {
+	      List<IViolation> nodeVios = curRouteCostAndViolationController.getNodeViolations(d.getElement().getId());
+	      if (!nodeVios.isEmpty()) {
+		  System.out.println(d.getElement().getId() + ": " + nodeVios);
+	      }
+	  });
+      });
   }
 }
