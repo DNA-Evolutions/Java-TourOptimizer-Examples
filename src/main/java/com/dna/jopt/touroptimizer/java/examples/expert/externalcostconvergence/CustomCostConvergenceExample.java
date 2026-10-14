@@ -72,8 +72,11 @@ public class CustomCostConvergenceExample extends Optimization {
 
     @Override
     public double getConvergenceCost(IOptimizationProgress curP) {
-      // By default we use jobCost but now we want to use utilization
-      return curP.getJobTransitionDistanceMeter();
+	// By default we use jobCost but now we want to use utilization
+
+	// Default: curP.getJobCost();
+
+	return curP.getJobTransitionDistanceMeter();
     }
   }
 
