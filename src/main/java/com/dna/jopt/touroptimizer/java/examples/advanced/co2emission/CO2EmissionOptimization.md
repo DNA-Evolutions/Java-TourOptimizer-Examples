@@ -110,7 +110,7 @@ Important: the comment in the code clarifies that this must be **higher than zer
 The example also sets general run controls:
 - `JOptExitCondition.JOptGenerationCount = 2000`
 - `JOpt.Algorithm.PreOptimization.SA.NumIterations = 10000`
-- `JOpt.Algorithm.PreOptimization.SA.NumRepetions = 1`
+- `JOpt.Algorithm.PreOptimization.SA.NumRepetitions = 1`
 
 ### Nodes and time windows
 Nodes are defined as `TimeWindowGeoNode` with:

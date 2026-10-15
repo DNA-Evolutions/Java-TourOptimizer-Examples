@@ -78,16 +78,14 @@ public class CompareResultsWithNodesMoveExample {
 	IOptimizationResult orgResult = CompareResultExampleOptimization.createInitialResult(opti);
 
 	/*
-	 * We have a result that we export to a kml. The result will show a geographical
-	 * problem at the nodes Duisburg and Krefeld. (Duisburg is visited before
-	 * Krefeld, which induces a higher total distance) Most often, such a result
-	 * raises questions from end customers. We move the node to a position that
-	 * avoids the crossing.
+	 * We have a result that we export to a kml. The result uses two separate
+	 * routes to avoid overtime. Most often, such a result raises questions from
+	 * end customers, for example why not all nodes are put into a single route.
 	 */
 	CompareResultExampleOptimization.exportToKml("comparison_nodemove_intial_result_" + System.currentTimeMillis() + ".kml", orgResult);
 
-	// Create a modified result where we exchange Krefeld and Duisburg and also
-	// export to kml
+	// Create a modified result where we move all nodes of the second route into
+	// the first route and also export to kml
 	IOptimizationResult modResult = CompareResultsWithNodesMoveExample.createModResult(opti, orgResult);
 
 	CompareResultExampleOptimization.exportToKml("comparison_nodemove_mod_result_" + System.currentTimeMillis() + ".kml", modResult);
@@ -119,7 +117,7 @@ public class CompareResultsWithNodesMoveExample {
     }
     
     /**
-     * Move second route nodes to first route. (THIS METHOD IS NOT IN USE IN THIS EXAMPLE)
+     * Move second route nodes to first route.
      *
      * @param opti the opti
      * @param orgResult the org result

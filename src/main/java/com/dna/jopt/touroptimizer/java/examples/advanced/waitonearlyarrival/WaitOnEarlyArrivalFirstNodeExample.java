@@ -73,7 +73,7 @@ public class WaitOnEarlyArrivalFirstNodeExample extends Optimization {
    * @return the string
    */
   public String toString() {
-    return "Example on how to define a desired first/last node.";
+    return "Example on how to let a resource wait on early arrival only at the first node of a route.";
   }
 
   /**
@@ -111,7 +111,7 @@ public class WaitOnEarlyArrivalFirstNodeExample extends Optimization {
 
     props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "10000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
 
     props.setProperty("JOpt.NumCPUCores", "4");
 

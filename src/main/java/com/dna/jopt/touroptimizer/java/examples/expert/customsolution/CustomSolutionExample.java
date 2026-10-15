@@ -124,7 +124,7 @@ public class CustomSolutionExample extends Optimization {
     // Effectively skip Simulated and gentic phase and deactivate assisted construction
     props.setProperty("JOptExitCondition.JOptGenerationCount", "10000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
     props.setProperty("JOpt.NumCPUCores", "4");
     // Do not use construction
     props.setProperty("JOpt.Assisted", "FALSE");

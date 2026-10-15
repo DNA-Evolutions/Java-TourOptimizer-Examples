@@ -26,7 +26,7 @@ This example shows how to enumerate the default property definitions programmati
 - Example source: [ReadOutDefaultPropertiesExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/readoutproperties/ReadOutDefaultPropertiesExample.java)
 
 Additional reference list and descriptions:
-- https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/zonecrossing
+- https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties
 
 ---
 

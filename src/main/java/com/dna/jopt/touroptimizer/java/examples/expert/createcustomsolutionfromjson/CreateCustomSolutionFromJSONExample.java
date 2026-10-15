@@ -13,6 +13,7 @@ package com.dna.jopt.touroptimizer.java.examples.expert.createcustomsolutionfrom
  * #L%
  */
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -60,23 +61,27 @@ public class CreateCustomSolutionFromJSONExample extends Optimization {
 
 	String jsonFile = "myopti.json.bz2";
 
-	// Prepare the optimization by loading the Properties and NodeConnector and
-	// extract the solution
-	IEntity en = CreateCustomSolutionFromJSONExample.loadEntityFromJson(new FileInputStream(jsonFile), this,
-		doLoadNodeConnector, doLoadProperties);
+	try {
+	    // Prepare the optimization by loading the Properties and NodeConnector and
+	    // extract the solution
+	    IEntity en = CreateCustomSolutionFromJSONExample.loadEntityFromJson(new FileInputStream(jsonFile), this,
+		    doLoadNodeConnector, doLoadProperties);
 
-	// Load elements
+	    // Load elements
 
-	// YOUR TODO HERE THE CUSTOM SOLUTION CAN BE CREATED BY USING THE LOADED ELEMENTS
-	List<INode> nodes = this.getNodes(en);
-	List<IResource> ress = this.getResources(en);
-	
+	    // YOUR TODO HERE THE CUSTOM SOLUTION CAN BE CREATED BY USING THE LOADED ELEMENTS
+	    List<INode> nodes = this.getNodes(en);
+	    List<IResource> ress = this.getResources(en);
 
-	// For now we simply add the elements - But you could create your own custom solution
-	this.addNodes(nodes);
-	this.addResources(ress);
+	    // For now we simply add the elements - But you could create your own custom solution
+	    this.addNodes(nodes);
+	    this.addResources(ress);
 
-	this.startRunAsync().get();
+	    this.startRunAsync().get();
+	} catch (FileNotFoundException e) {
+	    System.out.println("JsonFile not existing. Run example 'SaveOptimizationToJsonExample.java' first.");
+	    e.printStackTrace();
+	}
     }
 
     private List<IResource> getResources(IEntity en) {

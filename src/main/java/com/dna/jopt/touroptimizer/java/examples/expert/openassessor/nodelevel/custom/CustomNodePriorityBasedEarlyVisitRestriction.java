@@ -43,11 +43,12 @@ public class CustomNodePriorityBasedEarlyVisitRestriction
 
     // This examples shows how a custom restriction on node level can be designed
 
-    // In this example we would like that all nodes starting with "M" are visited before 11pm (CET)
+    // In this example we would like that nodes are visited early in their opening hours. The later
+    // the arrival after the start of the opening hours, the higher the cost, weighted by importance
 
     int curNodeImportante = node.getImportance();
 
-    // Calculate deviation to the end of the openingHours
+    // Calculate deviation to the start of the openingHours
     long curNodeHoursStartMillis =
         node.getDutyHours().get(holder.getChoosenOpeningHoursIndex()).getTimeWindow().getHoursBeginInMillis();
 

@@ -71,9 +71,9 @@ You implement a class extending the node-level base restriction:
 
 - `AbstractCustomNodeLevelRestriction`
 
-and override the restriction callback (signature shown here conceptually):
+and override the restriction callback (signature as in the examples):
 
-- `invokeRestriction(Optional<ILogicEntityRoute> ..., ILogicEntityRoute route, INode node, ..., EvaluatedNodeDataHolder holder, IEntityCostAssessor ca, boolean resultRequested)`
+- `invokeRestriction(IEntity en, ILogicEntityRoute route, INode node, IOptimizationElement lastGeoLocationElement, IOptimizationElement prevElement, EvaluatedNodeDataHolder holder, IEntityCostAssessor ca, boolean resultRequested)`
 
 This method is called repeatedly during evaluation.
 
@@ -115,7 +115,7 @@ Typical updates include:
 - adding cost (e.g., `addCost(...)`)
 - incrementing generic violation counts (e.g., `setNumConstraintViolations(...)`)
 - incrementing specific violation counters (e.g., node lateness counters)
-- optionally returning an `IEntityRestrictionResult` containing a structured violation entry when `resultRequested == true`
+- returning an `IEntityRestrictionResult`. `CustomNodeLetterMRestriction` adds a structured violation to it when `resultRequested == true`; the other two restrictions return it without a violation.
 
 ### Why “structured violations” matter
 Structured violations are not just for internal debugging:
@@ -130,7 +130,7 @@ In other words: node-level open assessor is often an **explainability feature**,
 
 ## Example 1 — Deadline-style rule: “M-nodes should not be late” (CustomNodeLetterMRestriction)
 
-**Intent:** nodes whose IDs start with `M` should be served before a deadline (in the example: “before 11pm (CET)”).
+**Intent:** nodes whose IDs start with `M` should be served before a deadline (in the example: before 11:00, that is 11 am, Europe/Berlin time).
 
 Key mechanics shown:
 - the restriction filters nodes by ID prefix (`startsWith("M")`)

@@ -227,8 +227,8 @@ In many real-world scenarios, **crossing between different zones** (e.g., via **
 
 **Enable it with this property:**
 ```java
-props.setProperty("JOpt.Clustering.PenlalizeZoneCodeCrossing", true);
-props.setProperty("JOpt.Clustering.PenlalizeZoneCodeCrossingMultiplier", "3.0");
+props.setProperty("JOpt.Clustering.PenalizeZoneCodeCrossing", true);
+props.setProperty("JOpt.Clustering.PenalizeZoneCodeCrossingMultiplier", "3.0");
 ```
 **Read more about the Zone Crossing Penalty in our [docs](https://docs.dna-evolutions.com/overview_docs/zonecrossing/zonecrossing.html).**
 Further, get an **[example](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/zonecrossing/).**

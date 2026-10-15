@@ -95,7 +95,7 @@ public class PillarExample extends Optimization {
 
     props.setProperty("JOptExitCondition.JOptGenerationCount", "20000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
     props.setProperty("JOpt.NumCPUCores", "4");
 
     opti.addElement(props);
@@ -210,7 +210,7 @@ public class PillarExample extends Optimization {
     opti.addElement(colognePlumbing);
 
     /*
-     * Jack has to call a customer between 10:00 and 12:30 for half an hour.
+     * Jack has to call a customer between 10:30 and 12:00 for half an hour.
      * His location does not matter.
      *
      */

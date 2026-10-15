@@ -48,22 +48,22 @@ public class CustomNodeLetterMRestriction extends AbstractCustomNodeLevelRestric
 
     // This examples shows how a custom restriction on node level can be designed
 
-    // In this example we would like that all nodes starting with "M" are visited before 11pm (CET)
+    // In this example we would like that all nodes starting with "M" are visited before 11:00
+    // (11 am, Europe/Berlin time)
 
     if (!node.getId().startsWith("M")) {
       // We don't care
       return new EntityRestrictionResult();
     }
 
-    // Extract arrival time
+    // Extract arrival time as local time in Europe/Berlin
     LocalDateTime date =
         LocalDateTime.ofInstant(
-            Instant.ofEpochMilli(holder.getArrivalTime()), ZoneId.systemDefault());
+            Instant.ofEpochMilli(holder.getArrivalTime()), ZoneId.of("Europe/Berlin"));
 
-    // Create a 12pm matching date object
+    // Create an 11:00 matching date object on the day of arrival
     LocalDateTime dateMatch =
         LocalDateTime.of(date.getYear(), date.getMonth(), date.getDayOfMonth(), 11, 0, 0, 0);
-    dateMatch.atZone(ZoneId.of("Europe/Berlin"));
 
     Duration delta = Duration.between(dateMatch, date);
 

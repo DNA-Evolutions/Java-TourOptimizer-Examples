@@ -52,7 +52,7 @@ Each package below contains one or more runnable examples plus a dedicated Markd
 - Package: [https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/backupconnector](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/backupconnector)
 - Key documents / references:
   - [CustomNodeBackUpConnector.md](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/backupconnector/CustomNodeBackUpConnector.md)
-  - [ExternalNodeConnection.md](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/externalnodeconnection/ExternalNodeConnection.md)
+  - [ExternalNodeConnection.md](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/connection_04/ExternalNodeConnection.md)
 
 ### `buildinfo` — Read build/runtime metadata from the library
 
@@ -96,16 +96,16 @@ Each package below contains one or more runnable examples plus a dedicated Markd
 
 - Package: [https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/openassessor](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/openassessor)
 - Key documents / references:
-  - [OpenAssessorRouteLevel.md](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/openassessor/routelevel/custom/OpenAssessorRouteLevel.md)
-  - [OpenAssessorNodeLevel.md](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/openassessor/nodelevel/OpenAssessorNodeLevel.md)
+  - [OpenAssessorRouteLevel.md](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/openassessor/OpenAssessorRouteLevel.md)
+  - [OpenAssessorNodeLevel.md](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/openassessor/OpenAssessorNodeLevel.md)
   - [Open Assessor docs](https://www.dna-evolutions.com/docs/learn-and-explore/special/special_features#open-assessor)
 
 ### `optimizationscheme` — Define the algorithm pipeline and default properties
 
 - Package: [https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/optimizationscheme](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/optimizationscheme)
 - Key documents / references:
-  - [OptimizationSchemeAlgorithmSelection.md](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/optimizationscheme/selectalgorithms/OptimizationSchemeAlgorithmSelection.md)
-  - [OptimizationSchemeCustomDefaultProperties.md](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/optimizationscheme/customdefaultproperties/OptimizationSchemeCustomDefaultProperties.md)
+  - [OptimizationSchemeAlgorithmSelection.md](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/optimizationscheme/OptimizationSchemeAlgorithmSelection.md)
+  - [OptimizationSchemeCustomDefaultProperties.md](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/optimizationscheme/OptimizationSchemeCustomDefaultProperties.md)
 
 ### `optionalnode` — Optional nodes (visited only if beneficial / necessary)
 

@@ -231,7 +231,7 @@ Why:
 ## Practical notes for running the examples
 
 ### License requirement
-These examples contain more than 10 elements (nodes/resources), therefore a **valid license is required** (the source files explicitly warn about this).
+These examples contain more than 20 elements (nodes/resources), more than the public evaluation license in `ExampleLicenseHelper` allows. Therefore a **full license is required** (the source files explicitly warn about this).
 
 ### Output artifacts
 All examples export KML files to the working directory.  

@@ -31,7 +31,7 @@ In the source, this is essentially:
 - `Properties coreVersionProperties = this.getCoreVersionProperties();`
 - print key/value pairs to stdout
 
-The output contains a rich set of keys, for example (excerpt shown in the source comment):
+The output contains a set of keys, for example:
 - `jopt.core.jopt.version.number`
 - `jopt.core.git.commit.time`
 - `jopt.core.git.build.time`

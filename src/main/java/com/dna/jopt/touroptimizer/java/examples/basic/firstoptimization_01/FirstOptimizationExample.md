@@ -53,7 +53,7 @@ This example sets four properties:
 - `JOpt.Algorithm.PreOptimization.SA.NumIterations = 100000`  
   Controls the number of iterations for the simulated annealing pre-optimization.
 
-- `JOpt.Algorithm.PreOptimization.SA.NumRepetions = 1`  
+- `JOpt.Algorithm.PreOptimization.SA.NumRepetitions = 1`  
   Number of pre-optimization repetitions (note the spelling is exactly as in the source key).
 
 - `JOpt.NumCPUCores = 4`  

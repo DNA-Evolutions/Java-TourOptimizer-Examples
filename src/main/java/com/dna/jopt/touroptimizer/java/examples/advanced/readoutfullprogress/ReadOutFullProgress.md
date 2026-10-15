@@ -135,7 +135,7 @@ That is why the repository also includes a utility.
 
 #### Distance
 - `pp.getDistance()` — total distance
-- `pp.getTerminationTransitDistance()` — termination transit distance
+- `pp.getTerminationTransitDistance()`: termination transit distance. `ParsedProgress` provides it, but the example does not print it.
 
 #### Utilization
 - `pp.getUtilization()` — `productiveTime / (productive + idle + transit)` (flex time excluded)

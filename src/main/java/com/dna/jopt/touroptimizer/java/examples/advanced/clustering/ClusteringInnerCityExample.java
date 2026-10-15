@@ -56,7 +56,7 @@ import com.google.common.collect.ImmutableList;
 import tech.units.indriya.quantity.Quantities;
 
 /**
- * ATTENTION: This example contains more than 10 elements therefore a valid
+ * ATTENTION: This example contains more than 20 elements therefore a full
  * license is required.
  *
  * <p>

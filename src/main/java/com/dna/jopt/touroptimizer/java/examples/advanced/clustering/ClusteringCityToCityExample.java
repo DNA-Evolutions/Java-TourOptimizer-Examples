@@ -49,7 +49,7 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tech.units.indriya.quantity.Quantities;
 
 /**
- * ATTENTION: This example contains more than 10 elements therefore a valid license is required.
+ * ATTENTION: This example contains more than 20 elements therefore a full license is required.
  *
  * <p>Example of clustering construction. Several cities in Germany serve as centers for nodes to be
  * visited. Resources are also spread around Germany. The task is to create a solution purely based

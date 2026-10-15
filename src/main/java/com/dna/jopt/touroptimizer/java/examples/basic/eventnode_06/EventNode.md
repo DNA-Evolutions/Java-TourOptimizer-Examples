@@ -53,7 +53,7 @@ The example applies a license via the repository helper and starts the run async
 
 - `JOptExitCondition.JOptGenerationCount = 20000`
 - `JOpt.Algorithm.PreOptimization.SA.NumIterations = 1000000`
-- `JOpt.Algorithm.PreOptimization.SA.NumRepetions = 1`
+- `JOpt.Algorithm.PreOptimization.SA.NumRepetitions = 1`
 - `JOpt.NumCPUCores = 4`
 
 Practical meaning:

@@ -15,7 +15,7 @@ Instead of duplicating constraints across all team members, you apply the constr
 
 - Example source: https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/constraintaliasid/ResourceConstraintAliasIdExample.java  
 
-This document is aligned with the repository’s broader feature notes (meeting transcript attached in this chat), where **alias resource IDs** are described as a way to “treat multiple resources as one logical unit” for constraints and dispatch rules.
+**Alias resource IDs** are a way to treat multiple resources as one logical unit for constraints and dispatch rules.
 
 ---
 

@@ -14,6 +14,7 @@ The examples covered are:
 - [LoadOptimizationFromJsonExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/io_03/LoadOptimizationFromJsonExample.java)
 - [LoadOptimizationToFreshRunExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/io_03/LoadOptimizationToFreshRunExample.java)
 - [LoadOptimizationFromJsonAndReassignNodes.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/io_03/LoadOptimizationFromJsonAndReassignNodes.java)
+- [LoadOptimizationFromJsonAndReassignPillar.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/io_03/LoadOptimizationFromJsonAndReassignPillar.java) (own document: [LoadOptimizationFromJsonAndReassignPillar.md](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/io_03/LoadOptimizationFromJsonAndReassignPillar.md))
 - [LoadOptimizationFromJsonString.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/io_03/LoadOptimizationFromJsonString.java)
 
 ---
@@ -145,6 +146,8 @@ File output is not always the right integration. Many systems are “payload-fir
 
 ## Loading patterns
 
+The loaders that read `myopti.json.bz2` (`LoadOptimizationFromJsonExample`, `LoadOptimizationToFreshRunExample`, `LoadOptimizationFromJsonAndReassignNodes`, `LoadOptimizationFromJsonAndReassignPillar`) need that file in the working directory. Run `SaveOptimizationToJsonExample` first, in the same working directory. If the file is missing, each of them prints "JsonFile not existing. Run example 'SaveOptimizationToJsonExample.java' first." and does not start a run.
+
 ### 1) Load from `*.json.bz2` and continue
 
 **Example:** `LoadOptimizationFromJsonExample`
@@ -210,7 +213,19 @@ This is a common operational requirement in routing: the world changes while you
 
 ---
 
-### 4) Load from an **in-memory JSON string** (portable payloads)
+### 4) Load and then add a **pillar** via reassignment
+
+**Example:** `LoadOptimizationFromJsonAndReassignPillar`
+
+After loading `myopti.json.bz2`, the example adds one `PillarTimeWindowGeoNode` (`Koeln-Pillar`, at the coordinates of Koeln) through the same call:
+
+- `this.addReassignNodes(getAdditionalNodes());`
+
+The pillar has one opening hours window on March 7, 2020, 08:00 to 17:00 (Europe/Berlin), and a visit duration of 20 minutes. A pillar is a fixed appointment: its time window must be met. See [LoadOptimizationFromJsonAndReassignPillar.md](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/io_03/LoadOptimizationFromJsonAndReassignPillar.md).
+
+---
+
+### 5) Load from an **in-memory JSON string** (portable payloads)
 
 **Example:** `LoadOptimizationFromJsonString`
 
@@ -295,4 +310,7 @@ If you copy these patterns into production code, consider:
 
 - Want to add new tasks into an existing plan?  
   Use **LoadOptimizationFromJsonAndReassignNodes** (`addReassignNodes(...)`).
+
+- Want to add a fixed appointment (pillar) into an existing plan?  
+  Use **LoadOptimizationFromJsonAndReassignPillar** (`addReassignNodes(...)` with a `PillarTimeWindowGeoNode`).
 

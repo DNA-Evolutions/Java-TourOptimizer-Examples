@@ -50,7 +50,7 @@ import tech.units.indriya.quantity.Quantities;
 
 /**
  * Inject a custom restriction for the assessor. Here, nodes which start with a "M" in their id need to be
- * visited before 11pm. Otherwise, a penalty is assigned.
+ * visited before 11:00 (11 am, Europe/Berlin time). Otherwise, a penalty is assigned.
  */
 public class CustomNodeLevelRestrictionExample extends Optimization {
 
@@ -60,7 +60,7 @@ public class CustomNodeLevelRestrictionExample extends Optimization {
   
   public String toString() {
 	  return "Inject a custom restriction for the assessor. Here, nodes which start with a \"M\" in their id need to be\r\n" + 
-	      " visited before 11pm. Otherwise, a penalty is assigned.";
+	      " visited before 11:00 (11 am, Europe/Berlin time). Otherwise, a penalty is assigned.";
   }
 
   public void example() throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
@@ -89,7 +89,7 @@ public class CustomNodeLevelRestrictionExample extends Optimization {
 
     props.setProperty("JOptExitCondition.JOptGenerationCount", "20000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
     props.setProperty("JOpt.NumCPUCores", "4");
 
     this.addElement(props);

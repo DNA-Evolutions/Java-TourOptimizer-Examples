@@ -178,7 +178,7 @@ The `timeOut` value is embedded in the JSON payload and is used by the REST serv
 
 **Package:** [`readinput`](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/restful/readinput)
 
-**Companion doc:** [`ReadJsonConfigAndRun.md`](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/restful/readinput/ReadJsonConfigAndRun.md)
+**Companion doc:** [`ReadRestJsonConfigAndRun.md`](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/restful/readinput/ReadRestJsonConfigAndRun.md)
 
 This sub-package answers the question: *"I have a REST JSON payload — how do I run it locally using the Java core library?"*
 
@@ -307,7 +307,7 @@ You will also need the TourOptimizer REST backend running (see [The REST server 
 
 ### Companion docs (this package)
 - [`CreateRestTourOptimizerInput.md`](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/restful/createinput/CreateRestTourOptimizerInput.md) — detailed guide for `createinput`
-- [`ReadJsonConfigAndRun.md`](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/restful/readinput/ReadJsonConfigAndRun.md) — detailed guide for `readinput`
+- [`ReadRestJsonConfigAndRun.md`](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/restful/readinput/ReadRestJsonConfigAndRun.md): detailed guide for `readinput`
 
 ### REST client repositories
 - [Java REST Client Examples](https://github.com/DNA-Evolutions/Java-REST-Client-Examples)
@@ -328,7 +328,6 @@ You will also need the TourOptimizer REST backend running (see [The REST server 
 - [Official documentation hub](https://www.dna-evolutions.com/docs/getting-started/home/home)
 - [License documentation](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license)
 - [Public JavaDocs](https://public.javadoc.dna-evolutions.com)
-- [FAQ](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/FAQ.md)
 - Contact: [info@dna-evolutions.com](mailto:info@dna-evolutions.com)
 
 ---

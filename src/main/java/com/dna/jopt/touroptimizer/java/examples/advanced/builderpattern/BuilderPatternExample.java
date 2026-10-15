@@ -131,7 +131,7 @@ public class BuilderPatternExample {
      *
      * Print the Result:
      *
-     * 1) The JSON version - please also see example CreateRestTourOptimizerInputExample.java
+     * 1) The JSON version - please also see example CreateRestTourOptimizerInputWithSolutionExample.java
      *
      * 2) The human readable text solution
      *
@@ -140,7 +140,7 @@ public class BuilderPatternExample {
      */
 
     // 1) JSON - can be used as input for our swagger interface - see also
-    // CreateRestTourOptimizerInputExample.java
+    // CreateRestTourOptimizerInputWithSolutionExample.java
     System.out.println(JSONOptimization.asJSON(result));
     System.out.println();
 
@@ -242,7 +242,7 @@ public class BuilderPatternExample {
 
     propMap.put("JOptExitCondition.JOptGenerationCount", "2000");
     propMap.put("JOpt.Algorithm.PreOptimization.SA.NumIterations", "10000");
-    propMap.put("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
+    propMap.put("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
 
     return OptimizationOptions.of(propMap);
   }

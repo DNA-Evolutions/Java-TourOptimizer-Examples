@@ -107,17 +107,19 @@ It is the cleanest mental model:
 
 ### What “locationId” changes
 
-This example assigns the **same `locationId`** to multiple nodes:
+This example assigns the **same `locationId`** to the two nodes that share the same geo-coordinates (50.9333, 6.95):
 
 - `koeln.setLocationId("TestLocationId1");`
 - `koeln1.setLocationId("TestLocationId1");`
-- `oberhausen.setLocationId("TestLocationId1");`
-- …and so on
+
+All other nodes have no explicit location id; for them, the element id is used as location id.
 
 The file comment explains the key semantics:
 
 - Elements sharing a `locationId` effectively share the same position.
-- You must ensure that all elements sharing a `locationId` also share the same geo-coordinates—this becomes important when fallback calculations rely on geo coordinates.
+- You must ensure that all elements sharing a `locationId` also share the same geo-coordinates. This becomes important when fallback calculations rely on geo coordinates.
+
+Connections are stored by location id. The explicit connections Koeln to Oberhausen and Oberhausen to Koeln are therefore also used for Koeln1 to Oberhausen and Oberhausen to Koeln1.
 
 ### Why you would use location IDs
 
@@ -136,7 +138,7 @@ If you assign the same `locationId` to nodes that do **not** share the same lati
 - explicit connections might be applied unexpectedly,
 - fallback distances might be computed from an inconsistent geo position.
 
-The example explicitly warns about this.
+The class comment of the example warns about this, and the example only shares a location id between nodes with identical coordinates.
 
 ---
 

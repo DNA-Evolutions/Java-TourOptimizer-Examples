@@ -12,6 +12,7 @@ package com.dna.jopt.touroptimizer.java.examples.basic.io_03;
  * #L%
  */
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
@@ -55,12 +56,19 @@ public class LoadOptimizationFromJsonExample extends Optimization {
 
     // Set the file to load
     String jsonFile = "myopti.json.bz2";
-    this.invokeFromJson(new FileInputStream(jsonFile), this);
 
-    // Set the Properties
-    this.setProperties();
+    try {
+      this.invokeFromJson(new FileInputStream(jsonFile), this);
 
-    this.startRunAsync().get();
+      // Set the Properties
+      this.setProperties();
+
+      this.startRunAsync().get();
+    } catch (FileNotFoundException e) {
+      System.out.println(
+          "JsonFile not existing. Run example 'SaveOptimizationToJsonExample.java' first.");
+      e.printStackTrace();
+    }
   }
 
   private void setProperties() {
@@ -69,8 +77,7 @@ public class LoadOptimizationFromJsonExample extends Optimization {
 
     props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
-    props.setProperty("JOptLicense.CheckAutoLicensce", "FALSE");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
     props.setProperty("JOpt.NumCPUCores", "4");
 
     this.addElement(props);

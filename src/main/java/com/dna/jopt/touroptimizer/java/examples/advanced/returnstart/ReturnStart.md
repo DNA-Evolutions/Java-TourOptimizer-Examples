@@ -20,7 +20,7 @@ Primary reference: https://www.dna-evolutions.com/docs/learn-and-explore/feature
 ## References
 
 - Documentation: https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/return_to_start
-- Example source: [ReturnStartExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/return2start/ReturnStartExample.java)
+- Example source: [ReturnStartExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/returnstart/ReturnStartExample.java)
 
 ---
 

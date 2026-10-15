@@ -212,15 +212,15 @@ public class BridgeTunnelCrossingZoneNumberConstraintExample extends Optimizatio
 
 	props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
 	props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
-	props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
+	props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
 	props.setProperty("JOpt.NumCPUCores", "4");
 
 	// This property can be used to adjust the cost for violating PostCode
 	// conditions when using
 	// soft Constraints. 10 is the default value.
 	props.setProperty("JOptWeight.ZoneCode", "10.0");
-	props.setProperty("JOpt.Clustering.PenlalizeZoneCodeCrossingMultiplier", "10.0");
-	props.setProperty("JOpt.Clustering.PenlalizeZoneCodeCrossing", "" + doPenalizeZoneCrossings);
+	props.setProperty("JOpt.Clustering.PenalizeZoneCodeCrossingMultiplier", "10.0");
+	props.setProperty("JOpt.Clustering.PenalizeZoneCodeCrossing", "" + doPenalizeZoneCrossings);
 
 	opti.addElement(props);
     }
@@ -284,9 +284,6 @@ public class BridgeTunnelCrossingZoneNumberConstraintExample extends Optimizatio
 
 	ZoneNumberQualification jerseyQuali = new ZoneNumberQualification(zoneThree);
 	jerseyQuali.addExtraCode(zoneFour);
-
-	// Add Resources
-	addResources(opti);
 
 	// Add nodes with qualifications
 	addManhattanNodes(opti, weeklyOpeningHours, manhattanQuali);

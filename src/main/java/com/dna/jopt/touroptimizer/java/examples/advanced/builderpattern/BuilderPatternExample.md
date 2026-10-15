@@ -87,7 +87,7 @@ This is the recommended approach for production systems because it:
 - makes runs debuggable
 - supports “explainability” and operational acceptance
 
-**Related docs (placeholder):** {LINK_DOC_OPTIMIZATION_PROGRESS}
+**Related docs:** [OptimizationProgress.md](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/progressfrequency/OptimizationProgress.md) (progress events and how often they are sent)
 
 ---
 

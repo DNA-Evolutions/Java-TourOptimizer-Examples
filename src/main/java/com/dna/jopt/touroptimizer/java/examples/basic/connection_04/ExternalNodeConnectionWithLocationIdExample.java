@@ -135,6 +135,8 @@ public class ExternalNodeConnectionWithLocationIdExample extends Optimization {
 	Duration visitDuration = Duration.ofMinutes(20);
 
 	// Define some nodes
+	// Koeln and Koeln1 share the same geographical position and therefore the same location id. All
+	// other nodes keep their own id as location id.
 
 	INode koeln = new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
 	koeln.setLocationId("TestLocationId1");
@@ -145,29 +147,25 @@ public class ExternalNodeConnectionWithLocationIdExample extends Optimization {
 	this.addElement(koeln1);
 
 	INode oberhausen = new TimeWindowGeoNode("Oberhausen", 51.4667, 6.85, weeklyOpeningHours, visitDuration, 1);
-	oberhausen.setLocationId("TestLocationId1");
 	this.addElement(oberhausen);
 
 	INode essen = new TimeWindowGeoNode("Essen", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
-	essen.setLocationId("TestLocationId1");
 	this.addElement(essen);
 
 	INode heilbronn = new TimeWindowGeoNode("Heilbronn", 49.1403, 9.22, weeklyOpeningHours, visitDuration, 1);
-	heilbronn.setLocationId("TestLocationId1");
 	this.addElement(heilbronn);
 
 	INode stuttgart = new TimeWindowGeoNode("Stuttgart", 48.7667, 9.18333, weeklyOpeningHours, visitDuration, 1);
 	this.addElement(stuttgart);
 
 	INode wuppertal = new TimeWindowGeoNode("Wuppertal", 51.2667, 7.18333, weeklyOpeningHours, visitDuration, 1);
-	wuppertal.setLocationId("TestLocationId1");
 	this.addElement(wuppertal);
 
 	INode aachen = new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
-	aachen.setLocationId("TestLocationId1");
 	this.addElement(aachen);
 
-	// Add some connection items
+	// Add some connection items. Connections are stored by location id, so the connection from Koeln to
+	// Oberhausen is also used from Koeln1 to Oberhausen (and back)
 	INodeConnectorItem connectionKolenOberhausen = new NodeEdgeConnectorItem();
 	connectionKolenOberhausen.setFromOptimizationElement(koeln);
 	connectionKolenOberhausen.setToOptimizationElement(oberhausen);

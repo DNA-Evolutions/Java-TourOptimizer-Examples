@@ -65,7 +65,7 @@ public class ReloadBaseWithUnloadAllExample extends Optimization {
 
   public String toString() {
     return "In this example optional nodes can be used to unload or load goods. If a node is set to be\r\n"
-        + " optional, the optimizer can choose to schedule it or not. THIS EXAMPLE CAN BE ONLY RUN WITH A VALID FULL LICENSE!";
+        + " optional, the optimizer can choose to schedule it or not.";
   }
 
   public void example()
@@ -92,7 +92,7 @@ public class ReloadBaseWithUnloadAllExample extends Optimization {
 
     props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "500000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
     props.setProperty("JOpt.NumCPUCores", "4");
     props.setProperty("JOptWeight.Capacity", "100");
 

@@ -58,8 +58,8 @@ There are two layers:
 ### 1) Global multiplier (optimizer property)
 
 The example sets:
-- `JOpt.Clustering.PenlalizeZoneCodeCrossing = true/false` (toggle)
-- `JOpt.Clustering.PenlalizeZoneCodeCrossingMultiplier = 10.0`
+- `JOpt.Clustering.PenalizeZoneCodeCrossing = true/false` (toggle)
+- `JOpt.Clustering.PenalizeZoneCodeCrossingMultiplier = 10.0`
 
 Interpretation:
 - a zone-crossing edge becomes significantly more expensive than an intra-zone edge,

@@ -62,6 +62,8 @@ Nodes added:
 - Koeln
 - Oberhausen
 - Essen
+- Dueren
+- Nuernberg
 - Heilbronn
 - Stuttgart
 - Wuppertal

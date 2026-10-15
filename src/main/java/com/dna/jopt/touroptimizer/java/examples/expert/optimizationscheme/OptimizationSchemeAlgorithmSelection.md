@@ -146,7 +146,7 @@ The example still sets properties, e.g.:
 
 - `JOptExitCondition.JOptGenerationCount`
 - `JOpt.Algorithm.PreOptimization.SA.NumIterations`
-- `JOpt.Algorithm.PreOptimization.SA.NumRepetions`
+- `JOpt.Algorithm.PreOptimization.SA.NumRepetitions`
 - `JOpt.NumCPUCores`
 
 Interpretation:

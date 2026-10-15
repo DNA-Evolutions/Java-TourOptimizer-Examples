@@ -91,7 +91,7 @@ public class AutoFilterParticularNodeExample extends Optimization {
 
     props.setProperty("JOptExitCondition.JOptGenerationCount", "20000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
 
     // Activate the filter mechanism
     props.setProperty("JOpt.SelectiveAutoFilter", "TRUE");

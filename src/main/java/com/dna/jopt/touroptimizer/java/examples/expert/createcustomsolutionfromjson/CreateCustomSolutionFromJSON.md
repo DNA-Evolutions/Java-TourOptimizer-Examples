@@ -29,6 +29,7 @@ Related background:
 
 1. Load an optimization snapshot from a compressed JSON file:
    - `myopti.json.bz2`
+   - The file must exist in the working directory first: run `SaveOptimizationToJsonExample` (package `basic.io_03`) before this example. If the file is missing, the example prints the hint "JsonFile not existing. Run example 'SaveOptimizationToJsonExample.java' first." and stops.
 2. Extract an `IEntity` from the loaded snapshot
 3. Pull out all nodes and resources found in that entity
 4. Add those elements into a new optimization instance and run again

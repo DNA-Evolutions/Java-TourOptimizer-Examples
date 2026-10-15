@@ -112,7 +112,7 @@ The example uses a path across Europe to make “stay out” behavior meaningful
 - VenedigOptional (day 0, optional)
 - Innsbruck (day 1)
 - Wien (day 2)
-- Mannheim (day 2)
+- Stuttgart (day 2)
 
 Key modeling signals:
 - all major nodes are marked as stay nodes,

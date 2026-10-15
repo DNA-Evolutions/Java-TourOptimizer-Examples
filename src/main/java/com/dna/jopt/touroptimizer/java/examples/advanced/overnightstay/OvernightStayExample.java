@@ -84,7 +84,7 @@ public class OvernightStayExample extends Optimization {
 
     props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "500000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
     props.setProperty("JOpt.NumCPUCores", "4");
     props.setProperty("JOptWeight.Capacity", "100");
 
@@ -225,16 +225,16 @@ public class OvernightStayExample extends Optimization {
     wien.setIsStayNode(stayNodesEnabled);
     this.addElement(wien);
 
-    TimeWindowGeoNode mannheim =
+    TimeWindowGeoNode stuttgart =
         new TimeWindowGeoNode(
-            "Mannheim",
+            "Stuttgart",
             48.775846,
             9.182932,
             this.nodeOpeningHoursHelper(2),
             Duration.ofHours(1),
             1);
-    mannheim.setIsStayNode(stayNodesEnabled);
-    this.addElement(mannheim);
+    stuttgart.setIsStayNode(stayNodesEnabled);
+    this.addElement(stuttgart);
   }
 
   @Override

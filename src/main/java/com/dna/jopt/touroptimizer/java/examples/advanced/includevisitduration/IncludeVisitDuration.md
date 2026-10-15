@@ -76,10 +76,11 @@ For **Koeln**, it flips the semantic switch:
 All other nodes remain strict by default.
 
 ### Resources
-Two `CapacityResource` instances are created (Jack and John), both starting in Aachen, with:
+One `CapacityResource` is created (Jack), starting in Aachen, with:
 - max distance: 1200 km
-- max working time: 12 hours
+- max working time: 13 hours
 - cost configuration: `setCost(0, 1, 1)`
+- working hours on May 6 and May 7, 2020, 08:00 to 17:00 (Europe/Berlin)
 
 This keeps the focus on the time-window semantics rather than resource differences.
 
@@ -87,7 +88,7 @@ This keeps the focus on the time-window semantics rather than resource differenc
 The example uses a relatively large iteration budget:
 - `JOptExitCondition.JOptGenerationCount = 20000`
 - `JOpt.Algorithm.PreOptimization.SA.NumIterations = 1000000`
-- `JOpt.Algorithm.PreOptimization.SA.NumRepetions = 1`
+- `JOpt.Algorithm.PreOptimization.SA.NumRepetitions = 1`
 
 This ensures the solver has enough opportunity to exploit the relaxed constraint on Koeln.
 

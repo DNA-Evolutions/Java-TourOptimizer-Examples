@@ -63,7 +63,7 @@ import java.util.ArrayList;
  * be delivered (customer request).
  *
  * <p>As planning the initial Load for our truck "JackTruck" can be challenging in mixed pickup and
- * delivery problems, we use a MixedFlexLoad that can adjust its own request or supply during
+ * delivery problems, we use FlexLoads that can adjust their own request or supply during
  * optimization. Even though a FlexLoad needs to be attached to a Node, a FlexLoad usually can be
  * seen as a warehouse that a Resource can use to reload and/or unload goods.
  *
@@ -328,7 +328,7 @@ public class PNDRequestAndSupplyFlexLoadExample extends Optimization {
    */
   public INodeDepot createSupplyFlexDepot(String depotId) {
 
-    // Adding RequestFlexLoads that adjust load request during optimization
+    // Adding SupplyFlexLoads that adjust load supply during optimization
     ILoad fridgeLoad = new SupplyFlexLoad("Fridge");
 
     // The initial (before optimization) property of a SupplyFlexLoad is a request of 0.0

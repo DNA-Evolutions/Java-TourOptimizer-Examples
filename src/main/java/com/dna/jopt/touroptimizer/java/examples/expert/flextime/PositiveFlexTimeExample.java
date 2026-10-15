@@ -49,7 +49,7 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 import tech.units.indriya.quantity.Quantities;
 
-/** Simple example of negative flextime. */
+/** Simple example of positive flextime. */
 public class PositiveFlexTimeExample extends Optimization {
 
   public static void main(String[] args)
@@ -84,7 +84,7 @@ public class PositiveFlexTimeExample extends Optimization {
 
     props.setProperty("JOptExitCondition.JOptGenerationCount", "10000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
     props.setProperty("JOpt.NumCPUCores", "4");
 
     this.addElement(props);

@@ -92,26 +92,27 @@ Practical guidance:
 ## Scenario structure in the example
 
 ### Time model
-- Node OpeningHours: March 6–7, 2020, 08:00–17:00 (Europe/Berlin)
-- Resource WorkingHours: March 6–7, 2020, 08:00–17:00 (Europe/Berlin)
+- Node OpeningHours: May 6 and May 7, 2020, 08:00 to 12:00 (Europe/Berlin)
+- Resource WorkingHours: May 6 and May 7, 2020, 08:00 to 18:00 (Europe/Berlin)
 
 ### Nodes
-The example uses `TimeWindowGeoNode` for multiple cities, including:
+The example uses `TimeWindowGeoNode` for five cities:
 - Koeln (first-node preference)
 - Wuppertal (last-node preference)
-- Essen, Dueren, Aachen (and potentially others in the file)
+- Essen, Dueren, Aachen
 
 All nodes share:
 - visit duration: 20 minutes
 - importance: 1 (base importance)
 
 ### Resources
-Two resources are created (Jack and John), both starting in Aachen, with identical:
+One resource is created (Jack), starting in Aachen, with:
+- max working time: 10 hours
 - max distance: 1200 km
-- cost configuration
-- working hours
+- cost configuration `setCost(0, 1, 1)`
+- two working days (see the time model above)
 
-This makes the “first/last” behavior easier to interpret because resources are not artificially different.
+With a single resource, the first/last behavior is easy to interpret.
 
 ---
 

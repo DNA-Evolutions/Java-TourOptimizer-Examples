@@ -97,7 +97,7 @@ public class RelativeTimeWindowRelationWithInducedIdleTimeExample extends Optimi
     Properties props = new Properties();
 
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
     props.setProperty("JOptWeight.Relationships", "100");
     props.setProperty("JOpt.NumCPUCores", "4");
     props.setProperty("JOpt.UnlocatedIdleTime", "true");
@@ -169,9 +169,10 @@ public class RelativeTimeWindowRelationWithInducedIdleTimeExample extends Optimi
 
     TimeWindowGeoNode essen =
         new TimeWindowGeoNode(
-            "Essen", 50.775346, 6.083887, weeklyOpeningHoursEssen, visitDuration, 1);
+            "Essen", 51.45, 7.01667, weeklyOpeningHoursEssen, visitDuration, 1);
     IConstraintResource johnMandConstraint = new MandatoryResourceConstraint();
     johnMandConstraint.addResource("John", 10);
+    essen.addConstraint(johnMandConstraint);
     this.addElement(essen);
 
     TimeWindowGeoNode aachen =
@@ -179,10 +180,11 @@ public class RelativeTimeWindowRelationWithInducedIdleTimeExample extends Optimi
             "Aachen", 50.775346, 6.083887, weeklyOpeningHoursAachen, visitDuration, 1);
     IConstraintResource jackMandConstraint = new MandatoryResourceConstraint();
     jackMandConstraint.addResource("Jack", 10);
+    aachen.addConstraint(jackMandConstraint);
     this.addElement(aachen);
 
     // Create a relative timeWindowRelation as delta based on master node
-    // The relatedNode has to start it’s task 40 minutes after the arrival of the masterNode. This
+    // The relatedNode has to start its task 40 minutes after the arrival of the masterNode. This
     // results in 20
     // minutes idle time for the relatedNode, since the tasks take 60 minutes to finish
     INode2NodeTempusRelation rel =

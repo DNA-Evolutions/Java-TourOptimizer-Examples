@@ -90,7 +90,7 @@ public class IncludeVisitDurationExample extends Optimization {
 
     props.setProperty("JOptExitCondition.JOptGenerationCount", "20000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
     props.setProperty("JOpt.NumCPUCores", "4");
 
     this.addElement(props);

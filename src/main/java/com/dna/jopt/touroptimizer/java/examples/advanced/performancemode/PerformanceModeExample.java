@@ -145,7 +145,7 @@ public class PerformanceModeExample extends Optimization {
 
     props.setProperty("JOptExitCondition.JOptGenerationCount", "100000"); // THIS IS VEEEERY HIGH  - 100 Thousand
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000000"); // THIS IS VEEEERY HIGH - 100 Million
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
     props.setProperty("JOpt.NumCPUCores", "4");
     
     props.setProperty("JOpt.PerformanceMode", ""+usePerformanceMode);

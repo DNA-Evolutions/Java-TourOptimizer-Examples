@@ -224,7 +224,6 @@ If you do not supply external edges, fallback connectors are used. Review:
 - Repository meta docs:
   - [RELEASE_NOTES.md](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/RELEASE_NOTES.md)
   - [CHANGELOG.md](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/CHANGELOG.md)
-  - [FAQ.md](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/FAQ.md)
 - Contact:
   - [www.dna-evolutions.com](https://www.dna-evolutions.com/contact)
   - [info@dna-evolutions.com](mailto:info@dna-evolutions.com)

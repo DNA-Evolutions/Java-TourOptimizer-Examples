@@ -212,7 +212,7 @@ public class ResourceTypeWithExpertiseConditionAndCostModelExample extends Optim
 
 	props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
 	props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
-	props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
+	props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
 
 	// The NodeType setting also influences how important it is not to violate the
 	// minimal
@@ -232,9 +232,9 @@ public class ResourceTypeWithExpertiseConditionAndCostModelExample extends Optim
 
 	/*
 	 * 
-	 * Oberhausen needs: - At least a repair qualification at level 3 but should be
+	 * Oberhausen needs: - At least a repair qualification at level 2 but should be
 	 * as high as possible (soft constraint) - A slater with a weight level of
-	 * maximal 4 (hard constraint)
+	 * maximal 10 (hard constraint)
 	 * 
 	 */
 
@@ -292,7 +292,7 @@ public class ResourceTypeWithExpertiseConditionAndCostModelExample extends Optim
 	/*
 	 * 
 	 * Wuppertal needs: - At least a repair qualification at level 5 a perfect match
-	 * is desirable (hard constraint) - A slater with a weight level of maximal 6
+	 * is desirable (hard constraint) - A slater with a weight level of maximal 4
 	 * (hard constraint)
 	 * 
 	 */
@@ -311,7 +311,7 @@ public class ResourceTypeWithExpertiseConditionAndCostModelExample extends Optim
 	// match - We penalize a high delta
 	SkillWithExpertiseCostModel acceptedModelRepair = SkillWithExpertiseCostModel.PENALIZE_MATCHING_SKILL_HIGH_DELTA;
 
-	// This Expertise constraint is implemented as a soft Constraint.
+	// This Expertise constraint is implemented as a hard Constraint.
 	int minEpxertiseLevelMedium = 5;
 
 	TypeWithExpertiseConstraint repairConstraintMediumExpertise = new TypeWithExpertiseConstraint(
@@ -401,7 +401,7 @@ public class ResourceTypeWithExpertiseConditionAndCostModelExample extends Optim
 
 	/*
 	 * 
-	 * Aachen needs: - At least a repair qualification at level 5 a perfect match is
+	 * Aachen needs: - At least a repair qualification at level 3 a perfect match is
 	 * desirable (hard constraint) - A slater with a weight level of maximal 6 (hard
 	 * constraint)
 	 * 
@@ -421,7 +421,7 @@ public class ResourceTypeWithExpertiseConditionAndCostModelExample extends Optim
 	// match - We penalize a high delta
 	SkillWithExpertiseCostModel acceptedModelRepair = SkillWithExpertiseCostModel.PENALIZE_MATCHING_SKILL_HIGH_DELTA;
 
-	// This Expertise constraint is implemented as a soft Constraint.
+	// This Expertise constraint is implemented as a hard Constraint.
 	int minEpxertiseLevelMedium = 3;
 
 	TypeWithExpertiseConstraint repairConstraintMediumExpertise = new TypeWithExpertiseConstraint(

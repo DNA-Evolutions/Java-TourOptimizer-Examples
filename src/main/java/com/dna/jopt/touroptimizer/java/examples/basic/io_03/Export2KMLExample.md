@@ -89,9 +89,8 @@ Each resource is assigned a cost matrix entry via `setCost(0, 1, 1)`.
 
 - `JOptExitCondition.JOptGenerationCount = 2000`
 - `JOpt.Algorithm.PreOptimization.SA.NumIterations = 100000`
-- `JOpt.Algorithm.PreOptimization.SA.NumRepetions = 1`
+- `JOpt.Algorithm.PreOptimization.SA.NumRepetitions = 1`
 - `JOpt.NumCPUCores = 4`
-- `JOptLicense.CheckAutoLicensce = FALSE`
 
 These are typical “developer friendly” defaults: enough compute to produce a meaningful result, with bounded runtime behavior in common environments.
 

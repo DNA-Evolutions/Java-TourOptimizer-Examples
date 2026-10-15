@@ -54,11 +54,9 @@ public class CustomNodeImportanceOrderRestriction
     // is visited later. Therefore we assign costs
     int deltaImportance = curNodeImportance-prevNodeImportance;
 
-    // Calculate deviation to the end of the openingHours
-
     double costWrongOrderedImprotance = 0.0;
     if (deltaImportance > 0) {
-      // We are late => assign cost
+      // The more important node is visited later => assign cost
     	costWrongOrderedImprotance = 100*deltaImportance;
     	// maybe use:
     	//this.getPropertyProvider().getPropertyProviderHelper().getWeightLateArrival();

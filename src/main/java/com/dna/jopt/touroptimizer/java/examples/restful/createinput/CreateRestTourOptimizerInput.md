@@ -59,7 +59,7 @@ The key utility method is reusable and can be dropped into any project that need
 public static String jsonFromOptimization(IOptimization opti)
         throws IOException, ConvertException, SerializationException {
 
-    String licenseKey = "YOUR_JSON_LIC"; // Replace with your JSON license key
+    String licenseKey = ExampleLicenseHelper.PUBLIC_JSON_LICENSE; // Replace by your license key
 
     Duration timeOut = Duration.ofMinutes(10);
 
@@ -76,7 +76,7 @@ The `timeOut` value serves a dual purpose:
 - It limits the serialization process on the Java side.
 - It is embedded in the JSON payload and used by the REST server as the **maximum allowed optimization duration**.
 
-> **Note:** Replace `"YOUR_JSON_LIC"` with a valid [JSON license key](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license). Without a valid license, the optimizer runs in a limited mode.
+> **Note:** The example uses the public evaluation license `ExampleLicenseHelper.PUBLIC_JSON_LICENSE` (up to 20 elements). Replace it with your own [JSON license key](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license) for larger problems.
 
 ---
 
@@ -112,9 +112,16 @@ JSONConfig myExtension = JSONConfig.builder()
         .timeOut(Duration.ofMinutes(10))
         .build();
 
-String json = JSONOptimization.asJSON(JSONOptimization.fromOptization(myOpti, Optional.of(myExtension)));
+OptimizationConfig<JSONConfig> jsonOptimization = JSONOptimization.fromOptization(myOpti, Optional.of(myExtension));
+
+List<ElementConnection> connections = new ArrayList<ElementConnection>(); // SOME
+jsonOptimization.withElementConnections(connections);
+
+String json = JSONOptimization.asJSON(jsonOptimization);
 System.out.println(json);
 ```
+
+`withElementConnections(...)` returns a new config object; it does not change `jsonOptimization`. In the example the list is empty and the returned object is not used, so the printed JSON is the same as without the call. To send your own element connections, fill the list and use the returned object, for example `jsonOptimization = jsonOptimization.withElementConnections(connections);`.
 
 ### When to use this variant
 

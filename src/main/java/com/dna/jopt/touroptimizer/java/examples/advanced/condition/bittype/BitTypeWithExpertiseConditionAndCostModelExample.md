@@ -48,13 +48,13 @@ In BitType, you typically attach requirements via `addDictType(...)`. Conceptual
 Examples shown in this file:
 
 - `repairConstraintMediumExpertise.addDictType(SKILL_TYPE_REPAIR, req);`
-- `repairConstraintMediumExpertise.addDictType(SKILL_TYPE_WEIGHT, req2);`
+- `weightConstraintMediumExpertise.addDictType(SKILL_TYPE_WEIGHT, req2);`
 - `repairConstraintMediumExpertise.addDictType(SKILL_TYPE_REPAIR,req3);`
 - `weightConstraintMediumExpertise.addDictType(SKILL_TYPE_WEIGHT, req4);`
 - `repairConstraintHighExpertise.addDictType(SKILL_TYPE_REPAIR, TypeLevelRequirement.of(minEpxertiseLevelHigh, true));`
 - `repairConstraintHighExpertise.addDictType(SKILL_TYPE_WEIGHT, TypeLevelRequirement.of(maxWeightLevelHigh, !weightIsMaxLevel));`
 - `repairConstraintMediumExpertise.addDictType(SKILL_TYPE_REPAIR, TypeLevelRequirement.of(minEpxertiseLevelMedium, true));`
-- `weightConstraintMediumExpertise.addDictType(SKILL_TYPE_REPAIR, TypeLevelRequirement.of(maxWeightLevelMedium, !weightIsMaxLevel));`
+- `weightConstraintMediumExpertise.addDictType(SKILL_TYPE_WEIGHT, TypeLevelRequirement.of(maxWeightLevelMedium, !weightIsMaxLevel));`
 
 ---
 

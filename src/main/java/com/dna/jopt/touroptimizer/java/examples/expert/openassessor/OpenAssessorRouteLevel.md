@@ -32,7 +32,7 @@ The pattern is what matters:
 
 ## References (route-level examples in this package)
 
-- [CustomRouteLevelOddNumberOfElementsRestrictionExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/openassessor/routelevel/custom/CustomRouteLevelOddNumberOfElementsRestrictionExample.java)
+- [CustomRouteLevelOddNumberOfElementsRestrictionExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/openassessor/routelevel/CustomRouteLevelOddNumberOfElementsRestrictionExample.java)
 - [OpenCostAssessorOptimizationSchemeWithOddNumberOfElementsRestriction.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/openassessor/routelevel/custom/OpenCostAssessorOptimizationSchemeWithOddNumberOfElementsRestriction.java) 
 - [CustomRouteWithOddNumberOfElementsRestriction.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/openassessor/routelevel/custom/CustomRouteWithOddNumberOfElementsRestriction.java)
 

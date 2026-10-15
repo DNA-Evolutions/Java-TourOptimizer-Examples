@@ -43,7 +43,7 @@ import com.dna.jopt.touroptimizer.java.examples.expert.openassessor.routelevel.c
 import tech.units.indriya.quantity.Quantities;
 
 /**
- * Inject a custom restriction for the assessor. Here, routes that have an odd number of nodes are
+ * Inject a custom restriction for the assessor. Here, routes that have an even number of nodes are
  * penalized.
  */
 public class CustomRouteLevelOddNumberOfElementsRestrictionExample extends Optimization {
@@ -54,7 +54,7 @@ public class CustomRouteLevelOddNumberOfElementsRestrictionExample extends Optim
   }
 
   public String toString() {
-    return "Inject a custom restriction for the assessor. Here, routes that have an odd number of nodes are\r\n"
+    return "Inject a custom restriction for the assessor. Here, routes that have an even number of nodes are\r\n"
         + " penalized. THIS EXAMPLE CAN BE ONLY RUN WITH A VALID FULL LICENSE!";
   }
 
@@ -81,7 +81,7 @@ public class CustomRouteLevelOddNumberOfElementsRestrictionExample extends Optim
 
     props.setProperty("JOptExitCondition.JOptGenerationCount", "20000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
     props.setProperty("JOpt.NumCPUCores", "4");
 
     this.addElement(props);

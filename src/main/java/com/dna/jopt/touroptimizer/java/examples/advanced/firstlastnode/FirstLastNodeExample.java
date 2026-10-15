@@ -110,7 +110,7 @@ public class FirstLastNodeExample extends Optimization {
 
     props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "10000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
 
     // Related properties
     // Default is 1. We are setting the nodeImportance higher here to ensure the cost for skipping Nodes is high enough

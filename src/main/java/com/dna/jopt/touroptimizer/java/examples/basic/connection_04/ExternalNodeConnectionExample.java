@@ -185,7 +185,8 @@ public class ExternalNodeConnectionExample extends Optimization {
         new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
     this.addElement(aachen);
 
-    // Add some connection items => The rest of the connections will be generated as fall back solution using haversine distances
+    // Add some connection items => The rest of the connections will be generated as fall back solution by the default
+    // backup connector (flat-earth distance approximation and an average speed)
     INodeConnectorItem connectionKolenOberhausen = new NodeEdgeConnectorItem();
     connectionKolenOberhausen.setFromOptimizationElement(koeln);
     connectionKolenOberhausen.setToOptimizationElement(oberhausen);

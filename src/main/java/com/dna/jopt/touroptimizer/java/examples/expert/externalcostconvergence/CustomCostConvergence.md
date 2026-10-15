@@ -17,7 +17,7 @@ This is extremely useful for:
 
 - Example source: [CustomCostConvergenceExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/externalcostconvergence/CustomCostConvergenceExample.java)  
 
-The convergence utilities referenced in this document are core classes (provided in the attached source files):
+The convergence classes referenced in this document are in the core package `com.dna.jopt.util.costconverger` (see the core javadoc):
 - `ICostConverger`
 - `AbstractCostConverger`
 - `JoinedCostConverger`
@@ -88,7 +88,7 @@ You must explicitly register allowed algorithms:
 
 ```java
 converger.addExecutionAlgorithm("GeneticEvolution");
-converger.addExecutionAlgorithm("SimulatedAnnealing");
+converger.addExecutionAlgorithm("SmartSimulatedAnnealingAlgo");
 ```
 
 Use the algorithm title strings (often available as constants in the algorithm classes) that match `curP.getCallerId()`.

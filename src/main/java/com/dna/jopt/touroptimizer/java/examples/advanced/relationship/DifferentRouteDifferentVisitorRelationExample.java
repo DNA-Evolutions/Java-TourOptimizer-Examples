@@ -114,7 +114,7 @@ public class DifferentRouteDifferentVisitorRelationExample extends Optimization 
 
     props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "10000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
 
     // Related properties
     props.setProperty("JOptWeight.Relationships", "100.0"); // Default is 100.0

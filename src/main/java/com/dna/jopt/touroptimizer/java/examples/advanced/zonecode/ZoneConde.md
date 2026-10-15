@@ -215,7 +215,7 @@ This avoids arbitrary “polygon edge” decisions and lets the optimizer choose
 This is the key scaling feature:
 - “territories change daily” becomes a data update, not a model change.
 
-### 5) Do not fake territories with distance penalties
+### 5) Do not build pseudo territories with distance penalties
 Distance penalties cannot reliably enforce territory rules when:
 - zones overlap,
 - zones change daily,

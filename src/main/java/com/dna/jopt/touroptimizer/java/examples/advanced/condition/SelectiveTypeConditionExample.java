@@ -97,7 +97,7 @@ public class SelectiveTypeConditionExample extends Optimization {
 
     props.setProperty("JOptExitCondition.JOptGenerationCount", "20000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
     props.setProperty("JOptWeight.NodeType", "10.0"); // Default is 1.0
     props.setProperty("JOpt.NumCPUCores", "4");
 

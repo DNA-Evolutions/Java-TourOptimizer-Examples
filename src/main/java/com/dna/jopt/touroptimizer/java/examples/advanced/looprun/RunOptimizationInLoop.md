@@ -26,6 +26,17 @@ Implementation intent in the code:
 
 - `MAX_LOOP_COUNT_GE = 3`
 
+### How the genetic stage keeps looping
+Before the run starts, `setGeneticPhase2LoopMode(...)` sets the start mode of the two algorithms:
+
+```java
+OptimizationAlgorithmStart modeSA = OptimizationAlgorithmStart.STATE_MODE_BATCH;
+OptimizationAlgorithmStart modeGE = OptimizationAlgorithmStart.STATE_MODE_CONTINIOUS;
+opti.setOptimizationAlgorithmStart(modeSA, modeGE);
+```
+
+Simulated annealing runs in batch mode, that is, for its configured number of iterations. The genetic stage runs in continuous mode: it runs until it is stopped (the `toString()` of the example: "Run an optimization in a loop until it is stopped externally."). The loop counter described below is that stop.
+
 ### How it counts loops
 The example increments a counter based on **progress events**:
 
@@ -114,11 +125,13 @@ The example still configures normal exit conditions:
 
 - `JOptExitCondition.JOptGenerationCount = 5000`
 - `JOpt.Algorithm.PreOptimization.SA.NumIterations = 100000`
-- `JOpt.Algorithm.PreOptimization.SA.NumRepetions = 1`
+- `JOpt.Algorithm.PreOptimization.SA.NumRepetitions = 1`
 
 These remain relevant because:
-- you are only stopping the stage earlier than its default exit,
-- the solver still needs global stop rules for other stages.
+- the generation count and the SA settings still configure the two algorithms,
+- the simulated annealing stage runs in batch mode, for its configured number of iterations.
+
+Because the genetic stage runs in continuous mode, the loop counter and `jumpToNextStage()` end it in this example.
 
 Think of “loop run” as an additional control layer:
 - ExitCondition limits the maximum,

@@ -53,15 +53,22 @@ The two Java examples implement exactly that extraction pattern.
 
 `ReadOutResultExample` shows the core technique without “pretty headers”.
 
-### 1) Iterate routes
+### 1) Read job-level values
+Before looking at single routes, the example reads two job-level values from the entity cost and violation controller:
+
+- `result.getResultEntity().getEntityCostAndViolationController()`
+- `getNumUnassignedNodes()` (number of unassigned nodes)
+- `getCostRelationship()` (cost of relationships)
+
+### 2) Iterate routes and get route costs
 The example loops over all routes in the result:
 
 - `result.getRoutes()`
 
-### 2) Get route cost
-For each route `r`, it prints a route cost:
+For each route `r`, it reads the route cost and violation controller and prints costs from it:
 
-- `result.getRouteCost(r)`
+- `r.getRouteCostAndViolationController().getCost()` (route cost)
+- `r.getRouteCostAndViolationController().getCostDistance()` (distance cost of the route)
 
 ### 3) Read the ordered route items (your “stop list”)
 The route’s visit sequence is retrieved via:
@@ -82,7 +89,7 @@ Typical data contained in those items (conceptually aligned with the tutorial’
 The example demonstrates two layers of violations:
 
 **Route-level**:
-- `result.getRouteViolations(r)`
+- `r.getRouteCostAndViolationController().getRouteViolations()`
 
 **Node-level (per element id)**:
 - `r.getRouteCostAndViolationController().getNodeViolations(d.getElement().getId())`
@@ -110,10 +117,10 @@ The example builds a result header using these job-level metrics:
 - `result.getJobTimeSeconds()`
 - `result.getJobIdleTimeSeconds()`
 - `result.getJobProductiveTimeSeconds()`
-- `result.getJobTransitTimeSeconds()`
-- `result.getJobDistance()`
-- `result.getJobTerminationTime()`
-- `result.getJobTerminationDistance()`
+- `result.getJobTransitionTimeSeconds()`
+- `result.getJobTransitionDistanceMeter()`
+- `result.getJobTerminationTransitionTimeSeconds()`
+- `result.getJobTerminationTransitionDistanceMeter()`
 
 Important: The example converts these values by dividing by `1000` and `60/3600`, implying the underlying unit is **milliseconds** in that runtime context. If you integrate this into production code, verify the units in your JOpt version and normalize consistently.
 
@@ -126,7 +133,8 @@ For each route, the example prints:
   - `getCurTransitTime()`
   - `getCurProductiveTime()`
   - `getCurIdleTime()`
-  - plus an additional “White Idle time” field (also from the joined detail controller),
+  - `getCurWhitSpaceIdleTime()` (printed as "White Idle time")
+  - `getCurInducedIdleTime()` (printed as "Ind. Idle time")
 - route distance via:
   - `r.getJoinedDetailController().getCurDistance()`,
 - termination (return-to-home) metrics:
@@ -146,7 +154,7 @@ It then prints the ordered route detail items:
 
 - `List<ILogicRouteElementDetailItem> details = result.getOrderedRouteItems(r);`
 
-and the violations (route-level and per-node), same as in the basic example.
+It also prints the route cost via `result.getRouteCost(r)` and the violations: route-level via `result.getRouteViolations(r)`, per node via `r.getRouteCostAndViolationController().getNodeViolations(...)`.
 
 ---
 

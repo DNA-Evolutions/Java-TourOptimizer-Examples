@@ -221,7 +221,7 @@ public class BitTypeWithExpertiseConditionAndCostModelExample extends Optimizati
 
 	props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
 	props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
-	props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
+	props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
 
 	// The NodeType setting also influences how important it is not to violate the
 	// minimal
@@ -248,9 +248,9 @@ public class BitTypeWithExpertiseConditionAndCostModelExample extends Optimizati
 
 	/*
 	 * 
-	 * Oberhausen needs: - At least a repair qualification at level 3 but should be
+	 * Oberhausen needs: - At least a repair qualification at level 2 but should be
 	 * as high as possible (soft constraint) - A slater with a weight level of
-	 * maximal 4 (hard constraint)
+	 * maximal 10 (hard constraint)
 	 * 
 	 */
 
@@ -265,7 +265,7 @@ public class BitTypeWithExpertiseConditionAndCostModelExample extends Optimizati
 	Duration visitDuration = Duration.ofMinutes(260);
 
 	// The customer wants a resource that is highly qualified -
-	// LOW_DELTA prefers the highest feasible expertise level; penalty ∝ (GLOBAL_MAX_LEVEL - ACTUAL_LEVEL).
+	// LOW_DELTA prefers the highest feasible expertise level; penalty proportional to (GLOBAL_MAX_LEVEL - ACTUAL_LEVEL).
 	SkillInfoCostModel acceptedModelRepair = SkillInfoCostModel.PENALIZE_MATCHING_SKILL_LOW_DELTA;
 
 	// This Expertise constraint is implemented as a soft Constraint.
@@ -296,7 +296,7 @@ public class BitTypeWithExpertiseConditionAndCostModelExample extends Optimizati
 	weightConstraintMediumExpertise.setSkillCostingModel(acceptedModelWeight);
 	
 	TypeLevelRequirement req2 = TypeLevelRequirement.of(maxWeightLevelMedium, !weightIsMaxLevel);
-	repairConstraintMediumExpertise.addDictType(SKILL_TYPE_WEIGHT, req2);
+	weightConstraintMediumExpertise.addDictType(SKILL_TYPE_WEIGHT, req2);
 	
 	weightConstraintMediumExpertise.setIsHard(true); // Try to send matching expertise level
 
@@ -319,7 +319,7 @@ public class BitTypeWithExpertiseConditionAndCostModelExample extends Optimizati
 	/*
 	 * 
 	 * Wuppertal needs: - At least a repair qualification at level 5 a perfect match
-	 * is desirable (hard constraint) - A slater with a weight level of maximal 6
+	 * is desirable (hard constraint) - A slater with a weight level of maximal 4
 	 * (hard constraint)
 	 * 
 	 */
@@ -338,7 +338,7 @@ public class BitTypeWithExpertiseConditionAndCostModelExample extends Optimizati
 	// match - We penalize a high delta
 	SkillInfoCostModel acceptedModelRepair = SkillInfoCostModel.PENALIZE_MATCHING_SKILL_HIGH_DELTA;
 
-	// This Expertise constraint is implemented as a soft Constraint.
+	// This Expertise constraint is implemented as a hard Constraint.
 	int minEpxertiseLevelMedium = 5;
 
 	BitTypeWithExpertiseConstraint repairConstraintMediumExpertise = new BitTypeWithExpertiseConstraint();
@@ -442,7 +442,7 @@ public class BitTypeWithExpertiseConditionAndCostModelExample extends Optimizati
 
 	/*
 	 * 
-	 * Aachen needs: - At least a repair qualification at level 5 a perfect match is
+	 * Aachen needs: - At least a repair qualification at level 3 a perfect match is
 	 * desirable (hard constraint) - A slater with a weight level of maximal 6 (hard
 	 * constraint)
 	 * 
@@ -462,7 +462,7 @@ public class BitTypeWithExpertiseConditionAndCostModelExample extends Optimizati
 	// match - We penalize a high delta
 	SkillInfoCostModel acceptedModelRepair = SkillInfoCostModel.PENALIZE_MATCHING_SKILL_HIGH_DELTA;
 
-	// This Expertise constraint is implemented as a soft Constraint.
+	// This Expertise constraint is implemented as a hard Constraint.
 	int minEpxertiseLevelMedium = 3;
 
 	BitTypeWithExpertiseConstraint repairConstraintMediumExpertise = new BitTypeWithExpertiseConstraint();
@@ -487,7 +487,7 @@ public class BitTypeWithExpertiseConditionAndCostModelExample extends Optimizati
 	
 	weightConstraintMediumExpertise.setSkillCostingModel(acceptedModelWeight);
 	
-	weightConstraintMediumExpertise.addDictType(SKILL_TYPE_REPAIR, TypeLevelRequirement.of(maxWeightLevelMedium, !weightIsMaxLevel));
+	weightConstraintMediumExpertise.addDictType(SKILL_TYPE_WEIGHT, TypeLevelRequirement.of(maxWeightLevelMedium, !weightIsMaxLevel));
 	
 	
 	weightConstraintMediumExpertise.setIsHard(true); // Try to send matching expertise level

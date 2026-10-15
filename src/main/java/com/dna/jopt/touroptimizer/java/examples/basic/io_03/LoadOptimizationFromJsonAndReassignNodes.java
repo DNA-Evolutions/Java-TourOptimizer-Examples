@@ -14,6 +14,7 @@ package com.dna.jopt.touroptimizer.java.examples.basic.io_03;
 import static java.time.Month.MARCH;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.ZoneId;
@@ -67,15 +68,22 @@ public class LoadOptimizationFromJsonAndReassignNodes extends Optimization {
     ExampleLicenseHelper.setLicense(this);
 
     String jsonFile = "myopti.json.bz2";
-    this.invokeFromJson(new FileInputStream(jsonFile), this);
 
-    // Additional Nodes are assigned to the Optimization
-    this.addReassignNodes(getAdditionalNodes());
+    try {
+      this.invokeFromJson(new FileInputStream(jsonFile), this);
 
-    // Set the Properties
-    this.setProperties();
+      // Additional Nodes are assigned to the Optimization
+      this.addReassignNodes(getAdditionalNodes());
 
-    this.startRunAsync().get();
+      // Set the Properties
+      this.setProperties();
+
+      this.startRunAsync().get();
+    } catch (FileNotFoundException e) {
+      System.out.println(
+          "JsonFile not existing. Run example 'SaveOptimizationToJsonExample.java' first.");
+      e.printStackTrace();
+    }
   }
 
   private void setProperties() {
@@ -84,8 +92,7 @@ public class LoadOptimizationFromJsonAndReassignNodes extends Optimization {
 
     props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
-    props.setProperty("JOptLicense.CheckAutoLicensce", "FALSE");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
     props.setProperty("JOpt.NumCPUCores", "4");
 
     this.addElement(props);

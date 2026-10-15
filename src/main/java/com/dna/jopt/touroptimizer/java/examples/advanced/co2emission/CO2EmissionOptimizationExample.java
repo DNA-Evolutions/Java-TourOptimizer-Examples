@@ -135,7 +135,7 @@ public class CO2EmissionOptimizationExample extends Optimization {
 
     props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "10000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetions", "1");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
 
     // We need to enable CO2Emission optimization by setting the corresponding property to a value
     // higher than zero (default value)

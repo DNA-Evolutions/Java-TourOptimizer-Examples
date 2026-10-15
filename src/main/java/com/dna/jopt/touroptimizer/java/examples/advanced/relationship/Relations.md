@@ -244,6 +244,8 @@ Purpose:
 - Demonstrate that relative timing constraints can intentionally create **waiting**.
 
 In the example:
+- master: `Essen`, bound to the resource `John` by a `MandatoryResourceConstraint`
+- related: `Aachen`, bound to the resource `Jack` by a `MandatoryResourceConstraint`
 - relation window: 0 to 40 minutes after master arrival
 - visit durations are long enough that this introduces idle time on the related node side (as described in the source comments)
 

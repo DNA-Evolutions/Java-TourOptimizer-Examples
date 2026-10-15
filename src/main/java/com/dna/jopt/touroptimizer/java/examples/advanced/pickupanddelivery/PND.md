@@ -230,6 +230,17 @@ Example:
 
 ---
 
+## Total depot capacity shared by load capacities
+
+A ResourceDepot can have a total capacity that is smaller than the sum of its LoadCapacities. Each LoadCapacity keeps its own maximum, and all of them share the total capacity of the depot.
+
+This models a vehicle with a special compartment: one good may only use the compartment, another good may use the whole vehicle, including the compartment. In the example, a `SimpleResourceDepot` with a total capacity of 70 holds `DelicateFruit` (maximum 30, the compartment) and `GlassVials` (maximum 70).
+
+Example:
+- [PNDDifferentTotalCapacityUtilization.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/pickupanddelivery/PNDDifferentTotalCapacityUtilization.java) (document: [PNDDifferentTotalCapacityUtilization.md](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/pickupanddelivery/PNDDifferentTotalCapacityUtilization.md))
+
+---
+
 ## Optional nodes and “infrastructure” in PND
 
 PND becomes significantly more powerful when you add infrastructure nodes that are not “customers”, such as:
@@ -353,6 +364,7 @@ PND example folder:
 | [PNDRequestAndSupplyFlexLoadExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/pickupanddelivery/PNDRequestAndSupplyFlexLoadExample.java) | RequestFlexLoad + SupplyFlexLoad |
 | [PNDOptionalUnloadAllLoadExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/pickupanddelivery/PNDOptionalUnloadAllLoadExample.java) | Optional UnloadAllLoad dumps |
 | [PNDCapacityFactorExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/pickupanddelivery/PNDCapacityFactorExample.java) | Capacity factors |
+| [PNDDifferentTotalCapacityUtilization.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/pickupanddelivery/PNDDifferentTotalCapacityUtilization.java) | Total depot capacity shared by two load capacities |
 | [PNDReportExtractionExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/pickupanddelivery/PNDReportExtractionExample.java) | Report extraction and analysis |
 | [PNDBakeryChainFlexLoadExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/pickupanddelivery/PNDBakeryChainFlexLoadExample.java) | Bakery production planning |
 

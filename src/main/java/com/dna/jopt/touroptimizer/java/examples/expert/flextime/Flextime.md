@@ -178,7 +178,7 @@ If you need strict behavior (“must not start before …”, “must not start 
 
 ### 4) Pair FlexTime with realistic first-node handling
 If your operation allows starting work immediately on early arrival (without waiting for node opening), consider the related feature:
-- `isWaitOneEarlyArrival` (mentioned in the FlexTime documentation section).
+- `setWaitOnEarlyArrival(boolean)` on the node (and `setWaitOnEarlyArrivalFirstNode(boolean)` for the first node of a route); see the example `WaitOnEarlyArrivalFirstNodeExample`.
 
 This can be combined with FlexTime to match real practices:
 - some organizations allow early work; others enforce waiting.
