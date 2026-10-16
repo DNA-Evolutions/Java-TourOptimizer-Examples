@@ -8,7 +8,7 @@ It is designed for real-world scenarios where a boundary crossing has a meaningf
 - congestion zones,
 - security checkpoints,
 - ports / yards / restricted regions,
-- “river crossing” city layouts where switching sides frequently is inefficient.
+- **river crossing** city layouts where switching sides frequently is inefficient.
 
 Instead of trying to approximate this behavior by manually tweaking distance matrices, JOpt provides an **architectural feature**:
 - keep normal distance/time costs,
@@ -19,14 +19,13 @@ Instead of trying to approximate this behavior by manually tweaking distance mat
 ## References
 
 - Zone Crossing Penalization (concept and properties):  
-  https://docs.dna-evolutions.com/overview_docs/zonecrossing/zonecrossing.html
+  https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/zonecrossing
 
 - Defining territories via ZoneCodes (foundation concept used by this feature):  
-  https://docs.dna-evolutions.com/overview_docs/special_features/Special_Features.html#defining-territories-via-zonecodes
+  https://www.dna-evolutions.com/docs/learn-and-explore/special/special_features#defining-territories-via-zonecodes
 
-- Example source:  
-  [BridgeTunnelCrossingZoneNumberConstraintExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/zonecrossing/BridgeTunnelCrossingZoneNumberConstraintExample.java)  
-  [BridgeTunnelCrossingZoneNumberConstraintExample.java (raw)](https://raw.githubusercontent.com/DNA-Evolutions/Java-TourOptimizer-Examples/refs/heads/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/zonecrossing/BridgeTunnelCrossingZoneNumberConstraintExample.java)
+- Example (GitHub):  
+  [BridgeTunnelCrossingZoneNumberConstraintExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/zonecrossing/BridgeTunnelCrossingZoneNumberConstraintExample.java)
 
 ---
 

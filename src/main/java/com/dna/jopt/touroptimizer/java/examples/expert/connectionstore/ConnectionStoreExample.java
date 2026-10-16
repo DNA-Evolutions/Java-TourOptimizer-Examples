@@ -139,7 +139,7 @@ public class ConnectionStoreExample extends Optimization {
     public void example()
 	    throws InterruptedException, ExecutionException, InvalidLicenceException, IOException, TimeoutException, ConvertException, SerializationException {
 
-	// We use the free mode for the example - please modify the ExampleLicenseHelper
+	// We use the public evaluation license (20 elements) for the example - please modify the ExampleLicenseHelper
 	// in case you
 	// have a valid
 	// license.

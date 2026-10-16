@@ -28,6 +28,7 @@ import com.dna.jopt.config.types.OptimizationConfig;
 import com.dna.jopt.config.types.RestOptimization;
 import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
+import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -101,6 +102,10 @@ public class ReadJsonConfigAndRunExample {
 	// Use the JSONOptimization as engine to run the defined config -
 	// JSONOptimization is compatible with the core of JOpt
 	IJSONOptimization myOpti = new JSONOptimization();
+
+	// We use the public evaluation license (20 elements) for the example - please
+	// modify the ExampleLicenseHelper in case you have a valid license.
+	ExampleLicenseHelper.setLicense(myOpti);
 
 	// 3) Attach to the Observables to see progress, errors, etc.
 	attachToObservables(myOpti);

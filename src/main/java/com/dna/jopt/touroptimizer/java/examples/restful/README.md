@@ -24,8 +24,8 @@ Each section has its own README. This README focuses on the **RESTful** package.
 - [The REST server (backend)](#the-rest-server-backend)
 - [The sandbox (CodeServer)](#the-sandbox-codeserver)
 - [Package structure](#package-structure)
-- [Sub-package: `createinput`](#sub-package-createinput-java-json)
-- [Sub-package: `readinput`](#sub-package-readinput-json-local-run)
+- [Sub-package: `createinput`](#sub-package-createinput-java-to-json)
+- [Sub-package: `readinput`](#sub-package-readinput-json-to-local-run)
 - [End-to-end flow](#end-to-end-flow)
 - [Running the examples](#running-the-examples)
 - [Further documentation](#further-documentation)
@@ -125,7 +125,7 @@ The two sub-packages represent **opposite directions** of the same serialization
 
 ---
 
-## Sub-package: `createinput` — Java → JSON
+## Sub-package: `createinput`: Java to JSON
 
 **Package:** [`createinput`](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/restful/createinput)
 
@@ -174,7 +174,7 @@ The `timeOut` value is embedded in the JSON payload and is used by the REST serv
 
 ---
 
-## Sub-package: `readinput` — JSON → local run
+## Sub-package: `readinput`: JSON to local run
 
 **Package:** [`readinput`](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/restful/readinput)
 
@@ -325,7 +325,7 @@ You will also need the TourOptimizer REST backend running (see [The REST server 
 - [TourOptimizer as a service (REST) — Part 2](https://www.youtube.com/watch?v=-LT1xxzrpBE)
 
 ### General
-- [Official documentation hub](https://www.dna-evolutions.com/docs/getting-started/home/home)
+- [Official documentation hub](https://www.dna-evolutions.com/docs/getting-started/home/introduction)
 - [License documentation](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license)
 - [Public JavaDocs](https://public.javadoc.dna-evolutions.com)
 - Contact: [info@dna-evolutions.com](mailto:info@dna-evolutions.com)

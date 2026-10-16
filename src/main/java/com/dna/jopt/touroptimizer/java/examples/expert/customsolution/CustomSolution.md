@@ -18,10 +18,10 @@ In JOpt.TourOptimizer, a “solution” is an **`IEntity`** that contains one or
 ### Examples in this package
 
 - **CustomSolutionExample.java**  
-  [Source](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/customsolution/CustomSolutionExample.java) · [Raw](https://raw.githubusercontent.com/DNA-Evolutions/Java-TourOptimizer-Examples/refs/heads/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/customsolution/CustomSolutionExample.java)
+  [Source](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/customsolution/CustomSolutionExample.java)
 
 - **CustomSolutionWithAdditionalNodesAndResourcesExample.java**  
-  [Source](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/customsolution/CustomSolutionWithAdditionalNodesAndResourcesExample.java) · [Raw](https://raw.githubusercontent.com/DNA-Evolutions/Java-TourOptimizer-Examples/refs/heads/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/customsolution/CustomSolutionWithAdditionalNodesAndResourcesExample.java)
+  [Source](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/customsolution/CustomSolutionWithAdditionalNodesAndResourcesExample.java)
 
 ---
 

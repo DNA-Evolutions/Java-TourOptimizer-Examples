@@ -16,7 +16,7 @@ In other words:
 ## Clickable links
 
 ### Concept documentation
-- [Special Features — CapturedNode / Pillar conflict resolution](https://www.dna-evolutions.com/docs/learn-and-explore/special/special_features#case-four-conflict-of-a-capturednode-with-a-node-solved-by-removing-a-capturednode)
+- [Special Features: CapturedNode / Pillar conflict resolution](https://www.dna-evolutions.com/docs/learn-and-explore/special/special_features#case-five-conflict-of-a-capturednode-with-a-node-solved-by-removing-a-capturednode)
 
 ### Example implementation
 - [PillarExample.java (GitHub)](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/pillar_07/PillarExample.java) 

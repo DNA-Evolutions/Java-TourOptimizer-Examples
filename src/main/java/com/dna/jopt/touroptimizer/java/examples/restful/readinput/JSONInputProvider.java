@@ -202,9 +202,6 @@ public class JSONInputProvider {
     	+ "    \"co2emissionFactor\" : 0.377\r\n"
     	+ "  } ],\r\n"
     	+ "  \"extension\" : {\r\n"
-    	+ "    \"keySetting\" : {\r\n"
-    	+ "      \"jsonLicense\" : \"{\\r\\n\\t\\\"version\\\": \\\"1.1\\\",\\r\\n\\t\\\"identifier\\\": \\\"PUBLIC-\\\",\\r\\n\\t\\\"description\\\": \\\"Key provided to for evaluation purpose from DNA evolutions GmbH.\\\",\\r\\n\\t\\\"contact\\\": \\\"www.dna-evolutions.com\\\",\\r\\n\\t\\\"modules\\\": [{\\r\\n\\t\\t\\t\\\"Module:\\\": \\\"Elements\\\",\\r\\n\\t\\t\\t\\\"max\\\": 15\\r\\n\\t\\t}, {\\r\\n\\t\\t\\t\\\"Module:\\\": \\\"Date\\\",\\r\\n\\t\\t\\t\\\"creation\\\": \\\"2021-05-25\\\",\\r\\n\\t\\t\\t\\\"due\\\": \\\"2027-05-25\\\"\\r\\n\\t\\t}\\r\\n\\t],\\r\\n\\t\\\"key\\\": \\\"PUBLIC-bc799ef350fe9841c1354736d8f863cb85bac88cefd19960c1\\\"\\r\\n}\"\r\n"
-    	+ "    },\r\n"
     	+ "    \"timeOut\" : \"PT10M\"\r\n"
     	+ "  }\r\n"
     	+ "}";

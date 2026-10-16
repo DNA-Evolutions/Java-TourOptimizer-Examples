@@ -9,7 +9,7 @@ There is no required order. You can start with the feature that matches your cur
 - If you are new to JOpt.TourOptimizer, begin with the **basic examples** first:
   - https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic
 - Official documentation home:
-  - [Documentation Hub on www.dna-evolutions.com](https://www.dna-evolutions.com/docs/getting-started/quickstart/getting-started)
+  - [Documentation Hub on www.dna-evolutions.com](https://www.dna-evolutions.com/docs/getting-started/quickstart/getting_started)
 
 ## How to run an example
 

@@ -103,12 +103,15 @@ public static RestOptimization jsonToRestOptimization(String src, ObjectMapper m
 
 ---
 
-### 3) Create the engine and attach observables
+### 3) Create the engine, set the license and attach observables
 
 ```java
 IJSONOptimization myOpti = new JSONOptimization();
+ExampleLicenseHelper.setLicense(myOpti);
 attachToObservables(myOpti);
 ```
+
+`ExampleLicenseHelper.setLicense(myOpti)` sets the public evaluation license before the run starts, see [The public license key](#the-public-license-key).
 
 Attaching to observables is optional but strongly recommended — it gives you visibility into the run as it progresses:
 
@@ -199,7 +202,7 @@ The JSON accepted by this example follows the standard JOpt REST schema. The key
 | `ident` | Human-readable identifier for this optimization run |
 | `nodes` | Array of visit nodes, each with `id`, geo `position`, `openingHours`, `visitDuration`, and `priority` |
 | `resources` | Array of resources (vehicles/employees), each with `id`, `position`, `workingHours`, `maxTime`, and `maxDistance` |
-| `extension` | REST-specific metadata: `keySetting` (license key) and `timeOut` (maximum optimization duration) |
+| `extension` | REST-specific metadata: `keySetting` (license key, optional; the payload of this example has none) and `timeOut` (maximum optimization duration) |
 
 A minimal node entry looks like this:
 
@@ -269,7 +272,7 @@ The call `resultFuture.get()` blocks indefinitely. In production code, prefer `r
 
 ### The public license key
 
-The `JSONInputProvider` constant embeds a **public evaluation license key** (`PUBLIC-bc799ef350fe...`) valid for up to 15 elements. This is sufficient for the example's seven nodes and one resource. For production runs with more elements, replace the `keySetting` in the `extension` block with a valid full license key.
+The example uses the public evaluation license `ExampleLicenseHelper.PUBLIC_JSON_LICENSE` (up to 20 elements). `ReadJsonConfigAndRunExample` sets it with `ExampleLicenseHelper.setLicense(myOpti)` before the run starts; the JSON payload carries no license. Replace it with your own [JSON license key](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license) for larger problems.
 
 ---
 

@@ -5,7 +5,7 @@ A compact “first run” example for **JOpt TourOptimizer (Java)**: define a sm
 ## Links
 
 - Example source (GitHub):  
-  [FirstOptimizationExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/firstoptimization_01/)
+  [FirstOptimizationExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/firstoptimization_01)
 
 - Tutorial walk-through:  
   https://www.dna-evolutions.com/docs/learn-and-explore/base-examples/firstoptimizationexample
@@ -16,7 +16,7 @@ A compact “first run” example for **JOpt TourOptimizer (Java)**: define a sm
 
 Think of the execution flow as a short pipeline:
 
-1. **License is applied** (example/free mode helper).
+1. **License is applied** (`ExampleLicenseHelper`, the public evaluation license).
 2. **Solver properties** are registered.
 3. **Nodes** (places to visit) are registered.
 4. **Resources** (people/vehicles) are registered.
@@ -41,7 +41,7 @@ This is implemented in `example()` by calling five helper methods in order:
 - `example()` contains the full run sequence and is the best entry point when you want to modify the scenario.
 
 Notable behavior:
-- The example applies a license using `ExampleLicenseHelper.setLicense(this);` and notes that it is using a free/example mode approach.
+- The example applies a license using `ExampleLicenseHelper.setLicense(this);`, which sets the public evaluation license (up to 20 elements, nodes and resources together), or your license file when it exists.
 
 ### `addProperties(...)`: the runtime knobs
 

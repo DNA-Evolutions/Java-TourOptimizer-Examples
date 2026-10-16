@@ -82,7 +82,7 @@ public class CO2EmissionOptimizationExample extends Optimization {
   public void example()
       throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
 
-    // We use the free mode for the example - please modify the ExampleLicenseHelper in case you
+    // We use the public evaluation license (20 elements) for the example - please modify the ExampleLicenseHelper in case you
     // have a valid
     // license.
 

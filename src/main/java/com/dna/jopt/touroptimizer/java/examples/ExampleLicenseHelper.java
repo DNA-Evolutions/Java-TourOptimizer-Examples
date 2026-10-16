@@ -50,8 +50,8 @@ public class ExampleLicenseHelper {
 
 	File myLicFile = new File(path);
 
-	// Checks whether license file exists, otherwise uses free mode by not setting
-	// any license
+	// Checks whether license file exists, otherwise uses the public evaluation
+	// license (20 elements)
 	if (myLicFile.exists()) {
 	    opti.setLicenseJSON(myLicFile);
 	}else {

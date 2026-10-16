@@ -15,13 +15,10 @@ This document is based on:
 ## References
 
 - CO2 feature overview (official docs):  
-  https://docs.dna-evolutions.com/overview_docs/co2_emission/CO2_emission.html
+  https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/co2_emission
 
 - Example source (GitHub):  
   https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/co2emission/CO2EmissionOptimizationExample.java
-
-- Example source (raw):  
-  https://raw.githubusercontent.com/DNA-Evolutions/Java-TourOptimizer-Examples/refs/heads/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/co2emission/CO2EmissionOptimizationExample.java
 
 ---
 

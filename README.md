@@ -196,7 +196,7 @@ Import the project as a Maven project in your IDE and run the `main` method of a
 
 ### Before you run all examples
 
-- **License:** the examples set the public evaluation license through `ExampleLicenseHelper`, which allows up to 20 elements (nodes and resources). Some examples are larger and need a full license: the clustering examples in `advanced/clustering`, `PerformanceModeBigOptiExample` and `CustomRouteLevelOddNumberOfElementsRestrictionExample`. `ExampleLicenseHelper` uses your license file instead when it exists at `src/main/resources/license/YOUR_LICENSE.jli`.
+- **License:** the examples set the public evaluation license through `ExampleLicenseHelper`, which allows up to 20 elements (nodes and resources together; without a license the limit is 10). The extended free license allows up to 30 nodes and 7 resources and is available only with a free sign-up (see [Evaluation license](#evaluation-license)). Some examples need more than the public evaluation license: the clustering examples in `advanced/clustering`, `PerformanceModeBigOptiExample` and `CustomRouteLevelOddNumberOfElementsRestrictionExample`. `ExampleLicenseHelper` uses your license file instead when it exists at `src/main/resources/license/YOUR_LICENSE.jli`.
 - **Order in `basic/io_03`:** the loaders that read `myopti.json.bz2` (`LoadOptimizationFromJsonExample`, `LoadOptimizationToFreshRunExample`, `LoadOptimizationFromJsonAndReassignNodes`, `LoadOptimizationFromJsonAndReassignPillar`) and `CreateCustomSolutionFromJSONExample` need that file in the working directory. Run `SaveOptimizationToJsonExample` first.
 - **Errors on purpose:** some examples throw an exception on purpose to show error handling: `CapacityCheckExample` and the examples in `expert/uncaughtexception`.
 
@@ -361,7 +361,7 @@ For new .NET integrations, the recommended path is to use the [JOpt.TourOptimize
 
 ### Evaluation license
 
-Get an extended free license designed for small businesses and customers evaluating the product:  
+Get an extended free license designed for small businesses and customers evaluating the product. It allows up to 30 nodes and 7 resources (37 elements) and is available only with a free [sign-up](https://www.dna-evolutions.com/sign-up) on the DNA Evolutions website:  
 [DNA Evolutions Portal](https://www.dna-evolutions.com/portal) *(sign-in required)*
 
 ### Code and registry

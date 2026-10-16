@@ -173,7 +173,7 @@ Critical concept:
 - A pillar is satisfied by **architecture**, not by “very high costs”.
 
 Docs:
-- [Special Features — CapturedNode / Pillar](https://www.dna-evolutions.com/docs/learn-and-explore/special/special_features#case-four-conflict-of-a-capturednode-with-a-node-solved-by-removing-a-capturednode)
+- [Special Features: CapturedNode / Pillar](https://www.dna-evolutions.com/docs/learn-and-explore/special/special_features#case-five-conflict-of-a-capturednode-with-a-node-solved-by-removing-a-capturednode)
 
 Package:
 - [pillar_07 (package)](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/pillar_07)
@@ -217,7 +217,7 @@ If you do not supply external edges, fallback connectors are used. Review:
 
 ## Further documentation & links
 
-- [Official documentation hub](https://www.dna-evolutions.com/docs/getting-started/home/home)
+- [Official documentation hub](https://www.dna-evolutions.com/docs/getting-started/home/introduction)
 - [Public Nexus repository](https://nexus.dna-evolutions.net/)
 - [Public JavaDocs](https://public.javadoc.dna-evolutions.com)
 - [Special features overview](https://www.dna-evolutions.com/docs/learn-and-explore/special/special_features)

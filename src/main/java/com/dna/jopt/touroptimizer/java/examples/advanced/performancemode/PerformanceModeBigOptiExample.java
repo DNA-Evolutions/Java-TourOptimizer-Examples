@@ -102,7 +102,7 @@ public class PerformanceModeBigOptiExample extends Optimization {
     public void example()
 	    throws InterruptedException, ExecutionException, InvalidLicenceException, IOException, TimeoutException {
 
-	// We use the free mode for the example - please modify the ExampleLicenseHelper
+	// We use the public evaluation license (20 elements) for the example - please modify the ExampleLicenseHelper
 	// in case you have a valid license.
 
 	// Performance mode gives an average boost of 50% but may miss some ideal

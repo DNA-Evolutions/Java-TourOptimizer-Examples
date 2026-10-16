@@ -11,7 +11,7 @@ This document explains how to configure the **optimization license** for **JOpt 
 
 ## When you need a license
 
-Without a license, JOpt runs in free mode with up to **10 optimization elements** (nodes and resources are counted as elements). The other examples in this repository set the public evaluation license through `ExampleLicenseHelper`, which allows up to **20 elements**. Larger problems need a full license.
+Without a license, JOpt runs in free mode with up to **10 optimization elements** (nodes and resources are counted as elements). The other examples in this repository set the public evaluation license through `ExampleLicenseHelper`, which allows up to **20 elements**. The extended free license allows up to **30 nodes and 7 resources** (37 elements); it is available only with a free [sign-up](https://www.dna-evolutions.com/sign-up) on the DNA Evolutions website. Larger problems need a full license.
 
 > If you need more elements during your evaluation phase, feel free to [contact us](https://www.dna-evolutions.com/contact).
 
@@ -138,7 +138,7 @@ If you use the REST service:
 
 ## Quick checklist
 
-- [ ] Using more than 10 elements without a license, or more than 20 with the public evaluation license? Provide a license.
+- [ ] Using more than 10 elements without a license, more than 20 with the public evaluation license, or more than 30 nodes or 7 resources with the extended free license? Provide a license with a higher limit.
 - [ ] Decide: string-based or file-based injection.
 - [ ] Store license securely (never in git).
 - [ ] Do not modify JSON keys.
