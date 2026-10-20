@@ -1,56 +1,27 @@
-# Export to KML — `Export2KMLExample`
+# Export a result to a KML file
 
-This example demonstrates a practical “last mile” step after solving a tour optimization: **exporting the resulting optimization container to a KML file** so you can visualize routes and locations in map tools such as **Google Earth** or other KML-capable viewers.
+`Export2KMLExample` runs an optimization and writes its result to the KML file `myopti.kml`, with one line in its own color for each route. You can open the file in Google Earth or another KML viewer and see the routes on a map. The page is for developers who want to inspect a plan visually. If you have not built an optimization yet, start with the [First optimization example](../firstoptimization_01/FirstOptimizationExample.md).
 
-Unlike purely console-based examples, this one produces a tangible artifact on disk: `myopti.kml`.
+## What the example shows
 
----
+This example demonstrates a "last mile" step after solving a tour optimization: **exporting the resulting optimization container to a KML file** so you can visualize routes and locations in map tools such as **Google Earth** or other KML-capable viewers.
 
-## Links
-
-- Example source (GitHub):  
-  [Export2KMLExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/io_03/Export2KMLExample.java)
-
----
-
-## What you get when you run it
+What you get when you run it:
 
 1. The optimizer runs asynchronously.
-2. Progress/status/error callbacks write messages to stdout.
-3. When the run finishes, `onAsynchronousOptimizationResult(...)` is invoked.
+2. The progress, warning, status and error events of the run are printed to stdout.
+3. When the run finishes, the example prints the result.
 4. The example exports the **result container** to `myopti.kml` via `EntityKMLExporter`.
 
-In other words: **Solve → Receive result → Export → Open in a map tool**.
+The flow is: solve, receive the result, export, open in a map tool.
 
----
+## Scenario
 
-## Execution flow (read this like a story)
+The dates, times and coordinates are sample values. The time zone is Europe/Berlin.
 
-### 1) `main(...)` launches the scenario
+### Nodes
 
-`main(...)` simply instantiates the example and calls `example()`.
-
-### 2) `example()` wires the run end-to-end
-
-The orchestration is intentionally compact:
-
-- Apply a license via `ExampleLicenseHelper.setLicense(this);`
-- Register solver properties via `setProperties()`
-- Register problem elements via `addNodes()` and `addResources()`
-- Start the run via `startRunAsync().get()` (the blocking `get()` is there to keep the JVM alive until completion)
-
-> Note: The class also overrides `onAsynchronousOptimizationResult(...)`, which is where the export happens. The `get()` call ensures the asynchronous run has time to finish and invoke that callback.
-
----
-
-## What is being optimized
-
-### Nodes (time-windowed geo points)
-
-The example creates a shared list of opening hours for **two days in March 2020** (Europe/Berlin time zone):
-
-- March 6: 08:00–17:00  
-- March 7: 08:00–17:00
+The example creates a shared list of opening hours for **two days in March 2020**: March 6 and March 7, each from 08:00 to 17:00.
 
 All nodes share:
 - `visitDuration = 20 minutes`
@@ -58,7 +29,7 @@ All nodes share:
 
 Nodes added (as `TimeWindowGeoNode`):
 - Koeln
-- Koeln1 (same coordinates as Koeln; useful for testing repeated/duplicate locations)
+- Koeln1 (same coordinates as Koeln)
 - Oberhausen
 - Essen
 - Heilbronn
@@ -66,7 +37,7 @@ Nodes added (as `TimeWindowGeoNode`):
 - Wuppertal
 - Aachen
 
-### Resources (capacity resources)
+### Resources
 
 Two resources are created as `CapacityResource`, both starting at Aachen coordinates:
 
@@ -76,96 +47,88 @@ Two resources are created as `CapacityResource`, both starting at Aachen coordin
   - max working time: 14 hours
 
 Shared constraints:
-- max distance per working day: **1200 km**
-- working hours are defined by `getDefaultWorkingHours()` (two days; the second day extends to 20:00)
+- max distance per route: **1200 km**
+- working hours are defined by `createWorkingHours()` (two days; the second day extends to 20:00)
 
-Each resource is assigned a cost matrix entry via `setCost(0, 1, 1)`.
+The 1200 km are more than the longest route of this plan needs. Jack's 8 hours are less than his shifts (9 hours and 12 hours); John's 14 hours are more than both.
 
----
+### Properties
 
-## Solver properties (what the run is “allowed” to do)
+`addProperties` registers a small set of properties that define solver effort and runtime behavior: `JOptExitCondition.JOptGenerationCount` set to 2000 and `JOpt.Algorithm.PreOptimization.SA.NumIterations` set to 100000. Both are below their defaults, which keeps the run short; the defaults are in the [property reference](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties).
 
-`setProperties()` registers a small set of properties that define solver effort and runtime behavior:
+## How the code works
 
-- `JOptExitCondition.JOptGenerationCount = 2000`
-- `JOpt.Algorithm.PreOptimization.SA.NumIterations = 100000`
-- `JOpt.Algorithm.PreOptimization.SA.NumRepetitions = 1`
-- `JOpt.NumCPUCores = 4`
+The source is [Export2KMLExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/io_03/Export2KMLExample.java). `main(...)` instantiates the example and calls `example()`. The orchestration is compact:
 
-These are typical “developer friendly” defaults: enough compute to produce a meaningful result, with bounded runtime behavior in common environments.
+```java
+ExampleLicenseHelper.setLicense(this);
+addProperties(this);
+addNodes(this);
+addResources(this);
+attachToObservables(this);
+IOptimizationResult result = startAndPresentResult(this);
+exportToKml(result);
+```
 
----
+- `ExampleLicenseHelper.setLicense(this)` uses your license file if you put one where the helper looks for it, and the public evaluation license otherwise.
+- `addProperties`, `addNodes` and `addResources` register the properties and the problem elements.
+- `attachToObservables` subscribes to the progress, warning, status and error events with the recommended event API, before the run starts. The event API is recommended. The legacy callback methods (`onProgress`, `onAsynchronousOptimizationResult` and the others) subscribe to the same events internally and stay supported; this example does not use them.
+- `startAndPresentResult` starts the run with `startRunAsync()` and waits up to 5 minutes for the result; without the wait the JVM would end before the run does. It prints the result and returns it.
+- `exportToKml` writes the result to the file.
 
-## Observability: progress, status, warnings, errors
+### The export
 
-This example shows two styles of progress reporting:
+```java
+String kmlFile = "myopti.kml";
 
-- `onProgress(String winnerProgressString)` prints a progress string
-- `onProgress(IOptimizationProgress rapoptProgress)` is implemented but intentionally left empty
+EntityKMLExporter kmlExporter = new EntityKMLExporter();
 
-Additionally:
-- `onStatus(...)` prints status code + message
-- `onError(...)` prints error code + message
-- `onWarning(...)` is present (stubbed)
+// export flushes the stream but does not close it; the try block closes it.
+try (OutputStream out = new FileOutputStream(kmlFile)) {
+  if (!kmlExporter.export(result, out)) {
+    System.out.println("KML export failed: " + kmlFile);
+  }
+}
+```
 
-Practical takeaway: you can scale observability from “just print progress” to “feed structured telemetry” without changing your modeling logic.
+- `export(result, out)` takes the `IOptimizationResult` of the run and writes the routes of its entity container.
+- `export` flushes the stream but does not close it, so the example opens the stream in a try-with-resources block, which closes it.
+- The example checks the boolean that `export` returns and prints `KML export failed: myopti.kml` if it is `false`.
+- The example sets no title. The exporter then names the KML document `Export_` followed by a number that can change between runs. `setTitle` sets a fixed name; [EventNode.md](../eventnode_06/EventNode.md) shows it.
 
----
+The export uses the container that holds the solved state.
 
-## The KML export (the point of this example)
+### Beyond the example
 
-### Where the export happens
+This example is minimal. In production or reusable tooling, consider:
 
-The file is created in:
+1. **Make the output path explicit** (e.g., configurable output directory) rather than relying on the process working directory.
+2. **Export on demand**:
+   - e.g., export only when a run is "good enough", or export multiple snapshots (best-of) during progress callbacks.
 
-- `onAsynchronousOptimizationResult(IOptimizationResult rapoptResult)`
+## Output and what to look for
 
-Core logic:
-
-- Print the result (`System.out.println(rapoptResult);`)
-- Create the output filename: `myopti.kml`
-- Export via:
-  - `IEntityExporter exporter = new EntityKMLExporter();`
-  - `exporter.export(rapoptResult.getContainer(), new FileOutputStream(kmlFile));`
-
-### What is exported
-
-The exporter writes the **optimization container** from the result:
-
-- `rapoptResult.getContainer()`
-
-This is important: the export uses the container that holds the solved state, not just a textual summary.
-
-### How to use the output
+The run prints the status and progress lines, then the result. After the result, the file `myopti.kml` is in the working directory; the run prints no further line when the export works.
 
 Once generated, open `myopti.kml` in a KML viewer (for example, Google Earth) to visually inspect:
 - node locations,
 - computed tours/routes (depending on exporter capabilities and result structure).
 
----
+In the file, each route of the result is a line in its own color, and the start and end of each route and every node on it are placemarks with their names. Which resource visits which node can change between runs, so the lines on your map may differ from another run.
 
-## Implementation notes (recommended improvements)
+## Run it
 
-This example is intentionally minimal. In production or reusable tooling, consider:
+Run the `main` method of `Export2KMLExample` from your IDE. You need a JDK in the version that the examples pom sets. You need no license file: without one, the example uses the public evaluation license (see the [license guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license)). After completion, check your process working directory for `myopti.kml`.
 
-1. **Use try-with-resources** for the output stream:
-   - ensures the stream is closed even on exceptions.
-2. **Make the output path explicit** (e.g., configurable output directory) rather than relying on the process working directory.
-3. **Export on demand**:
-   - e.g., export only when a run is “good enough”, or export multiple snapshots (best-of) during progress callbacks.
+## Related
 
----
-
-## Small curiosity
-
-The class-level string returned by `toString()` says it saves to a JSON file, while the implementation exports to **KML**. Treat the Java source as authoritative; the string is likely a leftover from a similar “export” example variant.
+- [Export2KMLExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/io_03/Export2KMLExample.java): the source of this example.
+- [LoadAndSaveOptimization.md](LoadAndSaveOptimization.md): the other examples of this package, which save and load a whole optimization as JSON.
+- [EventNode.md](../eventnode_06/EventNode.md): a KML export with a title, and how the file shows a node without a position.
+- [Pillar.md](../pillar_07/Pillar.md): an example that writes its result to a KML file as well.
+- [Recommended ways to run an optimization](../recommendedimplementation_02/RecommendedImplementation.md): the recommended run pattern, a synchronous run and the legacy callback methods.
+- [Base examples](../README.md): the overview of all Base examples.
 
 ---
 
-## How to run
-
-Run the `main(String[] args)` method of `Export2KMLExample`.
-
-After completion, check your process working directory for:
-
-- `myopti.kml`
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-20
