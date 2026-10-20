@@ -1,10 +1,9 @@
 package com.dna.jopt.touroptimizer.java.examples.advanced.capacitycheck;
-
 /*-
  * #%L
  * JOpt TourOptimizer Examples
  * %%
- * Copyright (C) 2017 - 2020 DNA Evolutions GmbH
+ * Copyright (C) 2017 - 2023 DNA Evolutions GmbH
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
@@ -48,111 +47,78 @@ import com.dna.jopt.member.unit.resource.IResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 /**
+ * Shows the capacity check, which rejects an input whose visits need at least twice the time of
+ * the working hours.
  *
+ * <p>Scenario: Jack from Aachen works from 08:00 to 17:00 on May 6 and May 7, 2020
+ * (Europe/Berlin). Seven nodes, open on May 6, need a visit of 400 minutes each: 2800 minutes of
+ * visits against 1080 minutes of working hours.
  *
- * @author jrich
- * @version Aug 24, 2022
- * @since Aug 24, 2022
+ * <p>Look for: the warning with the quotient 2.59 of visit time to working hours, the error event
+ * ENTITY_CORRUPT_NOTENOUGHTWORKINGTIME and the line that reports the rejection. The example ends
+ * there on purpose, without a run.
+ *
+ * <p>Prerequisites: None: without a license file the example uses the public evaluation license
+ * (see ExampleLicenseHelper).
+ *
+ * @see <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/capacitycheck/CapacityCheckExample.md">CapacityCheckExample.md</a>
  */
 public class CapacityCheckExample extends Optimization {
 
+  // Set to true to switch the capacity check off. With this input the run then starts, and JOpt
+  // switches on performance mode.
   private static final boolean DO_DEACTIVATE_CAPACITY_CHECK = false;
 
   /**
-   * The main method.
+   * Runs the example.
    *
-   * @param args the arguments
-   * @throws InterruptedException    the interrupted exception
-   * @throws ExecutionException      the execution exception
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws IOException
-   * @throws TimeoutException
+   * @param args not used
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
    */
   public static void main(String[] args)
-      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException,
-      TimeoutException {
+      throws ExecutionException, TimeoutException, InvalidLicenceException, IOException {
     new CapacityCheckExample().example();
   }
 
+  @Override
   public String toString() {
-    return "By default, JOpt does not accept if available working hours are two times less than the needed working time. "
-        + "This check can be deactivated if absolutely necessary. Use the boolean DO_DEACTIVATE_CAPACITY_CHECK within "
-        + "this example. ";
+    return "Shows the capacity check, which rejects an input whose visits need at least twice the"
+        + " time of the working hours.";
   }
 
   /**
-   * The method which executes the necessary parts for the Optimization.
+   * Builds the optimization, starts it and prints the result or the rejection.
    *
-   * @throws InterruptedException    the interrupted exception
-   * @throws ExecutionException      the execution exception
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws IOException
-   * @throws TimeoutException
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
    */
   public void example()
-      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException,
-      TimeoutException {
-
-    // We use the public evaluation license (20 elements) for the example - please modify the ExampleLicenseHelper
-    // in case you
-    // have a valid
-    // license.
-
+      throws ExecutionException, TimeoutException, InvalidLicenceException, IOException {
+    // The public evaluation license, or your own license if you put a license file where
+    // ExampleLicenseHelper looks for it.
     ExampleLicenseHelper.setLicense(this);
-
-    // Setting Properties, adding all Elements, and attaching to Observables
-    // (1) Adding properties
-    CapacityCheckExample.addProperties(this);
-
-    // (2) Adding Nodes
-    CapacityCheckExample.addNodes(this);
-
-    // (3) Adding Resources
-    CapacityCheckExample.addResources(this);
-
-    // (4) Attaching to Observables
-    CapacityCheckExample.attachToObservables(this);
-
-    // (5) Starting the Optimization completable Future and presenting the results
-    CapacityCheckExample.startAndPresentResult(this);
+    addProperties(this);
+    addNodes(this);
+    addResources(this);
+    attachToObservables(this);
+    startAndPresentResult(this);
   }
 
   /**
-   * Start the Optimization and present the result.
+   * Adds the properties that keep the run short and, if set, the switch of the capacity check.
    *
-   * @param opti the optimization instance
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws InterruptedException    the interrupted exception
-   * @throws ExecutionException      the execution exception
-   * @throws TimeoutException
-   */
-  private static void startAndPresentResult(IOptimization opti)
-      throws InvalidLicenceException, InterruptedException, ExecutionException, TimeoutException {
-
-    // Extracting a completable Future for the optimization result
-    CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
-
-    // It is important to block the call, otherwise the Optimization will be
-    // terminated
-    IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
-
-    // Presenting the result
-    System.out.println(result);
-  }
-
-  /**
-   * Adds the Properties to the Optimization.
-   *
-   * @param opti the optimization instance
+   * @param opti the optimization
    */
   private static void addProperties(IOptimization opti) {
-
     Properties props = new Properties();
-
-    props.setProperty("JOptExitCondition.JOptGenerationCount", "20000");
+    // Fewer generations and iterations than the defaults keep the run short.
+    props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
-    props.setProperty("JOpt.NumCPUCores", "4");
 
     if (DO_DEACTIVATE_CAPACITY_CHECK) {
       props.setProperty("JOpt.plausibility.doInputCheck.doCapacityCheck", "FALSE");
@@ -162,107 +128,122 @@ public class CapacityCheckExample extends Optimization {
   }
 
   /**
-   * Adds the Nodes to the Optimization.
+   * Adds seven nodes whose visits together need more than twice the time of Jack's working hours.
    *
-   * @param opti the optimization instance
+   * @param opti the optimization
    */
   private static void addNodes(IOptimization opti) {
-
-    // Define the OpeningHours
-    List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
-    weeklyOpeningHours
-        .add(new OpeningHours(
+    List<IOpeningHours> openingHours = new ArrayList<>();
+    openingHours.add(
+        new OpeningHours(
             ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 6, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
+    // 400 minutes per visit: the seven visits need 2800 minutes, more than twice the 1080 minutes
+    // of Jack's working hours.
     Duration visitDuration = Duration.ofMinutes(400);
 
+    // The same importance for every node, so no node is preferred over another.
     int importance = 1;
 
-    // Define some Nodes
-    INode koeln = new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration,
-        importance);
+    INode koeln =
+        new TimeWindowGeoNode("Koeln", 50.9333, 6.95, openingHours, visitDuration, importance);
     opti.addElement(koeln);
 
-    INode essen = new TimeWindowGeoNode("Essen", 51.45, 7.01667, weeklyOpeningHours, visitDuration,
-        importance);
+    INode essen =
+        new TimeWindowGeoNode("Essen", 51.45, 7.01667, openingHours, visitDuration, importance);
     opti.addElement(essen);
 
-    INode dueren = new TimeWindowGeoNode("Dueren", 50.8, 6.48333, weeklyOpeningHours, visitDuration,
-        importance);
+    INode dueren =
+        new TimeWindowGeoNode("Dueren", 50.8, 6.48333, openingHours, visitDuration, importance);
     opti.addElement(dueren);
 
     INode nuernberg =
-        new TimeWindowGeoNode("Nuernberg", 49.4478, 11.0683, weeklyOpeningHours, visitDuration,
-            importance);
+        new TimeWindowGeoNode(
+            "Nuernberg", 49.4478, 11.0683, openingHours, visitDuration, importance);
     opti.addElement(nuernberg);
 
     INode heilbronn =
-        new TimeWindowGeoNode("Heilbronn", 49.1403, 9.22, weeklyOpeningHours, visitDuration,
-            importance);
+        new TimeWindowGeoNode(
+            "Heilbronn", 49.1403, 9.22, openingHours, visitDuration, importance);
     opti.addElement(heilbronn);
 
     INode wuppertal =
-        new TimeWindowGeoNode("Wuppertal", 51.2667, 7.18333, weeklyOpeningHours, visitDuration,
-            importance);
+        new TimeWindowGeoNode(
+            "Wuppertal", 51.2667, 7.18333, openingHours, visitDuration, importance);
     opti.addElement(wuppertal);
 
     INode aachen =
-        new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration,
-            importance);
+        new TimeWindowGeoNode(
+            "Aachen", 50.775346, 6.083887, openingHours, visitDuration, importance);
     opti.addElement(aachen);
   }
 
   /**
-   * Adds the Resources to the Optimization.
+   * Adds Jack, who starts and ends each working day in Aachen.
    *
-   * @param opti the optimization instance
+   * @param opti the optimization
    */
   private static void addResources(IOptimization opti) {
-
-    // Define the WorkingHours
     List<IWorkingHours> workingHours = new ArrayList<>();
-    workingHours
-        .add(new WorkingHours(
+    workingHours.add(
+        new WorkingHours(
             ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    workingHours
-        .add(new WorkingHours(
+    workingHours.add(
+        new WorkingHours(
             ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
+    // 9 h and 1200 km per day. The capacity check does not use these limits: it compares the
+    // visits with the length of the working hours.
     Duration maxWorkingTime = Duration.ofHours(9);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
-    // Define the Resource
-    IResource jack = new CapacityResource("Jack from Aachen", 50.775346, 6.083887, maxWorkingTime,
-        maxDistanceKmW,
-        workingHours);
+    IResource jack =
+        new CapacityResource(
+            "Jack from Aachen", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
     opti.addElement(jack);
   }
 
   /**
-   * Attach to different Events (Observables) of the optimization instance.
+   * Prints the progress, warning, status and error events of the run.
    *
-   * @param opti the optimization instance
+   * @param opti the optimization
    */
   private static void attachToObservables(IOptimization opti) {
+    // Subscribe before the start: the subjects replay only a few past events.
+    opti.getOptimizationEvents()
+        .progressSubject()
+        .subscribe(p -> System.out.println(p.getProgressString()));
+    opti.getOptimizationEvents().warningSubject().subscribe(w -> System.out.println(w.toString()));
+    opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s.toString()));
+    // A rejection by the capacity check arrives here, with its error code and the quotient.
+    opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
+  }
 
-    opti.getOptimizationEvents().progressSubject().subscribe(p -> {
-      System.out.println(p.getProgressString());
-    });
-
-    opti.getOptimizationEvents().warningSubject().subscribe(w -> {
-      System.out.println(w.toString());
-    });
-
-    opti.getOptimizationEvents().statusSubject().subscribe(s -> {
-      System.out.println(s.toString());
-    });
-
-    opti.getOptimizationEvents().errorSubject().subscribe(e -> {
-      System.out.println(e.toString());
-    });
+  /**
+   * Starts the run, waits for the result and prints it, or prints that the input was rejected.
+   *
+   * @param opti the optimization
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   */
+  private static void startAndPresentResult(IOptimization opti)
+      throws ExecutionException, TimeoutException, InvalidLicenceException {
+    CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
+    try {
+      // Wait for the result; without the wait the JVM would end before the run does.
+      IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
+      System.out.println(result);
+    } catch (InterruptedException e) {
+      // JOpt rejects this input before the run, so the wait ends at once with this exception
+      // and no result. The first error event printed above names the cause.
+      System.out.println(
+          "Input rejected, the run did not start: the first error event names the cause.");
+      // Keep the interrupt status of the thread for its caller.
+      Thread.currentThread().interrupt();
+    }
   }
 }

@@ -3,7 +3,7 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.builderpattern;
  * #%L
  * JOpt TourOptimizer Examples
  * %%
- * Copyright (C) 2017 - 2020 DNA Evolutions GmbH
+ * Copyright (C) 2017 - 2023 DNA Evolutions GmbH
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
@@ -53,176 +55,133 @@ import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.google.common.collect.ImmutableList;
 
 /**
- * The Class BuilderPatternExample. Use a builder to create an Optimization and launch it via
- * JSONOptimization engine.
+ * Builds a complete optimization config with immutable builders and runs it with
+ * JSONOptimization.
  *
- * @author jrich
- * @version Jun 5, 2021
- * @since Jun 5, 2021
+ * <p>Scenario: Jack from Aachen visits Koeln and Essen on May 6, 2020. The nodes are open and
+ * Jack works from 08:00 to 17:00 (Europe/Berlin).
+ *
+ * <p>Look for: the result config printed as JSON, then the text solution of the result, then the
+ * solution header, the route header and the element details read from the result config.
+ *
+ * <p>Prerequisites: None: the example sets no license, and JOpt runs in its free mode, which these
+ * three elements fit (see the license guide).
+ *
+ * @see <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/builderpattern/BuilderPatternExample.md">BuilderPatternExample.md</a>
  */
 public class BuilderPatternExample {
 
-  /** The Constant TIMEOUT_OPTIMIZATION. */
+  // The timeout of the config, a sample value, stored in its extension. The printed JSON carries
+  // it; the run of this example ends long before.
   private static final Duration TIMEOUT_OPTIMIZATION = Duration.ofMinutes(10);
 
   /**
-   * The main method.
+   * Runs the example.
    *
-   * @param args the arguments
-   * @throws InterruptedException the interrupted exception
-   * @throws ExecutionException the execution exception
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws IOException Signals that an I/O exception has occurred.
-   * @throws ConvertException the convert exception
-   * @throws SerializationException the serialization exception
+   * @param args not used
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   * @throws ConvertException if the config cannot be converted
+   * @throws SerializationException if the config cannot be serialized
    */
   public static void main(String[] args)
-      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException,
-      ConvertException, SerializationException {
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException, ConvertException, SerializationException {
     new BuilderPatternExample().example();
   }
 
-  /**
-   * To string.
-   *
-   * @return the string
-   */
+  @Override
   public String toString() {
-    return "Use a builder to create an Optimization and launch it via JSONOptimization engine.";
+    return "Builds a complete optimization config with immutable builders and runs it with"
+        + " JSONOptimization.";
   }
 
   /**
-   * Example.
+   * Builds the config, runs it and prints the result in three forms.
    *
-   * @throws InterruptedException the interrupted exception
-   * @throws ExecutionException the execution exception
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws IOException Signals that an I/O exception has occurred.
-   * @throws ConvertException the convert exception
-   * @throws SerializationException the serialization exception
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   * @throws ConvertException if the config cannot be converted
+   * @throws SerializationException if the config cannot be serialized
    */
   public void example()
-      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException,
-      ConvertException, SerializationException {
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException, ConvertException, SerializationException {
+    OptimizationConfig<JSONConfig> config = createConfig();
 
-    // 1) Create a config object that is defining the whole optimization
-    OptimizationConfig<JSONConfig> myConfig =
-        OptimizationConfig.<JSONConfig>builder()
-            .addAllNodes(createNodes())
-            .addAllResources(createResources())
-            .extension(createJSONExtension())
-            .optimizationOptions(createOptimizationOptions())
-            .build();
+    // JSONOptimization runs a config object instead of elements added one by one.
+    IJSONOptimization opti = new JSONOptimization();
+    attachToObservables(opti);
 
-    // 2) Use the JSONOptimization as engine to run the defined config
-    IJSONOptimization myOpti = new JSONOptimization();
-
-    // 3) Attach to the Observables to see progress, errors, etc.
-    attachToObservables(myOpti);
-
-    // 4) Start the Optimization by providing the immutable config object
-    CompletableFuture<OptimizationConfig<JSONConfig>> resultFuture =
-        myOpti.startAsynchConfigFuture(myConfig, Optional.empty());
-
-    // 5) We call get() on the future to wait until the Optimization is done
-    OptimizationConfig<JSONConfig> result = resultFuture.get();
-
-    /*
-     *
-     * Print the Result:
-     *
-     * 1) The JSON version - please also see example CreateRestTourOptimizerInputWithSolutionExample.java
-     *
-     * 2) The human readable text solution
-     *
-     * 3) Parsing the result
-     *
-     */
-
-    // 1) JSON - can be used as input for our swagger interface - see also
-    // CreateRestTourOptimizerInputWithSolutionExample.java
-    System.out.println(JSONOptimization.asJSON(result));
-    System.out.println();
-
-    // 2) The result you know from other examples
-    result.extension().ifPresent(e -> System.out.println(e.textSolution()));
-    System.out.println();
-
-    // 3) For representing the result on your custom layer.
-    result
-        .solution()
-        .ifPresent(
-            s -> {
-              Optional<SolutionHeader> solutionHeaderOpt = s.header();
-
-              // The header of the solution
-              solutionHeaderOpt.ifPresent(System.out::println);
-
-              s.routes()
-                  .forEach(
-                      r -> {
-                        Optional<RouteHeader> curRouteHeaderOpt = r.header();
-                        curRouteHeaderOpt.ifPresent(System.out::println);
-
-                        ImmutableList<RouteElementDetail> elementDetails = r.elementDetails();
-
-                        elementDetails.forEach(System.out::println);
-                      });
-            });
+    OptimizationConfig<JSONConfig> result = startAndPresentResult(opti, config);
+    printSolution(result);
   }
 
   /**
-   * Creates the JSON extension.
+   * Creates the config that defines the whole optimization: nodes, resources, extension and
+   * properties.
    *
-   * @return the JSON config
+   * @return the immutable config
+   */
+  private static OptimizationConfig<JSONConfig> createConfig() {
+    return OptimizationConfig.<JSONConfig>builder()
+        .addAllNodes(createNodes())
+        .addAllResources(createResources())
+        .extension(createJSONExtension())
+        .optimizationOptions(createOptimizationOptions())
+        .build();
+  }
+
+  /**
+   * Creates the extension of the config with the timeout and, if present, the license.
+   *
+   * @return the extension
    */
   private static JSONConfig createJSONExtension() {
-
-    // 1) Create an extension - Here we can store our license key if present, and we have to define
-    // a timeout for the Optimization run
-
-    /*
-     * ATTENTION:
-     * ==========
-     *
-     * If you have a valid JSON license, please add it wrapped in an Optional.of("YOUR JSON LIC")
-     * instead of myJSONLicenseOpt = Optional.empty().
-     * If not license is provided, JOpt will run in the free mode, with a maximum of ten elements.
-     * Providing a non-valid license, will cause the Optimizer to throw an exception
-     */
+    // To use your own license, put its JSON string here: Optional.of("YOUR JSON LICENSE").
+    // Without a license JOpt runs in its free mode; an invalid license makes the run fail.
     Optional<String> myJSONLicenseOpt = Optional.empty();
 
-    JSONConfig myExtension;
-
     if (myJSONLicenseOpt.isPresent()) {
-
-      // Create a custom OptimizationKeySetting Object and attach license
       OptimizationKeySetting keySetting = OptimizationKeySetting.of(myJSONLicenseOpt.get());
-
-      // Create a custom extension wrapping the OptimizationKeySetting and a desired timeOut for the
-      // Optimization
-      myExtension =
-          JSONConfig.builder().keySetting(keySetting).timeOut(TIMEOUT_OPTIMIZATION).build();
-    } else {
-      // Create a custom extension wrapping the timeOut for the Optimization
-      myExtension = JSONConfig.builder().timeOut(TIMEOUT_OPTIMIZATION).build();
+      return JSONConfig.builder().keySetting(keySetting).timeOut(TIMEOUT_OPTIMIZATION).build();
     }
-
-    return myExtension;
+    return JSONConfig.builder().timeOut(TIMEOUT_OPTIMIZATION).build();
   }
 
   /**
-   * Creates the workinghour.
+   * Creates the properties of the run.
+   *
+   * @return the properties as optimization options
+   */
+  private static OptimizationOptions createOptimizationOptions() {
+    Map<String, String> propMap = new LinkedHashMap<>();
+    // Fewer generations and iterations than the defaults keep the run short.
+    propMap.put("JOptExitCondition.JOptGenerationCount", "1000");
+    propMap.put("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
+
+    return OptimizationOptions.of(propMap);
+  }
+
+  /**
+   * Creates the working hours of Jack on May 6, with their own limits for this day.
    *
    * @return the working hours
    */
-  private static WorkingHours createWorkinghour() {
-
+  private static WorkingHours createWorkingHours() {
     ZonedDateTime begin =
         ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin"));
     ZonedDateTime end =
         ZonedDateTime.of(2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"));
 
+    // Limits set on the working hours take precedence over the limits of the resource for this
+    // day: 10 h instead of the resource's 9 h. The 1000 km are more than this day needs.
     return WorkingHours.builder()
         .begin(begin.toInstant())
         .end(end.toInstant())
@@ -233,27 +192,11 @@ public class BuilderPatternExample {
   }
 
   /**
-   * Creates the optimization options.
-   *
-   * @return the optimization options
-   */
-  private static OptimizationOptions createOptimizationOptions() {
-    Map<String, String> propMap = new LinkedHashMap<>();
-
-    propMap.put("JOptExitCondition.JOptGenerationCount", "2000");
-    propMap.put("JOpt.Algorithm.PreOptimization.SA.NumIterations", "10000");
-    propMap.put("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
-
-    return OptimizationOptions.of(propMap);
-  }
-
-  /**
-   * Creates the openinghour.
+   * Creates the opening hours of a node on May 6.
    *
    * @return the opening hours
    */
-  private static OpeningHours createOpeninghour() {
-
+  private static OpeningHours createOpeningHours() {
     ZonedDateTime begin =
         ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin"));
     ZonedDateTime end =
@@ -267,86 +210,125 @@ public class BuilderPatternExample {
   }
 
   /**
-   * Creates the nodes.
+   * Creates the nodes Koeln and Essen.
    *
-   * @return the immutable list
+   * @return the nodes
    */
   private static ImmutableList<Node> createNodes() {
-
     return ImmutableList.of(
         Node.builder()
             .id("Koeln")
             .type(GeoNode.of(Position.of(50.9333, 6.95)))
             .visitDuration(Duration.ofMinutes(20))
-            .addOpeningHours(createOpeninghour())
+            .addOpeningHours(createOpeningHours())
             .build(),
         Node.builder()
             .id("Essen")
             .type(GeoNode.of(Position.of(51.45, 7.01667)))
             .visitDuration(Duration.ofMinutes(20))
-            .addOpeningHours(createOpeninghour())
+            .addOpeningHours(createOpeningHours())
             .build());
   }
 
   /**
-   * Creates the resources.
+   * Creates Jack, who starts and ends his day in Aachen.
    *
-   * @return the immutable list
+   * @return the resources
    */
   private static ImmutableList<Resource> createResources() {
-
-    Quantity<Length> maxDistance = Quantities.getQuantity(1000, KILO(METRE));
-
-    Position pos = Position.of(50.775346, 6.083887);
-
+    // The resource needs its own limits. They apply to working hours without limits of their
+    // own; the one working day of this example sets its own (see createWorkingHours).
     Duration maxWorkingTime = Duration.ofHours(9);
-
-    String id = "Jack from Aachen";
+    Quantity<Length> maxDistance = Quantities.getQuantity(1000, KILO(METRE));
 
     return ImmutableList.of(
         Resource.builder()
-            .id(id)
+            .id("Jack from Aachen")
             .type(CapacityResource.of())
-            .position(pos)
+            .position(Position.of(50.775346, 6.083887))
             .maxTime(maxWorkingTime)
             .maxDistance(maxDistance)
-            .addWorkingHours(createWorkinghour())
+            .addWorkingHours(createWorkingHours())
             .build());
   }
 
   /**
-   * Attach to different Events (Observables) of the optimization instance.
+   * Prints the progress, warning, status and error events of the run.
    *
-   * @param opti the optimization instance
+   * @param opti the optimization
    */
   private static void attachToObservables(IOptimization opti) {
-
+    // Subscribe before the start: the subjects replay only a few past events.
     opti.getOptimizationEvents()
         .progressSubject()
-        .subscribe(
-            p -> {
-              System.out.println(p.getProgressString());
-            });
+        .subscribe(p -> System.out.println(p.getProgressString()));
+    opti.getOptimizationEvents().warningSubject().subscribe(w -> System.out.println(w.toString()));
+    opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s.toString()));
+    opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
+  }
 
-    opti.getOptimizationEvents()
-        .warningSubject()
-        .subscribe(
-            w -> {
-              System.out.println(w.toString());
-            });
+  /**
+   * Starts the run, waits for the result, prints it and returns it.
+   *
+   * <p>The result is a config again: the input plus the solution. It prints first as JSON, the
+   * form that CreateRestTourOptimizerInputWithSolutionExample also prints, then as the text
+   * solution known from the other examples.
+   *
+   * @param opti the optimization
+   * @param config the config to run
+   * @return the result of the run
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   * @throws ConvertException if the config cannot be converted
+   * @throws SerializationException if the config cannot be serialized
+   */
+  private static OptimizationConfig<JSONConfig> startAndPresentResult(
+      IJSONOptimization opti, OptimizationConfig<JSONConfig> config)
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException, ConvertException, SerializationException {
+    CompletableFuture<OptimizationConfig<JSONConfig>> resultFuture =
+        opti.startAsynchConfigFuture(config, Optional.empty());
+    // Wait for the result; without the wait the JVM would end before the run does.
+    OptimizationConfig<JSONConfig> result = resultFuture.get(5, TimeUnit.MINUTES);
 
-    opti.getOptimizationEvents()
-        .statusSubject()
-        .subscribe(
+    System.out.println(JSONOptimization.asJSON(result));
+    System.out.println();
+
+    result
+        .extension()
+        .flatMap(JSONConfig::textSolution)
+        .ifPresent(t -> System.out.println(t.textSolution()));
+    System.out.println();
+
+    return result;
+  }
+
+  /**
+   * Prints the solution header, the route headers and the element details of the result, the
+   * parts an application reads to show the result in its own layer.
+   *
+   * @param result the result of the run
+   */
+  private static void printSolution(OptimizationConfig<JSONConfig> result) {
+    result
+        .solution()
+        .ifPresent(
             s -> {
-              System.out.println(s.toString());
-            });
+              Optional<SolutionHeader> solutionHeaderOpt = s.header();
+              solutionHeaderOpt.ifPresent(System.out::println);
 
-    opti.getOptimizationEvents()
-        .errorSubject()
-        .subscribe(
-            e -> {
-              System.out.println(e.toString());
+              s.routes()
+                  .forEach(
+                      r -> {
+                        Optional<RouteHeader> routeHeaderOpt = r.header();
+                        routeHeaderOpt.ifPresent(System.out::println);
+
+                        ImmutableList<RouteElementDetail> elementDetails = r.elementDetails();
+                        elementDetails.forEach(System.out::println);
+                      });
             });
   }
 }

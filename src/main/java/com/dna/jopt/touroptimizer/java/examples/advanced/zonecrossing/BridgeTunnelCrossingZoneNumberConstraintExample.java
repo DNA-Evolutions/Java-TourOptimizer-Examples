@@ -1,10 +1,9 @@
 package com.dna.jopt.touroptimizer.java.examples.advanced.zonecrossing;
-
 /*-
  * #%L
  * JOpt TourOptimizer Examples
  * %%
- * Copyright (C) 2017 - 2020 DNA Evolutions GmbH
+ * Copyright (C) 2017 - 2023 DNA Evolutions GmbH
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
@@ -14,10 +13,17 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.zonecrossing;
  */
 import static javax.measure.MetricPrefix.KILO;
 import static tech.units.indriya.unit.Units.METRE;
+import static java.time.Month.MAY;
 
-import java.io.FileNotFoundException;
+import tech.units.indriya.quantity.Quantities;
+
+import javax.measure.Quantity;
+import javax.measure.quantity.Length;
+
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -29,26 +35,21 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static java.time.Month.MAY;
-
-import javax.measure.Quantity;
-import javax.measure.quantity.Length;
-
 import com.dna.jopt.config.convert.ConvertException;
+import com.dna.jopt.config.json.types.JSONConfig;
 import com.dna.jopt.config.serialize.SerializationException;
 import com.dna.jopt.config.types.Position;
 import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
-import com.dna.jopt.io.exporting.IEntityExporter;
 import com.dna.jopt.io.exporting.kml.EntityKMLExporter;
-import com.dna.jopt.member.unit.hours.IWorkingHours;
 import com.dna.jopt.member.unit.condition.workinghour.zone.zonenumber.ZoneNumber;
 import com.dna.jopt.member.unit.condition.workinghour.zone.zonenumber.ZoneNumberQualification;
 import com.dna.jopt.member.unit.hours.IOpeningHours;
-import com.dna.jopt.member.unit.hours.WorkingHours;
+import com.dna.jopt.member.unit.hours.IWorkingHours;
 import com.dna.jopt.member.unit.hours.OpeningHours;
+import com.dna.jopt.member.unit.hours.WorkingHours;
 import com.dna.jopt.member.unit.node.INode;
 import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.resource.CapacityResource;
@@ -58,403 +59,353 @@ import com.dna.jopt.member.unit.zonemanager.ZoneConnection;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import com.dna.jopt.touroptimizer.java.examples.util.jsonprinter.ResultJsonPrinter;
 
-import tech.units.indriya.quantity.Quantities;
-
 /**
- * Example of zone crossing penalty as extension of the ZoneCode feature.
+ * Adds a cost to every route step from a node of one zone to a node of another zone, so that the
+ * routes stay on one side of the Hudson.
  *
- * In many real-world logistics scenarios, crossing between defined zones can be
- * costly, inefficient, or impractical. Bridges, tunnels, and other
- * infrastructural limitations can make frequent crossings undesirable
- * <br><br>
- * Visit
- * <a
- * href="https://docs.dna-evolutions.com/overview_docs/zonecrossing/zonecrossing.html">https://docs.dna-evolutions.com/overview_docs/zonecrossing/zonecrossing.html</a>
- * for a detailed explanation.
+ * <p>Scenario: Jack and Mel start in Queens and visit eight nodes in Manhattan (zone 1) and eight
+ * JerseyCity nodes across the Hudson (zone 3) on May 6 and May 7, 2020 (America/New_York). A
+ * crossing from zone 1 to zone 3 costs extra; the other direction does not.
  *
- * @author jrich
- * @version Feb 5, 2025
- * @since Feb 5, 2025
+ * <p>Look for: with doPenalizeZoneCrossings set to true, routes that each stay in one zone; then
+ * the JSON of the optimization, which holds no license.
+ *
+ * <p>Prerequisites: None: without a license file the example uses the public evaluation license
+ * (see ExampleLicenseHelper). It needs that license, because it has more elements than JOpt
+ * allows without one.
+ *
+ * @see <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/zonecrossing/BridgeTunnelCrossingZoneNumberConstraint.md">BridgeTunnelCrossingZoneNumberConstraint.md</a>
+ * @see <a href="https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/zonecrossing">Zone crossing penalization</a>
  */
 public class BridgeTunnelCrossingZoneNumberConstraintExample extends Optimization {
 
   /**
-   * The main method.
+   * Runs the example.
    *
-   * @param args the arguments
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws ConvertException        the convert exception
-   * @throws SerializationException  the serialization exception
-   * @throws FileNotFoundException   the file not found exception
-   * @throws InterruptedException    the interrupted exception
-   * @throws ExecutionException      the execution exception
-   * @throws IOException             Signals that an I/O exception has occurred.
-   * @throws TimeoutException
+   * @param args not used
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   * @throws ConvertException if the optimization cannot be converted to a config
+   * @throws SerializationException if the config cannot be serialized
    */
   public static void main(String[] args)
-      throws InvalidLicenceException, ConvertException, SerializationException,
-      InterruptedException, ExecutionException, IOException, TimeoutException {
-
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException, ConvertException, SerializationException {
     new BridgeTunnelCrossingZoneNumberConstraintExample().example();
   }
 
-  /**
-   * To string.
-   *
-   * @return the string
-   */
+  @Override
   public String toString() {
-    return "Example of zone crossing penalty as extension of the ZoneCode feature.";
+    return "Adds a cost to every route step from a node of one zone to a node of another zone, so"
+        + " that the routes stay on one side of the Hudson.";
   }
 
   /**
-   * Example.
+   * Builds the optimization, runs it, prints the result, writes it to KML and prints the JSON.
    *
-   * @throws InterruptedException    the interrupted exception
-   * @throws ExecutionException      the execution exception
-   * @throws FileNotFoundException   the file not found exception
-   * @throws IOException             Signals that an I/O exception has occurred.
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws ConvertException        the convert exception
-   * @throws SerializationException  the serialization exception
-   * @throws TimeoutException
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   * @throws ConvertException if the optimization cannot be converted to a config
+   * @throws SerializationException if the config cannot be serialized
    */
   public void example()
-      throws InterruptedException, ExecutionException, FileNotFoundException, IOException,
-      InvalidLicenceException, ConvertException, SerializationException, TimeoutException {
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException, ConvertException, SerializationException {
+    // Set to false to see the routes without the crossing penalty.
+    boolean doPenalizeZoneCrossings = true;
 
-    boolean doPenalizeZoneCrossings = true; // Modify me
-
-    // Set license via helper
+    // The public evaluation license, or your own license if you put a license file where
+    // ExampleLicenseHelper looks for it.
     ExampleLicenseHelper.setLicense(this);
-
-    // Setting Properties, adding all Elements, and attaching to Observables
-    // (1) Adding properties
-    BridgeTunnelCrossingZoneNumberConstraintExample.addProperties(this, doPenalizeZoneCrossings);
-
-    // (2) Adding Nodes
-    BridgeTunnelCrossingZoneNumberConstraintExample.addNodes(this);
-
-    // (3) Adding Resources
-    BridgeTunnelCrossingZoneNumberConstraintExample.addResources(this);
-
-    // (4) Attaching to Observables
-    BridgeTunnelCrossingZoneNumberConstraintExample.attachToObservables(this);
-
-    // (5) Add zoneConnections
-    BridgeTunnelCrossingZoneNumberConstraintExample.addZoneConnections(this);
-
-    // Starting the optimization via Completable Future
-    // and presenting the result
-    // (6) Starting the optimization and presenting the result
-    IOptimizationResult result =
-        BridgeTunnelCrossingZoneNumberConstraintExample.startAndPresentResult(this);
-
-    // Export to kml
-    BridgeTunnelCrossingZoneNumberConstraintExample
-        .exportToKml(
-            "BridgeCrossingZoneNumberConstraintExample-" + doPenalizeZoneCrossings + ".kml",
-            result);
-
-    /*
-     *
-     *
-     */
-
-    // Print JSON - Do we want to keep the optimised solution as part of the JSON?
-    boolean keepSolutionInJson = false;
-
-    // The feature of ZoneConnections works regardless of the normal connection settings. Here, we remove the connections to generate a
-    // shorter JSON
-    boolean keepNodeConnectionsInJson = false;
-
-    // The license that will be used, if we use the JSON as input for the TourOptimizer
-    String tourOptimizerLic = ExampleLicenseHelper.PUBLIC_JSON_LICENSE;
-
-    // The timeOut that will be used, if we use the JSON as input for the TourOptimizer
-    Duration timeOut = Duration.ofMinutes(10);
-
-    String jsonInput =
-        ResultJsonPrinter.toJsonOptimizationString(ResultJsonPrinter.toJsonOptimization(this,
-            tourOptimizerLic, timeOut, keepSolutionInJson, keepNodeConnectionsInJson));
-
-    System.out.print(jsonInput);
-
+    addProperties(this, doPenalizeZoneCrossings);
+    addNodes(this);
+    addResources(this);
+    addZoneConnections(this);
+    attachToObservables(this);
+    IOptimizationResult result = startAndPresentResult(this);
+    exportToKml(result, doPenalizeZoneCrossings);
+    printJson(this);
   }
 
   /**
-   * Start the optimization and present the result.
+   * Adds the properties that keep the run short and switch the crossing penalty on or off.
    *
-   * @param opti the optimization instance
-   * @return
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws InterruptedException    the interrupted exception
-   * @throws ExecutionException      the execution exception
-   * @throws TimeoutException
-   */
-  private static IOptimizationResult startAndPresentResult(IOptimization opti)
-      throws InvalidLicenceException, InterruptedException, ExecutionException, TimeoutException {
-    // Extracting a completable future for the optimization result
-    CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
-
-    // It is important to block the call, otherwise optimization will be terminated
-    IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
-
-    System.out.println(result);
-
-    return result;
-  }
-
-  /**
-   * Sets the properties.
-   *
-   * @param opti the new properties
+   * @param opti the optimization
+   * @param doPenalizeZoneCrossings whether a step between two zones costs extra
    */
   private static void addProperties(IOptimization opti, boolean doPenalizeZoneCrossings) {
-
     Properties props = new Properties();
-
-    props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
+    // Fewer generations and iterations than the defaults keep the run short.
+    props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
-    props.setProperty("JOpt.NumCPUCores", "4");
 
-    // This property can be used to adjust the cost for violating PostCode
-    // conditions when using
-    // soft Constraints. 10 is the default value.
-    props.setProperty("JOptWeight.ZoneCode", "10.0");
+    props.setProperty(
+        "JOpt.Clustering.PenalizeZoneCodeCrossing", String.valueOf(doPenalizeZoneCrossings));
+    // The extra cost of a step between two zones: its distance times the TotalDistance and
+    // RouteDistance weights, times the factor of its ZoneConnection, times this multiplier. With
+    // 10.0, no route of this plan crosses between the zones (see the output of the example).
     props.setProperty("JOpt.Clustering.PenalizeZoneCodeCrossingMultiplier", "10.0");
-    props.setProperty("JOpt.Clustering.PenalizeZoneCodeCrossing", "" + doPenalizeZoneCrossings);
 
     opti.addElement(props);
   }
 
-  private static void addZoneConnections(IOptimization opti) {
-    IZoneManager zm = opti.getNodeConnector().getZoneManager();
-
-    // The crossingPenaltyMultiplier of 5.0 will act an additional cost multiplier for going from Zone 1 to Zone 3 when zone-crossing
-    // penalization is turned on.
-
-    // Add a dummy connection for Zone 1 => 3
-    ZoneConnection zoneConnectionItem13 = ZoneConnection.builder().fromZoneId("1").toZoneId("3")
-        .crossingPenaltyMultiplier(5.0).build();
-
-    zm.putZoneConnection(zoneConnectionItem13);
-
-    // The crossingPenaltyMultiplier of 0.0 will act an additional cost multiplier for going from Zone 3 to Zone 1 when zone-crossing
-    // penalization is turned on. Here 0.0 will effectively deactivate the zone crossing penalty in this direction.
-
-    ZoneConnection zoneConnectionItem31 = ZoneConnection.builder().fromZoneId("3").toZoneId("1")
-        .crossingPenaltyMultiplier(0.0).build();
-
-    zm.putZoneConnection(zoneConnectionItem31);
-  }
-
+  /**
+   * Adds the nodes of both zones with the same opening hours.
+   *
+   * @param opti the optimization
+   */
   private static void addNodes(IOptimization opti) {
+    List<IOpeningHours> openingHours = new ArrayList<>();
+    openingHours.add(
+        new OpeningHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("America/New_York")),
+            ZonedDateTime.of(
+                2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("America/New_York"))));
+    openingHours.add(
+        new OpeningHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("America/New_York")),
+            ZonedDateTime.of(
+                2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("America/New_York"))));
 
-    // Creating/Adding Nodes
-    List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
-    weeklyOpeningHours
-        .add(new OpeningHours(
-            ZonedDateTime.of(2030, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2030, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+    // Manhattan is zone 1; the JerseyCity nodes across the Hudson are zone 3. The extra codes 2
+    // and 4 show that a qualification can hold several codes; the two areas share none, so every
+    // step between them is a crossing.
+    ZoneNumberQualification manhattanQuali = new ZoneNumberQualification(new ZoneNumber(1));
+    manhattanQuali.addExtraCode(new ZoneNumber(2));
 
-    weeklyOpeningHours
-        .add(new OpeningHours(
-            ZonedDateTime.of(2030, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2030, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+    ZoneNumberQualification jerseyQuali = new ZoneNumberQualification(new ZoneNumber(3));
+    jerseyQuali.addExtraCode(new ZoneNumber(4));
 
-    /*
-     *
-     * Manhattan
-     *
-     */
-
-    // See
-    // https://docs.dna-evolutions.com/overview_docs/special_features/Special_Features.html#defining-territories-via-zonecodes
-
-    ZoneNumber zoneOne = new ZoneNumber(1); // Manhattan 1
-    ZoneNumber zoneTwo = new ZoneNumber(2); // Manhattan 2 - Not necessary just to test multiple zone-codes per node
-
-    ZoneNumberQualification manhattanQuali = new ZoneNumberQualification(zoneOne);
-    manhattanQuali.addExtraCode(zoneTwo);
-
-    /*
-     * Jersey City
-     */
-
-    ZoneNumber zoneThree = new ZoneNumber(3); // JerseyCity 1
-    ZoneNumber zoneFour = new ZoneNumber(4); // JerseyCity 2 - not necessary just to test multiple zone-codes per
-    // node
-
-    ZoneNumberQualification jerseyQuali = new ZoneNumberQualification(zoneThree);
-    jerseyQuali.addExtraCode(zoneFour);
-
-    // Add nodes with qualifications
-    addManhattanNodes(opti, weeklyOpeningHours, manhattanQuali);
-    addJerseyCityNodes(opti, weeklyOpeningHours, jerseyQuali);
+    addManhattanNodes(opti, openingHours, manhattanQuali);
+    addJerseyCityNodes(opti, openingHours, jerseyQuali);
   }
 
   /**
-   * Adds the manhattan nodes.
+   * Adds eight nodes in Manhattan, all in zone 1.
    *
-   * @param opti               the opti
-   * @param weeklyOpeningHours the weekly opening hours
-   * @param zoneNumber         the zone number
+   * @param opti the optimization
+   * @param openingHours the opening hours of the nodes
+   * @param zoneQuali the zone qualification of the nodes
    */
-  private static void addManhattanNodes(IOptimization opti, List<IOpeningHours> weeklyOpeningHours,
-      ZoneNumberQualification zoneNumber) {
+  private static void addManhattanNodes(
+      IOptimization opti, List<IOpeningHours> openingHours, ZoneNumberQualification zoneQuali) {
+    List<Position> positions = new ArrayList<>();
+    positions.add(Position.of(40.764279, -73.988988));
+    positions.add(Position.of(40.761822, -73.968600));
+    positions.add(Position.of(40.764162, -73.991906));
+    positions.add(Position.of(40.723670, -73.998738));
+    positions.add(Position.of(40.796056, -73.967102));
+    positions.add(Position.of(40.761964, -73.972156));
+    positions.add(Position.of(40.737567, -74.009090));
+    positions.add(Position.of(40.733846, -74.009090));
 
-    List<Position> poss = new ArrayList<>();
-
-    poss.add(Position.of(40.764279, -73.988988));
-    poss.add(Position.of(40.761822, -73.968600));
-    poss.add(Position.of(40.764162, -73.991906));
-    poss.add(Position.of(40.723670, -73.998738));
-    poss.add(Position.of(40.796056, -73.967102));
-    poss.add(Position.of(40.761964, -73.972156));
-    poss.add(Position.of(40.737567, -74.009090));
-    poss.add(Position.of(40.733846, -74.009090));
-
-    /*
-     *
-     */
-
+    // 60 minutes per visit, a sample value: eight visits and the drives fit into one working day,
+    // so one resource can serve all nodes of a zone on May 6.
     Duration visitDuration = Duration.ofMinutes(60);
 
-    for (int ii = 0; ii < poss.size(); ii++) {
-
-      INode curNode =
-          new TimeWindowGeoNode("Manhattan-" + ii, poss.get(ii), weeklyOpeningHours, visitDuration,
-              1);
-
-      curNode.addQualification(zoneNumber);
-
-      opti.addElement(curNode);
+    for (int ii = 0; ii < positions.size(); ii++) {
+      INode node =
+          new TimeWindowGeoNode(
+              "Manhattan-" + ii, positions.get(ii), openingHours, visitDuration, 1);
+      node.addQualification(zoneQuali);
+      opti.addElement(node);
     }
-
   }
 
   /**
-   * Adds the jersey city nodes.
+   * Adds eight nodes across the Hudson from Manhattan, all in zone 3.
    *
-   * @param opti               the opti
-   * @param weeklyOpeningHours the weekly opening hours
-   * @param zoneNumber         the zone number
+   * @param opti the optimization
+   * @param openingHours the opening hours of the nodes
+   * @param zoneQuali the zone qualification of the nodes
    */
-  private static void addJerseyCityNodes(IOptimization opti, List<IOpeningHours> weeklyOpeningHours,
-      ZoneNumberQualification zoneNumber) {
+  private static void addJerseyCityNodes(
+      IOptimization opti, List<IOpeningHours> openingHours, ZoneNumberQualification zoneQuali) {
+    List<Position> positions = new ArrayList<>();
+    positions.add(Position.of(40.751788, -74.027374));
+    positions.add(Position.of(40.725626, -74.037277));
+    positions.add(Position.of(40.751106, -74.025960));
+    positions.add(Position.of(40.759971, -74.023066));
+    positions.add(Position.of(40.746625, -74.026088));
+    positions.add(Position.of(40.748330, -74.057274));
+    positions.add(Position.of(40.738185, -74.027539));
+    positions.add(Position.of(40.740757, -74.026748));
 
-    List<Position> poss = new ArrayList<>();
-
-    poss.add(Position.of(40.751788, -74.027374));
-
-    poss.add(Position.of(40.725626, -74.037277));
-
-    poss.add(Position.of(40.751106, -74.025960));
-
-    poss.add(Position.of(40.759971, -74.023066));
-
-    poss.add(Position.of(40.746625, -74.026088));
-
-    poss.add(Position.of(40.748330, -74.057274));
-
-    poss.add(Position.of(40.738185, -74.027539));
-
-    poss.add(Position.of(40.740757, -74.026748));
-
+    // 60 minutes per visit, a sample value, as in Manhattan.
     Duration visitDuration = Duration.ofMinutes(60);
 
-    for (int ii = 0; ii < poss.size(); ii++) {
-
-      INode curNode =
-          new TimeWindowGeoNode("JerseyCity-" + ii, poss.get(ii), weeklyOpeningHours, visitDuration,
-              1);
-
-      curNode.addQualification(zoneNumber);
-
-      opti.addElement(curNode);
+    for (int ii = 0; ii < positions.size(); ii++) {
+      INode node =
+          new TimeWindowGeoNode(
+              "JerseyCity-" + ii, positions.get(ii), openingHours, visitDuration, 1);
+      node.addQualification(zoneQuali);
+      opti.addElement(node);
     }
-
   }
 
   /**
-   * Adds the resources.
+   * Adds Jack and Mel, who start and end each working day in Queens.
    *
-   * @param opti the opti
+   * @param opti the optimization
    */
   private static void addResources(IOptimization opti) {
+    // Both resources start in Queens, outside both zones. The start is not a node, so the drive
+    // to the first node of a route never counts as a crossing.
+    Position queens = Position.of(40.742728, -73.870528);
 
-    Position pos = Position.of(40.742728, -73.870528);
+    // The working hours carry no zone constraints: both resources may visit both zones, and only
+    // the crossing cost keeps a route on one side.
+    List<IWorkingHours> workingHoursJack = createWorkingHours();
+    List<IWorkingHours> workingHoursMel = createWorkingHours();
 
-    /*
-     * Defining WorkingHours and attach Constraints based on the Zones we created
-     *
-     * For example: the first WorkingHour gets zoneOne and zoneTwo as Constraint.
-     * This means the Resource holding this WorkingHour should only visit ZoneOne
-     * and ZoneTwo during this WorkingHour.
-     */
-    IWorkingHours woh1 = new WorkingHours(
-        ZonedDateTime.of(2030, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-        ZonedDateTime.of(2030, MAY.getValue(), 6, 20, 0, 0, 0, ZoneId.of("Europe/Berlin")));
-
-    IWorkingHours woh2 = new WorkingHours(
-        ZonedDateTime.of(2030, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-        ZonedDateTime.of(2030, MAY.getValue(), 7, 20, 0, 0, 0, ZoneId.of("Europe/Berlin")));
-
-    List<IWorkingHours> weeklyWorkingHours = new ArrayList<>();
-    weeklyWorkingHours.add(woh1);
-    weeklyWorkingHours.add(woh2);
-
-    /*
-     *
-     * Creating/Adding the Resource and attach constrained WorkingHours
-     *
-     */
-
+    // 13 h and 1200 km per day, sample values above what a day of this plan needs.
     Duration maxWorkingTime = Duration.ofHours(13);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
-    IResource rep1 =
-        new CapacityResource("Jack", pos, maxWorkingTime, maxDistanceKmW, weeklyWorkingHours);
-    rep1.setCost(0, 1, 1);
-    opti.addElement(rep1);
+    IResource jack =
+        new CapacityResource("Jack", queens, maxWorkingTime, maxDistanceKmW, workingHoursJack);
+    opti.addElement(jack);
 
-    IResource rep2 =
-        new CapacityResource("Mel", pos, maxWorkingTime, maxDistanceKmW, weeklyWorkingHours);
-    rep2.setCost(0, 1, 1);
-    opti.addElement(rep2);
-
+    IResource mel =
+        new CapacityResource("Mel", queens, maxWorkingTime, maxDistanceKmW, workingHoursMel);
+    opti.addElement(mel);
   }
 
   /**
-   * Attach to different Events (Observables) of the optimization instance.
+   * Creates the working hours of one resource: 08:00 to 20:00 on May 6 and May 7, 2020.
    *
-   * @param opti the optimization instance
+   * @return the working hours
+   */
+  private static List<IWorkingHours> createWorkingHours() {
+    List<IWorkingHours> workingHours = new ArrayList<>();
+    workingHours.add(
+        new WorkingHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("America/New_York")),
+            ZonedDateTime.of(
+                2020, MAY.getValue(), 6, 20, 0, 0, 0, ZoneId.of("America/New_York"))));
+    workingHours.add(
+        new WorkingHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("America/New_York")),
+            ZonedDateTime.of(
+                2020, MAY.getValue(), 7, 20, 0, 0, 0, ZoneId.of("America/New_York"))));
+    return workingHours;
+  }
+
+  /**
+   * Adds the factors of the crossing penalty for both directions between zone 1 and zone 3.
+   *
+   * @param opti the optimization
+   */
+  private static void addZoneConnections(IOptimization opti) {
+    IZoneManager zm = opti.getNodeConnector().getZoneManager();
+
+    // The sample factor 5.0: a step from zone 1 to zone 3 costs five times the crossing penalty,
+    // like a toll that is charged in one direction only.
+    ZoneConnection zoneConnection13 =
+        ZoneConnection.builder()
+            .fromZoneId("1")
+            .toZoneId("3")
+            .crossingPenaltyMultiplier(5.0)
+            .build();
+    zm.putZoneConnection(zoneConnection13);
+
+    // The factor 0.0 switches the penalty off for steps from zone 3 to zone 1.
+    ZoneConnection zoneConnection31 =
+        ZoneConnection.builder()
+            .fromZoneId("3")
+            .toZoneId("1")
+            .crossingPenaltyMultiplier(0.0)
+            .build();
+    zm.putZoneConnection(zoneConnection31);
+  }
+
+  /**
+   * Prints the progress, warning, status and error events of the run.
+   *
+   * @param opti the optimization
    */
   private static void attachToObservables(IOptimization opti) {
-
-    opti.getOptimizationEvents().progressSubject()
+    // Subscribe before the start: the subjects replay only a few past events.
+    opti.getOptimizationEvents()
+        .progressSubject()
         .subscribe(p -> System.out.println(p.getProgressString()));
-
     opti.getOptimizationEvents().warningSubject().subscribe(w -> System.out.println(w.toString()));
-
     opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s.toString()));
-
     opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
   }
 
   /**
-   * Export to kml.
+   * Starts the run, waits for the result, prints it and returns it.
    *
-   * @param kmlFile the kml file
-   * @param result  the result
-   * @throws FileNotFoundException the file not found exception
+   * @param opti the optimization
+   * @return the result of the run
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
    */
-  static void exportToKml(String kmlFile, IOptimizationResult result) throws FileNotFoundException {
+  private static IOptimizationResult startAndPresentResult(IOptimization opti)
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException {
+    CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
+    // Wait for the result; without the wait the JVM would end before the run does.
+    IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
+    System.out.println(result);
+    return result;
+  }
 
-    IEntityExporter exporter = new EntityKMLExporter();
-    exporter.export(result.getContainer(), new FileOutputStream(kmlFile));
+  /**
+   * Writes the result to a KML file in the working directory, named after the class and the
+   * setting of the penalty.
+   *
+   * @param result the result of the run
+   * @param doPenalizeZoneCrossings whether the run penalized zone crossings
+   * @throws IOException if a file cannot be read or written
+   */
+  private static void exportToKml(IOptimizationResult result, boolean doPenalizeZoneCrossings)
+      throws IOException {
+    String name = BridgeTunnelCrossingZoneNumberConstraintExample.class.getSimpleName();
+    // One file per setting, so that the routes with and without the penalty can be compared.
+    File file = new File(name + "-" + doPenalizeZoneCrossings + ".kml");
 
+    EntityKMLExporter kmlExporter = new EntityKMLExporter();
+    kmlExporter.setTitle(name);
+
+    try (OutputStream out = new FileOutputStream(file)) {
+      if (!kmlExporter.export(result, out)) {
+        System.out.println("KML export failed: " + file);
+      }
+    }
+  }
+
+  /**
+   * Prints the optimization as JSON, without the solution, the node connections and a license.
+   *
+   * @param opti the optimization
+   * @throws IOException if a file cannot be read or written
+   * @throws ConvertException if the optimization cannot be converted to a config
+   * @throws SerializationException if the config cannot be serialized
+   */
+  private static void printJson(IOptimization opti)
+      throws IOException, ConvertException, SerializationException {
+    // The ZoneConnections work without the node connections, so the JSON leaves them out and
+    // stays shorter. It leaves out the solution as well.
+    boolean keepSolutionInJson = false;
+    boolean keepNodeConnectionsInJson = false;
+
+    // The extension holds a timeout of 10 minutes, a sample value, and no key setting, so the
+    // printed JSON contains no license.
+    JSONConfig extension = JSONConfig.builder().timeOut(Duration.ofMinutes(10)).build();
+
+    String json =
+        ResultJsonPrinter.toJsonOptimizationString(
+            ResultJsonPrinter.toJsonOptimization(
+                opti, extension, keepSolutionInJson, keepNodeConnectionsInJson));
+    System.out.println(json);
   }
 }
