@@ -3,177 +3,157 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.openlocation;
  * #%L
  * JOpt TourOptimizer Examples
  * %%
- * Copyright (C) 2017 - 2020 DNA Evolutions GmbH
+ * Copyright (C) 2017 - 2023 DNA Evolutions GmbH
  * %%
- * This file is subject to the terms and conditions defined in file 'LICENSE.txt',
- * which is part of this source code package.
+ * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
+ * which is part of this repository.
  *
- * If not, see <https://www.dna-evolutions.com/agb-conditions-and-terms/>.
+ * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
-import static java.util.Calendar.MAY;
+import static java.time.Month.MAY;
 import static javax.measure.MetricPrefix.KILO;
 import static tech.units.indriya.unit.Units.METRE;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 
 import com.dna.jopt.config.types.Position;
-import com.dna.jopt.framework.body.Optimization;
-import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
-import com.dna.jopt.member.unit.hours.IWorkingHours;
 import com.dna.jopt.member.unit.IOptimizationElement;
 import com.dna.jopt.member.unit.converter.openlocation.OpenLocation;
 import com.dna.jopt.member.unit.hours.IOpeningHours;
-import com.dna.jopt.member.unit.hours.WorkingHours;
+import com.dna.jopt.member.unit.hours.IWorkingHours;
 import com.dna.jopt.member.unit.hours.OpeningHours;
+import com.dna.jopt.member.unit.hours.WorkingHours;
 import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.resource.CapacityResource;
-import com.dna.jopt.member.unit.resource.IResource;
 
 import tech.units.indriya.quantity.Quantities;
 
 /**
- * Example of transforming a Latitude and Longitude to a Plus Code
- * (https://maps.google.com/pluscodes/) back and forth.
+ * Converts the positions of nodes and resources to Plus Codes (Open Location Codes) and back.
  *
- * @author jrich
- * @version Mar 26, 2021
- * @since Mar 26, 2021
+ * <p>Scenario: three nodes (Koeln, Oberhausen and Essen) and two resources (JackKoeln and JackJena)
+ * with their latitude and longitude. The example runs no optimization; it only reads the position
+ * of each element.
+ *
+ * <p>Look for: for each element, its position, its Plus Code and the position decoded from the
+ * code. The decoded position is the centre of the code's cell, close to the original but not the
+ * same.
+ *
+ * <p>Prerequisites: None: the example runs no optimization and needs no license.
+ *
+ * @see <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/openlocation/OpenLocationCode.md">OpenLocationCode.md</a>
  */
-public class LatLon2PlusCodeBackAndForthExample extends Optimization {
+public class LatLon2PlusCodeBackAndForthExample {
 
   /**
-   * The main method.
+   * Runs the example.
    *
-   * @param args the arguments
-   * @throws IOException Signals that an I/O exception has occurred.
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws InterruptedException the interrupted exception
-   * @throws ExecutionException the execution exception
+   * @param args not used
    */
-  public static void main(String[] args)
-      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+  public static void main(String[] args) {
     new LatLon2PlusCodeBackAndForthExample().example();
   }
 
-  /**
-   * To string.
-   *
-   * @return the string
-   */
+  @Override
   public String toString() {
-    return "Example of transforming a Latitude and Longitude to a Plus Code.";
+    return "Converts the positions of nodes and resources to Plus Codes (Open Location Codes) and"
+        + " back.";
+  }
+
+  /** Builds the nodes and resources and prints the conversion of each position. */
+  public void example() {
+    List<IOptimizationElement> elements = new ArrayList<>();
+    elements.addAll(createNodes());
+    elements.addAll(createResources());
+    convertElements(elements);
   }
 
   /**
-   * Example.
+   * Converts the position of each element to a Plus Code and back, and prints the three values.
    *
-   * @throws IOException Signals that an I/O exception has occurred.
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws InterruptedException the interrupted exception
-   * @throws ExecutionException the execution exception
+   * @param elements the nodes and resources
    */
-  public void example()
-      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+  private static void convertElements(List<IOptimizationElement> elements) {
+    for (IOptimizationElement element : elements) {
+      Position position = element.getPosition();
+      String plusCode = position.toOpenLocationCode();
 
-    // Convert the elements and present the result
-    this.convertElements();
+      OpenLocation location = OpenLocation.builder().code(plusCode).build();
+      Position positionBack = location.toPos();
+
+      System.out.println("Element: " + element.getId());
+      System.out.println(" Lat/Long (initial): " + position);
+      System.out.println(" PlusCode: " + plusCode);
+      System.out.println(" Lat/Long (back): " + positionBack);
+      System.out.println();
+    }
   }
 
-  /** Adds the resources. */
-  private void convertElements() {
+  /**
+   * Creates three nodes with their latitude and longitude.
+   *
+   * @return the nodes
+   */
+  private static List<IOptimizationElement> createNodes() {
+    // A node needs opening hours and a visit duration; this example reads only its position.
+    List<IOpeningHours> openingHours = new ArrayList<>();
+    openingHours.add(
+        new OpeningHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 22, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+    Duration visitDuration = Duration.ofMinutes(10);
+    int importance = 1;
 
-    List<IOptimizationElement> elements = getNodes();
-    elements.addAll(getResources());
-
-    elements.forEach(
-        e -> {
-
-          // Get the location code from the position
-          Position orgPos = e.getPosition();
-          String olc = e.getPosition().toOpenLocationCode();
-
-          OpenLocation loc = OpenLocation.builder().code(olc).build();
-
-          System.out.println(
-              "\nElement:"
-                  + e.getId()
-                  + "\n Lat/Long (initial): "
-                  + orgPos
-                  + "\n PlusCode: "
-                  + olc
-                  + "\n Lat/Long (back): "
-                  + loc.toPos()
-                  + "\n");
-        });
+    List<IOptimizationElement> nodes = new ArrayList<>();
+    nodes.add(
+        new TimeWindowGeoNode("Koeln", 50.9333, 6.95, openingHours, visitDuration, importance));
+    nodes.add(
+        new TimeWindowGeoNode(
+            "Oberhausen", 51.4667, 6.85, openingHours, visitDuration, importance));
+    nodes.add(
+        new TimeWindowGeoNode("Essen", 51.45, 7.01667, openingHours, visitDuration, importance));
+    return nodes;
   }
 
-  public static List<IWorkingHours> getWorkingHours() {
-
-    List<IWorkingHours> workingHoursOne = new ArrayList<>();
-    workingHoursOne.add(
-        new WorkingHours(
-            ZonedDateTime.of(2020, MAY, 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY, 6, 22, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    return workingHoursOne;
-  }
-
-  public List<IOptimizationElement> getResources() {
-
-    List<IOptimizationElement> ress = new ArrayList<>();
-
+  /**
+   * Creates two resources with their latitude and longitude.
+   *
+   * @return the resources
+   */
+  private static List<IOptimizationElement> createResources() {
+    // A resource needs working hours and limits; this example reads only its position.
     Duration maxWorkingTime = Duration.ofHours(12);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(2200.0, KILO(METRE));
 
-    IResource rep1 =
+    List<IOptimizationElement> resources = new ArrayList<>();
+    resources.add(
         new CapacityResource(
-            "JackKoeln", 50.9333, 6.95, maxWorkingTime, maxDistanceKmW, getWorkingHours());
-    rep1.setCost(0, 1, 1);
-
-    IResource rep2 =
+            "JackKoeln", 50.9333, 6.95, maxWorkingTime, maxDistanceKmW, createWorkingHours()));
+    resources.add(
         new CapacityResource(
-            "JackJena", 50.93297, 11.58297, maxWorkingTime, maxDistanceKmW, getWorkingHours());
-    rep2.setCost(0, 1, 1);
-
-    ress.add(rep1);
-    ress.add(rep2);
-
-    return ress;
+            "JackJena", 50.93297, 11.58297, maxWorkingTime, maxDistanceKmW, createWorkingHours()));
+    return resources;
   }
 
-  public static List<IOptimizationElement> getNodes() {
-
-    List<IOptimizationElement> nodes = new ArrayList<>();
-
-    List<IOpeningHours> weeklyOpeningHoursOne = new ArrayList<>();
-
-    weeklyOpeningHoursOne.add(
-        new OpeningHours(
-            ZonedDateTime.of(2020, MAY, 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY, 6, 22, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    Duration visitDuration = Duration.ofMinutes(10);
-
-    // 1.) add the nodes to be visited
-    nodes.add(
-        new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHoursOne, visitDuration, 1));
-
-    nodes.add(
-        new TimeWindowGeoNode(
-            "Oberhausen", 51.4667, 6.85, weeklyOpeningHoursOne, visitDuration, 1));
-
-    nodes.add(
-        new TimeWindowGeoNode("Essen", 51.45, 7.01667, weeklyOpeningHoursOne, visitDuration, 1));
-
-    return nodes;
+  /**
+   * Creates the working hours of one resource: May 6, 2020, from 08:00 to 22:00.
+   *
+   * @return the working hours
+   */
+  private static List<IWorkingHours> createWorkingHours() {
+    List<IWorkingHours> workingHours = new ArrayList<>();
+    workingHours.add(
+        new WorkingHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 22, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+    return workingHours;
   }
 }

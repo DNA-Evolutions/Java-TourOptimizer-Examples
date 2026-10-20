@@ -1,10 +1,9 @@
 package com.dna.jopt.touroptimizer.java.examples.advanced.condition.magnetic;
-
 /*-
  * #%L
  * JOpt TourOptimizer Examples
  * %%
- * Copyright (C) 2017 - 2026 DNA Evolutions GmbH
+ * Copyright (C) 2017 - 2023 DNA Evolutions GmbH
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
@@ -12,20 +11,19 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.condition.magnetic;
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
-import static java.time.Month.MARCH;
+import static java.time.Month.MAY;
 import static javax.measure.MetricPrefix.KILO;
 import static tech.units.indriya.unit.Units.METRE;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.OutputStream;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -38,9 +36,7 @@ import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
-import com.dna.jopt.io.exporting.IEntityExporter;
 import com.dna.jopt.io.exporting.kml.EntityKMLExporter;
-import com.dna.jopt.member.unit.condition.IConstraint;
 import com.dna.jopt.member.unit.condition.node.MagnetoNodeConstraint;
 import com.dna.jopt.member.unit.condition.node.MagnetoNodeConstraint.NodeOrder;
 import com.dna.jopt.member.unit.hours.IOpeningHours;
@@ -56,266 +52,255 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tech.units.indriya.quantity.Quantities;
 
 /**
- * Demonstrates the {@link MagnetoNodeConstraint} ("magnetic" node constraint) in <b>soft</b> mode.
- * <p>
- * A magnetic constraint is attached to a <i>single</i> node and influences the optimizer by adding a
- * <b>preference</b> (soft constraint) regarding which other nodes should (attraction) or should not
- * (repulsion) appear in the <b>same route</b>.
- * </p>
+ * Shows the soft MagnetoNodeConstraint: one magnet node attracts a node to its route, another
+ * repels two nodes from its route.
  *
- * <h2>Two modes</h2>
- * <ul>
- *   <li><b>Attraction</b>: the constrained node prefers certain target nodes to be on the same route.</li>
- *   <li><b>Repulsion</b>: the constrained node prefers certain target nodes to be on a different route.</li>
- * </ul>
+ * <p>Scenario: Jack and John start in Aachen and work on May 6, 2020, from 08:00 to 17:00 and on
+ * May 7, 2020, from 08:00 to 20:00 (Europe/Berlin). Eight nodes are open from 08:00 to 17:00 on
+ * both days; each visit takes 60 minutes. Stuttgart attracts Aachen with the order FRONT: Aachen
+ * should be on Stuttgart's route, after Stuttgart. Koeln repels Wuppertal and Essen: they should
+ * be on other routes than Koeln.
  *
- * <h2>Order control (attraction mode)</h2>
- * Optionally, you can specify where the constrained node should appear within the route:
- * <ul>
- *   <li>{@link NodeOrder#FRONT}: prefer to be near the start of the route</li>
- *   <li>{@link NodeOrder#BACK}: prefer to be near the end of the route</li>
- *   <li>{@link NodeOrder#NO_ORDER}: no ordering preference</li>
- * </ul>
+ * <p>Look for: Stuttgart and Aachen on one route, Stuttgart first, with a LATE violation at
+ * Aachen, the cost of the long drive between them; Koeln on a route without Wuppertal and Essen.
+ * The example also writes the result to MagneticSoftConditionExample.kml.
  *
- * <h2>Important</h2>
- * {@code MagnetoNodeConstraint} is <b>soft-only</b> in JOpt.TourOptimizer:
- * setting {@code isHard=true} is not allowed and will be rejected.
+ * <p>Prerequisites: None: without a license file the example uses the public evaluation license
+ * (see ExampleLicenseHelper).
  *
- * <p>
- * This example creates a small Germany-based dataset and adds:
- * </p>
- * <ul>
- *   <li>An <b>attracting</b> magnet on node "Stuttgart" that prefers node "Aachen" to be on the same route,
- *       with Stuttgart preferred at the <b>front</b> of that route.</li>
- *   <li>A <b>repulsive</b> magnet on node "Koeln" that prefers nodes "Wuppertal" and "Essen" to be on a different route.</li>
- * </ul>
- *
- * @author DNA
- * @since Feb 16, 2026
+ * @see <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/condition/magnetic/MagneticSoftCondition.md">MagneticSoftCondition.md</a>
  */
 public class MagneticSoftConditionExample extends Optimization {
+
   /**
    * Runs the example.
    *
-   * @param args ignored
+   * @param args not used
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
    */
-
   public static void main(String[] args)
-      throws InvalidLicenceException, InterruptedException, ExecutionException, IOException,
-      TimeoutException {
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException {
     new MagneticSoftConditionExample().example();
   }
 
   @Override
   public String toString() {
-    return "MagnetoNodeConstraint: attraction (with optional order) + repulsion — soft constraint only";
+    return "Shows the soft MagnetoNodeConstraint: one magnet node attracts a node to its route,"
+        + " another repels two nodes from its route.";
   }
 
   /**
-   * Builds a small optimization instance, starts the run asynchronously and subscribes to
-   * progress/warning/error events.
-   * <p>
-   * Note: we block on the result future to keep the JVM alive until the optimization finishes.
-   * </p>
-   */
-
-  public void example()
-      throws InvalidLicenceException, InterruptedException, ExecutionException, IOException,
-      TimeoutException {
-
-    // Set license via helper
-    ExampleLicenseHelper.setLicense(this);
-
-    this.addNodes();
-    this.addResources();
-
-    // Start the Optimization
-    CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
-
-    // Subscribe to events
-    subscribeToEvents(this);
-
-    // It is important to block the call, otherwise the optimization will be
-    // terminated
-    IOptimizationResult result = resultFuture.get(1, TimeUnit.MINUTES);
-
-    IEntityExporter kmlExporter = new EntityKMLExporter();
-    kmlExporter.setTitle("TEST EXPORT");
-
-    try {
-
-      kmlExporter.export(
-          result.getContainer(),
-          new FileOutputStream(new File("./TempWithCondition.kml")));
-
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }
-  }
-
-  /**
-   * Creates a small set of working hours for demonstration purposes (two days).
-   * In real projects, these typically come from your workforce/vehicle master data.
+   * Builds the optimization, runs it, prints the result and writes it to a KML file.
    *
-   * @return default working hours
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
    */
+  public void example()
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException {
+    // The public evaluation license, or your own license if you put a license file where
+    // ExampleLicenseHelper looks for it.
+    ExampleLicenseHelper.setLicense(this);
+    addProperties(this);
+    addNodes(this);
+    addResources(this);
+    attachToObservables(this);
+    IOptimizationResult result = startAndPresentResult(this);
+    exportToKml(result);
+  }
 
-  private static List<IWorkingHours> getDefaultWorkingHours() {
+  /**
+   * Adds the properties that keep the run short.
+   *
+   * @param opti the optimization
+   */
+  private static void addProperties(IOptimization opti) {
+    Properties props = new Properties();
 
+    // Fewer generations and iterations than the defaults keep the run short.
+    props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
+
+    opti.addElement(props);
+  }
+
+  /**
+   * Adds eight nodes and attaches an attracting magnet to Stuttgart and a repelling one to Koeln.
+   *
+   * @param opti the optimization
+   */
+  private static void addNodes(IOptimization opti) {
+    List<IOpeningHours> openingHours = new ArrayList<>();
+    openingHours.add(
+        new OpeningHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+    openingHours.add(
+        new OpeningHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+
+    // Each visit takes 60 minutes and counts toward the working time, like the driving.
+    Duration visitDuration = Duration.ofMinutes(60);
+
+    // The same importance for every node, so no node is preferred over another.
+    int importance = 1;
+
+    INode koeln =
+        new TimeWindowGeoNode("Koeln", 50.9333, 6.95, openingHours, visitDuration, importance);
+    opti.addElement(koeln);
+
+    INode oberhausen =
+        new TimeWindowGeoNode(
+            "Oberhausen", 51.4667, 6.85, openingHours, visitDuration, importance);
+    opti.addElement(oberhausen);
+
+    INode essen =
+        new TimeWindowGeoNode("Essen", 51.45, 7.01667, openingHours, visitDuration, importance);
+    opti.addElement(essen);
+
+    INode dueren =
+        new TimeWindowGeoNode("Dueren", 50.8, 6.48333, openingHours, visitDuration, importance);
+    opti.addElement(dueren);
+
+    INode heilbronn =
+        new TimeWindowGeoNode(
+            "Heilbronn", 49.1403, 9.22, openingHours, visitDuration, importance);
+    opti.addElement(heilbronn);
+
+    INode stuttgart =
+        new TimeWindowGeoNode(
+            "Stuttgart", 48.7667, 9.18333, openingHours, visitDuration, importance);
+    opti.addElement(stuttgart);
+
+    INode wuppertal =
+        new TimeWindowGeoNode(
+            "Wuppertal", 51.2667, 7.18333, openingHours, visitDuration, importance);
+    opti.addElement(wuppertal);
+
+    INode aachen =
+        new TimeWindowGeoNode(
+            "Aachen", 50.775346, 6.083887, openingHours, visitDuration, importance);
+    opti.addElement(aachen);
+
+    // A MagnetoNodeConstraint is always soft: a route that breaks it costs more. setIsHard(true)
+    // only logs a warning.
+
+    // Stuttgart attracts Aachen: Aachen should be on Stuttgart's route. FRONT asks for the
+    // attracted node after the magnet node, so Stuttgart comes first.
+    MagnetoNodeConstraint attractingMagnet = new MagnetoNodeConstraint();
+    attractingMagnet.setIsAttractingMagnet(true);
+    attractingMagnet.addNodeMagnetId("Aachen");
+    attractingMagnet.setOrder(NodeOrder.FRONT);
+    stuttgart.addConstraint(attractingMagnet);
+
+    // Koeln repels Wuppertal and Essen: they should be on other routes than Koeln.
+    MagnetoNodeConstraint repellingMagnet = new MagnetoNodeConstraint();
+    repellingMagnet.setIsAttractingMagnet(false);
+    repellingMagnet.addNodeMagnetId("Wuppertal");
+    repellingMagnet.addNodeMagnetId("Essen");
+    koeln.addConstraint(repellingMagnet);
+  }
+
+  /**
+   * Adds Jack and John, who both start in Aachen and have the same working hours.
+   *
+   * @param opti the optimization
+   */
+  private static void addResources(IOptimization opti) {
+    // 10 h per day; the day with Stuttgart and Aachen and its long drives needs almost all of it.
+    Duration maxWorkingTime = Duration.ofHours(10);
+    // 1200 km per day, more than the longest day of this plan needs.
+    Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
+
+    IResource jack =
+        new CapacityResource(
+            "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, createWorkingHours());
+    opti.addElement(jack);
+
+    IResource john =
+        new CapacityResource(
+            "John", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, createWorkingHours());
+    opti.addElement(john);
+  }
+
+  /**
+   * Creates the working hours of one resource: May 6, 2020, until 17:00 and May 7 until 20:00.
+   *
+   * @return the working hours
+   */
+  private static List<IWorkingHours> createWorkingHours() {
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
         new WorkingHours(
-            ZonedDateTime.of(2030, MARCH.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2030, MARCH.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
     workingHours.add(
         new WorkingHours(
-            ZonedDateTime.of(2030, MARCH.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2030, MARCH.getValue(), 7, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
+            ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MAY.getValue(), 7, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
     return workingHours;
   }
 
   /**
-   * Adds two example resources with identical starting positions and working hour windows.
-   * Costs are kept simple to focus on the magnetic constraint behavior.
-   */
-
-  private void addResources() {
-
-    Duration maxWorkingTimeJack = Duration.ofHours(10);
-    Duration maxWorkingTimeJohn = Duration.ofHours(10);
-    Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
-
-    IResource rep1 =
-        new CapacityResource("Jack", 50.775346, 6.083887, maxWorkingTimeJack, maxDistanceKmW,
-            getDefaultWorkingHours());
-    rep1.setCost(0, 1, 1);
-
-    this.addElement(rep1);
-
-    // Note, "John" does not have the "plumbing" Qualification
-    IResource rep2 =
-        new CapacityResource("John", 50.775346, 6.083887, maxWorkingTimeJohn, maxDistanceKmW,
-            getDefaultWorkingHours());
-    rep2.setCost(0, 1, 1);
-    this.addElement(rep2);
-  }
-
-  /**
-   * Adds time-window nodes (cities) and attaches two {@link MagnetoNodeConstraint}s:
-   * <ul>
-   *   <li>Attraction: Stuttgart prefers Aachen on the same route, with Stuttgart near the route start.</li>
-   *   <li>Repulsion: Koeln prefers Wuppertal and Essen to be on different routes.</li>
-   * </ul>
-   */
-
-  private void addNodes() {
-
-    List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
-    weeklyOpeningHours.add(
-        new OpeningHours(
-            ZonedDateTime.of(2030, MARCH.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2030, MARCH.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    weeklyOpeningHours.add(
-        new OpeningHours(
-            ZonedDateTime.of(2030, MARCH.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2030, MARCH.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    Duration visitDuration = Duration.ofMinutes(60);
-
-    INode koeln =
-        new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(koeln);
-
-    INode oberhausen =
-        new TimeWindowGeoNode("Oberhausen", 51.4667, 6.85, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(oberhausen);
-
-    INode essen =
-        new TimeWindowGeoNode("Essen", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(essen);
-
-    INode dueren =
-        new TimeWindowGeoNode("Dueren", 50.8, 6.48333, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(dueren);
-
-    INode heilbronn =
-        new TimeWindowGeoNode("Heilbronn", 49.1403, 9.22, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(heilbronn);
-
-    INode stuttgart =
-        new TimeWindowGeoNode("Stuttgart", 48.7667, 9.18333, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(stuttgart);
-
-    INode wuppertal =
-        new TimeWindowGeoNode("Wuppertal", 51.2667, 7.18333, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(wuppertal);
-
-    INode aachen =
-        new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(aachen);
-
-    /*
-     * Attraction magnet (soft): keep specific nodes together (same route)
-     */
-
-    // The node stuttgart is attracting aachen to be in the same route.
-    IConstraint magnetConstraint = new MagnetoNodeConstraint();
-    magnetConstraint.setIsHard(false); // MagnetoNodeConstraint is soft-only (hard not allowed)
-    ((MagnetoNodeConstraint) magnetConstraint).setIsAttractingMagnet(true);
-    ((MagnetoNodeConstraint) magnetConstraint).addNodeMagnetId("Aachen");
-
-    // Optional ordering preference: Stuttgart should be near the start of its route
-    /*
-     * NodeOrder options: FRONT, BACK, NO_ORDER
-     */
-    ((MagnetoNodeConstraint) magnetConstraint).setOrder(NodeOrder.FRONT);
-
-    // Attach the magnet constraint to Stuttgart
-    stuttgart.addConstraint(magnetConstraint);
-
-    /*
-     * Repulsion magnet (soft): keep specific nodes apart (different routes)
-     */
-    // Koeln prefers Wuppertal and Essen to NOT be on the same route (repulsion)
-    IConstraint repulsiveMagnetConstraint = new MagnetoNodeConstraint();
-    repulsiveMagnetConstraint.setIsHard(false); // MagnetoNodeConstraint is soft-only (hard not allowed)
-    ((MagnetoNodeConstraint) repulsiveMagnetConstraint).setIsAttractingMagnet(false);
-    ((MagnetoNodeConstraint) repulsiveMagnetConstraint).addNodeMagnetId("Wuppertal");
-    ((MagnetoNodeConstraint) repulsiveMagnetConstraint).addNodeMagnetId("Essen");
-
-    // Attach the magnet constraint to Stuttgart
-    koeln.addConstraint(repulsiveMagnetConstraint);
-
-  }
-
-  /**
-   * Subscribes to the reactive optimization event streams (progress, warnings, errors, status) and
-   * prints them to {@link System#out}.
+   * Prints the progress, warning, status and error events of the run.
    *
-   * @param opti the optimization instance
+   * @param opti the optimization
    */
-
-  private static void subscribeToEvents(IOptimization opti) {
-
-    PrintStream myOut = System.out;
-
-    // Subscribe to events
-    opti.getOptimizationEvents().progressSubject()
-        .subscribe(p -> myOut.println(p.getProgressString()));
-
-    opti.getOptimizationEvents().errorSubject()
-        .subscribe(e -> myOut.println(e.getCause() + " " + e.getCode()));
-
-    opti.getOptimizationEvents().warningSubject()
-        .subscribe(w -> myOut.println(w.getDescription() + w.getCode()));
-
-    opti.getOptimizationEvents().statusSubject()
-        .subscribe(s -> myOut.println(s.getDescription() + " " + s.getCode()));
-
-    opti.getOptimizationEvents().resultFuture().thenAccept(myOut::println);
+  private static void attachToObservables(IOptimization opti) {
+    // Subscribe before the start: the subjects replay only a few past events.
+    opti.getOptimizationEvents()
+        .progressSubject()
+        .subscribe(p -> System.out.println(p.getProgressString()));
+    opti.getOptimizationEvents().warningSubject().subscribe(w -> System.out.println(w.toString()));
+    opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s.toString()));
+    opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
   }
 
+  /**
+   * Starts the run, waits for the result, prints it and returns it.
+   *
+   * @param opti the optimization
+   * @return the result of the run
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   */
+  private static IOptimizationResult startAndPresentResult(IOptimization opti)
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException {
+    CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
+    // Wait for the result; without the wait the JVM would end before the run does.
+    IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
+    System.out.println(result);
+    return result;
+  }
+
+  /**
+   * Writes the result to MagneticSoftConditionExample.kml in the working directory.
+   *
+   * @param result the result of the run
+   * @throws IOException if a file cannot be read or written
+   */
+  private static void exportToKml(IOptimizationResult result) throws IOException {
+    String kmlFile = "MagneticSoftConditionExample.kml";
+
+    EntityKMLExporter kmlExporter = new EntityKMLExporter();
+    kmlExporter.setTitle("MagneticSoftConditionExample");
+
+    // export flushes the stream but does not close it; the try block closes it.
+    try (OutputStream out = new FileOutputStream(kmlFile)) {
+      if (!kmlExporter.export(result, out)) {
+        System.out.println("KML export failed: " + kmlFile);
+      }
+    }
+  }
 }
