@@ -9,33 +9,16 @@ In JOpt, many nodes represent geo locations, for example a `TimeWindowGeoNode` w
 - it takes part in the plan like any other node, with opening hours, a visit duration and an importance,
 - but it has no geo coordinates.
 
-Conceptually, it represents "work that must be done".
-
-Event nodes are useful when your planning problem includes tasks such as:
-
-- phone calls,
-- paperwork / compliance steps,
-- remote support sessions,
-- internal meetings,
-- follow-ups that can be done anywhere (within working hours).
-
-These tasks still consume time and must be placed in the route timeline, but they do not consume travel distance.
+Typical event nodes are phone calls, paperwork, remote support sessions and internal meetings: they take time on the route but add no travel.
 
 ### When to use an event node
 
-- **Use event nodes when the task is location-independent.** A good rule: if the task can be performed "from anywhere" and the only constraint is **time**, it belongs as an `EventNode`.
+- **If only the time of a task matters, not its place, model it as an `EventNode`.**
 - **Use geo nodes when travel is part of the cost/constraints.** If there is any dependency on distance/time-to-reach, keep it as a geo node (or supply connection data).
-- **Be explicit about time windows**, for example: call the customer between 10 and 12. Ensure the opening hours reflect the business requirement, otherwise the optimizer will schedule it wherever convenient.
-- **Watch idle time.** Adding event nodes can reduce idle time (fill gaps between tight windows), but it can also increase complexity. Use result analysis to validate:
+- **Be explicit about time windows**, for example: call the customer between 10 and 12. Ensure the opening hours reflect the business requirement, otherwise the optimizer places it anywhere inside the opening hours.
+- **Watch idle time.** Adding event nodes can reduce idle time (fill gaps between tight windows). Use result analysis to validate:
   - whether the event nodes are scheduled where intended,
   - whether they create unexpected waiting time due to time-window interaction.
-
-To extend the example:
-
-- Add multiple event nodes representing calls, each with its own time window.
-- Give them different importance values to influence selection/ordering.
-- Combine with result analysis to generate a "call schedule" alongside the physical route.
-- Export both route and event tasks to a downstream execution system (driver app / dispatcher UI).
 
 ## Scenario
 
@@ -48,10 +31,7 @@ The example builds one resource and nine nodes. The dates, times and coordinates
 
 The maximal working time of 13 hours is longer than the 9 hours of the working hours, so a day may run past 17:00 without overtime. The 1200 km per day are more than the longest day of this plan needs.
 
-Even though the example includes an `EventNode`, resources still have geo coordinates because they define:
-- start/end location.
-
-In the result, each route starts and ends at Jack's position.
+The resource still has coordinates: each route starts and ends at Jack's position.
 
 `addProperties` sets two properties: `JOptExitCondition.JOptGenerationCount` to 1000 and `JOpt.Algorithm.PreOptimization.SA.NumIterations` to 100000. Both are below their defaults, which keeps the run short; the defaults are in the [property reference](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties).
 
@@ -96,11 +76,9 @@ INode koeln =
 opti.addElement(koeln);
 ```
 
-An event node is an ordinary node of the optimization: it is added with `addElement` like the geo nodes and is scheduled into the route plan like them.
-
 ### Events and the run
 
-`attachToObservables` uses the recommended event API. It subscribes to the progress, warning, status and error subjects of `getOptimizationEvents()` before the run starts, because the subjects replay only a few past events:
+`attachToObservables` uses the event API; [Recommended ways to run an optimization](../recommendedimplementation_02/RecommendedImplementation.md) compares it with the legacy callback methods. It subscribes to the progress, warning, status and error subjects of `getOptimizationEvents()` before the run starts, because the subjects replay only a few past events:
 
 ```java
 // Subscribe before the start: the subjects replay only a few past events.
@@ -111,8 +89,6 @@ opti.getOptimizationEvents().warningSubject().subscribe(w -> System.out.println(
 opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s.toString()));
 opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
 ```
-
-The event API is recommended. The legacy callback methods (`onProgress`, `onAsynchronousOptimizationResult` and the others) subscribe to the same events internally and stay supported; this example does not use them.
 
 `startAndPresentResult` starts the run asynchronously and waits up to 5 minutes for the result:
 
@@ -144,7 +120,7 @@ try (OutputStream out = new FileOutputStream(kmlFile)) {
 
 The example checks the boolean that `export` returns and prints `KML export failed: EventNodeExample.kml` if it is `false`.
 
-This is valuable for quick inspection of route geometry and ordering. An event node has no position of its own: in the KML file it gets a placemark at the position of the element before it on the route, with its own icon style.
+An event node has no position of its own: in the KML file it gets a placemark at the position of the element before it on the route, with its own icon style.
 
 ## Output and what to look for
 
@@ -170,12 +146,19 @@ The route ends after 17:00, and its violation summary is empty: Jack may work up
 
 Run the `main` method of `EventNodeExample` from your IDE. You need a JDK in the version that the examples pom sets. You need no license file: without one, the example uses the public evaluation license (see the [license guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license)). The run writes `EventNodeExample.kml` into the working directory.
 
+To extend the example:
+
+- Add multiple event nodes representing calls, each with its own time window.
+- Give them different importance values to influence selection/ordering.
+- Combine with result analysis to generate a "call schedule" alongside the physical route.
+- Export both route and event tasks to a downstream execution system (driver app / dispatcher UI).
+
 ## Related
 
 - [EventNodeExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/eventnode_06/EventNodeExample.java): the source of this example.
 - [Nodes](https://www.dna-evolutions.com/docs/getting-started/tutorials/nodes): the node types and their constructors, `EventNode` among them.
-- [Pillar.md](../pillar_07/Pillar.md): pillar nodes, including the `PillarEventNode`, an event node whose time window must be met.
-- [Export2KMLExample.md](../io_03/Export2KMLExample.md): the KML export as the subject of its own example.
+- [Pillar nodes with hard time windows](../pillar_07/Pillar.md): pillar nodes, including the `PillarEventNode`, an event node whose time window must be met.
+- [Export a result to a KML file](../io_03/Export2KMLExample.md): the KML export as the subject of its own example.
 - [Reactive events and streams](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/reactive_events): the event subjects that `attachToObservables` subscribes to.
 - [Recommended ways to run an optimization](../recommendedimplementation_02/RecommendedImplementation.md): the recommended run pattern, a synchronous run and the legacy callback methods.
 - [Base examples](../README.md): the overview of all Base examples.

@@ -1,25 +1,28 @@
-# JOpt.TourOptimizer: Java Examples
+# JOpt.TourOptimizer: Java examples
 
-<a href="https://dna-evolutions.com/" target="_blank"><img src="https://www.dna-evolutions.com/images/dna_logo.png" width="200" title="DNA Evolutions" alt="DNA Evolutions"></a>
+<a href="https://www.dna-evolutions.com/"><img src="https://www.dna-evolutions.com/images/dna_logo.png" width="200" title="DNA Evolutions" alt="DNA Evolutions"></a>
 
-A fully functional Maven project containing an extensive collection of Java examples for **DNA Evolutions' JOpt.TourOptimizer**, a flexible routing and scheduling optimization engine built around a three-phase pipeline of Construction Heuristics, Simulated Annealing, and Genetic Evolution. Use this repository to get started with JOpt directly in your IDE, or launch the browser-based sandbox with a single Docker command.
+A Maven project with Java examples for JOpt.TourOptimizer by DNA Evolutions. JOpt runs a construction algorithm, simulated annealing and genetic evolution one after the other. Open the project in your IDE, or start the browser sandbox in Docker.
 
-- **Documentation hub:** [dna-evolutions.com/docs/getting-started](https://www.dna-evolutions.com/docs/getting-started)
-- **Special features:** [dna-evolutions.com/docs/learn-and-explore/special/special_features](https://dna-evolutions.com/docs/learn-and-explore/special/special_features)
-- **Interactive API:** [dna-evolutions.com/api](https://dna-evolutions.com/api/)
+- **Documentation hub:** [dna-evolutions.com/docs/getting-started/home/introduction](https://www.dna-evolutions.com/docs/getting-started/home/introduction)
+- **Special features:** [dna-evolutions.com/docs/learn-and-explore/special/special_features](https://www.dna-evolutions.com/docs/learn-and-explore/special/special_features)
+- **Interactive API:** [dna-evolutions.com/api](https://www.dna-evolutions.com/api/)
 - **JavaDocs:** [public.javadoc.dna-evolutions.com](https://public.javadoc.dna-evolutions.com)
 - **Nexus repository:** [nexus.dna-evolutions.net](https://nexus.dna-evolutions.net)
 
-<a href="https://sourceforge.net/software/product/JOpt.TourOptimizer/?pk_campaign=badge&pk_source=vendor" target="_blank" rel="nofollow">
+<a href="https://sourceforge.net/software/product/JOpt.TourOptimizer/?pk_campaign=badge&pk_source=vendor" rel="nofollow">
 <img alt="Partner 2025" src="https://sourceforge.net/cdn/syndication/badge_img/3636727/light-partner" height="100px" width="100px"></a>
 
 ---
 
-## Overview
+## Contents
 
 - [What is JOpt](#what-is-jopt)
 - [Example categories](#example-categories)
 - [Recommended learning path](#recommended-learning-path)
+- [Advanced examples](#advanced-examples)
+- [Expert examples](#expert-examples)
+- [RESTful examples](#restful-examples)
 - [Feature selection guide](#feature-selection-guide)
 - [Getting started](#getting-started)
 - [Browser sandbox (Docker)](#browser-sandbox-docker)
@@ -28,27 +31,29 @@ A fully functional Maven project containing an extensive collection of Java exam
 - [Non-Maven build tools](#non-maven-build-tools)
 - [Java 8 legacy support](#java-8-legacy-support)
 - [.NET legacy support](#net-legacy-support)
-- [Prerequisites](#prerequisites)
+- [Requirements by scenario](#requirements-by-scenario)
 - [Further links](#further-links)
+- [Contact](#contact)
+- [Agreement](#agreement)
 
 ---
 
 ## What is JOpt
 
-JOpt is a flexible routing optimization engine written in Java. It solves tour optimization problems that are highly constrained: time windows, skills, mandatory visit requirements, multi-day planning, load capacities, zone restrictions, and more.
+JOpt is a Java library for tour optimization under constraints: time windows, skills, mandatory visits, multi-day planning, load capacities and zone restrictions.
 
-Click to watch the introduction:
+The introduction video on YouTube:
 
-<a href="https://www.youtube.com/watch?v=U4mDQGnZGZs" target="_blank"><img src="https://dna-evolutions.com/images/docs/home/jopt_intro_prev.gif" width="600"
+<a href="https://www.youtube.com/watch?v=U4mDQGnZGZs"><img src="https://www.dna-evolutions.com/images/docs/home/jopt_intro_prev.gif" width="600"
 title="Introduction to JOpt" alt="Introduction to JOpt"></a>
 
-> The TourOptimizer REST API uses the same snapshot schema as the Java library. The features that are part of the published API schema can be used from any client: Java, TypeScript, Python, C#, or any language with an OpenAPI code generator. The [interactive API](https://dna-evolutions.com/api/) shows the schema.
+> The TourOptimizer REST API uses the same snapshot schema as the Java library. The features that are part of the published API schema can be used from any client: Java, TypeScript, Python, C#, or any language with an OpenAPI code generator. The [interactive API](https://www.dna-evolutions.com/api/) shows the schema.
 
 ---
 
 ## Example categories
 
-The project is organised into four categories of increasing complexity. Each category has its own README and each example has its own markdown documentation placed alongside the source.
+The examples are grouped by level. Each level has a README, and each example has a .md page beside its source.
 
 | Category | Description | Link |
 |---|---|---|
@@ -65,7 +70,7 @@ If you are new to JOpt, follow this progression through the Base examples first,
 
 ### Basic
 
-1. **Read the core elements tutorial**: [Basic elements](https://www.dna-evolutions.com/docs/getting-started/tutorials/basic-elements)
+1. **Read the Basic elements tutorial**: [Basic elements](https://www.dna-evolutions.com/docs/getting-started/tutorials/basic-elements)
 2. **Run the first optimization**: [`firstoptimization_01/FirstOptimizationExample.java`](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/firstoptimization_01/FirstOptimizationExample.java), [Tutorial](https://www.dna-evolutions.com/docs/getting-started/tutorials/first-optimization)
 3. **Adopt a production execution pattern**: [`recommendedimplementation_02`](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/recommendedimplementation_02) (the recommended run pattern, a synchronous run and the legacy callback methods)
 4. **Persist and resume optimizations**: [`io_03`](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/io_03) (JSON/JSON.BZ2 save, load, checkpoint during run, KML export)
@@ -75,25 +80,23 @@ If you are new to JOpt, follow this progression through the Base examples first,
 8. **Model hard SLA constraints**: [`pillar_07`](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/pillar_07) (Pillar and Captured nodes; nodes flow around pillars by architecture, not by cost)
 9. **Set up licensing**: [`setlicense_08`](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/setlicense_08) (file-based and JSON-based licensing)
 
-> **Good advice:** keep the model small first. Validate feasibility and correctness before increasing problem size. Always subscribe to progress/status/error events during development. It makes debugging easier.
-
 ---
 
 ## Advanced examples
 
-The [Advanced examples](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced) cover the full range of operational features: resource-to-node conditions and skills, pickup and delivery (including fuzzy loads, timed transport, and production planning), node relations (same route, same resource, relative time windows), territory management via ZoneCodes and ZoneCrossing, clustering-based construction for large instances, AutoFilter for infeasible node removal, FlexTime, overnight stay, CO2 emission optimization, and more.
+The [Advanced examples](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced) cover resource-to-node conditions and skills, pickup and delivery (including fuzzy loads, timed transport, and production planning), node relations (same route, same resource, relative time windows), territory management via ZoneCodes and ZoneCrossing, clustering-based construction for large instances, AutoFilter for infeasible node removal, FlexTime, overnight stay and CO2 emission optimization.
 
-Each sub-package contains its own README and companion Markdown documentation placed alongside the example sources. For a full feature overview including decision guidance on when to use each capability, see the [Special features overview](https://dna-evolutions.com/docs/learn-and-explore/special/special_features).
+For a full feature overview including decision guidance on when to use each capability, see the [Special features overview](https://www.dna-evolutions.com/docs/learn-and-explore/special/special_features).
 
 ---
 
 ## Expert examples
 
-The [Expert examples](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert) focus on *how the optimizer behaves* rather than what it models. Topics include: injecting custom business rules via the Open Assessor (route-level and node-level), selecting and configuring the algorithm pipeline explicitly, performance mode for large-scale instances, warm-start from an existing plan, custom convergence criteria, deterministic uncaught exception handling for production deployments, result comparison and plan-delta analysis, and deep progress telemetry.
+The [Expert examples](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert) change how the optimizer works. Topics include: injecting custom business rules via the Open Assessor (route-level and node-level), selecting and configuring the algorithm pipeline explicitly, performance mode for large-scale instances, warm-start from an existing plan, custom convergence criteria, deterministic uncaught exception handling for production deployments, result comparison and plan-delta analysis, and deep progress telemetry.
 
-> Hard constraints must be satisfied by architecture, not by high cost penalties. If a rule must always hold, implement it as a structural feature or Open Assessor hard rule. Reserve penalty weights for preferences within the feasible space.
+> A rule that must always hold belongs in a structural feature or an Open Assessor hard rule. Penalty weights are for preferences inside the feasible space.
 
-Each sub-package has its own README. For additional context see the [Special features overview](https://dna-evolutions.com/docs/learn-and-explore/special/special_features) and the [Optimization properties reference](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties).
+For additional context see the [Special features overview](https://www.dna-evolutions.com/docs/learn-and-explore/special/special_features) and the [Optimization properties reference](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties).
 
 ---
 
@@ -101,21 +104,21 @@ Each sub-package has its own README. For additional context see the [Special fea
 
 The [RESTful examples](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/restful) bridge the Java SDK and the TourOptimizer REST API. They cover both directions of the serialization round-trip: building a problem in Java and serializing it to a REST-compatible JSON payload (with or without a pre-computed solution for warm-start workflows), and loading a REST JSON payload to run it locally with the Java core library without a server. These patterns are useful for debugging, hybrid pre-solver architectures, integration testing, and CI/CD test fixtures.
 
-Each sub-package has its own README with step-by-step guidance. For more context on the REST API itself see the [Docker REST TourOptimizer repository](https://github.com/DNA-Evolutions/Docker-REST-TourOptimizer) and the [interactive API documentation](https://dna-evolutions.com/api/).
+For more context on the REST API itself see the [Docker REST TourOptimizer repository](https://github.com/DNA-Evolutions/Docker-REST-TourOptimizer) and the [interactive API documentation](https://www.dna-evolutions.com/api/).
 
 ---
 
 ## Feature selection guide
 
-Not sure which feature to use? Use these decision rules.
+Decision rules by problem:
 
-**If your main pain is runtime:**
+**If the run takes too long:**
 Start with **AutoFilter** to remove infeasible nodes early and **Performance Mode** for large-scale presets. For very large instances, evaluate **Clustering construction** for a better starting solution.
 
 **If you need strong business rules:**
 Use **Relations** to couple nodes across route, resource, or time. Use **ZoneCodes** for territories (hard or soft) and **ZoneCrossing** to discourage expensive boundary crossings. Use **Pillar/Captured nodes** for contractual SLA hard constraints that must be satisfied by architecture.
 
-**If you model logistics flows, not just routes:**
+**If feasibility depends on the load:**
 Use **Pickup and Delivery (PND)** when feasibility depends on load state: underload, overload, timed transport, or production planning.
 
 **If you need customer-specific business logic:**
@@ -141,13 +144,13 @@ Three ways to start:
 
 ## Browser sandbox (Docker)
 
-The sandbox is a browser-based IDE ([code-server](https://github.com/cdr/code-server) / Visual Studio Code) with Java, Maven, and the latest examples pre-installed. No local Java or IDE setup required.
+The sandbox is a browser-based IDE ([code-server](https://github.com/cdr/code-server) / Visual Studio Code) with Java, Maven and the examples pre-installed. No local Java or IDE setup required.
 
-**Docker Hub:** [`dnaevolutions/jopt_example_server`](https://hub.docker.com/r/dnaevolutions/jopt_example_server)
+**Docker Hub:** [`dnaevolutions/jopt_example_server:latest`](https://hub.docker.com/r/dnaevolutions/jopt_example_server)
 
 Preview (click to enlarge):
 
-<a href="https://dna-evolutions.com/images/docs/home/coderserver.png" target="_blank"><img src="https://www.dna-evolutions.com/images/docs/home/coderserver.png" width="85%"
+<a href="https://www.dna-evolutions.com/images/docs/home/coderserver.png"><img src="https://www.dna-evolutions.com/images/docs/home/coderserver.png" width="85%"
 title="JOpt Example Sandbox" alt="JOpt Example Sandbox"></a>
 
 ### Start the sandbox
@@ -160,31 +163,23 @@ docker run -it -d \
   dnaevolutions/jopt_example_server:latest
 ```
 
-The `-v` flag mounts your current directory into the container so your changes survive restarts. On the first launch the latest examples are cloned automatically. On subsequent launches the existing files are preserved.
+The `-v` flag mounts your current directory into the container so your changes survive restarts. On the first launch the examples are cloned automatically. On subsequent launches the existing files are preserved.
 
 ### Open the sandbox
 
 Navigate to [http://localhost:8042](http://localhost:8042) and log in with:
 
-```
+```text
 jopt
 ```
 
-On the first run, Maven downloads the required dependencies; this takes under one minute, depending on your connection. A [tutorial video](https://www.youtube.com/watch?v=Jk9ONloaNlk) (~3 minutes) walks through the full sandbox workflow.
-
-**System requirements:** at least 2 GB RAM and 2 CPU cores.
+On the first run, Maven downloads the dependencies. A [tutorial video](https://www.youtube.com/watch?v=Jk9ONloaNlk) walks through the sandbox.
 
 For additional sandbox variants (REST client sandbox, Python sandbox, C# sandbox) and a full comparison table, see the [JOpt Sandboxes guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/jopt-sandboxes) and the [sandbox section of the Docker REST TourOptimizer README](https://github.com/DNA-Evolutions/Docker-REST-TourOptimizer#docker-sandboxes-browser-based-evaluation).
 
 ---
 
 ## Clone and run locally
-
-### Prerequisites
-
-- Java 17 or later
-- Maven 3.6 or later
-- Any Java IDE (IntelliJ IDEA, Eclipse, VS Code)
 
 ### Steps
 
@@ -196,7 +191,7 @@ Import the project as a Maven project in your IDE and run the `main` method of a
 
 ### Before you run all examples
 
-- **License:** the examples set the public evaluation license through `ExampleLicenseHelper`. Without a license, JOpt allows up to 10 elements (nodes and resources together), the public evaluation license up to 20, and the extended free license up to 30 nodes and 7 resources; the extended free license is available with a free sign-up (see [Evaluation license](#evaluation-license)). Some examples need more than the public evaluation license: the clustering examples in `advanced/clustering`, `PerformanceModeBigOptiExample` and `CustomRouteLevelOddNumberOfElementsRestrictionExample`. `ExampleLicenseHelper` uses your license file instead when it exists at `src/main/resources/license/YOUR_LICENSE.jli`.
+- **License:** the examples set the public evaluation license through `ExampleLicenseHelper`. Without a license, JOpt allows up to 10 elements (nodes and resources together), the public evaluation license up to 20, and the extended free license up to 30 nodes and 7 resources; the extended free license is available with a free sign-up (see [Extended free license](#extended-free-license)). Some examples need more than the public evaluation license: the clustering examples in `advanced/clustering`, `PerformanceModeBigOptiExample` and `CustomRouteLevelOddNumberOfElementsRestrictionExample`. `ExampleLicenseHelper` uses your license file instead when it exists at `src/main/resources/license/YOUR_LICENSE.jli`.
 - **Order in `basic/io_03`:** the loaders that read `myopti.json.bz2` (`LoadOptimizationFromJsonExample`, `LoadOptimizationToFreshRunExample`, `LoadOptimizationFromJsonAndReassignNodes`, `LoadOptimizationFromJsonAndReassignPillar`) and `CreateCustomSolutionFromJSONExample` need that file in the working directory. Run `SaveOptimizationToJsonExample` first.
 - **Errors on purpose:** some examples throw an exception on purpose to show error handling: `CapacityCheckExample` and the examples in `expert/uncaughtexception`.
 
@@ -290,7 +285,7 @@ The JavaDocs are also available online as a [browsable reference](https://public
 
 ## Non-Maven build tools
 
-JOpt is compatible with Gradle, SBT, IVY, Grape, Leiningen, and other JVM build tools. Browse the [Nexus repository](https://nexus.dna-evolutions.net/#browse/browse:maven-releases), select the desired artifact, and look for the Usage panel to find the snippet for your build tool. You will need to add the DNA Evolutions repository in your build configuration regardless of the tool.
+JOpt is compatible with Gradle, SBT, IVY, Grape, Leiningen, and other JVM build tools. Browse the [Nexus repository](https://nexus.dna-evolutions.net/#browse/browse:maven-releases), select the desired artifact, and look for the Usage panel to find the snippet for your build tool. Add the DNA Evolutions repository to the build configuration of any tool.
 
 ---
 
@@ -298,7 +293,7 @@ JOpt is compatible with Gradle, SBT, IVY, Grape, Leiningen, and other JVM build 
 
 Version **7.5.2** is the last release to include a Java 8 compatible build. From version 7.5.3 onward, Java 17 is required.
 
-Users who need to stay on Java 8 are encouraged to migrate to [JOpt.TourOptimizer](https://github.com/DNA-Evolutions/Docker-REST-TourOptimizer), the containerised REST API, which allows building clients in any language via the OpenAPI spec.
+On Java 8, use the [JOpt.TourOptimizer REST service](https://github.com/DNA-Evolutions/Docker-REST-TourOptimizer) in a container; a client in any language can be generated from its OpenAPI spec.
 
 ```xml
 <!-- Last Java 8 compatible release -->
@@ -330,19 +325,19 @@ A legacy .NET version of JOpt is available via [IKVM.NET](https://en.wikipedia.o
 
 | Version | Download |
 |---|---|
-| 7.5.2 (latest legacy) | [jopt.core-7.5.2-legacy.zip](https://shared.dna-evolutions.com/legacy/net/jopt.core-7.5.2-SNAPSHOT-with-dep-pg-legacy/jopt.core-7.5.2-SNAPSHOT-with-dep-pg-legacy.zip) |
-| 7.5.1 | [jopt.core-7.5.1-legacy.zip](https://shared.dna-evolutions.com/legacy/net/jopt.core-7.5.1-SNAPSHOT-with-dep-pg-legacy/jopt.core-7.5.1-SNAPSHOT-with-dep-pg-legacy.zip) |
-| 7.5.0 | [jopt.core-7.5.0-legacy.zip](https://shared.dna-evolutions.com/legacy/net/jopt.core-7.5.0-SNAPSHOT-with-dep-pg-legacy/jopt.core-7.5.0-SNAPSHOT-with-dep-pg-legacy.zip) |
-| 7.4.9-rc4 | [jopt.core-7.4.9-rc4-legacy.zip](https://shared.dna-evolutions.com/legacy/net/jopt.core-7.4.9-rc4-SNAPSHOT-with-dep-pg-legacy/jopt.core-7.4.9-rc4-SNAPSHOT-with-dep-pg-legacy.zip) |
-| 7.4.9-rc2 | [jopt.core-7.4.9-rc2-legacy.zip](https://shared.dna-evolutions.com/legacy/net/jopt.core-7.4.9-rc2-SNAPSHOT-with-dep-pg-legacy/jopt.core-7.4.9-rc2-SNAPSHOT-with-dep-pg-legacy.zip) |
-| 7.4.8 | [jopt.core-7.4.8-legacy.zip](https://shared.dna-evolutions.com/legacy/net/jopt.core-7.4.8-with-dep-pg-legacy/jopt.core-7.4.8-with-dep-pg-legacy.zip) |
+| 7.5.2 (last legacy build) | [jopt.core-7.5.2-SNAPSHOT-with-dep-pg-legacy.zip](https://shared.dna-evolutions.com/legacy/net/jopt.core-7.5.2-SNAPSHOT-with-dep-pg-legacy/jopt.core-7.5.2-SNAPSHOT-with-dep-pg-legacy.zip) |
+| 7.5.1 | [jopt.core-7.5.1-SNAPSHOT-with-dep-pg-legacy.zip](https://shared.dna-evolutions.com/legacy/net/jopt.core-7.5.1-SNAPSHOT-with-dep-pg-legacy/jopt.core-7.5.1-SNAPSHOT-with-dep-pg-legacy.zip) |
+| 7.5.0 | [jopt.core-7.5.0-SNAPSHOT-with-dep-pg-legacy.zip](https://shared.dna-evolutions.com/legacy/net/jopt.core-7.5.0-SNAPSHOT-with-dep-pg-legacy/jopt.core-7.5.0-SNAPSHOT-with-dep-pg-legacy.zip) |
+| 7.4.9-rc4 | [jopt.core-7.4.9-rc4-SNAPSHOT-with-dep-pg-legacy.zip](https://shared.dna-evolutions.com/legacy/net/jopt.core-7.4.9-rc4-SNAPSHOT-with-dep-pg-legacy/jopt.core-7.4.9-rc4-SNAPSHOT-with-dep-pg-legacy.zip) |
+| 7.4.9-rc2 | [jopt.core-7.4.9-rc2-SNAPSHOT-with-dep-pg-legacy.zip](https://shared.dna-evolutions.com/legacy/net/jopt.core-7.4.9-rc2-SNAPSHOT-with-dep-pg-legacy/jopt.core-7.4.9-rc2-SNAPSHOT-with-dep-pg-legacy.zip) |
+| 7.4.8 | [jopt.core-7.4.8-with-dep-pg-legacy.zip](https://shared.dna-evolutions.com/legacy/net/jopt.core-7.4.8-with-dep-pg-legacy/jopt.core-7.4.8-with-dep-pg-legacy.zip) |
 | 7.4.6 | [jopt.core.pg-7.4.6-shaded.zip](https://shared.dna-evolutions.com/legacy/net/jopt.core.pg-7.4.6-shaded/jopt.core.pg-7.4.6-shaded.zip) |
 
 For new .NET integrations, the recommended path is to use the [JOpt.TourOptimizer REST API](https://github.com/DNA-Evolutions/Docker-REST-TourOptimizer) with a generated C# client from the OpenAPI spec.
 
 ---
 
-## Prerequisites
+## Requirements by scenario
 
 | Scenario | Requirement |
 |---|---|
@@ -364,14 +359,14 @@ For new .NET integrations, the recommended path is to use the [JOpt.TourOptimize
 ### Documentation
 
 - [Getting started](https://www.dna-evolutions.com/docs/getting-started)
-- [Special features overview](https://dna-evolutions.com/docs/learn-and-explore/special/special_features)
+- [Special features overview](https://www.dna-evolutions.com/docs/learn-and-explore/special/special_features)
 - [Optimization properties](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties)
-- [Interactive API testing](https://dna-evolutions.com/api/)
+- [Interactive API testing](https://www.dna-evolutions.com/api/)
 - [JavaDocs (online)](https://public.javadoc.dna-evolutions.com)
 
-### Evaluation license
+### Extended free license
 
-Get an extended free license designed for small businesses and customers evaluating the product. It allows up to 30 nodes and 7 resources (37 elements) and is available only with a free [sign-up](https://www.dna-evolutions.com/sign-up) on the DNA Evolutions website:  
+Get an extended free license for customers evaluating the product. It allows up to 30 nodes and 7 resources (37 elements) and is available only with a free [sign-up](https://www.dna-evolutions.com/sign-up) on the DNA Evolutions website:  
 [DNA Evolutions Portal](https://www.dna-evolutions.com/portal) *(sign-in required)*
 
 ### Code and registry
@@ -390,13 +385,13 @@ Get an extended free license designed for small businesses and customers evaluat
 
 ## Contact
 
-For help or questions reach us at [www.dna-evolutions.com/contact](https://www.dna-evolutions.com/contact) or [info@dna-evolutions.com](mailto:info@dna-evolutions.com).
+For help or questions, use the [contact form](https://www.dna-evolutions.com/contact) or write to [info@dna-evolutions.com](mailto:info@dna-evolutions.com).
 
 ---
 
 ## Agreement
 
-For license terms and plans please visit [www.dna-evolutions.com](https://www.dna-evolutions.com).
+For license terms and plans, visit the [DNA Evolutions website](https://www.dna-evolutions.com).
 
 ---
 

@@ -1,6 +1,6 @@
 # Load a snapshot and add a pillar
 
-This example loads a saved optimization state from `myopti.json.bz2` and adds one **pillar node** (a fixed appointment) to it before the next run. It shows how a planned state can take a new appointment with a strict time window without rebuilding the model: the pillar `Koeln-Pillar` goes into the loaded solution through `addReassignNodes`. The snapshot comes from `SaveOptimizationToJsonExample`, which [LoadAndSaveOptimization.md](LoadAndSaveOptimization.md) describes; run it first.
+This example loads a saved optimization state from `myopti.json.bz2` and adds one **pillar node** (a fixed appointment) to it before the next run. It shows how a planned state can take a new appointment with a strict time window without rebuilding the model: the pillar `Koeln-Pillar` goes into the loaded solution through `addReassignNodes`. The page is for developers who add fixed appointments to a plan that is already optimized. The snapshot comes from `SaveOptimizationToJsonExample`, which [Load and save optimization snapshots](LoadAndSaveOptimization.md) describes; run it first.
 
 ## What the example shows
 
@@ -43,7 +43,7 @@ startAndPresentResult(this);
 1. Sets the license: your license file if you put one where `ExampleLicenseHelper` looks for it, the public evaluation license otherwise.
 2. Loads the snapshot. If that fails, `example()` returns without a run.
 3. Adds the pillar through reassignment.
-4. Sets the properties for the next run. They come after the load, because the load brings the properties of the snapshot and `addElement(Properties)` replaces the stored properties.
+4. Sets the properties of the next run, after the load (see the comment in the code).
 5. Subscribes to the progress, warning, status and error events with the recommended event API, before the run starts.
 6. Starts the run, waits up to 5 minutes for the result and prints it.
 
@@ -85,7 +85,7 @@ opti.addReassignNodes(List.of(koelnPillar));
 
 ## Output and what to look for
 
-The status lines show that the run starts from the loaded solution and reassigns the pillar. These two lines appear in both runs:
+The status lines show that the run starts from the loaded solution and reassigns the pillar. These two lines appear in two test runs:
 
 ```text
 StatusEvent(OPTIMIZATION_USING_PROVIDED_SOLUTION, Using a provided solution as starting point for the optimization.)
@@ -96,11 +96,7 @@ The run starts with the simulated annealing step; no construction algorithm star
 
 In the result, the line of `Koeln-Pillar` is marked `Pillar`. It lies on a route of March 7, inside its time window, directly after the nodes Koeln and Koeln1, which have the same coordinates (`Driving: 0.0 [min], 0.0 [km]`). Which resource takes the pillar and the cost of the result can change between runs.
 
-If `myopti.json.bz2` is missing, the example does not start a run. The `catch` block of `loadFromJson` prints a message instead, with this line:
-
-```java
-System.out.println(JSON_FILE + " not found. Run SaveOptimizationToJsonExample first.");
-```
+If `myopti.json.bz2` is missing, `loadFromJson` prints `myopti.json.bz2 not found. Run SaveOptimizationToJsonExample first.` and the example starts no run.
 
 ## Run it
 
@@ -114,10 +110,10 @@ You need a JDK in the version that the examples pom sets. You need no license fi
 ## Related
 
 - [LoadOptimizationFromJsonAndReassignPillar.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/io_03/LoadOptimizationFromJsonAndReassignPillar.java): the source of this example.
-- [LoadAndSaveOptimization.md](LoadAndSaveOptimization.md): overview of all load and save examples in this package, including `SaveOptimizationToJsonExample`, which writes the snapshot.
+- [Load and save optimization snapshots](LoadAndSaveOptimization.md): overview of all load and save examples in this package, including `SaveOptimizationToJsonExample`, which writes the snapshot.
 - [LoadOptimizationFromJsonAndReassignNodes.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/io_03/LoadOptimizationFromJsonAndReassignNodes.java): the same pattern with three ordinary time-window nodes instead of a pillar.
 - [LoadOptimizationToFreshRunExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/io_03/LoadOptimizationToFreshRunExample.java): loads the snapshot but ignores its solution.
-- [Pillar.md](../pillar_07/Pillar.md): pillar nodes in general; `PillarExample` builds pillars attached to resources, from scratch.
+- [Pillar nodes with hard time windows](../pillar_07/Pillar.md): pillar nodes in general; `PillarExample` builds pillars attached to resources, from scratch.
 - [Recommended ways to run an optimization](../recommendedimplementation_02/RecommendedImplementation.md): the recommended run pattern, a synchronous run and the legacy callback methods.
 - [Base examples](../README.md): the overview of all Base examples.
 

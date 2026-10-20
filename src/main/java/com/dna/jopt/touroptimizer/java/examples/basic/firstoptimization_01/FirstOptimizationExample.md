@@ -1,6 +1,6 @@
 # First optimization example
 
-`FirstOptimizationExample` plans two working days of one resource, Jack from Aachen, who visits seven cities in Germany: the class sets the license and the properties, adds the nodes and the resource, prints the events of the run and then the result. It is for Java developers who start with JOpt. The [First optimization tutorial](https://www.dna-evolutions.com/docs/getting-started/tutorials/first-optimization) covers the same code step by step.
+`FirstOptimizationExample` plans two working days of one resource, Jack from Aachen, who visits seven cities in Germany. The class sets the license and the properties, adds the nodes and the resource, prints the events of the run and then the result. It is for Java developers who start with JOpt. The [First optimization tutorial](https://www.dna-evolutions.com/docs/getting-started/tutorials/first-optimization) covers the same code step by step.
 
 ## What the example shows
 
@@ -12,7 +12,7 @@ The run starts asynchronously, and the example waits for the result with a timeo
 
 Jack from Aachen visits seven nodes. The Aachen node lies at Jack's start position. The nodes are open and Jack works from 08:00 to 17:00 on May 6 and May 7, 2020 (Europe/Berlin); the dates are sample values. Each visit takes 20 minutes.
 
-Then seven nodes are created as `TimeWindowGeoNode` objects and added:
+The seven nodes are `TimeWindowGeoNode` objects:
 
 - Koeln (50.9333, 6.95)
 - Essen (51.45, 7.01667)
@@ -24,7 +24,7 @@ Then seven nodes are created as `TimeWindowGeoNode` objects and added:
 
 Jack may work 9 hours and drive 1200 km per working day. The day with Nuernberg takes longer than 9 hours, so the result reports overtime. No day of this plan needs 1200 km.
 
-Interpretation: this is a geographically distributed node set that is small, but it already shows a trade-off: the second day runs into overtime. It stays small enough to remain readable.
+This geographically distributed node set is small, but it already shows a trade-off: the second day runs into overtime.
 
 ## How the code works
 
@@ -55,7 +55,7 @@ public void example()
 
 `addProperties` sets two properties:
 
-- `JOptExitCondition.JOptGenerationCount`: controls how many generations the evolutionary phase is allowed to run.
+- `JOptExitCondition.JOptGenerationCount`: controls the number of generations of the genetic evolution.
 - `JOpt.Algorithm.PreOptimization.SA.NumIterations`: controls the number of iterations for the simulated annealing pre-optimization.
 
 Both values are lower than the core defaults, which keeps the run short. The [property reference](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties) lists the defaults.
@@ -66,7 +66,7 @@ props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
 props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
 ```
 
-Practical reading: our runs gave the same result each time; JOpt has no seed setting, so this is not guaranteed. These values keep the example "busy enough" to show progress updates, but not so heavy that it becomes inconvenient during development.
+Our runs gave the same result each time; JOpt has no seed setting, so this is not guaranteed.
 
 ### Nodes and the resource
 
@@ -112,10 +112,7 @@ opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s
 opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
 ```
 
-This is helpful when you are learning:
-- you can see whether the solver is still active,
-- what the solver is trying to improve,
-- and whether there are modeling or feasibility issues.
+The printed events show whether the run is still going and whether it reports warnings or errors.
 
 `startAndPresentResult` starts the run with `startRunAsync()` and waits up to 5 minutes for the result.
 
@@ -126,9 +123,7 @@ IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
 System.out.println(result);
 ```
 
-Why the blocking wait matters:
-- if your process exits early, the asynchronous optimization run is terminated with it.
-- without a timeout, the call can wait indefinitely if something is misconfigured.
+Without a timeout, the call can wait indefinitely if something is misconfigured.
 
 ## Output and what to look for
 
@@ -183,16 +178,6 @@ Change observability:
 - **Timeout**: increase the 5-minute wait (or reduce generations / SA iterations).
 - **No meaningful result**: verify time windows overlap (resource working hours vs node opening hours).
 - **Unexpected infeasibility**: check max working time and max distance relative to geography and visit durations.
-
-### Next steps
-
-Once you understand this example, the next progression is:
-- multiple resources,
-- different node types or constraints,
-- capacity/skills/compatibility constraints,
-- alternative objective weighting and more advanced properties.
-
-The tutorial linked above explains the main modeling concepts in depth.
 
 ## Related
 

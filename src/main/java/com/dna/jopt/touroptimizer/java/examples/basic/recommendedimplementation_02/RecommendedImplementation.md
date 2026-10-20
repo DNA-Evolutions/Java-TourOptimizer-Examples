@@ -1,6 +1,6 @@
 # Recommended ways to run an optimization
 
-JOpt delivers the events and the result of a run in three ways: through the event API with an asynchronous run, which we recommend, through the event API with a synchronous run, or through the legacy callback methods. The intent is to help you choose the *right* integration style for your runtime (CLI tools, batch jobs, services, UI apps) and avoid common pitfalls such as premature JVM termination, missing events, or "silent" failures. Run the [First optimization example](../firstoptimization_01/FirstOptimizationExample.md) first: the three classes here use its steps.
+JOpt delivers the events and the result of a run in three ways: through the event API with an asynchronous run, which we recommend, through the event API with a synchronous run, or through the legacy callback methods. The page is for Java developers who choose how their application starts a run and receives its events and result. Run the [First optimization example](../firstoptimization_01/FirstOptimizationExample.md) first: the three classes here use its steps.
 
 ## What the example shows
 
@@ -33,8 +33,6 @@ Use *Reactive events* (both event API classes) when...
 - you prefer "subscribe and react" over overriding callback hooks,
 - you want a single place to wire all observability (progress + status + errors).
 
-`RecommendedAsynchImplementationExample` shows the override style: the legacy callback methods (`onProgress`, `onAsynchronousOptimizationResult` and the others) subscribe to the same events internally and stay supported, and the event API is recommended.
-
 ### A recommended default integration blueprint
 
 For most applications that need both **results** and **runtime insight**, the recommended approach is:
@@ -48,7 +46,7 @@ For most applications that need both **results** and **runtime insight**, the re
 
 ## Scenario
 
-The three classes plan the same scenario. Jack from Aachen visits nine nodes: Koeln, Oberhausen, Essen, Dueren, Nuernberg, Heilbronn, Stuttgart, Wuppertal and Aachen. The nodes are open and Jack works from 08:00 to 17:00 on May 6 and May 7, 2020 (Europe/Berlin); the dates are sample values. Each visit takes 20 minutes.
+The three classes plan the same scenario. Jack, who starts in Aachen, visits nine nodes: Koeln, Oberhausen, Essen, Dueren, Nuernberg, Heilbronn, Stuttgart, Wuppertal and Aachen. The nodes are open and Jack works from 08:00 to 17:00 on May 6 and May 7, 2020 (Europe/Berlin); the dates are sample values. Each visit takes 20 minutes.
 
 Jack may work 13 hours and drive 1200 km per day, so the day with Nuernberg, about 12 hours long, needs no overtime. The classes set two properties, `JOptExitCondition.JOptGenerationCount` and `JOpt.Algorithm.PreOptimization.SA.NumIterations`, to values lower than the core defaults, which keeps the run short; the [property reference](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties) describes them.
 
@@ -89,8 +87,6 @@ Practical guidance:
 
 - In server environments, avoid calling `get()` on request threads. Prefer chaining (`thenAccept`, `handle`, `whenComplete`) and propagating completion.
 - Always ensure errors are surfaced (either via `exceptionally(...)` on the future, or via your chosen error observable/callback).
-- Consider centralizing event subscriptions into a small "wiring" method so that:
-  - your logging/telemetry strategy remains consistent across examples.
 
 ### RecommendedSynchImplementationExample
 
@@ -103,16 +99,10 @@ IOptimizationResult result = opti.startRunSync(5, TimeUnit.MINUTES);
 System.out.println(result);
 ```
 
-This pattern is designed for execution contexts where blocking is acceptable and often desirable:
-- predictable application lifecycle,
-- straightforward error handling (exceptions bubble up),
-- no risk of "forgetting" to wait on the result.
-
 Practical guidance:
 
 - Prefer a **real timeout** in production so you can fail fast and recover gracefully.
-- If you also want progress/status output, ensure your chosen event/callback approach is wired *before* calling `startRunSync(...)`.
-- If you run synchronously (`startRunSync(...)`) but still want event output, subscribe **before** starting the run (the example explicitly warns about this).
+- Subscribe before you call `startRunSync(...)`: the subjects replay only a few past events.
 
 ### RecommendedAsynchImplementationExample
 
@@ -154,19 +144,9 @@ public void onAsynchronousOptimizationResult(IOptimizationResult result) {
 }
 ```
 
-### Two ways to consume the result
+### How each class receives the result
 
-These examples demonstrate that you can handle results in two complementary ways.
-
-**A) "Future-driven" result consumption** (`RecommendedImplementationReactiveJavaExample`):
-- You get the returned `CompletableFuture<IOptimizationResult>`.
-- You either block (CLI/batch) or chain continuations (services).
-
-Typical service-style usage (non-blocking) chains `thenAccept` and `exceptionally` on the future that `startRunAsync()` returns, instead of the blocking `get`. `RecommendedSynchImplementationExample` gets the returned `IOptimizationResult` directly from `startRunSync`.
-
-**B) "Callback-driven" result consumption** (`RecommendedAsynchImplementationExample`): the class overrides `onAsynchronousOptimizationResult(IOptimizationResult result)` and prints the result from inside this hook, once. It does not override `requestedAsynchronousOptimizationResult`: that method receives only results that are requested during the run with `requestResult()`.
-
-**Recommendation:** pick *one* primary result-consumption mechanism per integration to avoid duplicate handling.
+`RecommendedImplementationReactiveJavaExample` waits on the future that `startRunAsync()` returns; a service chains `thenAccept` and `exceptionally` on it instead. `RecommendedSynchImplementationExample` takes the result that `startRunSync` returns. `RecommendedAsynchImplementationExample` prints it once in `onAsynchronousOptimizationResult`; it does not override `requestedAsynchronousOptimizationResult`, which receives only results requested during the run with `requestResult()`.
 
 ## Output and what to look for
 
@@ -187,7 +167,7 @@ StatusEvent(OPTIMIZATION_ALGO_REPDONE, GeneticEvolution)
 StatusEvent(OPTIMIZATION_DONE, Optimization done)
 ```
 
-The legacy class prints the result in `onAsynchronousOptimizationResult`, and `StatusEvent(OPTIMIZATION_DONE, Optimization done)` follows as the last line of the output in both runs.
+The legacy class prints the result in `onAsynchronousOptimizationResult`, and `StatusEvent(OPTIMIZATION_DONE, Optimization done)` follows as the last line of the output in two test runs.
 
 ## Run it
 
@@ -195,26 +175,10 @@ Run the `main` method of each class from your IDE, with the repository imported 
 
 ### Common pitfalls
 
-Pitfall: JVM exits before optimization finishes
-- Fix: block or await completion somewhere (the examples use a timed `get(...)` or `startRunSync(...)` with a timeout).
-
-Pitfall: no progress/status output (events "missed")
-- Fix: subscribe before running (especially relevant for synchronous start).
-
-Pitfall: result handled twice
-- Fix: choose either "future-driven" *or* "callback-driven" result handling.
-
-Pitfall: swallowed exceptions
-- Fix: connect error handling explicitly (reactive error stream and/or future exception handlers).
-
-### Next steps
-
-Once these patterns are clear, the next enhancements tend to be:
-
-- structured logging of events (JSON logs, correlation IDs),
-- timeout/retry policies around long-running optimization runs,
-- persisting intermediate checkpoints or partial results (if applicable in your architecture),
-- multi-resource scenarios (to validate scaling behavior and dispatch policies).
+- **The JVM ends before the run.** Wait for the result, as the classes do with a timed `get(...)` or `startRunSync(...)`.
+- **No progress or status output.** Subscribe before the run starts, especially before a synchronous start.
+- **The result is handled twice.** Handle it in one place: on the returned future or result, or in `onAsynchronousOptimizationResult`.
+- **Exceptions are swallowed.** Connect the error handling explicitly: the error events, and the exception handlers of the future.
 
 ## Related
 

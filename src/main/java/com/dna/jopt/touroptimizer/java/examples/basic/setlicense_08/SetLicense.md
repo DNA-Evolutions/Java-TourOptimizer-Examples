@@ -11,21 +11,15 @@ A JOpt license is provided as a **JSON definition**. You can set it either:
 
 `SetLicenseExample` looks for the file `src/main/resources/license/YOUR_LICENSE.jli`, the same path that `ExampleLicenseHelper` uses. If the file exists, the example sets the license from it with `setLicenseJSON(File)`. Otherwise it calls `ExampleLicenseHelper.setLicense`, which sets the public evaluation license as a string. Either way, the example prints which license it set.
 
-Without a license, JOpt runs in free mode, with fewer elements than the public evaluation license allows (nodes and resources are counted as elements). The other Base examples set the license through `ExampleLicenseHelper`: the public evaluation license, or your license file when it exists. The extended free license is available only with a free [sign-up](https://www.dna-evolutions.com/sign-up) on the DNA Evolutions website. Larger problems need a full license. The [license guide: element limits](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license#free-license) lists the limits.
+Without a license, JOpt allows fewer elements than with the public evaluation license; nodes and resources count as elements. The extended free license is available only with a free [sign-up](https://www.dna-evolutions.com/sign-up) on the DNA Evolutions website. Larger problems need a full license. The [license guide: element limits](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license#free-license) lists the limits.
 
 If you need more elements during your evaluation phase, [contact us](https://www.dna-evolutions.com/contact).
 
-Implication:
-- Small "hello world" scenarios may run without an explicit license (depending on element count).
-
-The documentation also warns:
-
-- Changing any JSON key (deleting/modifying/adding) deactivates the license.
-- The only allowed modification is formatting (e.g., prettifying).
+The [license guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license) warns: changing any key of the license JSON (deleting, modifying or adding one) deactivates the license; only formatting, such as prettifying, is allowed.
 
 ## Scenario
 
-Jack from Aachen visits five nodes: Koeln, Oberhausen, Essen, Dueren and Nuernberg. The nodes are open and Jack works from 08:00 to 17:00 on May 6 and May 7, 2020 (Europe/Berlin); the dates are sample values. Each visit takes 20 minutes, and Jack may work 13 hours and drive 1200 km per day. The example also writes the result to `SetLicenseExample.kml`.
+Jack, who starts in Aachen, visits five nodes: Koeln, Oberhausen, Essen, Dueren and Nuernberg. The nodes are open and Jack works from 08:00 to 17:00 on May 6 and May 7, 2020 (Europe/Berlin); the dates are sample values. Each visit takes 20 minutes, and Jack may work 13 hours and drive 1200 km per day. The example also writes the result to `SetLicenseExample.kml`.
 
 ## How the code works
 
@@ -56,7 +50,7 @@ if (licenseFile.exists()) {
 }
 ```
 
-In the example repository, the JSON string variant is demonstrated by a helper method that sets `setLicenseJSON(String)`: `ExampleLicenseHelper.setLicense`, which this example calls when the file is missing.
+`ExampleLicenseHelper.setLicense` shows the string variant: it sets the public evaluation license with `setLicenseJSON(String)`.
 
 ### The run
 
@@ -84,7 +78,7 @@ The first line of the output names the license that the example set. Without a l
 License: the public evaluation license, no file src/main/resources/license/YOUR_LICENSE.jli
 ```
 
-With a license file at that path, the code prints `License: the license file` followed by the path instead (line 131 of `SetLicenseExample.java`).
+With a license file at that path, the code prints `License: the license file` followed by the path instead.
 
 At the start of the run, a status event `STATUS_INFO` shows the contact, the description and the version of the license that is set. In the result, all five nodes are on May 6, and the route of May 7 is not scheduled (trimmed to these lines of the result header):
 
@@ -143,19 +137,7 @@ Formatting-only changes are acceptable; semantic changes are not.
 
 ### Notes for the Docker and REST variant
 
-The license documentation states that when using the **Docker** version of JOpt.TourOptimizer, you must send the JSON license definition along with your request.
-
-If you use the REST service:
-- keep the license in your request-building pipeline,
-- and handle errors centrally so a missing/invalid license is diagnosed immediately.
-
-### Quick checklist
-
-- [ ] If you use more elements than your license allows, provide a license with a higher limit.
-- [ ] Decide: string-based or file-based injection.
-- [ ] Store license securely (never in git).
-- [ ] Do not modify JSON keys.
-- [ ] Set license before starting the optimization run.
+With JOpt.TourOptimizer in a container, the license JSON goes with each request; the [license guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license) names the field and links the REST server page.
 
 ## Related
 

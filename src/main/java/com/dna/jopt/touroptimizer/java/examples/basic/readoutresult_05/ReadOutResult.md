@@ -1,45 +1,17 @@
 # Reading values from an optimization result
 
-An `IOptimizationResult` gives access to the job values, the routes, the route items and the violations of a run, and these examples read them out and print them as a report with headers. In the scenario, a maximal working time of 4 hours and opening hours that end at 12:00 produce overtime and late arrivals, so the violation part of the result has content to read. The page is for developers who process the result in their own code. If you have not run an example yet, start with the [First optimization example](../firstoptimization_01/FirstOptimizationExample.md); the [first-optimization tutorial](https://www.dna-evolutions.com/docs/getting-started/tutorials/first-optimization#analyzing-the-result) explains the printed result.
+An `IOptimizationResult` gives access to the job values, the routes, the route items and the violations of a run, and these examples read them out and print them as a report with headers. In the scenario, a maximal working time of 4 hours and opening hours that end at 12:00 produce overtime and late arrivals, so the violation part of the result has content to read. The page is for developers who process the result in code: for a console report, for automated checks or for your own export. If you have not run an example yet, start with the [First optimization example](../firstoptimization_01/FirstOptimizationExample.md); the [First optimization tutorial](https://www.dna-evolutions.com/docs/getting-started/tutorials/first-optimization#analyzing-the-result) explains the printed result.
 
 ## What the example shows
-
-This document explains how to **extract structured information** from a JOpt.TourOptimizer run result (`IOptimizationResult`) and turn it into something useful for:
-
-- console diagnostics,
-- human-readable reports (route headers, per-stop tables),
-- automated checks (violations / feasibility),
-- your own export.
 
 Two classes show the techniques:
 
 - [ReadOutResultExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/readoutresult_05/ReadOutResultExample.java) reads job values from the result, and costs and violations from the cost and violation controller of each route.
 - [ReadOutResultWithHeadersExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/readoutresult_05/ReadOutResultWithHeadersExample.java) prints a report: a header with the job totals, a header for each route, the route items and the violations.
 
-### Two complementary ways to read a result
+`System.out.println(result)` prints the whole result as text, as in the [First optimization example](../firstoptimization_01/FirstOptimizationExample.md). These two examples read the values through the API instead.
 
-#### Use result.toString() for debugging and reproducibility
-
-Use this when:
-
-- you want a quick sanity check,
-- you store logs for support/replay,
-- you need a compact output without writing your own report logic.
-
-#### Use the API for structured, machine-readable extraction
-
-When you need more than a diagnostic dump, e.g., a table of planned arrivals, or a UI timeline, you should read the result object directly.
-
-This document focuses on the structured approach, while still encouraging you to also store the `toString()` output in logs. The two examples use the API; they do not print the `toString()` of the result.
-
-### Mental model: result, routes, route items, violations
-
-The tutorial describes the result as:
-
-- a **header** (job-level summary across all routes),
-- multiple **route headers** (per-resource/per-working-hours summaries),
-- an ordered list of **route elements** (the actual visit sequence with timestamps),
-- optional **violations** (route-level and node-level).
+The printed result has a job header, a header per route, the route items in the order of the visits and the violations; the [First optimization tutorial](https://www.dna-evolutions.com/docs/getting-started/tutorials/first-optimization#analyzing-the-result) explains each part.
 
 `ReadOutResultExample` prints the job values and the items of each route; `ReadOutResultWithHeadersExample` prints the job header and a header per route.
 
@@ -76,11 +48,9 @@ public void example()
 }
 ```
 
-`attachToObservables` subscribes to the progress, warning, status and error events before the run starts, because the subjects replay only a few past events. `startAndPresentResult` starts the run with `startRunAsync()`, waits for the result for up to 5 minutes and reads the values from it. The event API is recommended. The legacy callback methods (`onProgress`, `onAsynchronousOptimizationResult` and the others) subscribe to the same events internally and stay supported.
+`attachToObservables` subscribes to the progress, warning, status and error events before the run starts, because the subjects replay only a few past events. `startAndPresentResult` starts the run with `startRunAsync()`, waits for the result for up to 5 minutes and reads the values from it. `attachToObservables` uses the event API; [Recommended ways to run an optimization](../recommendedimplementation_02/RecommendedImplementation.md) compares it with the legacy callback methods.
 
 ### Job values and routes in ReadOutResultExample
-
-`ReadOutResultExample` shows the core technique without "pretty headers".
 
 Before looking at single routes, the example reads two job-level values from the result: the unassigned nodes (`result.getUnassignedNodes()`, of which it prints the number) and the relationship cost (`result.getJobRelationshipCost()`):
 
@@ -119,21 +89,7 @@ for (ILogicEntityRoute route : result.getRoutes()) {
 }
 ```
 
-The route's visit sequence comes from `result.getOrderedRouteItems(route)`, in the order of arrival. This returns a list of `ILogicRouteElementDetailItem`. You can treat each item as "the next stop" in the route plan.
-
-Typical data contained in those items (conceptually aligned with the tutorial's per-node analysis):
-
-- element id,
-- arrival/departure timestamps,
-- visit duration,
-- travel time / travel distance from the previous element.
-
-(Exact getters depend on the type of the detail item; the example prints each item directly.)
-
-The example demonstrates two layers of violations:
-
-- **Route-level:** `controller.getRouteViolations()`
-- **Node-level (per element id):** `controller.getNodeViolations(detail.getElement().getId())`
+The route's visit sequence comes from `result.getOrderedRouteItems(route)`, in the order of arrival. This returns a list of `ILogicRouteElementDetailItem`. Each item is one stop. The example prints the items as they are; the output below shows their fields: the element id, arrival, departure, visit duration, and the driving time and distance from the previous element.
 
 ### The report of ReadOutResultWithHeadersExample
 
@@ -210,74 +166,7 @@ The route header holds:
 
 Times print as whole minutes, distances as kilometers.
 
-Conceptually, this corresponds to what the tutorial calls:
-
-- transit time,
-- productive time,
-- idle time,
-- route distance,
-- termination time/distance.
-
 After the route header, the example prints the route cost (`result.getRouteCost(route)`), the ordered route items (`result.getOrderedRouteItems(route)`), the route violations (`result.getRouteViolations(route)`) and the node violations (`route.getRouteCostAndViolationController().getNodeViolations(...)`).
-
-### How to build your own result reader (recommended blueprint)
-
-#### Step 1: always persist toString() for debugging
-
-Even if you parse the result structurally, keep a copy of the textual dump:
-
-- it accelerates incident triage,
-- it helps with comparing runs.
-
-#### Step 2: extract a job summary object
-
-Populate a DTO with:
-
-- total routes,
-- scheduled routes (if you use that concept),
-- total time/distance,
-- cost figure-of-merit,
-- termination totals.
-
-This is the data your UI/dashboard typically wants "up top".
-
-#### Step 3: extract per-route summaries
-
-For each route:
-
-- resource id,
-- working-hours index (if applicable in your scenario),
-- route start/stop (effective),
-- transit/productive/idle time,
-- distance,
-- termination metrics.
-
-#### Step 4: extract per-stop details
-
-From `getOrderedRouteItems(r)` build per-stop rows:
-
-- element id,
-- visiting index,
-- arrival/departure,
-- service duration,
-- travel time/distance from previous element.
-
-This is the data you want for:
-
-- customer notifications,
-- driver instructions,
-- Gantt/timeline renderings.
-
-#### Step 5: extract violations and classify them
-
-- route-level violations: "this route violates constraints overall"
-- node-level violations: "this stop violates constraints specifically"
-
-Then decide how to present them:
-
-- as hard errors,
-- as warnings,
-- or as "exceptions requiring review".
 
 ### Common pitfalls
 
@@ -289,7 +178,7 @@ Then decide how to present them:
 
 ### Output of ReadOutResultExample
 
-After the event lines, the example prints these lines, the same in both runs:
+After the event lines, the example prints these lines, the same in two test runs:
 
 ```text
 Number Unassigned Nodes: 0
@@ -325,7 +214,7 @@ Look for:
 
 ### Output of ReadOutResultWithHeadersExample
 
-The report, trimmed to the job header and the header of the first route, is the same in both runs:
+The report, trimmed to the job header and the header of the first route, is the same in two test runs:
 
 ```text
 -------------------------------- --------------------------
@@ -361,41 +250,19 @@ Termi. distance  [km]  : 98.957
 
 Look for the hours with two decimals. They agree with the route headers: the transit times of the two routes, 172 and 661 minutes, add up to about 13.9 hours (the route headers cut the minutes to whole numbers). After each route header, the report prints the same route cost, route items and violations as `ReadOutResultExample`.
 
-### Practical checks you can implement
-
-1. **Late arrival audit**  
-   Print any node violations, but group them by route and sort by severity.
-
-2. **Idle-time hotspots**  
-   Identify routes/stops with high idle time (often caused by tight time windows).
-
-3. **Distance vs. productive ratio**  
-   Compare transit time vs productive time per route; this reveals unbalanced planning.
-
-4. **Termination cost control**  
-   Watch termination distance/time; it's an indicator that the last stop is far from the home base.
-
 ### Beyond console output
 
-If you want to go beyond console output:
-
-- Export the per-stop table to CSV (for analysts).
-- Serialize a compact "route plan JSON" for APIs/clients.
-- Export to KML (see the KML example) for map visualization.
-- Build a UI timeline using arrival/departure timestamps.
+To go further, write the per-stop rows to CSV, or the result to KML as in [Export a result to a KML file](../io_03/Export2KMLExample.md).
 
 ## Run it
 
-- Open the project in your IDE and run the `main` method of `ReadOutResultExample` or `ReadOutResultWithHeadersExample`.
-- You need a JDK in the version that the examples pom sets.
-- You need no license: without a license file, the examples use the public evaluation license. The [license guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license) explains the license and its element limits.
-- No other example needs to run first, and the examples write no files.
+Run the `main` method of `ReadOutResultExample` or `ReadOutResultWithHeadersExample` from your IDE. You need a JDK in the version that the examples pom sets. You need no license file: without one, the examples use the public evaluation license (see the [license guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license)). No other example needs to run first, and the examples write no files.
 
 ## Related
 
-- [First-optimization tutorial, analyzing the result](https://www.dna-evolutions.com/docs/getting-started/tutorials/first-optimization#analyzing-the-result): the printed result of a run, with its header and its routes.
+- [First optimization tutorial, analyzing the result](https://www.dna-evolutions.com/docs/getting-started/tutorials/first-optimization#analyzing-the-result): the printed result of a run, with its header and its routes.
 - [Property reference](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties): the property keys of the examples and their defaults.
-- [Export2KMLExample](../io_03/Export2KMLExample.md): the KML example, which writes a result to a KML file for a map.
+- [Export a result to a KML file](../io_03/Export2KMLExample.md): the KML example, which writes a result to a KML file for a map.
 - [Recommended ways to run an optimization](../recommendedimplementation_02/RecommendedImplementation.md): the recommended run pattern, a synchronous run and the legacy callback methods.
 - [Reactive events and streams](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/reactive_events): the event API that `attachToObservables` uses.
 - [Base examples](../README.md): the overview of all Base examples.

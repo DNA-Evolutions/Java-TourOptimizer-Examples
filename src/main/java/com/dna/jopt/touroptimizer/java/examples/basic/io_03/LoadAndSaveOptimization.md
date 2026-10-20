@@ -1,16 +1,16 @@
 # Load and save optimization snapshots
 
-The io_03 examples on this page save a JOpt optimization as a snapshot, for example `myopti.json.bz2`, and load it again from a file or from a string; one of them saves a checkpoint while the genetic evolution runs. The page is for Java developers who want to continue, repeat or extend a run without building the model in code again. Start with the [First optimization example](../firstoptimization_01/FirstOptimizationExample.md), whose step methods these examples follow.
+The `io_03` examples on this page save a JOpt optimization as a snapshot, for example `myopti.json.bz2`, and load it again from a file or from a string; one of them saves a checkpoint while the genetic evolution runs. The page is for Java developers who want to continue, repeat or extend a run without building the model in code again. Start with the [First optimization example](../firstoptimization_01/FirstOptimizationExample.md), whose step methods these examples follow.
 
 ## What the example shows
 
-A snapshot is the state of an optimization as JSON, in a file `*.json.bz2`. This is JSON content stored in a **BZip2-compressed stream**, so the file is compressed. The file that `SaveOptimizationToJsonExample` writes holds the nodes, the resources, their connections, the properties and the solution of the run. A loader reads such a file into its own optimization. It can continue from the saved solution, start without it, or add nodes to it.
+A snapshot is the state of an optimization as JSON, in a file `*.json.bz2`: the file is compressed with BZip2. The file that `SaveOptimizationToJsonExample` writes holds the nodes, the resources, their connections, the properties and the solution of the run. A loader reads such a file into its own optimization. It can continue from the saved solution, start without it, or add nodes to it.
 
 - `SaveOptimizationToJsonExample` saves the optimization after the run to `myopti.json.bz2`.
-- `SaveOptimizationDuringRunToJsonExample` saves it during the run, when the genetic evolution reaches 80 percent, to `myoptiSavedDuringRun.json.bz2`.
+- `SaveOptimizationDuringRunToJsonExample` saves it during the run with `requestExportState`, when the genetic evolution reaches 80 percent, to `myoptiSavedDuringRun.json.bz2`.
 - `SaveOptimizationToJsonStringExample` prints the optimization as JSON after the run. The printed JSON holds no solution, so it is not a snapshot.
 - `LoadOptimizationFromJsonExample` loads `myopti.json.bz2` and continues from its solution.
-- `LoadOptimizationToFreshRunExample` loads `myopti.json.bz2` but ignores the saved solution, so the run builds its own.
+- `LoadOptimizationToFreshRunExample` loads `myopti.json.bz2` but ignores the saved solution (`ignoreLoadedSolution = true`), so the run builds its own.
 - `LoadOptimizationFromJsonAndReassignNodes` loads `myopti.json.bz2` and adds three nodes to its solution with `addReassignNodes`.
 - `LoadOptimizationFromJsonString` loads a snapshot from a JSON string. It reads the string from the class path resource `json/LoadOptimizationFromJsonString.json`.
 
@@ -35,14 +35,6 @@ Two important implications:
 
 The "fresh run" loading pattern (see below) exists because there are cases where you want the **model** but not the **previous solution**.
 
-### Quick decision guide
-
-- To save at the end of a run, use **SaveOptimizationToJsonExample** (end-of-run export).
-- For checkpoints in long runs, use **SaveOptimizationDuringRunToJsonExample** (`requestExportState` + done acknowledgement).
-- To reuse the model but not the solution, use **LoadOptimizationToFreshRunExample** (`ignoreLoadedSolution = true`).
-- To add new tasks into an existing plan, use **LoadOptimizationFromJsonAndReassignNodes** (`addReassignNodes(...)`).
-- To add a fixed appointment (pillar) into an existing plan, use **LoadOptimizationFromJsonAndReassignPillar** (`addReassignNodes(...)` with a `PillarTimeWindowGeoNode`).
-
 ## Scenario
 
 `SaveOptimizationToJsonExample` and `SaveOptimizationDuringRunToJsonExample` build the same scenario. Eight nodes in western and southern Germany (Koeln and Koeln1 at the same place, Oberhausen, Essen, Wuppertal, Aachen, Heilbronn, Stuttgart) are open on March 6 and 7, 2020, from 08:00 to 17:00, with a visit of 20 minutes each. Two resources, Jack and John, start in Aachen. They work on March 6 from 08:00 to 17:00 and on March 7 from 08:00 to 20:00. Jack may work 8 hours, less than either shift, and John 14 hours, more than either shift. The time zone is Europe/Berlin; the dates are sample values.
@@ -64,9 +56,9 @@ The source files on GitHub:
 - [LoadOptimizationToFreshRunExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/io_03/LoadOptimizationToFreshRunExample.java)
 - [LoadOptimizationFromJsonAndReassignNodes.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/io_03/LoadOptimizationFromJsonAndReassignNodes.java)
 - [LoadOptimizationFromJsonString.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/io_03/LoadOptimizationFromJsonString.java)
-- [json/LoadOptimizationFromJsonString.json](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/resources/json/LoadOptimizationFromJsonString.json), the resource that LoadOptimizationFromJsonString reads
+- [json/LoadOptimizationFromJsonString.json](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/resources/json/LoadOptimizationFromJsonString.json), the resource that `LoadOptimizationFromJsonString` reads
 
-Each class follows the steps of FirstOptimizationExample. `example()` sets the license and calls the step methods in order. `attachToObservables` subscribes to the event subjects, the recommended event API, before the run starts. `startAndPresentResult` starts the run with `startRunAsync()`, waits up to 5 minutes for the result and prints it. In the loaders, the load step takes the place of the property, node and resource steps.
+Each class follows the steps of `FirstOptimizationExample`. `example()` sets the license and calls the step methods in order. `attachToObservables` subscribes to the event subjects, the recommended event API, before the run starts. `startAndPresentResult` starts the run with `startRunAsync()`, waits up to 5 minutes for the result and prints it. In the loaders, the load step takes the place of the property, node and resource steps.
 
 ### SaveOptimizationToJsonExample
 
@@ -84,11 +76,6 @@ private static void saveToJson(IOptimization opti) throws IOException {
   }
 }
 ```
-
-Operationally, this is a good default for:
-- batch/CLI workflows,
-- reproducibility,
-- downstream tooling (e.g., later loading for re-optimization).
 
 ### SaveOptimizationDuringRunToJsonExample
 
@@ -127,9 +114,7 @@ private static void requestSave(IOptimization opti) {
 }
 ```
 
-#### When this pattern is the right choice
-- you run long optimizations and want periodic checkpoints,
-- you want "save on signal" behavior (e.g., on a metric threshold),
+Use it for checkpoints in long runs, or to save when a progress value is reached.
 
 ### SaveOptimizationToJsonStringExample
 
@@ -181,7 +166,7 @@ The loaded optimization holds the properties and the solution of the save run, s
 
 ### LoadOptimizationToFreshRunExample
 
-The class differs from LoadOptimizationFromJsonExample in one argument: its `loadFromJson` passes `ignoreLoadedSolution` as true to `update`. The block shows the start of the method; the rest is the same as above:
+The class differs from `LoadOptimizationFromJsonExample` in one argument: its `loadFromJson` passes `ignoreLoadedSolution` as true to `update`. The block shows the start of the method; the rest is the same as above:
 
 ```java
 // With true, all parts of the snapshot are loaded (the elements, the node connector and the
@@ -192,14 +177,11 @@ try (InputStream in = new FileInputStream(JSON_FILE)) {
   boolean loaded = importer.update(in, opti, ignoreLoadedSolution);
 ```
 
-#### When to use it
-- you want to rerun with new solver settings from the same base model,
-- you suspect the prior solution is stale or incompatible with new constraints,
-- you want reproducible "from scratch" behavior without constructing the model again.
+Use it to rerun the same model with new properties, or when the saved solution does not fit new constraints.
 
 ### LoadOptimizationFromJsonAndReassignNodes
 
-`example()` loads the file as LoadOptimizationFromJsonExample does and then adds the nodes:
+`example()` loads the file as `LoadOptimizationFromJsonExample` does and then adds the nodes:
 
 ```java
 // The public evaluation license, or your own license if you put a license file where
@@ -226,12 +208,7 @@ newNodes.add(
 opti.addReassignNodes(newNodes);
 ```
 
-#### What "reassign" means in practice
-This pattern is for "live" operations:
-
-- you already have an optimization state (and often a solution),
-- new tasks arrive (new customer visits, new delivery points),
-- you want to inject them into the existing optimization context and re-optimize.
+Use it when new tasks arrive for a plan that is already optimized.
 
 ### LoadOptimizationFromJsonString
 
@@ -264,16 +241,7 @@ private static boolean loadFromJsonString(IOptimization opti, String json) throw
 }
 ```
 
-In an application the string could come from a database or a message instead of the class path.
-
-#### When this pattern is useful
-- your snapshot is stored as a string in a DB,
-- your snapshot arrives over the network as JSON text,
-- you need to embed snapshots in test fixtures.
-
-#### Operational cautions
-- Validate and trust your source: importing arbitrary snapshots can be risky if you accept untrusted input.
-- Consider size limits: very large snapshots should be stored as compressed blobs, not as raw strings in logs.
+Use it when the snapshot comes from a database, a message or a test fixture; validate snapshots from sources you do not trust.
 
 ### End-to-end workflows (recommended recipes)
 
@@ -314,7 +282,7 @@ If you copy these patterns into production code, consider:
 
 ## Output and what to look for
 
-Every run prints the progress lines, the status events and the result. The lines below were the same in both runs. The run ident, the order of Koeln and Koeln1 (they share a place) and the routes that get a node can change between runs, so they are not shown.
+Every run prints the progress lines, the status events and the result. The lines below were the same in two test runs. The run id (`Optimization-IDENT` in the result header), the order of Koeln and Koeln1 (they share a place) and the routes that get a node can change between runs, so they are not shown.
 
 ### Output of SaveOptimizationToJsonExample
 
@@ -392,7 +360,7 @@ Koeln2, Dueren2 and Essen2 then appear in the routes of the result. The routes t
 
 ### Output of LoadOptimizationFromJsonString
 
-As in LoadOptimizationFromJsonExample, the run starts from the loaded solution:
+As in `LoadOptimizationFromJsonExample`, the run starts from the loaded solution:
 
 ```text
 StatusEvent(OPTIMIZATION_USING_PROVIDED_SOLUTION, Using a provided solution as starting point for the optimization.)
@@ -403,15 +371,13 @@ StatusEvent(OPTIMIZATION_ALGO_STARTING, SmartSimulatedAnnealingAlgo)
 
 Run the `main` method of a class from your IDE, with the root of the project as the working directory. The examples need a JDK in the version that the examples pom sets. They need no license: without a license file they use the public evaluation license (see the [license guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license)).
 
-Run `SaveOptimizationToJsonExample` first. It writes `myopti.json.bz2` into the working directory, where `LoadOptimizationFromJsonExample`, `LoadOptimizationToFreshRunExample` and `LoadOptimizationFromJsonAndReassignNodes` read it. Without the file, the code prints that `myopti.json.bz2` is not found and that SaveOptimizationToJsonExample must run first (LoadOptimizationFromJsonExample.java:111), and the example starts no run. `LoadOptimizationFromJsonString` needs no file in the working directory, because its JSON resource is on the class path.
-
-Stop `SaveOptimizationDuringRunToJsonExample` once its result is printed if the program does not end by itself.
+Run `SaveOptimizationToJsonExample` first. It writes `myopti.json.bz2` into the working directory, where `LoadOptimizationFromJsonExample`, `LoadOptimizationToFreshRunExample` and `LoadOptimizationFromJsonAndReassignNodes` read it. Without the file, the code prints that `myopti.json.bz2` is not found and that `SaveOptimizationToJsonExample` must run first, and the example starts no run. `LoadOptimizationFromJsonString` needs no file in the working directory, because its JSON resource is on the class path.
 
 ## Related
 
 - [First optimization example](../firstoptimization_01/FirstOptimizationExample.md): the step methods that these examples follow.
-- [LoadOptimizationFromJsonAndReassignPillar](LoadOptimizationFromJsonAndReassignPillar.md): loads `myopti.json.bz2` and adds a pillar node with `addReassignNodes`.
-- [Export2KMLExample](Export2KMLExample.md): exports the result of a run to a KML file.
+- [Load a snapshot and add a pillar](LoadOptimizationFromJsonAndReassignPillar.md): loads `myopti.json.bz2` and adds a pillar node with `addReassignNodes`.
+- [Export a result to a KML file](Export2KMLExample.md): exports the result of a run to a KML file.
 - [Recommended ways to run an optimization](../recommendedimplementation_02/RecommendedImplementation.md): the recommended run pattern, a synchronous run and the legacy callback methods.
 - [Base examples](../README.md): the overview of all Base examples.
 - [Optimization properties](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties): the property keys and their defaults.

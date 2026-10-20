@@ -6,89 +6,11 @@
 
 The example builds three pillars: a geo pillar bound to a resource, an event pillar bound to a resource, and a geo pillar without a resource. The result shows each of them inside its time window.
 
-### Pillars as hard constraints
-
-A **PillarNode** (also called a **Pillar**) models an **absolute, non-negotiable** constraint: its SLA (OpeningHours / time window) must be met.
-
-A Pillar is a **hard constraint** that is fulfilled by the optimizer's **architecture**.
-
-- **Soft constraints** are typically enforced by *cost* (penalty terms in the objective function).
-- **Hard constraints** in JOpt are enforced by *design*: the algorithm is structured so that these constraints are not violated.
-  A Pillar is an example: normal nodes "flow around" the pillar appointment in the timeline.
-
-### A pillar as a fixed anchor
-
-A pillar appointment acts like a **fixed anchor** in the route timeline:
-
-- The optimizer treats the pillar time window as something that must be satisfied.
-- The surrounding schedule is then adapted:
-  - normal nodes may be reordered,
-  - normal nodes may be shifted earlier/later,
-  - normal nodes may be assigned to other resources,
-  - or a pillar that cannot be reached stays unassigned; it is never served late.
-
-This "nodes flow around the pillar" effect is a direct consequence of JOpt's architecture for hard constraints.
-
-### What is hard about a pillar
-
-A pillar's **OpeningHours** are treated as hard feasibility boundaries:
-- arriving outside the pillar time window is not acceptable,
-- waiting before the window is allowed (as with normal time windows),
-- but the visit must be placed such that the SLA is matched.
-
-This makes pillars suitable for:
-- contractual appointment windows,
-- compliance deadlines,
-- "must happen at this time" commitments.
-
-### Conflict handling
-
-The Special Features documentation describes how the optimizer resolves conflicts between a pillar and "normal" nodes. The hierarchy is:
-
-1. **Reorder / shift normal nodes** so the pillar SLA is met.
-2. **Let normal nodes violate** their constraints if your model allows it (soft constraints/cost-driven).
-3. **Move work to other resources** if available, to protect the pillar.
-4. A pillar that cannot be reached stays unassigned; it is never served late.
-
-The system prefers cancellation/removal to violating a captured SLA.
-
-### Pillar node types
-
-The pillar concept appears as dedicated node classes implementing `IPillarNode`, such as:
-
-- `PillarTimeWindowGeoNode`: a geo-located pillar node (lat/long + strict opening hours)
-- `PillarEventNode`: a non-geo pillar node (event-style pillar, strict opening hours)
-
-A pillar can optionally be tied to a **mandatory resource**:
-
-- `pillar.attachResource(resource);`
-
-When attached, the node is time-critical and constrained to one specific resource.
-
-This is valuable for:
-- skills/certifications,
-- legal requirements,
-- named-person commitments.
-
-### When to use a pillar
-
-**Use pillars when violations are unacceptable.** Use pillars for contractual requirements:
-- "must be serviced within this window"
-- "must not be late"
-- "must not be moved outside the SLA"
-
-**Do not use pillars to "nudge" the solver.** If the time window is *preferred* but not mandatory, model it as a normal node and handle it via:
-- soft constraint penalties,
-- objective weighting,
-- business rules.
-
-That separation means:
-- **architecture** for hard constraints,
-- **cost function** for preferences and trade-offs.
+A pillar is a `PillarTimeWindowGeoNode` (with a position) or a `PillarEventNode` (without one); both implement `IPillarNode`. A resource may wait before the time window of a pillar but never arrive late. The other nodes are reordered, shifted or moved to another resource around it, and a pillar that cannot be reached stays unassigned; it is never served late. `attachResource` binds a pillar to one resource. For a time window that may be missed, use a normal node. The [pillar nodes feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/pillar_nodes) explains the conflict cases. The special features page calls pillars CapturedNodes.
 
 ### Summary
 
-- **PillarNode**: strict SLA matching for OpeningHours (hard constraint).
+- `IPillarNode`: strict SLA matching for OpeningHours (hard constraint).
 - Pillars are enforced by **optimizer architecture**.
 - Normal nodes "flow around" pillars; the solver rearranges the schedule to keep pillar SLAs intact.
 - Pillars can optionally enforce a mandatory resource via `attachResource(...)`.
@@ -167,7 +89,7 @@ IPillarNode maintenanceJob =
 opti.addElement(maintenanceJob);
 ```
 
-`attachToObservables`, `startAndPresentResult` and `exportToKml` work as in [EventNode.md](../eventnode_06/EventNode.md): the example subscribes to the events with the recommended event API, waits up to 5 minutes for the result, prints it and writes it to `PillarExample.kml` in the working directory.
+`attachToObservables`, `startAndPresentResult` and `exportToKml` work as in [Event nodes for tasks without a location](../eventnode_06/EventNode.md): the example subscribes to the events with the recommended event API, waits up to 5 minutes for the result, prints it and writes it to `PillarExample.kml` in the working directory.
 
 ## Output and what to look for
 
@@ -187,24 +109,16 @@ No route of the result shows a violation.
 
 ## Run it
 
-Run the `main(String[] args)` method of `PillarExample` from your IDE.
-
-Behavior highlights:
-- The run is started asynchronously (`startRunAsync()`).
-- The example blocks with `get(5, TimeUnit.MINUTES)` to prevent premature termination.
-- The result is printed to stdout.
-- A KML file is written for visual inspection.
-
-You need a JDK in the version that the examples pom sets. You need no license file: without one, the example uses the public evaluation license (see the [license guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license)). The run writes `PillarExample.kml` into the working directory.
+Run the `main(String[] args)` method of `PillarExample` from your IDE. You need a JDK in the version that the examples pom sets. You need no license file: without one, the example uses the public evaluation license (see the [license guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license)). The run writes `PillarExample.kml` into the working directory.
 
 ## Related
 
 - [PillarExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/pillar_07/PillarExample.java): the source of this example.
 - [Pillar nodes feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/pillar_nodes): why pillars are hard constraints, the conflict cases and when to use them.
-- [Special features: conflict of a pillar node with a node](https://www.dna-evolutions.com/docs/learn-and-explore/special/special_features#case-five-conflict-of-a-capturednode-with-a-node-solved-by-removing-a-capturednode): the case in which a pillar stays unassigned.
+- [Special features: conflict of a CapturedNode with a node](https://www.dna-evolutions.com/docs/learn-and-explore/special/special_features#case-five-conflict-of-a-capturednode-with-a-node-solved-by-removing-a-capturednode): the case in which a pillar stays unassigned.
 - [Nodes](https://www.dna-evolutions.com/docs/getting-started/tutorials/nodes): the constructors of `PillarTimeWindowGeoNode` and `PillarEventNode`.
-- [EventNode.md](../eventnode_06/EventNode.md): event nodes without a hard time window, and the event API and KML export that this example uses too.
-- [LoadOptimizationFromJsonAndReassignPillar.md](../io_03/LoadOptimizationFromJsonAndReassignPillar.md): a pillar added to a loaded solution.
+- [Event nodes for tasks without a location](../eventnode_06/EventNode.md): event nodes without a hard time window, and the event API and KML export that this example uses too.
+- [Load a snapshot and add a pillar](../io_03/LoadOptimizationFromJsonAndReassignPillar.md): a pillar added to a loaded solution.
 - [Recommended ways to run an optimization](../recommendedimplementation_02/RecommendedImplementation.md): the recommended run pattern, a synchronous run and the legacy callback methods.
 - [Base examples](../README.md): the overview of all Base examples.
 
