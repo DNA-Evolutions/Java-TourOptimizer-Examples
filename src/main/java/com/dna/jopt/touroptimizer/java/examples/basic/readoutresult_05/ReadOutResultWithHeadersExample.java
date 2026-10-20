@@ -3,7 +3,7 @@ package com.dna.jopt.touroptimizer.java.examples.basic.readoutresult_05;
  * #%L
  * JOpt TourOptimizer Examples
  * %%
- * Copyright (C) 2017 - 2020 DNA Evolutions GmbH
+ * Copyright (C) 2017 - 2023 DNA Evolutions GmbH
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
@@ -21,73 +21,181 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 
+import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
-import com.dna.jopt.framework.outcomewrapper.IOptimizationProgress;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
-import com.dna.jopt.member.unit.hours.IWorkingHours;
+import com.dna.jopt.member.bucket.route.ILogicEntityRoute;
 import com.dna.jopt.member.bucket.route.controller.detail.ILogicRouteElementDetailItem;
 import com.dna.jopt.member.unit.hours.IOpeningHours;
-import com.dna.jopt.member.unit.hours.WorkingHours;
+import com.dna.jopt.member.unit.hours.IWorkingHours;
 import com.dna.jopt.member.unit.hours.OpeningHours;
+import com.dna.jopt.member.unit.hours.WorkingHours;
+import com.dna.jopt.member.unit.node.INode;
 import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.resource.CapacityResource;
+import com.dna.jopt.member.unit.resource.IResource;
 import com.dna.jopt.member.unit.violation.IViolation;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 import tech.units.indriya.quantity.Quantities;
 
-/** Example on how to access route information and details from result object. */
+/**
+ * Prints a report of the result: a header with the job totals, a header for each route, the route
+ * items and the violations.
+ *
+ * <p>Scenario: the same as in ReadOutResultExample: eight nodes in Germany, open on May 6 and 7,
+ * 2020 from 08:00 to 12:00, and the resource Jack from Aachen, in the time zone Europe/Berlin.
+ *
+ * <p>Look for: the RESULTS header with the job totals (times in hours, distances in kilometers),
+ * then for each route the "Route information" header (times in minutes), the route cost, the route
+ * items, the overtime and the late arrivals.
+ *
+ * <p>Prerequisites: None: without a license file the example uses the public evaluation license
+ * (see ExampleLicenseHelper).
+ *
+ * @see <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/readoutresult_05/ReadOutResult.md">ReadOutResult.md</a>
+ */
 public class ReadOutResultWithHeadersExample extends Optimization {
 
+  /**
+   * Runs the example.
+   *
+   * @param args not used
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   */
   public static void main(String[] args)
-      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException {
     new ReadOutResultWithHeadersExample().example();
   }
 
+  @Override
   public String toString() {
-    return "Example on how to access route information, headers and details from result object.";
+    return "Prints a report of the result: a header with the job totals, a header for each route,"
+        + " the route items and the violations.";
   }
 
+  /**
+   * Builds the optimization, runs it and prints the result.
+   *
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   */
   public void example()
-      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
-
-    // Set license via helper
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException {
+    // The public evaluation license, or your own license if you put a license file where
+    // ExampleLicenseHelper looks for it.
     ExampleLicenseHelper.setLicense(this);
-
-    // Properties!
-    this.setProperties();
-
-    this.addNodes();
-    this.addResources();
-
-    CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
-
-    // It is important to block the call, otherwise optimization will be terminated
-    resultFuture.get();
+    addProperties(this);
+    addNodes(this);
+    addResources(this);
+    attachToObservables(this);
+    startAndPresentResult(this);
   }
 
-  private void setProperties() {
-
+  /**
+   * Adds the properties that keep the run short.
+   *
+   * @param opti the optimization
+   */
+  private static void addProperties(IOptimization opti) {
     Properties props = new Properties();
-
+    // Fewer generations and iterations than the defaults keep the run short.
     props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
-    props.setProperty("JOpt.NumCPUCores", "4");
-
-    this.addElement(props);
+    opti.addElement(props);
   }
 
-  private void addResources() {
+  /**
+   * Adds the eight nodes.
+   *
+   * @param opti the optimization
+   */
+  private static void addNodes(IOptimization opti) {
+    List<IOpeningHours> openingHours = new ArrayList<>();
+    openingHours.add(
+        new OpeningHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 12, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
+    openingHours.add(
+        new OpeningHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MAY.getValue(), 7, 12, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+    // The windows close at 12:00; the result shows late arrivals on May 7.
+
+    // Each visit takes 20 minutes and counts toward the working time, like the driving.
+    Duration visitDuration = Duration.ofMinutes(20);
+
+    // The same importance for every node, so no node is preferred over another.
+    int importance = 1;
+
+    INode koeln =
+        new TimeWindowGeoNode(
+            "Koeln", 50.9333, 6.95, openingHours, visitDuration, importance);
+    opti.addElement(koeln);
+
+    INode essen =
+        new TimeWindowGeoNode(
+            "Essen", 51.45, 7.01667, openingHours, visitDuration, importance);
+    opti.addElement(essen);
+
+    INode dueren =
+        new TimeWindowGeoNode(
+            "Dueren", 50.8, 6.48333, openingHours, visitDuration, importance);
+    opti.addElement(dueren);
+
+    INode nuernberg =
+        new TimeWindowGeoNode(
+            "Nuernberg", 49.4478, 11.0683, openingHours, visitDuration, importance);
+    opti.addElement(nuernberg);
+
+    INode heilbronn =
+        new TimeWindowGeoNode(
+            "Heilbronn", 49.1403, 9.22, openingHours, visitDuration, importance);
+    opti.addElement(heilbronn);
+
+    INode stuttgart =
+        new TimeWindowGeoNode(
+            "Stuttgart", 48.7667, 9.18333, openingHours, visitDuration, importance);
+    opti.addElement(stuttgart);
+
+    INode wuppertal =
+        new TimeWindowGeoNode(
+            "Wuppertal", 51.2667, 7.18333, openingHours, visitDuration, importance);
+    opti.addElement(wuppertal);
+
+    INode aachen =
+        new TimeWindowGeoNode(
+            "Aachen", 50.775346, 6.083887, openingHours, visitDuration, importance);
+    opti.addElement(aachen);
+  }
+
+  /**
+   * Adds the resource Jack.
+   *
+   * @param opti the optimization
+   */
+  private static void addResources(IOptimization opti) {
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
         new WorkingHours(
@@ -99,223 +207,142 @@ public class ReadOutResultWithHeadersExample extends Optimization {
             ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 7, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
+    // Short on purpose: both routes take longer than 4 h, so the result shows overtime.
     Duration maxWorkingTime = Duration.ofHours(4);
+    // 1200 km per day, more than the longest day of this plan needs.
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
-    CapacityResource rep1 =
+    IResource jack =
         new CapacityResource(
             "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
-    rep1.setCost(0, 1, 1);
-    this.addElement(rep1);
+    opti.addElement(jack);
   }
 
-  private void addNodes() {
-
-    List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
-    weeklyOpeningHours.add(
-        new OpeningHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 12, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    weeklyOpeningHours.add(
-        new OpeningHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 12, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    Duration visitDuration = Duration.ofMinutes(20);
-
-    // Define some nodes
-    TimeWindowGeoNode koeln =
-        new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(koeln);
-
-    TimeWindowGeoNode essen =
-        new TimeWindowGeoNode("Essen", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(essen);
-
-    TimeWindowGeoNode dueren =
-        new TimeWindowGeoNode("Dueren", 50.8, 6.48333, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(dueren);
-
-    TimeWindowGeoNode nuernberg =
-        new TimeWindowGeoNode("Nuernberg", 49.4478, 11.0683, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(nuernberg);
-
-    TimeWindowGeoNode heilbronn =
-        new TimeWindowGeoNode("Heilbronn", 49.1403, 9.22, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(heilbronn);
-
-    TimeWindowGeoNode stuttgart =
-        new TimeWindowGeoNode("Stuttgart", 48.7667, 9.18333, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(stuttgart);
-
-    TimeWindowGeoNode wuppertal =
-        new TimeWindowGeoNode("Wuppertal", 51.2667, 7.18333, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(wuppertal);
-
-    TimeWindowGeoNode aachen =
-        new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(aachen);
+  /**
+   * Prints the progress, warning, status and error events of the run.
+   *
+   * @param opti the optimization
+   */
+  private static void attachToObservables(IOptimization opti) {
+    // Subscribe before the start: the subjects replay only a few past events.
+    opti.getOptimizationEvents()
+        .progressSubject()
+        .subscribe(p -> System.out.println(p.getProgressString()));
+    opti.getOptimizationEvents().warningSubject().subscribe(w -> System.out.println(w.toString()));
+    opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s.toString()));
+    opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
   }
 
-  @Override
-  public void onError(int code, String message) {
-    System.out.println("code: " + code + " message:" + message);
-  }
+  /**
+   * Starts the run, waits for the result and prints the report.
+   *
+   * @param opti the optimization
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   */
+  private static void startAndPresentResult(IOptimization opti)
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException {
+    CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
+    // Wait for the result; without the wait the JVM would end before the run does.
+    IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
 
-  @Override
-  public void onStatus(int code, String message) {
-    System.out.println("code: " + code + " message:" + message);
-  }
-
-  @Override
-  public void onWarning(int code, String message) {
-    //
-
-  }
-
-  @Override
-  public void onProgress(String winnerProgressString) {
-    System.out.println(winnerProgressString);
-  }
-
-  @Override
-  public void onProgress(IOptimizationProgress rapoptProgress) {
-    //
-  }
-
-  @Override
-  public void onAsynchronousOptimizationResult(IOptimizationResult result) {
-
-    /*
-     *
-     * Data about the result
-     *
-     */
-    StringBuilder routeHeaderbld = new StringBuilder();
-
-    routeHeaderbld.append("\n-------------------------------- --------------------------");
-    routeHeaderbld.append("\n--------------------- RESULTS -----------------------------");
-    routeHeaderbld.append("\n----------------- -----------------------------------------");
-    routeHeaderbld.append("\n Number of Route         : " + result.getJobRouteCount());
-    routeHeaderbld.append("\n Total Route Elements    : " + result.getJobElementCount());
-    routeHeaderbld.append("\n Total cost              : " + result.getJobCost());
-    routeHeaderbld.append("\n-----------------------------------------------------------");
-    routeHeaderbld.append(
-        "\n Total time        [h]   : " + (int) (result.getJobTimeSeconds() / 1000L / 3600L));
-    routeHeaderbld.append(
-        "\n Total idle time   [h]   : " + (int) (result.getJobIdleTimeSeconds() / 1000 / 3600));
-    routeHeaderbld.append(
-        "\n Total prod. time  [h]   : "
-            + (int) (result.getJobProductiveTimeSeconds() / 1000 / 3600));
-    routeHeaderbld.append(
-        "\n Total tran. time  [h]   : "
-            + (int) (result.getJobTransitionTimeSeconds() / 1000L / 3600L));
-    routeHeaderbld.append(
-        "\n Total distance    [km]  : " + (int) (result.getJobTransitionDistanceMeter() / 1000.0));
-    routeHeaderbld.append(
+    // The job getters return seconds and meters.
+    StringBuilder jobHeader = new StringBuilder();
+    jobHeader.append("\n-------------------------------- --------------------------");
+    jobHeader.append("\n--------------------- RESULTS -----------------------------");
+    jobHeader.append("\n----------------- -----------------------------------------");
+    jobHeader.append("\n Number of Route         : " + result.getJobRouteCount());
+    jobHeader.append("\n Total Route Elements    : " + result.getJobElementCount());
+    jobHeader.append("\n Total cost              : " + result.getJobCost());
+    jobHeader.append("\n-----------------------------------------------------------");
+    jobHeader.append("\n Total time        [h]   : " + toHours(result.getJobTimeSeconds()));
+    jobHeader.append(
+        "\n Total idle time   [h]   : " + toHours(result.getJobIdleTimeSeconds()));
+    jobHeader.append(
+        "\n Total prod. time  [h]   : " + toHours(result.getJobProductiveTimeSeconds()));
+    jobHeader.append(
+        "\n Total tran. time  [h]   : " + toHours(result.getJobTransitionTimeSeconds()));
+    jobHeader.append(
+        "\n Total distance    [km]  : " + result.getJobTransitionDistanceMeter() / 1000);
+    jobHeader.append(
         "\n Termi. time       [h]   : "
-            + (int) (result.getJobTerminationTransitionTimeSeconds() / 1000.0 / 3600.0));
-    routeHeaderbld.append(
+            + toHours(result.getJobTerminationTransitionTimeSeconds()));
+    jobHeader.append(
         "\n Termi. distance   [km]  : "
-            + (int) (result.getJobTerminationTransitionDistanceMeter() / 1000.0));
+            + result.getJobTerminationTransitionDistanceMeter() / 1000);
+    System.out.println(jobHeader.toString());
 
-    System.out.println(routeHeaderbld.toString());
-
-    /*
-     *  Access the data about each route
-     */
     System.out.println("\n----------------------- -----------------------------------");
     System.out.println("--------------------- ROUTES ------------------------------");
     System.out.println("---------------------- ------------------------------------\n");
-    result
-        .getRoutes()
-        .stream()
-        .forEach(
-            r -> {
 
-              /*
-               *  Header via getJoinedDetailController
-               */
+    for (ILogicEntityRoute route : result.getRoutes()) {
+      // The joined detail controller of a route returns milliseconds and meters.
+      StringBuilder routeHeader = new StringBuilder();
+      routeHeader.append("\n-----------------------------------------------------------");
+      routeHeader.append("\nRoute information");
+      routeHeader.append("\nRouteId                : " + route.getRouteId());
+      routeHeader.append(
+          "\nResource               : " + route.getCurrentVisitingResource().getId());
+      routeHeader.append(
+          "\nTransit time     [min] : "
+              + (int) (route.getJoinedDetailController().getCurTransitTime() / 1000.0 / 60.0));
+      routeHeader.append(
+          "\nProductive. time [min] : "
+              + (int) (route.getJoinedDetailController().getCurProductiveTime() / 1000.0 / 60.0));
+      routeHeader.append(
+          "\nIdle time        [min] : "
+              + (int) (route.getJoinedDetailController().getCurIdleTime() / 1000.0 / 60.0));
+      routeHeader.append(
+          "\nWhite Idle time  [min] : "
+              + (int) (route.getJoinedDetailController().getCurWhitSpaceIdleTime() / 1000.0
+                  / 60.0));
+      routeHeader.append(
+          "\nInd. Idle time   [min] : "
+              + (int) (route.getJoinedDetailController().getCurInducedIdleTime() / 1000.0 / 60.0));
+      routeHeader.append(
+          "\nRoute Distance   [km]  : "
+              + (int) route.getJoinedDetailController().getCurDistance() / 1000.0);
+      routeHeader.append(
+          "\nTermi. time      [min] : "
+              + (int) (route.getJoinedDetailController().getTerminationTransitTime()
+                  / 1000.0
+                  / 60.0));
+      routeHeader.append(
+          "\nTermi. distance  [km]  : "
+              + (int) route.getJoinedDetailController().getTerminationTransitDistance()
+                  / 1000.0);
+      System.out.println(routeHeader.toString());
 
-              StringBuilder routeSB = new StringBuilder();
-              routeSB.append("\n-----------------------------------------------------------");
-              routeSB.append("\nRoute information");
+      System.out.println("\nRouteCost: " + result.getRouteCost(route));
 
-              routeSB.append("\nRouteId                : " + r.getRouteId());
-              routeSB.append(
-                  "\nResource               : " + r.getCurrentVisitingResource().getId());
+      List<ILogicRouteElementDetailItem> details = result.getOrderedRouteItems(route);
+      details.forEach(System.out::println);
 
-              routeSB.append(
-                  "\nTransit time     [min] : "
-                      + (int) (r.getJoinedDetailController().getCurTransitTime() / 1000.0 / 60.0));
-              routeSB.append(
-                  "\nProductive. time [min] : "
-                      + (int)
-                          (r.getJoinedDetailController().getCurProductiveTime() / 1000.0 / 60.0));
-              routeSB.append(
-                  "\nIdle time        [min] : "
-                      + (int) (r.getJoinedDetailController().getCurIdleTime() / 1000.0 / 60.0));
-              routeSB.append(
-                  "\nWhite Idle time  [min] : "
-                      + (int)
-                          (r.getJoinedDetailController().getCurWhitSpaceIdleTime()
-                              / 1000.0
-                              / 60.0));
-              routeSB.append(
-                  "\nInd. Idle time   [min] : "
-                      + (int)
-                          (r.getJoinedDetailController().getCurInducedIdleTime() / 1000.0 / 60.0));
-              routeSB.append(
-                  "\nRoute Distance   [km]  : "
-                      + (double) ((int) (r.getJoinedDetailController().getCurDistance() / 1.0))
-                          / 1000.0);
+      List<IViolation> violations = result.getRouteViolations(route);
+      violations.forEach(System.out::println);
 
-              routeSB.append(
-                  "\nTermi. time      [min] : "
-                      + (int)
-                          (r.getJoinedDetailController().getTerminationTransitTime()
-                              / 1000.0
-                              / 60.0));
-              routeSB.append(
-                  "\nTermi. distance  [km]  : "
-                      + (double)
-                              ((int)
-                                  (r.getJoinedDetailController().getTerminationTransitDistance()
-                                      / 1.0))
-                          / 1000.0);
+      for (ILogicRouteElementDetailItem detail : details) {
+        List<IViolation> nodeViolations =
+            route
+                .getRouteCostAndViolationController()
+                .getNodeViolations(detail.getElement().getId());
+        if (!nodeViolations.isEmpty()) {
+          System.out.println(detail.getElement().getId() + ": " + nodeViolations);
+        }
+      }
+    }
+  }
 
-              System.out.println(routeSB.toString());
-
-              // Get e.g. cost of a route
-              System.out.println("\nRouteCost: " + result.getRouteCost(r));
-
-              /*
-               *
-               * Route elements
-               *
-               */
-
-              // Get details of the route
-              List<ILogicRouteElementDetailItem> details = result.getOrderedRouteItems(r);
-              details.forEach(System.out::println);
-
-              // Get route violations
-              List<IViolation> violations = result.getRouteViolations(r);
-              violations.forEach(System.out::println);
-
-              // Get node Violations
-              details
-                  .stream()
-                  .forEach(
-                      d -> {
-                        List<IViolation> nodeVios =
-                            r.getRouteCostAndViolationController()
-                                .getNodeViolations(d.getElement().getId());
-                        if (!nodeVios.isEmpty()) {
-                          System.out.println(d.getElement().getId() + ": " + nodeVios);
-                        }
-                      });
-            });
+  /**
+   * Formats seconds as hours with two decimals and a dot as the decimal separator on every machine.
+   *
+   * @param seconds the seconds
+   * @return the hours, for example "1.50" for 5400 seconds
+   */
+  private static String toHours(int seconds) {
+    return String.format(Locale.ROOT, "%.2f", seconds / 3600.0);
   }
 }
