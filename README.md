@@ -52,7 +52,7 @@ The project is organised into four categories of increasing complexity. Each cat
 
 | Category | Description | Link |
 |---|---|---|
-| **Basic** | First optimizations, nodes, resources, time windows, I/O, result reading, licensing | [Basic examples](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic) |
+| **Basic** | First optimizations, nodes, resources, time windows, I/O, result reading, licensing | [Base examples](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic) |
 | **Advanced** | Constraints, conditions, relations, PND, clustering, zones, overnight, FlexTime, CO2 | [Advanced examples](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced) |
 | **Expert** | Custom assessors, optimization schemes, performance mode, warm-start, exception handling | [Expert examples](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert) |
 | **RESTful** | Bridge between the Java SDK and the REST API: serialize problems to JSON, run JSON payloads locally | [RESTful examples](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/restful) |
@@ -61,13 +61,13 @@ The project is organised into four categories of increasing complexity. Each cat
 
 ## Recommended learning path
 
-If you are new to JOpt, follow this progression through the Basic examples first, then branch into the Advanced or Expert sections as needed.
+If you are new to JOpt, follow this progression through the Base examples first, then branch into the Advanced or Expert sections as needed.
 
 ### Basic
 
 1. **Read the core elements tutorial**: [Basic elements](https://www.dna-evolutions.com/docs/getting-started/tutorials/basic-elements)
 2. **Run the first optimization**: [`firstoptimization_01/FirstOptimizationExample.java`](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/firstoptimization_01/FirstOptimizationExample.java), [Tutorial](https://www.dna-evolutions.com/docs/getting-started/tutorials/first-optimization)
-3. **Adopt a production execution pattern**: [`recommendedimplementation_02`](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/recommendedimplementation_02) (sync vs async vs reactive event handling)
+3. **Adopt a production execution pattern**: [`recommendedimplementation_02`](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/recommendedimplementation_02) (the recommended run pattern, a synchronous run and the legacy callback methods)
 4. **Persist and resume optimizations**: [`io_03`](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/io_03) (JSON/JSON.BZ2 save, load, checkpoint during run, KML export)
 5. **Provide your own distances and travel times**: [`connection_04`](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/connection_04) (directed edges, partial matrices, locationId, backup connector)
 6. **Read and analyse results**: [`readoutresult_05`](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/readoutresult_05) (routes, stop sequences, costs, violations)
@@ -196,9 +196,19 @@ Import the project as a Maven project in your IDE and run the `main` method of a
 
 ### Before you run all examples
 
-- **License:** the examples set the public evaluation license through `ExampleLicenseHelper`, which allows up to 20 elements (nodes and resources together; without a license the limit is 10). The extended free license allows up to 30 nodes and 7 resources and is available only with a free sign-up (see [Evaluation license](#evaluation-license)). Some examples need more than the public evaluation license: the clustering examples in `advanced/clustering`, `PerformanceModeBigOptiExample` and `CustomRouteLevelOddNumberOfElementsRestrictionExample`. `ExampleLicenseHelper` uses your license file instead when it exists at `src/main/resources/license/YOUR_LICENSE.jli`.
+- **License:** the examples set the public evaluation license through `ExampleLicenseHelper`. Without a license, JOpt allows up to 10 elements (nodes and resources together), the public evaluation license up to 20, and the extended free license up to 30 nodes and 7 resources; the extended free license is available with a free sign-up (see [Evaluation license](#evaluation-license)). Some examples need more than the public evaluation license: the clustering examples in `advanced/clustering`, `PerformanceModeBigOptiExample` and `CustomRouteLevelOddNumberOfElementsRestrictionExample`. `ExampleLicenseHelper` uses your license file instead when it exists at `src/main/resources/license/YOUR_LICENSE.jli`.
 - **Order in `basic/io_03`:** the loaders that read `myopti.json.bz2` (`LoadOptimizationFromJsonExample`, `LoadOptimizationToFreshRunExample`, `LoadOptimizationFromJsonAndReassignNodes`, `LoadOptimizationFromJsonAndReassignPillar`) and `CreateCustomSolutionFromJSONExample` need that file in the working directory. Run `SaveOptimizationToJsonExample` first.
 - **Errors on purpose:** some examples throw an exception on purpose to show error handling: `CapacityCheckExample` and the examples in `expert/uncaughtexception`.
+
+### Code formatter profile
+
+An Eclipse formatter profile for the examples is in `formatter/jopt-examples-formatter.xml` (profile name `JOptExamples`). It indents with 2 spaces per block level and 4 for a continuation line, wraps lines at 100 columns, keeps existing line breaks and comments, and leaves code between `@formatter:off` and `@formatter:on` as written.
+
+To use it in Eclipse:
+
+1. Open **Window > Preferences > Java > Code Style > Formatter**.
+2. Click **Import...** and select `formatter/jopt-examples-formatter.xml` in the cloned repository.
+3. Check that `JOptExamples` is the active profile and click **Apply and Close**.
 
 ---
 
