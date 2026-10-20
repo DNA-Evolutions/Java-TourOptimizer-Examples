@@ -1,5 +1,4 @@
 package com.dna.jopt.touroptimizer.java.examples.basic.io_03;
-
 /*-
  * #%L
  * JOpt TourOptimizer Examples
@@ -23,20 +22,23 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 
 import com.dna.jopt.config.convert.ConvertException;
+import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
-import com.dna.jopt.framework.outcomewrapper.IOptimizationProgress;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
 import com.dna.jopt.member.unit.hours.IOpeningHours;
 import com.dna.jopt.member.unit.hours.IWorkingHours;
-import com.dna.jopt.member.unit.hours.WorkingHours;
 import com.dna.jopt.member.unit.hours.OpeningHours;
+import com.dna.jopt.member.unit.hours.WorkingHours;
 import com.dna.jopt.member.unit.node.INode;
 import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.relation.node2node.INode2NodeRelation;
@@ -48,133 +50,187 @@ import com.dna.jopt.touroptimizer.java.examples.util.jsonprinter.ResultJsonPrint
 
 import tech.units.indriya.quantity.Quantities;
 
-/** Printing the current optimization state to a string using JSON. */
+/**
+ * Prints the optimization as a JSON string after the run, without the solution.
+ *
+ * <p>Scenario: the two nodes Koeln and Aachen, open on March 6, 2030, a relation that puts Aachen
+ * after Koeln, and one resource, Jack, who starts in Aachen and works on March 6 and 7, 2030; time
+ * zone Europe/Berlin.
+ *
+ * <p>Look for: the result, then the JSON with the nodes, the relation, the resource and the
+ * properties. ResultJsonPrinter leaves out the solution, the core build options and the node
+ * connections, so unlike the file of SaveOptimizationToJsonExample the JSON holds no solution.
+ *
+ * <p>Prerequisites: None: without a license file the example uses the public evaluation license
+ * (see ExampleLicenseHelper).
+ *
+ * @see <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/io_03/LoadAndSaveOptimization.md">LoadAndSaveOptimization.md</a>
+ */
 public class SaveOptimizationToJsonStringExample extends Optimization {
 
-    public static void main(String[] args)
-	    throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
-	new SaveOptimizationToJsonStringExample().example();
-    }
+  /**
+   * Runs the example.
+   *
+   * @param args not used
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   * @throws ConvertException if the optimization cannot be converted to JSON
+   */
+  public static void main(String[] args)
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException, ConvertException {
+    new SaveOptimizationToJsonStringExample().example();
+  }
 
-    public String toString() {
-	return "Printing the current optimization state to a string using JSON. Be careful: Optimization snapshots can be very big and usually are highly "
-		+ "compressed and loaded on the fly.";
-    }
+  @Override
+  public String toString() {
+    return "Prints the optimization as a JSON string after the run, without the solution.";
+  }
 
-    public void example() throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
+  /**
+   * Builds the optimization, runs it, prints the result and then the optimization as JSON.
+   *
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   * @throws ConvertException if the optimization cannot be converted to JSON
+   */
+  public void example()
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException, ConvertException {
+    // The public evaluation license, or your own license if you put a license file where
+    // ExampleLicenseHelper looks for it.
+    ExampleLicenseHelper.setLicense(this);
+    addProperties(this);
+    addNodes(this);
+    addResources(this);
+    attachToObservables(this);
+    startAndPresentResult(this);
+    printAsJson(this);
+  }
 
-	// Set license via helper
-	ExampleLicenseHelper.setLicense(this);
+  /**
+   * Adds the properties that keep the run short.
+   *
+   * @param opti the optimization
+   */
+  private static void addProperties(IOptimization opti) {
+    Properties props = new Properties();
+    // Fewer generations and iterations than the defaults keep the run short.
+    props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
+    opti.addElement(props);
+  }
 
-	// Properties!
-	this.setProperties();
+  /**
+   * Adds the two nodes and the relation between them to the optimization.
+   *
+   * @param opti the optimization
+   */
+  private static void addNodes(IOptimization opti) {
+    List<IOpeningHours> openingHours = new ArrayList<>();
+    openingHours.add(
+        new OpeningHours(
+            ZonedDateTime.of(2030, MARCH.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2030, MARCH.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-	this.addNodes();
-	this.addResources();
+    // Each visit takes 20 minutes and counts toward the working time, like the driving.
+    Duration visitDuration = Duration.ofMinutes(20);
+    // The same importance for every node, so no node is preferred over another.
+    int importance = 1;
 
-	this.startRunAsync().get();
-    }
+    INode koeln =
+        new TimeWindowGeoNode("Koeln", 50.9333, 6.95, openingHours, visitDuration, importance);
+    opti.addElement(koeln);
 
-    private void setProperties() {
+    INode aachen =
+        new TimeWindowGeoNode(
+            "Aachen", 50.775346, 6.083887, openingHours, visitDuration, importance);
+    opti.addElement(aachen);
 
-	Properties props = new Properties();
+    // Penalizes Aachen starting -2000 to +10 min from Koeln's start, so Aachen follows Koeln.
+    INode2NodeRelation rel =
+        new NegativeRelativeTimeWindow2RelatedNodeRelation(
+            Duration.ofMinutes(-2000), Duration.ofMinutes(10));
+    rel.setMasterNode(koeln);
+    rel.setRelatedNode(aachen);
+    aachen.addNode2NodeRelation(rel);
+    koeln.addNode2NodeRelation(rel);
+  }
 
-	props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
-	props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
-	props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
-	props.setProperty("JOpt.NumCPUCores", "4");
+  /**
+   * Adds the resource to the optimization.
+   *
+   * @param opti the optimization
+   */
+  private static void addResources(IOptimization opti) {
+    List<IWorkingHours> workingHours = new ArrayList<>();
+    workingHours.add(
+        new WorkingHours(
+            ZonedDateTime.of(2030, MARCH.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2030, MARCH.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+    workingHours.add(
+        new WorkingHours(
+            ZonedDateTime.of(2030, MARCH.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2030, MARCH.getValue(), 7, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-	this.addElement(props);
-    }
+    // Jack's 8 h are more than the short route of this example needs.
+    Duration maxWorkingTime = Duration.ofHours(8);
+    // 1200 km per day, more than the longest day of this plan needs.
+    Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
-    private static List<IWorkingHours> getDefaultWorkingHours() {
+    IResource jack =
+        new CapacityResource(
+            "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
+    opti.addElement(jack);
+  }
 
-	List<IWorkingHours> workingHours = new ArrayList<>();
-	workingHours.add(
-		new WorkingHours(ZonedDateTime.of(2030, MARCH.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-			ZonedDateTime.of(2030, MARCH.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+  /**
+   * Prints the progress, warning, status and error events of the run.
+   *
+   * @param opti the optimization
+   */
+  private static void attachToObservables(IOptimization opti) {
+    // Subscribe before the start: the subjects replay only a few past events.
+    opti.getOptimizationEvents()
+        .progressSubject()
+        .subscribe(p -> System.out.println(p.getProgressString()));
+    opti.getOptimizationEvents().warningSubject().subscribe(w -> System.out.println(w.toString()));
+    opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s.toString()));
+    opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
+  }
 
-	workingHours.add(
-		new WorkingHours(ZonedDateTime.of(2030, MARCH.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-			ZonedDateTime.of(2030, MARCH.getValue(), 7, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+  /**
+   * Starts the run, waits for the result and prints it.
+   *
+   * @param opti the optimization
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   */
+  private static void startAndPresentResult(IOptimization opti)
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException {
+    CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
+    // Wait for the result; without the wait the JVM would end before the run does.
+    IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
+    System.out.println(result);
+  }
 
-	return workingHours;
-    }
-
-    private void addResources() {
-
-	Duration maxWorkingTimeJack = Duration.ofHours(8);
-	Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
-
-	IResource rep1 = new CapacityResource("Jack", 50.775346, 6.083887, maxWorkingTimeJack, maxDistanceKmW,
-		getDefaultWorkingHours());
-	rep1.setCost(0, 1, 1);
-
-	this.addElement(rep1);
-
-    }
-
-    private void addNodes() {
-
-	List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
-	weeklyOpeningHours.add(
-		new OpeningHours(ZonedDateTime.of(2030, MARCH.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-			ZonedDateTime.of(2030, MARCH.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-	Duration visitDuration = Duration.ofMinutes(20);
-
-	// Define some nodes
-
-	INode koeln = new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-	this.addElement(koeln);
-
-	INode aachen = new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
-	this.addElement(aachen);
-
-	// Add a relation
-	INode2NodeRelation rel = new NegativeRelativeTimeWindow2RelatedNodeRelation(Duration.ofMinutes(-2000),
-		Duration.ofMinutes(10));
-	rel.setMasterNode(koeln);
-	rel.setRelatedNode(aachen);
-	aachen.addNode2NodeRelation(rel);
-	koeln.addNode2NodeRelation(rel);
-    }
-
-    @Override
-    public void onError(int code, String message) {
-	System.out.println("code: " + code + " message:" + message);
-    }
-
-    @Override
-    public void onStatus(int code, String message) {
-	System.out.println("code: " + code + " message:" + message);
-    }
-
-    @Override
-    public void onWarning(int code, String message) {
-	//
-
-    }
-
-    @Override
-    public void onProgress(String winnerProgressString) {
-	System.out.println(winnerProgressString);
-    }
-
-    @Override
-    public void onProgress(IOptimizationProgress rapoptProgress) {
-	//
-    }
-
-    @Override
-    public void onAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {
-
-	try {
-	    ResultJsonPrinter.printResultAsJson(this, false);
-	} catch (IOException | ConvertException e) {
-	    e.printStackTrace();
-	}
-
-    }
-
+  /**
+   * Prints the optimization as pretty-printed JSON.
+   *
+   * @param opti the optimization
+   * @throws IOException if the JSON cannot be written
+   * @throws ConvertException if the optimization cannot be converted to JSON
+   */
+  private static void printAsJson(IOptimization opti) throws IOException, ConvertException {
+    // false: leave out the node connections (the distances and times between the elements).
+    ResultJsonPrinter.printResultAsJson(opti, false);
+  }
 }

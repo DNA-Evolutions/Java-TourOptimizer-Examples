@@ -1,0 +1,606 @@
+{
+	"optimizationStatus": {
+		"statusDescription": "SUCCESS_WITH_SOLUTION",
+		"error": "NO_ERROR",
+		"status": "SUCCESS_WITH_SOLUTION",
+		"resultKind": "FINAL"
+	},
+	"createdTimeStamp": 1792062807945,
+	"creator": "DEFAULT_CREATOR",
+	"ident": "JOpt-Run-1741101851742",
+	"nodes": [
+		{
+			"id": "Aachen",
+			"type": {
+				"position": {
+					"latitude": 50.775346,
+					"longitude": 6.083887,
+					"locationId": "Aachen"
+				},
+				"typeName": "Geo"
+			},
+			"openingHours": [
+				{
+					"begin": "2020-03-06T07:00:00Z",
+					"end": "2020-03-06T16:00:00Z",
+					"zoneId": "Europe/Berlin"
+				},
+				{
+					"begin": "2020-03-07T07:00:00Z",
+					"end": "2020-03-07T16:00:00Z",
+					"zoneId": "Europe/Berlin"
+				}
+			],
+			"visitDuration": "PT20M",
+			"priority": 1
+		},
+		{
+			"id": "Oberhausen",
+			"type": {
+				"position": {
+					"latitude": 51.4667,
+					"longitude": 6.85,
+					"locationId": "Oberhausen"
+				},
+				"typeName": "Geo"
+			},
+			"openingHours": [
+				{
+					"begin": "2020-03-06T07:00:00Z",
+					"end": "2020-03-06T16:00:00Z",
+					"zoneId": "Europe/Berlin"
+				},
+				{
+					"begin": "2020-03-07T07:00:00Z",
+					"end": "2020-03-07T16:00:00Z",
+					"zoneId": "Europe/Berlin"
+				}
+			],
+			"visitDuration": "PT20M",
+			"priority": 1
+		},
+		{
+			"id": "Essen",
+			"type": {
+				"position": {
+					"latitude": 51.45,
+					"longitude": 7.01667,
+					"locationId": "Essen"
+				},
+				"typeName": "Geo"
+			},
+			"openingHours": [
+				{
+					"begin": "2020-03-06T07:00:00Z",
+					"end": "2020-03-06T16:00:00Z",
+					"zoneId": "Europe/Berlin"
+				},
+				{
+					"begin": "2020-03-07T07:00:00Z",
+					"end": "2020-03-07T16:00:00Z",
+					"zoneId": "Europe/Berlin"
+				}
+			],
+			"visitDuration": "PT20M",
+			"priority": 1
+		},
+		{
+			"id": "Wuppertal",
+			"type": {
+				"position": {
+					"latitude": 51.2667,
+					"longitude": 7.18333,
+					"locationId": "Wuppertal"
+				},
+				"typeName": "Geo"
+			},
+			"openingHours": [
+				{
+					"begin": "2020-03-06T07:00:00Z",
+					"end": "2020-03-06T16:00:00Z",
+					"zoneId": "Europe/Berlin"
+				},
+				{
+					"begin": "2020-03-07T07:00:00Z",
+					"end": "2020-03-07T16:00:00Z",
+					"zoneId": "Europe/Berlin"
+				}
+			],
+			"visitDuration": "PT20M",
+			"priority": 1
+		},
+		{
+			"id": "Koeln1",
+			"type": {
+				"position": {
+					"latitude": 50.9333,
+					"longitude": 6.95,
+					"locationId": "Koeln1"
+				},
+				"typeName": "Geo"
+			},
+			"openingHours": [
+				{
+					"begin": "2020-03-06T07:00:00Z",
+					"end": "2020-03-06T16:00:00Z",
+					"zoneId": "Europe/Berlin"
+				},
+				{
+					"begin": "2020-03-07T07:00:00Z",
+					"end": "2020-03-07T16:00:00Z",
+					"zoneId": "Europe/Berlin"
+				}
+			],
+			"visitDuration": "PT20M",
+			"priority": 1
+		},
+		{
+			"id": "Koeln",
+			"type": {
+				"position": {
+					"latitude": 50.9333,
+					"longitude": 6.95,
+					"locationId": "Koeln"
+				},
+				"typeName": "Geo"
+			},
+			"openingHours": [
+				{
+					"begin": "2020-03-06T07:00:00Z",
+					"end": "2020-03-06T16:00:00Z",
+					"zoneId": "Europe/Berlin"
+				},
+				{
+					"begin": "2020-03-07T07:00:00Z",
+					"end": "2020-03-07T16:00:00Z",
+					"zoneId": "Europe/Berlin"
+				}
+			],
+			"visitDuration": "PT20M",
+			"priority": 1
+		},
+		{
+			"id": "Heilbronn",
+			"type": {
+				"position": {
+					"latitude": 49.1403,
+					"longitude": 9.22,
+					"locationId": "Heilbronn"
+				},
+				"typeName": "Geo"
+			},
+			"openingHours": [
+				{
+					"begin": "2020-03-06T07:00:00Z",
+					"end": "2020-03-06T16:00:00Z",
+					"zoneId": "Europe/Berlin"
+				},
+				{
+					"begin": "2020-03-07T07:00:00Z",
+					"end": "2020-03-07T16:00:00Z",
+					"zoneId": "Europe/Berlin"
+				}
+			],
+			"visitDuration": "PT20M",
+			"priority": 1
+		},
+		{
+			"id": "Stuttgart",
+			"type": {
+				"position": {
+					"latitude": 48.7667,
+					"longitude": 9.18333,
+					"locationId": "Stuttgart"
+				},
+				"typeName": "Geo"
+			},
+			"openingHours": [
+				{
+					"begin": "2020-03-06T07:00:00Z",
+					"end": "2020-03-06T16:00:00Z",
+					"zoneId": "Europe/Berlin"
+				},
+				{
+					"begin": "2020-03-07T07:00:00Z",
+					"end": "2020-03-07T16:00:00Z",
+					"zoneId": "Europe/Berlin"
+				}
+			],
+			"visitDuration": "PT20M",
+			"priority": 1
+		}
+	],
+	"resources": [
+		{
+			"id": "Jack",
+			"type": {
+				"typeName": "Capacity"
+			},
+			"position": {
+				"latitude": 50.775346,
+				"longitude": 6.083887,
+				"locationId": "Jack"
+			},
+			"workingHours": [
+				{
+					"begin": "2020-03-06T07:00:00Z",
+					"end": "2020-03-06T16:00:00Z",
+					"zoneId": "Europe/Berlin"
+				},
+				{
+					"begin": "2020-03-07T07:00:00Z",
+					"end": "2020-03-07T19:00:00Z",
+					"zoneId": "Europe/Berlin"
+				}
+			],
+			"maxTime": "PT8H",
+			"maxDistance": "1200 km",
+			"co2emissionFactor": 0.377
+		},
+		{
+			"id": "John",
+			"type": {
+				"typeName": "Capacity"
+			},
+			"position": {
+				"latitude": 50.775346,
+				"longitude": 6.083887,
+				"locationId": "John"
+			},
+			"workingHours": [
+				{
+					"begin": "2020-03-06T07:00:00Z",
+					"end": "2020-03-06T16:00:00Z",
+					"zoneId": "Europe/Berlin"
+				},
+				{
+					"begin": "2020-03-07T07:00:00Z",
+					"end": "2020-03-07T19:00:00Z",
+					"zoneId": "Europe/Berlin"
+				}
+			],
+			"maxTime": "PT14H",
+			"maxDistance": "1200 km",
+			"co2emissionFactor": 0.377
+		}
+	],
+	"optimizationOptions": {
+		"properties": {
+			"JOpt.Algorithm.GE.OnProgressOutPercentage": "1.0",
+			"JOpt.Algorithm.Operator.2Opt.Threshold": "10",
+			"JOpt.Algorithm.Operator.GE.doForceReselect": "FALSE",
+			"JOpt.Algorithm.Operator.GE.numReselects": "3",
+			"JOpt.Algorithm.Operator.RequireHoursOverlap": "TRUE",
+			"JOpt.Algorithm.Operator.SA.doForceReselect": "FALSE",
+			"JOpt.Algorithm.Operator.SA.numReselects": "5",
+			"JOpt.Algorithm.PreOptimization.SA.CoolingRate": "0.999985",
+			"JOpt.Algorithm.PreOptimization.SA.NumIterations": "100000",
+			"JOpt.Algorithm.PreOptimization.SA.NumRepetitions": "1",
+			"JOpt.Algorithm.PreOptimization.SA.OnProgressOutPercentage": "1.0",
+			"JOpt.Algorithm.PreOptimization.SA.StartingTemperature": "10.0",
+			"JOpt.Algorithm.PreOptimization.SA.StartingTemperatureLoadedSnapshot": "0.1",
+			"JOpt.Algorithm.Relation.NestingLimit": "100",
+			"JOpt.Algorithm.tryUseCluster2Opt": "FALSE",
+			"JOpt.Algorithm.tryUseClusterInsertion": "FALSE",
+			"JOpt.Assisted": "TRUE",
+			"JOpt.AutoFilter": "FALSE",
+			"JOpt.AutoFilter.EarlyArrivalMargin": "0",
+			"JOpt.AutoFilter.LateArrivalMargin": "0",
+			"JOpt.AutoFilter.RouteDistanceExceedMargin": "0",
+			"JOpt.AutoFilter.WorkingHoursExceedMargin": "0",
+			"JOpt.AutoFilter.afterFilteringResult": "FALSE",
+			"JOpt.AutoFilter.beforeFilteringResult": "FALSE",
+			"JOpt.AutoFilter.canDisableNodeProtection": "TRUE",
+			"JOpt.AutoFilter.collectivePenalization.maxImportance": "5",
+			"JOpt.AutoFilter.doNormalFiltering": "TRUE",
+			"JOpt.AutoFilter.tryAvoidSplittingJoinedClusters": "FALSE",
+			"JOpt.AutoFilter.tryGracefulNodeFiltering": "TRUE",
+			"JOpt.AutoFilter.usePostOptimizationAfterStrictFiltering": "TRUE",
+			"JOpt.AutoFilter.useStrictFilterOnJobLevel": "TRUE",
+			"JOpt.AutoFilter.useStrictFilterOnLastExecution": "TRUE",
+			"JOpt.AutoForceFilter.EarlyArrivalMargin": "0",
+			"JOpt.AutoForceFilter.LateArrivalMargin": "0",
+			"JOpt.AutoForceFilter.RouteDistanceExceedMargin": "0",
+			"JOpt.AutoForceFilter.WorkingHoursExceedMargin": "0",
+			"JOpt.CO.ActiveTimeTrigger": "FALSE",
+			"JOpt.CO.AutoSyncJoptTime": "FALSE",
+			"JOpt.CapacityDegradation.TreatSameLocationsAsOne": "FALSE",
+			"JOpt.Clustering.AutoZoneCodeClusters": "FALSE",
+			"JOpt.Clustering.AutoZoneCodeClusters.isHard": "FALSE",
+			"JOpt.Clustering.JointVisitDuration.doUseDistanceDivider": "FALSE",
+			"JOpt.Clustering.MaxDistanceUtilization": "200.0",
+			"JOpt.Clustering.MaxDurationUtilization": "80.0",
+			"JOpt.Clustering.PenalizeZoneCodeCrossing": "FALSE",
+			"JOpt.Clustering.PenalizeZoneCodeCrossingMultiplier": "1.0",
+			"JOpt.Clustering.ReassignOrphanedNodes": "TRUE",
+			"JOpt.Clustering.ResourceDutyHoursSplitValue": "10",
+			"JOpt.Clustering.ResourceSplitValue": "30",
+			"JOpt.Clustering.ShowDebugOutput": "FALSE",
+			"JOpt.CostAssessment.suppressInactiveFinalizedRouteCosts": "TRUE",
+			"JOpt.CostAssessment.useAverageCost": "FALSE",
+			"JOpt.DebugMode.NodeChecking": "TRUE",
+			"JOpt.EntityValidation.Debug": "FALSE",
+			"JOpt.FuzzyDemand": "0",
+			"JOpt.InducedIdleTime.addInsertionOperatorCoupling": "FALSE",
+			"JOpt.InducedIdleTime.isCausingIdleTimeCost": "TRUE",
+			"JOpt.InducedIdleTime.max": "7200",
+			"JOpt.InducedIdleTime.min": "60",
+			"JOpt.IntermediateStage.ThrowResults": "FALSE",
+			"JOpt.JOptPopulationSize": "100",
+			"JOpt.JointVisitDuration.maxRadiusMeter": "10.0",
+			"JOpt.JointVisitDuration.routeTimeBonusFactor": "0.0",
+			"JOpt.KeepZeroDriveForEventNodes": "FALSE",
+			"JOpt.Lockdown.Blockpillar.endOffset": "0",
+			"JOpt.Lockdown.Blockpillar.startOffset": "0",
+			"JOpt.Lockdown.LockdownUnchangedRoutes": "TRUE",
+			"JOpt.MovingEventNodes": "TRUE",
+			"JOpt.Multicore": "1",
+			"JOpt.NumCPUCores": "4",
+			"JOpt.PerformanceMode": "FALSE",
+			"JOpt.PillarDropper.AllowRescheduleMaximalRouteDistanceExceeded": "TRUE",
+			"JOpt.PillarDropper.AllowRescheduleWorkingHoursExceeded": "TRUE",
+			"JOpt.PlausibilityGuard.PropertyChecker.Active": "TRUE",
+			"JOpt.PropertyChecker.ShowWarnings": "TRUE",
+			"JOpt.ReassignNodesOnStartup": "FALSE",
+			"JOpt.ReassignResourcesOnStartup": "FALSE",
+			"JOpt.SelectiveAutoFilter": "FALSE",
+			"JOpt.SelectiveAutoFilter.AfterEndAnchor": "FALSE",
+			"JOpt.SelectiveAutoFilter.CapacityOverload": "FALSE",
+			"JOpt.SelectiveAutoFilter.DoubleBooking": "FALSE",
+			"JOpt.SelectiveAutoFilter.MaximalRouteDistanceExceeded": "FALSE",
+			"JOpt.SelectiveAutoFilter.NodeType": "FALSE",
+			"JOpt.SelectiveAutoFilter.RelationShip": "FALSE",
+			"JOpt.SelectiveAutoFilter.ResourceMismatch": "FALSE",
+			"JOpt.SelectiveAutoFilter.TimeWindow.Early": "FALSE",
+			"JOpt.SelectiveAutoFilter.TimeWindow.Late": "FALSE",
+			"JOpt.SelectiveAutoFilter.WorkingHoursExceeded": "FALSE",
+			"JOpt.UnlocatedIdleTime": "FALSE",
+			"JOpt.plausibility.doInputCheck": "TRUE",
+			"JOpt.plausibility.doInputCheck.doCapacityCheck": "TRUE",
+			"JOptExitCondition.JOptGenerationCount": "2000",
+			"JOptWeight.CO2Emission": "0.0",
+			"JOptWeight.Capacity": "50.0",
+			"JOptWeight.ColorCapacity": "10.0",
+			"JOptWeight.CompactingFactor": "1.0",
+			"JOptWeight.DistanceExceeded": "10.0",
+			"JOptWeight.DistanceVariationPattern": "0.0",
+			"JOptWeight.ExpertiseLevelPreference": "1.0",
+			"JOptWeight.NodeCompactingFactor": "0.0",
+			"JOptWeight.NodeImportance": "1.0",
+			"JOptWeight.NodeType": "1.0",
+			"JOptWeight.PreferableResource": "1.0",
+			"JOptWeight.Relationships": "100.0",
+			"JOptWeight.ResourceActive": "0.0",
+			"JOptWeight.ResourceLocationBias": "0.0",
+			"JOptWeight.ResourceRadiusDrivingDistance": "1.0",
+			"JOptWeight.ResourceRadiusDrivingTime": "1.0",
+			"JOptWeight.ResourceWorkingTimeBalance": "0.0",
+			"JOptWeight.RouteDistance": "1.0",
+			"JOptWeight.RouteTime": "1.0",
+			"JOptWeight.TimeExceeded": "100.0",
+			"JOptWeight.TimeWindow": "1.0",
+			"JOptWeight.TimeWindow.AfterEndPillarAnchor": "1000.0",
+			"JOptWeight.TimeWindow.FlexTimePenalizeFactor": "0.0",
+			"JOptWeight.TimeWindow.OfferedNodeCostMultiplier": "2.0",
+			"JOptWeight.TimeWindow.ServiceHours": "10.0",
+			"JOptWeight.TimeWindow.TimeWindowEarlyFactor": "10.0",
+			"JOptWeight.TimeWindow.TimeWindowEarlyFactorAtFirstNode": "1.0",
+			"JOptWeight.TimeWindow.TimeWindowLateFactor": "100.0",
+			"JOptWeight.TotalDistance": "1.0",
+			"JOptWeight.TotalTime": "1.0",
+			"JOptWeight.UnPreferableResource": "1.0",
+			"JOptWeight.UselessUnloadAllVisitation": "1.0",
+			"JOptWeight.WorkingTime": "5.0",
+			"JOptWeight.ZoneCode": "10.0",
+			"JOptWeight.ZoneCode.Priority": "2.0"
+		},
+		"optimizationSchemeOptions": {
+			"constructionOptimizationAlgorithmConfig": {
+				"algorithm": "SMART_CONSTR_ALGO"
+			},
+			"heuristicOptimizationAlgorithmConfigs": [
+				{
+					"algorithm": "SMART_SIMULATED_ANNEALING_ALGO",
+					"hasAutoFilter": false
+				},
+				{
+					"algorithm": "GENETIC_EVOLUTION_ALGO",
+					"hasAutoFilter": true
+				}
+			]
+		}
+	},
+	"solution": {
+		"createdTimeStamp": 1792062807945,
+		"creator": "DEFAULT_CREATOR",
+		"ident": "JOpt-Run-1741101851742",
+		"header": {
+			"numRoutes": 4,
+			"numScheduledRoutes": 2,
+			"totElements": 10,
+			"unassignedElementIds": [],
+			"totCost": 847.033054487167,
+			"totTime": "PT12H34M5.115S",
+			"totIdleTime": "PT0S",
+			"totProdTime": "PT2H40M",
+			"totTranTime": "PT9H54M5.115S",
+			"totTermiTime": "PT4H1M10.835S",
+			"totDistance": "784192.6169871669 m",
+			"totTermiDistance": "318358.3783121061 m",
+			"jobViolations": []
+		},
+		"routes": [
+			{
+				"header": {
+					"cost": 1.6666666666666667,
+					"time": "PT20M",
+					"idleTime": "PT0S",
+					"prodTime": "PT20M",
+					"tranTime": "PT0S",
+					"termiTime": "PT0S",
+					"distance": "0.0 m",
+					"termiDistance": "0.0 m",
+					"routeViolations": [],
+					"isClosed": true,
+					"isAlternateDestination": false
+				},
+				"id": 0,
+				"resourceId": "Jack",
+				"startTime": "2020-03-06T07:00:00Z",
+				"startElementId": "Jack",
+				"startPosition": {
+					"latitude": 50.775346,
+					"longitude": 6.083887,
+					"locationId": "Jack"
+				},
+				"endElementId": "Jack",
+				"endPosition": {
+					"latitude": 50.775346,
+					"longitude": 6.083887,
+					"locationId": "Jack"
+				},
+				"optimizableElementIds": [
+					"Aachen"
+				],
+				"nonOptimizableElementIds": [],
+				"optionalOptimizableElementIds": [],
+				"pillarElementIds": [],
+				"elementDetails": [],
+				"pillarLatestEffectiveArrivalOffsetMap": {},
+				"flags": [],
+				"isFinalized": false,
+				"isInactive": false,
+				"isLockedDown": false
+			},
+			{
+				"header": {
+					"cost": 0.0,
+					"time": "PT0S",
+					"idleTime": "PT0S",
+					"prodTime": "PT0S",
+					"tranTime": "PT0S",
+					"termiTime": "PT0S",
+					"distance": "0.0 m",
+					"termiDistance": "0.0 m",
+					"routeViolations": [],
+					"isClosed": true,
+					"isAlternateDestination": false
+				},
+				"id": 1,
+				"resourceId": "Jack",
+				"startTime": "2020-03-07T07:00:00Z",
+				"startElementId": "Jack",
+				"startPosition": {
+					"latitude": 50.775346,
+					"longitude": 6.083887,
+					"locationId": "Jack"
+				},
+				"endElementId": "Jack",
+				"endPosition": {
+					"latitude": 50.775346,
+					"longitude": 6.083887,
+					"locationId": "Jack"
+				},
+				"optimizableElementIds": [],
+				"nonOptimizableElementIds": [],
+				"optionalOptimizableElementIds": [],
+				"pillarElementIds": [],
+				"elementDetails": [],
+				"pillarLatestEffectiveArrivalOffsetMap": {},
+				"flags": [],
+				"isFinalized": false,
+				"isInactive": false,
+				"isLockedDown": false
+			},
+			{
+				"header": {
+					"cost": 845.3663878205003,
+					"time": "PT12H14M5.115S",
+					"idleTime": "PT0S",
+					"prodTime": "PT2H20M",
+					"tranTime": "PT9H54M5.115S",
+					"termiTime": "PT4H1M10.835S",
+					"distance": "784192.6169871669 m",
+					"termiDistance": "318358.3783121061 m",
+					"routeViolations": [],
+					"isClosed": true,
+					"isAlternateDestination": false
+				},
+				"id": 2,
+				"resourceId": "John",
+				"startTime": "2020-03-06T07:00:00Z",
+				"startElementId": "John",
+				"startPosition": {
+					"latitude": 50.775346,
+					"longitude": 6.083887,
+					"locationId": "John"
+				},
+				"endElementId": "John",
+				"endPosition": {
+					"latitude": 50.775346,
+					"longitude": 6.083887,
+					"locationId": "John"
+				},
+				"optimizableElementIds": [
+					"Oberhausen",
+					"Essen",
+					"Wuppertal",
+					"Koeln1",
+					"Koeln",
+					"Heilbronn",
+					"Stuttgart"
+				],
+				"nonOptimizableElementIds": [],
+				"optionalOptimizableElementIds": [],
+				"pillarElementIds": [],
+				"elementDetails": [],
+				"pillarLatestEffectiveArrivalOffsetMap": {},
+				"flags": [],
+				"isFinalized": false,
+				"isInactive": false,
+				"isLockedDown": false
+			},
+			{
+				"header": {
+					"cost": 0.0,
+					"time": "PT0S",
+					"idleTime": "PT0S",
+					"prodTime": "PT0S",
+					"tranTime": "PT0S",
+					"termiTime": "PT0S",
+					"distance": "0.0 m",
+					"termiDistance": "0.0 m",
+					"routeViolations": [],
+					"isClosed": true,
+					"isAlternateDestination": false
+				},
+				"id": 3,
+				"resourceId": "John",
+				"startTime": "2020-03-07T07:00:00Z",
+				"startElementId": "John",
+				"startPosition": {
+					"latitude": 50.775346,
+					"longitude": 6.083887,
+					"locationId": "John"
+				},
+				"endElementId": "John",
+				"endPosition": {
+					"latitude": 50.775346,
+					"longitude": 6.083887,
+					"locationId": "John"
+				},
+				"optimizableElementIds": [],
+				"nonOptimizableElementIds": [],
+				"optionalOptimizableElementIds": [],
+				"pillarElementIds": [],
+				"elementDetails": [],
+				"pillarLatestEffectiveArrivalOffsetMap": {},
+				"flags": [],
+				"isFinalized": false,
+				"isInactive": false,
+				"isLockedDown": false
+			}
+		]
+	},
+	"extension": {}
+}

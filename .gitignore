@@ -18,4 +18,5 @@ oldjars/
 src/main/java/com/dna/jopt/touroptimizer/java/examples/excluded/
 .sts4-cache/classpath-data.json
 *.json
+!/src/main/resources/json/*.json
 misc/

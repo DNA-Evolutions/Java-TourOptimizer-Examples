@@ -1,11 +1,9 @@
 package com.dna.jopt.touroptimizer.java.examples.basic.io_03;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 /*-
  * #%L
  * JOpt TourOptimizer Examples
  * %%
- * Copyright (C) 2017 - 2020 DNA Evolutions GmbH
+ * Copyright (C) 2017 - 2023 DNA Evolutions GmbH
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
@@ -13,739 +11,172 @@ import java.io.ByteArrayOutputStream;
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
-import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 
-import com.dna.jopt.config.convert.ConvertException;
-import com.dna.jopt.config.serialize.SerializationException;
 import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
-import com.dna.jopt.framework.outcomewrapper.IOptimizationProgress;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
 import com.dna.jopt.io.importing.IOptimizationImporter;
 import com.dna.jopt.io.importing.json.OptimizationJSONImporter;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 /**
- * This example shows how to load an optimization state from a JSON file.
+ * Loads an optimization state from a JSON string and continues from its solution.
  *
- * @author DNA
- * @version Mar 26, 2021
- * @since Mar 26, 2021
+ * <p>Scenario: a sample snapshot of the SaveOptimizationToJsonExample scenario as plain JSON
+ * text: eight nodes and the two resources Jack and John on March 6 and 7, 2020, time zone
+ * Europe/Berlin, with properties and a solution. The example reads the text from the class path
+ * resource json/LoadOptimizationFromJsonString.json; in an application the string could come from
+ * a database or a message.
+ *
+ * <p>Look for: the status line OPTIMIZATION_USING_PROVIDED_SOLUTION, which shows that the run
+ * starts from the loaded solution, and then the result.
+ *
+ * <p>Prerequisites: None: without a license file the example uses the public evaluation license
+ * (see ExampleLicenseHelper). The JSON resource is part of this repository.
+ *
+ * @see <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/io_03/LoadAndSaveOptimization.md">LoadAndSaveOptimization.md</a>
  */
 public class LoadOptimizationFromJsonString extends Optimization {
 
-  
-  public static final String JSON_SNAPSHOT = "{\r\n"
-  	+ "	\"optimizationStatus\": {\r\n"
-  	+ "		\"statusDescription\": \"SUCCESS_WITH_SOLUTION\",\r\n"
-  	+ "		\"error\": \"NO_ERROR\",\r\n"
-  	+ "		\"status\": \"SUCCESS_WITH_SOLUTION\",\r\n"
-  	+ "		\"resultKind\": \"FINAL\"\r\n"
-  	+ "	},\r\n"
-  	+ "	\"createdTimeStamp\": 1792062807945,\r\n"
-  	+ "	\"creator\": \"DEFAULT_CREATOR\",\r\n"
-  	+ "	\"ident\": \"JOpt-Run-1741101851742\",\r\n"
-  	+ "	\"nodes\": [\r\n"
-  	+ "		{\r\n"
-  	+ "			\"id\": \"Aachen\",\r\n"
-  	+ "			\"type\": {\r\n"
-  	+ "				\"position\": {\r\n"
-  	+ "					\"latitude\": 50.775346,\r\n"
-  	+ "					\"longitude\": 6.083887,\r\n"
-  	+ "					\"locationId\": \"Aachen\"\r\n"
-  	+ "				},\r\n"
-  	+ "				\"typeName\": \"Geo\"\r\n"
-  	+ "			},\r\n"
-  	+ "			\"openingHours\": [\r\n"
-  	+ "				{\r\n"
-  	+ "					\"begin\": \"2020-03-06T07:00:00Z\",\r\n"
-  	+ "					\"end\": \"2020-03-06T16:00:00Z\",\r\n"
-  	+ "					\"zoneId\": \"Europe/Berlin\"\r\n"
-  	+ "				},\r\n"
-  	+ "				{\r\n"
-  	+ "					\"begin\": \"2020-03-07T07:00:00Z\",\r\n"
-  	+ "					\"end\": \"2020-03-07T16:00:00Z\",\r\n"
-  	+ "					\"zoneId\": \"Europe/Berlin\"\r\n"
-  	+ "				}\r\n"
-  	+ "			],\r\n"
-  	+ "			\"visitDuration\": \"PT20M\",\r\n"
-  	+ "			\"priority\": 1\r\n"
-  	+ "		},\r\n"
-  	+ "		{\r\n"
-  	+ "			\"id\": \"Oberhausen\",\r\n"
-  	+ "			\"type\": {\r\n"
-  	+ "				\"position\": {\r\n"
-  	+ "					\"latitude\": 51.4667,\r\n"
-  	+ "					\"longitude\": 6.85,\r\n"
-  	+ "					\"locationId\": \"Oberhausen\"\r\n"
-  	+ "				},\r\n"
-  	+ "				\"typeName\": \"Geo\"\r\n"
-  	+ "			},\r\n"
-  	+ "			\"openingHours\": [\r\n"
-  	+ "				{\r\n"
-  	+ "					\"begin\": \"2020-03-06T07:00:00Z\",\r\n"
-  	+ "					\"end\": \"2020-03-06T16:00:00Z\",\r\n"
-  	+ "					\"zoneId\": \"Europe/Berlin\"\r\n"
-  	+ "				},\r\n"
-  	+ "				{\r\n"
-  	+ "					\"begin\": \"2020-03-07T07:00:00Z\",\r\n"
-  	+ "					\"end\": \"2020-03-07T16:00:00Z\",\r\n"
-  	+ "					\"zoneId\": \"Europe/Berlin\"\r\n"
-  	+ "				}\r\n"
-  	+ "			],\r\n"
-  	+ "			\"visitDuration\": \"PT20M\",\r\n"
-  	+ "			\"priority\": 1\r\n"
-  	+ "		},\r\n"
-  	+ "		{\r\n"
-  	+ "			\"id\": \"Essen\",\r\n"
-  	+ "			\"type\": {\r\n"
-  	+ "				\"position\": {\r\n"
-  	+ "					\"latitude\": 51.45,\r\n"
-  	+ "					\"longitude\": 7.01667,\r\n"
-  	+ "					\"locationId\": \"Essen\"\r\n"
-  	+ "				},\r\n"
-  	+ "				\"typeName\": \"Geo\"\r\n"
-  	+ "			},\r\n"
-  	+ "			\"openingHours\": [\r\n"
-  	+ "				{\r\n"
-  	+ "					\"begin\": \"2020-03-06T07:00:00Z\",\r\n"
-  	+ "					\"end\": \"2020-03-06T16:00:00Z\",\r\n"
-  	+ "					\"zoneId\": \"Europe/Berlin\"\r\n"
-  	+ "				},\r\n"
-  	+ "				{\r\n"
-  	+ "					\"begin\": \"2020-03-07T07:00:00Z\",\r\n"
-  	+ "					\"end\": \"2020-03-07T16:00:00Z\",\r\n"
-  	+ "					\"zoneId\": \"Europe/Berlin\"\r\n"
-  	+ "				}\r\n"
-  	+ "			],\r\n"
-  	+ "			\"visitDuration\": \"PT20M\",\r\n"
-  	+ "			\"priority\": 1\r\n"
-  	+ "		},\r\n"
-  	+ "		{\r\n"
-  	+ "			\"id\": \"Wuppertal\",\r\n"
-  	+ "			\"type\": {\r\n"
-  	+ "				\"position\": {\r\n"
-  	+ "					\"latitude\": 51.2667,\r\n"
-  	+ "					\"longitude\": 7.18333,\r\n"
-  	+ "					\"locationId\": \"Wuppertal\"\r\n"
-  	+ "				},\r\n"
-  	+ "				\"typeName\": \"Geo\"\r\n"
-  	+ "			},\r\n"
-  	+ "			\"openingHours\": [\r\n"
-  	+ "				{\r\n"
-  	+ "					\"begin\": \"2020-03-06T07:00:00Z\",\r\n"
-  	+ "					\"end\": \"2020-03-06T16:00:00Z\",\r\n"
-  	+ "					\"zoneId\": \"Europe/Berlin\"\r\n"
-  	+ "				},\r\n"
-  	+ "				{\r\n"
-  	+ "					\"begin\": \"2020-03-07T07:00:00Z\",\r\n"
-  	+ "					\"end\": \"2020-03-07T16:00:00Z\",\r\n"
-  	+ "					\"zoneId\": \"Europe/Berlin\"\r\n"
-  	+ "				}\r\n"
-  	+ "			],\r\n"
-  	+ "			\"visitDuration\": \"PT20M\",\r\n"
-  	+ "			\"priority\": 1\r\n"
-  	+ "		},\r\n"
-  	+ "		{\r\n"
-  	+ "			\"id\": \"Koeln1\",\r\n"
-  	+ "			\"type\": {\r\n"
-  	+ "				\"position\": {\r\n"
-  	+ "					\"latitude\": 50.9333,\r\n"
-  	+ "					\"longitude\": 6.95,\r\n"
-  	+ "					\"locationId\": \"Koeln1\"\r\n"
-  	+ "				},\r\n"
-  	+ "				\"typeName\": \"Geo\"\r\n"
-  	+ "			},\r\n"
-  	+ "			\"openingHours\": [\r\n"
-  	+ "				{\r\n"
-  	+ "					\"begin\": \"2020-03-06T07:00:00Z\",\r\n"
-  	+ "					\"end\": \"2020-03-06T16:00:00Z\",\r\n"
-  	+ "					\"zoneId\": \"Europe/Berlin\"\r\n"
-  	+ "				},\r\n"
-  	+ "				{\r\n"
-  	+ "					\"begin\": \"2020-03-07T07:00:00Z\",\r\n"
-  	+ "					\"end\": \"2020-03-07T16:00:00Z\",\r\n"
-  	+ "					\"zoneId\": \"Europe/Berlin\"\r\n"
-  	+ "				}\r\n"
-  	+ "			],\r\n"
-  	+ "			\"visitDuration\": \"PT20M\",\r\n"
-  	+ "			\"priority\": 1\r\n"
-  	+ "		},\r\n"
-  	+ "		{\r\n"
-  	+ "			\"id\": \"Koeln\",\r\n"
-  	+ "			\"type\": {\r\n"
-  	+ "				\"position\": {\r\n"
-  	+ "					\"latitude\": 50.9333,\r\n"
-  	+ "					\"longitude\": 6.95,\r\n"
-  	+ "					\"locationId\": \"Koeln\"\r\n"
-  	+ "				},\r\n"
-  	+ "				\"typeName\": \"Geo\"\r\n"
-  	+ "			},\r\n"
-  	+ "			\"openingHours\": [\r\n"
-  	+ "				{\r\n"
-  	+ "					\"begin\": \"2020-03-06T07:00:00Z\",\r\n"
-  	+ "					\"end\": \"2020-03-06T16:00:00Z\",\r\n"
-  	+ "					\"zoneId\": \"Europe/Berlin\"\r\n"
-  	+ "				},\r\n"
-  	+ "				{\r\n"
-  	+ "					\"begin\": \"2020-03-07T07:00:00Z\",\r\n"
-  	+ "					\"end\": \"2020-03-07T16:00:00Z\",\r\n"
-  	+ "					\"zoneId\": \"Europe/Berlin\"\r\n"
-  	+ "				}\r\n"
-  	+ "			],\r\n"
-  	+ "			\"visitDuration\": \"PT20M\",\r\n"
-  	+ "			\"priority\": 1\r\n"
-  	+ "		},\r\n"
-  	+ "		{\r\n"
-  	+ "			\"id\": \"Heilbronn\",\r\n"
-  	+ "			\"type\": {\r\n"
-  	+ "				\"position\": {\r\n"
-  	+ "					\"latitude\": 49.1403,\r\n"
-  	+ "					\"longitude\": 9.22,\r\n"
-  	+ "					\"locationId\": \"Heilbronn\"\r\n"
-  	+ "				},\r\n"
-  	+ "				\"typeName\": \"Geo\"\r\n"
-  	+ "			},\r\n"
-  	+ "			\"openingHours\": [\r\n"
-  	+ "				{\r\n"
-  	+ "					\"begin\": \"2020-03-06T07:00:00Z\",\r\n"
-  	+ "					\"end\": \"2020-03-06T16:00:00Z\",\r\n"
-  	+ "					\"zoneId\": \"Europe/Berlin\"\r\n"
-  	+ "				},\r\n"
-  	+ "				{\r\n"
-  	+ "					\"begin\": \"2020-03-07T07:00:00Z\",\r\n"
-  	+ "					\"end\": \"2020-03-07T16:00:00Z\",\r\n"
-  	+ "					\"zoneId\": \"Europe/Berlin\"\r\n"
-  	+ "				}\r\n"
-  	+ "			],\r\n"
-  	+ "			\"visitDuration\": \"PT20M\",\r\n"
-  	+ "			\"priority\": 1\r\n"
-  	+ "		},\r\n"
-  	+ "		{\r\n"
-  	+ "			\"id\": \"Stuttgart\",\r\n"
-  	+ "			\"type\": {\r\n"
-  	+ "				\"position\": {\r\n"
-  	+ "					\"latitude\": 48.7667,\r\n"
-  	+ "					\"longitude\": 9.18333,\r\n"
-  	+ "					\"locationId\": \"Stuttgart\"\r\n"
-  	+ "				},\r\n"
-  	+ "				\"typeName\": \"Geo\"\r\n"
-  	+ "			},\r\n"
-  	+ "			\"openingHours\": [\r\n"
-  	+ "				{\r\n"
-  	+ "					\"begin\": \"2020-03-06T07:00:00Z\",\r\n"
-  	+ "					\"end\": \"2020-03-06T16:00:00Z\",\r\n"
-  	+ "					\"zoneId\": \"Europe/Berlin\"\r\n"
-  	+ "				},\r\n"
-  	+ "				{\r\n"
-  	+ "					\"begin\": \"2020-03-07T07:00:00Z\",\r\n"
-  	+ "					\"end\": \"2020-03-07T16:00:00Z\",\r\n"
-  	+ "					\"zoneId\": \"Europe/Berlin\"\r\n"
-  	+ "				}\r\n"
-  	+ "			],\r\n"
-  	+ "			\"visitDuration\": \"PT20M\",\r\n"
-  	+ "			\"priority\": 1\r\n"
-  	+ "		}\r\n"
-  	+ "	],\r\n"
-  	+ "	\"resources\": [\r\n"
-  	+ "		{\r\n"
-  	+ "			\"id\": \"Jack\",\r\n"
-  	+ "			\"type\": {\r\n"
-  	+ "				\"typeName\": \"Capacity\"\r\n"
-  	+ "			},\r\n"
-  	+ "			\"position\": {\r\n"
-  	+ "				\"latitude\": 50.775346,\r\n"
-  	+ "				\"longitude\": 6.083887,\r\n"
-  	+ "				\"locationId\": \"Jack\"\r\n"
-  	+ "			},\r\n"
-  	+ "			\"workingHours\": [\r\n"
-  	+ "				{\r\n"
-  	+ "					\"begin\": \"2020-03-06T07:00:00Z\",\r\n"
-  	+ "					\"end\": \"2020-03-06T16:00:00Z\",\r\n"
-  	+ "					\"zoneId\": \"Europe/Berlin\"\r\n"
-  	+ "				},\r\n"
-  	+ "				{\r\n"
-  	+ "					\"begin\": \"2020-03-07T07:00:00Z\",\r\n"
-  	+ "					\"end\": \"2020-03-07T19:00:00Z\",\r\n"
-  	+ "					\"zoneId\": \"Europe/Berlin\"\r\n"
-  	+ "				}\r\n"
-  	+ "			],\r\n"
-  	+ "			\"maxTime\": \"PT8H\",\r\n"
-  	+ "			\"maxDistance\": \"1200 km\",\r\n"
-  	+ "			\"co2emissionFactor\": 0.377\r\n"
-  	+ "		},\r\n"
-  	+ "		{\r\n"
-  	+ "			\"id\": \"John\",\r\n"
-  	+ "			\"type\": {\r\n"
-  	+ "				\"typeName\": \"Capacity\"\r\n"
-  	+ "			},\r\n"
-  	+ "			\"position\": {\r\n"
-  	+ "				\"latitude\": 50.775346,\r\n"
-  	+ "				\"longitude\": 6.083887,\r\n"
-  	+ "				\"locationId\": \"John\"\r\n"
-  	+ "			},\r\n"
-  	+ "			\"workingHours\": [\r\n"
-  	+ "				{\r\n"
-  	+ "					\"begin\": \"2020-03-06T07:00:00Z\",\r\n"
-  	+ "					\"end\": \"2020-03-06T16:00:00Z\",\r\n"
-  	+ "					\"zoneId\": \"Europe/Berlin\"\r\n"
-  	+ "				},\r\n"
-  	+ "				{\r\n"
-  	+ "					\"begin\": \"2020-03-07T07:00:00Z\",\r\n"
-  	+ "					\"end\": \"2020-03-07T19:00:00Z\",\r\n"
-  	+ "					\"zoneId\": \"Europe/Berlin\"\r\n"
-  	+ "				}\r\n"
-  	+ "			],\r\n"
-  	+ "			\"maxTime\": \"PT14H\",\r\n"
-  	+ "			\"maxDistance\": \"1200 km\",\r\n"
-  	+ "			\"co2emissionFactor\": 0.377\r\n"
-  	+ "		}\r\n"
-  	+ "	],\r\n"
-  	+ "	\"optimizationOptions\": {\r\n"
-  	+ "		\"properties\": {\r\n"
-  	+ "			\"JOpt.Algorithm.GE.OnProgressOutPercentage\": \"1.0\",\r\n"
-  	+ "			\"JOpt.Algorithm.Operator.2Opt.Threshold\": \"10\",\r\n"
-  	+ "			\"JOpt.Algorithm.Operator.GE.doForceReselect\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.Algorithm.Operator.GE.numReselects\": \"3\",\r\n"
-  	+ "			\"JOpt.Algorithm.Operator.RequireHoursOverlap\": \"TRUE\",\r\n"
-  	+ "			\"JOpt.Algorithm.Operator.SA.doForceReselect\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.Algorithm.Operator.SA.numReselects\": \"5\",\r\n"
-  	+ "			\"JOpt.Algorithm.PreOptimization.SA.CoolingRate\": \"0.999985\",\r\n"
-  	+ "			\"JOpt.Algorithm.PreOptimization.SA.NumIterations\": \"100000\",\r\n"
-  	+ "			\"JOpt.Algorithm.PreOptimization.SA.NumRepetitions\": \"1\",\r\n"
-  	+ "			\"JOpt.Algorithm.PreOptimization.SA.OnProgressOutPercentage\": \"1.0\",\r\n"
-  	+ "			\"JOpt.Algorithm.PreOptimization.SA.StartingTemperature\": \"10.0\",\r\n"
-  	+ "			\"JOpt.Algorithm.PreOptimization.SA.StartingTemperatureLoadedSnapshot\": \"0.1\",\r\n"
-  	+ "			\"JOpt.Algorithm.Relation.NestingLimit\": \"100\",\r\n"
-  	+ "			\"JOpt.Algorithm.tryUseCluster2Opt\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.Algorithm.tryUseClusterInsertion\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.Assisted\": \"TRUE\",\r\n"
-  	+ "			\"JOpt.AutoFilter\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.AutoFilter.EarlyArrivalMargin\": \"0\",\r\n"
-  	+ "			\"JOpt.AutoFilter.LateArrivalMargin\": \"0\",\r\n"
-  	+ "			\"JOpt.AutoFilter.RouteDistanceExceedMargin\": \"0\",\r\n"
-  	+ "			\"JOpt.AutoFilter.WorkingHoursExceedMargin\": \"0\",\r\n"
-  	+ "			\"JOpt.AutoFilter.afterFilteringResult\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.AutoFilter.beforeFilteringResult\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.AutoFilter.canDisableNodeProtection\": \"TRUE\",\r\n"
-  	+ "			\"JOpt.AutoFilter.collectivePenalization.maxImportance\": \"5\",\r\n"
-  	+ "			\"JOpt.AutoFilter.doNormalFiltering\": \"TRUE\",\r\n"
-  	+ "			\"JOpt.AutoFilter.tryAvoidSplittingJoinedClusters\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.AutoFilter.tryGracefulNodeFiltering\": \"TRUE\",\r\n"
-  	+ "			\"JOpt.AutoFilter.usePostOptimizationAfterStrictFiltering\": \"TRUE\",\r\n"
-  	+ "			\"JOpt.AutoFilter.useStrictFilterOnJobLevel\": \"TRUE\",\r\n"
-  	+ "			\"JOpt.AutoFilter.useStrictFilterOnLastExecution\": \"TRUE\",\r\n"
-  	+ "			\"JOpt.AutoForceFilter.EarlyArrivalMargin\": \"0\",\r\n"
-  	+ "			\"JOpt.AutoForceFilter.LateArrivalMargin\": \"0\",\r\n"
-  	+ "			\"JOpt.AutoForceFilter.RouteDistanceExceedMargin\": \"0\",\r\n"
-  	+ "			\"JOpt.AutoForceFilter.WorkingHoursExceedMargin\": \"0\",\r\n"
-  	+ "			\"JOpt.CO.ActiveTimeTrigger\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.CO.AutoSyncJoptTime\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.CapacityDegradation.TreatSameLocationsAsOne\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.Clustering.AutoZoneCodeClusters\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.Clustering.AutoZoneCodeClusters.isHard\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.Clustering.JointVisitDuration.doUseDistanceDivider\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.Clustering.MaxDistanceUtilization\": \"200.0\",\r\n"
-  	+ "			\"JOpt.Clustering.MaxDurationUtilization\": \"80.0\",\r\n"
-  	+ "			\"JOpt.Clustering.PenalizeZoneCodeCrossing\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.Clustering.PenalizeZoneCodeCrossingMultiplier\": \"1.0\",\r\n"
-  	+ "			\"JOpt.Clustering.ReassignOrphanedNodes\": \"TRUE\",\r\n"
-  	+ "			\"JOpt.Clustering.ResourceDutyHoursSplitValue\": \"10\",\r\n"
-  	+ "			\"JOpt.Clustering.ResourceSplitValue\": \"30\",\r\n"
-  	+ "			\"JOpt.Clustering.ShowDebugOutput\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.CostAssessment.suppressInactiveFinalizedRouteCosts\": \"TRUE\",\r\n"
-  	+ "			\"JOpt.CostAssessment.useAverageCost\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.DebugMode.NodeChecking\": \"TRUE\",\r\n"
-  	+ "			\"JOpt.EntityValidation.Debug\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.FuzzyDemand\": \"0\",\r\n"
-  	+ "			\"JOpt.InducedIdleTime.addInsertionOperatorCoupling\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.InducedIdleTime.isCausingIdleTimeCost\": \"TRUE\",\r\n"
-  	+ "			\"JOpt.InducedIdleTime.max\": \"7200\",\r\n"
-  	+ "			\"JOpt.InducedIdleTime.min\": \"60\",\r\n"
-  	+ "			\"JOpt.IntermediateStage.ThrowResults\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.JOptPopulationSize\": \"100\",\r\n"
-  	+ "			\"JOpt.JointVisitDuration.maxRadiusMeter\": \"10.0\",\r\n"
-  	+ "			\"JOpt.JointVisitDuration.routeTimeBonusFactor\": \"0.0\",\r\n"
-  	+ "			\"JOpt.KeepZeroDriveForEventNodes\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.Lockdown.Blockpillar.endOffset\": \"0\",\r\n"
-  	+ "			\"JOpt.Lockdown.Blockpillar.startOffset\": \"0\",\r\n"
-  	+ "			\"JOpt.Lockdown.LockdownUnchangedRoutes\": \"TRUE\",\r\n"
-  	+ "			\"JOpt.MovingEventNodes\": \"TRUE\",\r\n"
-  	+ "			\"JOpt.Multicore\": \"1\",\r\n"
-  	+ "			\"JOpt.NumCPUCores\": \"4\",\r\n"
-  	+ "			\"JOpt.PerformanceMode\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.PillarDropper.AllowRescheduleMaximalRouteDistanceExceeded\": \"TRUE\",\r\n"
-  	+ "			\"JOpt.PillarDropper.AllowRescheduleWorkingHoursExceeded\": \"TRUE\",\r\n"
-  	+ "			\"JOpt.PlausibilityGuard.PropertyChecker.Active\": \"TRUE\",\r\n"
-  	+ "			\"JOpt.PropertyChecker.ShowWarnings\": \"TRUE\",\r\n"
-  	+ "			\"JOpt.ReassignNodesOnStartup\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.ReassignResourcesOnStartup\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.SelectiveAutoFilter\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.SelectiveAutoFilter.AfterEndAnchor\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.SelectiveAutoFilter.CapacityOverload\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.SelectiveAutoFilter.DoubleBooking\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.SelectiveAutoFilter.MaximalRouteDistanceExceeded\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.SelectiveAutoFilter.NodeType\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.SelectiveAutoFilter.RelationShip\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.SelectiveAutoFilter.ResourceMismatch\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.SelectiveAutoFilter.TimeWindow.Early\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.SelectiveAutoFilter.TimeWindow.Late\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.SelectiveAutoFilter.WorkingHoursExceeded\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.UnlocatedIdleTime\": \"FALSE\",\r\n"
-  	+ "			\"JOpt.plausibility.doInputCheck\": \"TRUE\",\r\n"
-  	+ "			\"JOpt.plausibility.doInputCheck.doCapacityCheck\": \"TRUE\",\r\n"
-  	+ "			\"JOptExitCondition.JOptGenerationCount\": \"2000\",\r\n"
-  	+ "			\"JOptWeight.CO2Emission\": \"0.0\",\r\n"
-  	+ "			\"JOptWeight.Capacity\": \"50.0\",\r\n"
-  	+ "			\"JOptWeight.ColorCapacity\": \"10.0\",\r\n"
-  	+ "			\"JOptWeight.CompactingFactor\": \"1.0\",\r\n"
-  	+ "			\"JOptWeight.DistanceExceeded\": \"10.0\",\r\n"
-  	+ "			\"JOptWeight.DistanceVariationPattern\": \"0.0\",\r\n"
-  	+ "			\"JOptWeight.ExpertiseLevelPreference\": \"1.0\",\r\n"
-  	+ "			\"JOptWeight.NodeCompactingFactor\": \"0.0\",\r\n"
-  	+ "			\"JOptWeight.NodeImportance\": \"1.0\",\r\n"
-  	+ "			\"JOptWeight.NodeType\": \"1.0\",\r\n"
-  	+ "			\"JOptWeight.PreferableResource\": \"1.0\",\r\n"
-  	+ "			\"JOptWeight.Relationships\": \"100.0\",\r\n"
-  	+ "			\"JOptWeight.ResourceActive\": \"0.0\",\r\n"
-  	+ "			\"JOptWeight.ResourceLocationBias\": \"0.0\",\r\n"
-  	+ "			\"JOptWeight.ResourceRadiusDrivingDistance\": \"1.0\",\r\n"
-  	+ "			\"JOptWeight.ResourceRadiusDrivingTime\": \"1.0\",\r\n"
-  	+ "			\"JOptWeight.ResourceWorkingTimeBalance\": \"0.0\",\r\n"
-  	+ "			\"JOptWeight.RouteDistance\": \"1.0\",\r\n"
-  	+ "			\"JOptWeight.RouteTime\": \"1.0\",\r\n"
-  	+ "			\"JOptWeight.TimeExceeded\": \"100.0\",\r\n"
-  	+ "			\"JOptWeight.TimeWindow\": \"1.0\",\r\n"
-  	+ "			\"JOptWeight.TimeWindow.AfterEndPillarAnchor\": \"1000.0\",\r\n"
-  	+ "			\"JOptWeight.TimeWindow.FlexTimePenalizeFactor\": \"0.0\",\r\n"
-  	+ "			\"JOptWeight.TimeWindow.OfferedNodeCostMultiplier\": \"2.0\",\r\n"
-  	+ "			\"JOptWeight.TimeWindow.ServiceHours\": \"10.0\",\r\n"
-  	+ "			\"JOptWeight.TimeWindow.TimeWindowEarlyFactor\": \"10.0\",\r\n"
-  	+ "			\"JOptWeight.TimeWindow.TimeWindowEarlyFactorAtFirstNode\": \"1.0\",\r\n"
-  	+ "			\"JOptWeight.TimeWindow.TimeWindowLateFactor\": \"100.0\",\r\n"
-  	+ "			\"JOptWeight.TotalDistance\": \"1.0\",\r\n"
-  	+ "			\"JOptWeight.TotalTime\": \"1.0\",\r\n"
-  	+ "			\"JOptWeight.UnPreferableResource\": \"1.0\",\r\n"
-  	+ "			\"JOptWeight.UselessUnloadAllVisitation\": \"1.0\",\r\n"
-  	+ "			\"JOptWeight.WorkingTime\": \"5.0\",\r\n"
-  	+ "			\"JOptWeight.ZoneCode\": \"10.0\",\r\n"
-  	+ "			\"JOptWeight.ZoneCode.Priority\": \"2.0\"\r\n"
-  	+ "		},\r\n"
-  	+ "		\"optimizationSchemeOptions\": {\r\n"
-  	+ "			\"constructionOptimizationAlgorithmConfig\": {\r\n"
-  	+ "				\"algorithm\": \"SMART_CONSTR_ALGO\"\r\n"
-  	+ "			},\r\n"
-  	+ "			\"heuristicOptimizationAlgorithmConfigs\": [\r\n"
-  	+ "				{\r\n"
-  	+ "					\"algorithm\": \"SMART_SIMULATED_ANNEALING_ALGO\",\r\n"
-  	+ "					\"hasAutoFilter\": false\r\n"
-  	+ "				},\r\n"
-  	+ "				{\r\n"
-  	+ "					\"algorithm\": \"GENETIC_EVOLUTION_ALGO\",\r\n"
-  	+ "					\"hasAutoFilter\": true\r\n"
-  	+ "				}\r\n"
-  	+ "			]\r\n"
-  	+ "		}\r\n"
-  	+ "	},\r\n"
-  	+ "	\"solution\": {\r\n"
-  	+ "		\"createdTimeStamp\": 1792062807945,\r\n"
-  	+ "		\"creator\": \"DEFAULT_CREATOR\",\r\n"
-  	+ "		\"ident\": \"JOpt-Run-1741101851742\",\r\n"
-  	+ "		\"header\": {\r\n"
-  	+ "			\"numRoutes\": 4,\r\n"
-  	+ "			\"numScheduledRoutes\": 2,\r\n"
-  	+ "			\"totElements\": 10,\r\n"
-  	+ "			\"unassignedElementIds\": [],\r\n"
-  	+ "			\"totCost\": 847.033054487167,\r\n"
-  	+ "			\"totTime\": \"PT12H34M5.115S\",\r\n"
-  	+ "			\"totIdleTime\": \"PT0S\",\r\n"
-  	+ "			\"totProdTime\": \"PT2H40M\",\r\n"
-  	+ "			\"totTranTime\": \"PT9H54M5.115S\",\r\n"
-  	+ "			\"totTermiTime\": \"PT4H1M10.835S\",\r\n"
-  	+ "			\"totDistance\": \"784192.6169871669 m\",\r\n"
-  	+ "			\"totTermiDistance\": \"318358.3783121061 m\",\r\n"
-  	+ "			\"jobViolations\": []\r\n"
-  	+ "		},\r\n"
-  	+ "		\"routes\": [\r\n"
-  	+ "			{\r\n"
-  	+ "				\"header\": {\r\n"
-  	+ "					\"cost\": 1.6666666666666667,\r\n"
-  	+ "					\"time\": \"PT20M\",\r\n"
-  	+ "					\"idleTime\": \"PT0S\",\r\n"
-  	+ "					\"prodTime\": \"PT20M\",\r\n"
-  	+ "					\"tranTime\": \"PT0S\",\r\n"
-  	+ "					\"termiTime\": \"PT0S\",\r\n"
-  	+ "					\"distance\": \"0.0 m\",\r\n"
-  	+ "					\"termiDistance\": \"0.0 m\",\r\n"
-  	+ "					\"routeViolations\": [],\r\n"
-  	+ "					\"isClosed\": true,\r\n"
-  	+ "					\"isAlternateDestination\": false\r\n"
-  	+ "				},\r\n"
-  	+ "				\"id\": 0,\r\n"
-  	+ "				\"resourceId\": \"Jack\",\r\n"
-  	+ "				\"startTime\": \"2020-03-06T07:00:00Z\",\r\n"
-  	+ "				\"startElementId\": \"Jack\",\r\n"
-  	+ "				\"startPosition\": {\r\n"
-  	+ "					\"latitude\": 50.775346,\r\n"
-  	+ "					\"longitude\": 6.083887,\r\n"
-  	+ "					\"locationId\": \"Jack\"\r\n"
-  	+ "				},\r\n"
-  	+ "				\"endElementId\": \"Jack\",\r\n"
-  	+ "				\"endPosition\": {\r\n"
-  	+ "					\"latitude\": 50.775346,\r\n"
-  	+ "					\"longitude\": 6.083887,\r\n"
-  	+ "					\"locationId\": \"Jack\"\r\n"
-  	+ "				},\r\n"
-  	+ "				\"optimizableElementIds\": [\r\n"
-  	+ "					\"Aachen\"\r\n"
-  	+ "				],\r\n"
-  	+ "				\"nonOptimizableElementIds\": [],\r\n"
-  	+ "				\"optionalOptimizableElementIds\": [],\r\n"
-  	+ "				\"pillarElementIds\": [],\r\n"
-  	+ "				\"elementDetails\": [],\r\n"
-  	+ "				\"pillarLatestEffectiveArrivalOffsetMap\": {},\r\n"
-  	+ "				\"flags\": [],\r\n"
-  	+ "				\"isFinalized\": false,\r\n"
-  	+ "				\"isInactive\": false,\r\n"
-  	+ "				\"isLockedDown\": false\r\n"
-  	+ "			},\r\n"
-  	+ "			{\r\n"
-  	+ "				\"header\": {\r\n"
-  	+ "					\"cost\": 0.0,\r\n"
-  	+ "					\"time\": \"PT0S\",\r\n"
-  	+ "					\"idleTime\": \"PT0S\",\r\n"
-  	+ "					\"prodTime\": \"PT0S\",\r\n"
-  	+ "					\"tranTime\": \"PT0S\",\r\n"
-  	+ "					\"termiTime\": \"PT0S\",\r\n"
-  	+ "					\"distance\": \"0.0 m\",\r\n"
-  	+ "					\"termiDistance\": \"0.0 m\",\r\n"
-  	+ "					\"routeViolations\": [],\r\n"
-  	+ "					\"isClosed\": true,\r\n"
-  	+ "					\"isAlternateDestination\": false\r\n"
-  	+ "				},\r\n"
-  	+ "				\"id\": 1,\r\n"
-  	+ "				\"resourceId\": \"Jack\",\r\n"
-  	+ "				\"startTime\": \"2020-03-07T07:00:00Z\",\r\n"
-  	+ "				\"startElementId\": \"Jack\",\r\n"
-  	+ "				\"startPosition\": {\r\n"
-  	+ "					\"latitude\": 50.775346,\r\n"
-  	+ "					\"longitude\": 6.083887,\r\n"
-  	+ "					\"locationId\": \"Jack\"\r\n"
-  	+ "				},\r\n"
-  	+ "				\"endElementId\": \"Jack\",\r\n"
-  	+ "				\"endPosition\": {\r\n"
-  	+ "					\"latitude\": 50.775346,\r\n"
-  	+ "					\"longitude\": 6.083887,\r\n"
-  	+ "					\"locationId\": \"Jack\"\r\n"
-  	+ "				},\r\n"
-  	+ "				\"optimizableElementIds\": [],\r\n"
-  	+ "				\"nonOptimizableElementIds\": [],\r\n"
-  	+ "				\"optionalOptimizableElementIds\": [],\r\n"
-  	+ "				\"pillarElementIds\": [],\r\n"
-  	+ "				\"elementDetails\": [],\r\n"
-  	+ "				\"pillarLatestEffectiveArrivalOffsetMap\": {},\r\n"
-  	+ "				\"flags\": [],\r\n"
-  	+ "				\"isFinalized\": false,\r\n"
-  	+ "				\"isInactive\": false,\r\n"
-  	+ "				\"isLockedDown\": false\r\n"
-  	+ "			},\r\n"
-  	+ "			{\r\n"
-  	+ "				\"header\": {\r\n"
-  	+ "					\"cost\": 845.3663878205003,\r\n"
-  	+ "					\"time\": \"PT12H14M5.115S\",\r\n"
-  	+ "					\"idleTime\": \"PT0S\",\r\n"
-  	+ "					\"prodTime\": \"PT2H20M\",\r\n"
-  	+ "					\"tranTime\": \"PT9H54M5.115S\",\r\n"
-  	+ "					\"termiTime\": \"PT4H1M10.835S\",\r\n"
-  	+ "					\"distance\": \"784192.6169871669 m\",\r\n"
-  	+ "					\"termiDistance\": \"318358.3783121061 m\",\r\n"
-  	+ "					\"routeViolations\": [],\r\n"
-  	+ "					\"isClosed\": true,\r\n"
-  	+ "					\"isAlternateDestination\": false\r\n"
-  	+ "				},\r\n"
-  	+ "				\"id\": 2,\r\n"
-  	+ "				\"resourceId\": \"John\",\r\n"
-  	+ "				\"startTime\": \"2020-03-06T07:00:00Z\",\r\n"
-  	+ "				\"startElementId\": \"John\",\r\n"
-  	+ "				\"startPosition\": {\r\n"
-  	+ "					\"latitude\": 50.775346,\r\n"
-  	+ "					\"longitude\": 6.083887,\r\n"
-  	+ "					\"locationId\": \"John\"\r\n"
-  	+ "				},\r\n"
-  	+ "				\"endElementId\": \"John\",\r\n"
-  	+ "				\"endPosition\": {\r\n"
-  	+ "					\"latitude\": 50.775346,\r\n"
-  	+ "					\"longitude\": 6.083887,\r\n"
-  	+ "					\"locationId\": \"John\"\r\n"
-  	+ "				},\r\n"
-  	+ "				\"optimizableElementIds\": [\r\n"
-  	+ "					\"Oberhausen\",\r\n"
-  	+ "					\"Essen\",\r\n"
-  	+ "					\"Wuppertal\",\r\n"
-  	+ "					\"Koeln1\",\r\n"
-  	+ "					\"Koeln\",\r\n"
-  	+ "					\"Heilbronn\",\r\n"
-  	+ "					\"Stuttgart\"\r\n"
-  	+ "				],\r\n"
-  	+ "				\"nonOptimizableElementIds\": [],\r\n"
-  	+ "				\"optionalOptimizableElementIds\": [],\r\n"
-  	+ "				\"pillarElementIds\": [],\r\n"
-  	+ "				\"elementDetails\": [],\r\n"
-  	+ "				\"pillarLatestEffectiveArrivalOffsetMap\": {},\r\n"
-  	+ "				\"flags\": [],\r\n"
-  	+ "				\"isFinalized\": false,\r\n"
-  	+ "				\"isInactive\": false,\r\n"
-  	+ "				\"isLockedDown\": false\r\n"
-  	+ "			},\r\n"
-  	+ "			{\r\n"
-  	+ "				\"header\": {\r\n"
-  	+ "					\"cost\": 0.0,\r\n"
-  	+ "					\"time\": \"PT0S\",\r\n"
-  	+ "					\"idleTime\": \"PT0S\",\r\n"
-  	+ "					\"prodTime\": \"PT0S\",\r\n"
-  	+ "					\"tranTime\": \"PT0S\",\r\n"
-  	+ "					\"termiTime\": \"PT0S\",\r\n"
-  	+ "					\"distance\": \"0.0 m\",\r\n"
-  	+ "					\"termiDistance\": \"0.0 m\",\r\n"
-  	+ "					\"routeViolations\": [],\r\n"
-  	+ "					\"isClosed\": true,\r\n"
-  	+ "					\"isAlternateDestination\": false\r\n"
-  	+ "				},\r\n"
-  	+ "				\"id\": 3,\r\n"
-  	+ "				\"resourceId\": \"John\",\r\n"
-  	+ "				\"startTime\": \"2020-03-07T07:00:00Z\",\r\n"
-  	+ "				\"startElementId\": \"John\",\r\n"
-  	+ "				\"startPosition\": {\r\n"
-  	+ "					\"latitude\": 50.775346,\r\n"
-  	+ "					\"longitude\": 6.083887,\r\n"
-  	+ "					\"locationId\": \"John\"\r\n"
-  	+ "				},\r\n"
-  	+ "				\"endElementId\": \"John\",\r\n"
-  	+ "				\"endPosition\": {\r\n"
-  	+ "					\"latitude\": 50.775346,\r\n"
-  	+ "					\"longitude\": 6.083887,\r\n"
-  	+ "					\"locationId\": \"John\"\r\n"
-  	+ "				},\r\n"
-  	+ "				\"optimizableElementIds\": [],\r\n"
-  	+ "				\"nonOptimizableElementIds\": [],\r\n"
-  	+ "				\"optionalOptimizableElementIds\": [],\r\n"
-  	+ "				\"pillarElementIds\": [],\r\n"
-  	+ "				\"elementDetails\": [],\r\n"
-  	+ "				\"pillarLatestEffectiveArrivalOffsetMap\": {},\r\n"
-  	+ "				\"flags\": [],\r\n"
-  	+ "				\"isFinalized\": false,\r\n"
-  	+ "				\"isInactive\": false,\r\n"
-  	+ "				\"isLockedDown\": false\r\n"
-  	+ "			}\r\n"
-  	+ "		]\r\n"
-  	+ "	},\r\n"
-  	+ "	\"extension\": {}\r\n"
-  	+ "}";
-  
-  
-  public static void main(String[] args) throws InterruptedException, ExecutionException, InvalidLicenceException,
-	  IOException {
-      new LoadOptimizationFromJsonString().example();
-  }
-  
-  public String toString() {
-      return "Loading the current optimization state from a JSON String. The JSON string is wrapped in a bzip stream to allow default processing."
-      	+ " By default, BZIP is always in use.";
-  }
-
-  public void example() throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
-
-      // Set the license via helper
-      ExampleLicenseHelper.setLicense(this);
-
-      this.invokeFromJson(JSON_SNAPSHOT, this);
-
-      // Set the Properties
-      this.setProperties();
-
-      attachToObservables(this);
-
-      this.startRunAsync().get();
-  }
-
-  private void setProperties() {
-
-      Properties props = new Properties();
-
-      props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
-      props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
-      props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
-      props.setProperty("JOpt.NumCPUCores", "4");
-
-      this.addElement(props);
-  }
-
-  private void invokeFromJson(String json, IOptimization opti) throws IOException {
-
-      IOptimizationImporter importer = new OptimizationJSONImporter();
-      importer.update(compressStringToBZip2Stream(json), opti);
-  }
-  
-  
-  
-  public static InputStream compressStringToBZip2Stream(String input) throws IOException {
-      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
-      // Create a BZip2 output stream wrapping the ByteArrayOutputStream
-      try (BZip2CompressorOutputStream bzOut = new BZip2CompressorOutputStream(byteArrayOutputStream)) {
-          bzOut.write(input.getBytes());
-      } // Try does automatically call finish() => Don't do it twice by adding it inside the try statement
-
-      // Create an InputStream from the compressed byte array
-      ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-
-      return byteArrayInputStream; // This is now a valid BZip2 stream
-  }
-  
-  
-
-  @Override
-  public void onAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {
-      System.out.println(rapoptResult);
-  }
-
-  /*
-   * 
-   * 
-   * 
-   */
+  private static final String JSON_RESOURCE = "/json/LoadOptimizationFromJsonString.json";
 
   /**
-   * Attach to different Events (Observables) of the optimization instance.
+   * Runs the example.
    *
-   * @param opti the optimization instance
+   * @param args not used
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
    */
-  private static void attachToObservables(IOptimization opti) {
-
-      opti.getOptimizationEvents().progressSubject().subscribe(p -> {
-	  System.out.println(p.getProgressString());
-      });
-
-      opti.getOptimizationEvents().warningSubject().subscribe(w -> {
-	  System.out.println(w.toString());
-      });
-
-      opti.getOptimizationEvents().statusSubject().subscribe(s -> {
-	  System.out.println(s.toString());
-      });
-
-      opti.getOptimizationEvents().errorSubject().subscribe(e -> {
-	  System.out.println(e.toString());
-      });
+  public static void main(String[] args)
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException {
+    new LoadOptimizationFromJsonString().example();
   }
 
+  @Override
+  public String toString() {
+    return "Loads an optimization state from a JSON string and continues from its solution.";
+  }
+
+  /**
+   * Reads the JSON string, loads the optimization from it, runs it and prints the result.
+   *
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   */
+  public void example()
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException {
+    // The public evaluation license, or your own license if you put a license file where
+    // ExampleLicenseHelper looks for it.
+    ExampleLicenseHelper.setLicense(this);
+    String json = readJsonString();
+    if (!loadFromJsonString(this, json)) {
+      return;
+    }
+    attachToObservables(this);
+    startAndPresentResult(this);
+  }
+
+  /**
+   * Reads the JSON resource from the class path into a string.
+   *
+   * @return the JSON text
+   * @throws IOException if a file cannot be read or written
+   */
+  private static String readJsonString() throws IOException {
+    try (InputStream in = LoadOptimizationFromJsonString.class.getResourceAsStream(JSON_RESOURCE)) {
+      if (in == null) {
+        throw new FileNotFoundException("Resource not found: " + JSON_RESOURCE);
+      }
+      return new String(in.readAllBytes(), StandardCharsets.UTF_8);
+    }
+  }
+
+  /**
+   * Loads the elements, the properties and the solution from the JSON string.
+   *
+   * @param opti the optimization
+   * @param json the JSON text of a snapshot
+   * @return true if the snapshot was loaded
+   * @throws IOException if the string cannot be compressed
+   */
+  private static boolean loadFromJsonString(IOptimization opti, String json) throws IOException {
+    IOptimizationImporter importer = new OptimizationJSONImporter();
+    // OptimizationJSONImporter reads BZip2-compressed JSON, so the string is compressed first.
+    try (InputStream in = compressToBZip2(json)) {
+      boolean loaded = importer.update(in, opti);
+      if (!loaded) {
+        System.out.println("JSON import failed: " + JSON_RESOURCE);
+      }
+      return loaded;
+    }
+  }
+
+  /**
+   * Compresses a string into an in-memory BZip2 stream.
+   *
+   * @param text the text to compress
+   * @return a stream that reads the compressed bytes
+   * @throws IOException if the string cannot be compressed
+   */
+  private static InputStream compressToBZip2(String text) throws IOException {
+    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+    // Closing the BZip2 stream finishes it, so it is complete before the bytes are read.
+    try (BZip2CompressorOutputStream bzOut = new BZip2CompressorOutputStream(bytes)) {
+      bzOut.write(text.getBytes(StandardCharsets.UTF_8));
+    }
+    return new ByteArrayInputStream(bytes.toByteArray());
+  }
+
+  /**
+   * Prints the progress, warning, status and error events of the run.
+   *
+   * @param opti the optimization
+   */
+  private static void attachToObservables(IOptimization opti) {
+    // Subscribe before the start: the subjects replay only a few past events.
+    opti.getOptimizationEvents()
+        .progressSubject()
+        .subscribe(p -> System.out.println(p.getProgressString()));
+    opti.getOptimizationEvents().warningSubject().subscribe(w -> System.out.println(w.toString()));
+    opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s.toString()));
+    opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
+  }
+
+  /**
+   * Starts the run, waits for the result and prints it.
+   *
+   * @param opti the optimization
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   */
+  private static void startAndPresentResult(IOptimization opti)
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException {
+    CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
+    // Wait for the result; without the wait the JVM would end before the run does.
+    IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
+    System.out.println(result);
+  }
 }
