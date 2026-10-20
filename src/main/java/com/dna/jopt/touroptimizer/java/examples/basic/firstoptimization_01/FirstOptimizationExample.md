@@ -4,7 +4,7 @@
 
 ## What the example shows
 
-`FirstOptimizationExample` extends `Optimization` and builds a complete run in one method, `example()`. Each step is a method of its own: `addProperties`, `addNodes`, `addResources`, `attachToObservables` and `startAndPresentResult`. Most other Base examples use the same names for `attachToObservables` and `startAndPresentResult`; their other steps depend on what they show.
+`FirstOptimizationExample` extends `Optimization` and builds a complete run in one method, `example()`. Each step is a method of its own: `addProperties`, `addNodes`, `addResources`, `attachToObservables` and `startAndPresentResult`. Most other Basic examples use the same names for `attachToObservables` and `startAndPresentResult`; their other steps depend on what they show.
 
 The run starts asynchronously, and the example waits for the result with a timeout. It prints the progress, warning, status and error events while the run is going, and the result at the end.
 
@@ -184,7 +184,7 @@ Change observability:
 - [Basic elements tutorial](https://www.dna-evolutions.com/docs/getting-started/tutorials/basic-elements): the nodes, resources and other elements that this example uses.
 - [Reactive events and streams](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/reactive_events): the feature guide of the event API that `attachToObservables` uses.
 - [Recommended ways to run an optimization](../recommendedimplementation_02/RecommendedImplementation.md): the recommended run pattern, a synchronous run and the legacy callback methods.
-- [Base examples](../README.md): the overview of all Base examples.
+- [Basic examples](../README.md): the overview of all Basic examples.
 - [Optimization properties](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties): the property reference, with the defaults.
 
 ---

@@ -1,6 +1,6 @@
-# Base examples
+# Basic examples
 
-The Base examples show how to model and run a tour optimization with JOpt.TourOptimizer for Java: properties, nodes, resources, connections, results and licensing. They are for Java developers who start with JOpt. Read the [Basic elements tutorial](https://www.dna-evolutions.com/docs/getting-started/tutorials/basic-elements) first.
+The Basic examples show how to model and run a tour optimization with JOpt.TourOptimizer for Java: properties, nodes, resources, connections, results and licensing. They are for Java developers who start with JOpt. Read the [Basic elements tutorial](https://www.dna-evolutions.com/docs/getting-started/tutorials/basic-elements) first.
 
 The number in each package name (`firstoptimization_01` to `setlicense_08`) indicates increasing complexity. You do **not** need to follow the numbering strictly, but we suggest working through them in this order.
 

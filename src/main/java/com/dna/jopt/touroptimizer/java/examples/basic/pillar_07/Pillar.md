@@ -120,7 +120,7 @@ Run the `main(String[] args)` method of `PillarExample` from your IDE. You need 
 - [Event nodes for tasks without a location](../eventnode_06/EventNode.md): event nodes without a hard time window, and the event API and KML export that this example uses too.
 - [Load a snapshot and add a pillar](../io_03/LoadOptimizationFromJsonAndReassignPillar.md): a pillar added to a loaded solution.
 - [Recommended ways to run an optimization](../recommendedimplementation_02/RecommendedImplementation.md): the recommended run pattern, a synchronous run and the legacy callback methods.
-- [Base examples](../README.md): the overview of all Base examples.
+- [Basic examples](../README.md): the overview of all Basic examples.
 
 ---
 

@@ -379,7 +379,7 @@ Run `SaveOptimizationToJsonExample` first. It writes `myopti.json.bz2` into the 
 - [Load a snapshot and add a pillar](LoadOptimizationFromJsonAndReassignPillar.md): loads `myopti.json.bz2` and adds a pillar node with `addReassignNodes`.
 - [Export a result to a KML file](Export2KMLExample.md): exports the result of a run to a KML file.
 - [Recommended ways to run an optimization](../recommendedimplementation_02/RecommendedImplementation.md): the recommended run pattern, a synchronous run and the legacy callback methods.
-- [Base examples](../README.md): the overview of all Base examples.
+- [Basic examples](../README.md): the overview of all Basic examples.
 - [Optimization properties](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties): the property keys and their defaults.
 - [License guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license): the public evaluation license and its element limits.
 

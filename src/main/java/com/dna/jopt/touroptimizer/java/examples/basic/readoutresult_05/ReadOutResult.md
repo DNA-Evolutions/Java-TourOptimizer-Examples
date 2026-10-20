@@ -59,8 +59,8 @@ CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
 // Wait for the result; without the wait the JVM would end before the run does.
 IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
 
-System.out.println("\nNumber Unassigned Nodes: " + result.getUnassignedNodes().size());
-System.out.println("\nRelationShip Cost: " + result.getJobRelationshipCost());
+System.out.println("\nUnassigned nodes: " + result.getUnassignedNodes().size());
+System.out.println("\nRelationship cost: " + result.getJobRelationshipCost());
 ```
 
 The example then loops over all routes in the result (`result.getRoutes()`). For each route, it reads the route cost and violation controller (`route.getRouteCostAndViolationController()`) and prints costs from it: `controller.getCost()` (route cost) and `controller.getCostDistance()` (distance cost of the route). The controller also has a cost for each kind of cost, for example `getCostLate()`.
@@ -181,9 +181,9 @@ After the route header, the example prints the route cost (`result.getRouteCost(
 After the event lines, the example prints these lines, the same in two test runs:
 
 ```text
-Number Unassigned Nodes: 0
+Unassigned nodes: 0
 
-RelationShip Cost: 0.0
+Relationship cost: 0.0
 
 RouteCost: 567.4941601558551
  Aachen / Geo  / Arrival: 06.05.2020 08:00:00 (Europe/Berlin) , Departure: 06.05.2020 08:20:00 (Europe/Berlin) / Duration: 20.0 [min] / Driving: 0.0 [min], 0.0 [km]
@@ -265,7 +265,7 @@ Run the `main` method of `ReadOutResultExample` or `ReadOutResultWithHeadersExam
 - [Export a result to a KML file](../io_03/Export2KMLExample.md): the KML example, which writes a result to a KML file for a map.
 - [Recommended ways to run an optimization](../recommendedimplementation_02/RecommendedImplementation.md): the recommended run pattern, a synchronous run and the legacy callback methods.
 - [Reactive events and streams](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/reactive_events): the event API that `attachToObservables` uses.
-- [Base examples](../README.md): the overview of all Base examples.
+- [Basic examples](../README.md): the overview of all Basic examples.
 
 ---
 

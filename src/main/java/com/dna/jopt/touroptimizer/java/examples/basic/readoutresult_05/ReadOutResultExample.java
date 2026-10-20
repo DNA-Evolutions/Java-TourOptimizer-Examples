@@ -246,8 +246,8 @@ public class ReadOutResultExample extends Optimization {
     // Wait for the result; without the wait the JVM would end before the run does.
     IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
 
-    System.out.println("\nNumber Unassigned Nodes: " + result.getUnassignedNodes().size());
-    System.out.println("\nRelationShip Cost: " + result.getJobRelationshipCost());
+    System.out.println("\nUnassigned nodes: " + result.getUnassignedNodes().size());
+    System.out.println("\nRelationship cost: " + result.getJobRelationshipCost());
 
     for (ILogicEntityRoute route : result.getRoutes()) {
       ILogicRouteCostAndViolationController controller =

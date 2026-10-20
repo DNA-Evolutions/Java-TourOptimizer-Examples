@@ -143,7 +143,7 @@ With JOpt.TourOptimizer in a container, the license JSON goes with each request;
 
 - [License guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license): the license JSON, the element limits, and how to send a license with a request to JOpt.TourOptimizer.
 - [First optimization example](../firstoptimization_01/FirstOptimizationExample.md): the run steps after the license, explained one by one.
-- [Base examples](../README.md): the overview of all Base examples.
+- [Basic examples](../README.md): the overview of all Basic examples.
 
 ---
 

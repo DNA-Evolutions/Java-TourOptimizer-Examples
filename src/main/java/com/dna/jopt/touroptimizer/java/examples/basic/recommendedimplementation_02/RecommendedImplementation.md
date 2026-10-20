@@ -184,7 +184,7 @@ Run the `main` method of each class from your IDE, with the repository imported 
 
 - [First optimization example](../firstoptimization_01/FirstOptimizationExample.md): the steps that these classes share, explained one by one.
 - [Reactive events and streams](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/reactive_events): the feature guide of the event API.
-- [Base examples](../README.md): the overview of all Base examples.
+- [Basic examples](../README.md): the overview of all Basic examples.
 - [Optimization properties](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties): the property reference.
 
 ---

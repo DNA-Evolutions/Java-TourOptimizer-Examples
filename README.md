@@ -10,9 +10,6 @@ A Maven project with Java examples for JOpt.TourOptimizer by DNA Evolutions. JOp
 - **JavaDocs:** [public.javadoc.dna-evolutions.com](https://public.javadoc.dna-evolutions.com)
 - **Nexus repository:** [nexus.dna-evolutions.net](https://nexus.dna-evolutions.net)
 
-<a href="https://sourceforge.net/software/product/JOpt.TourOptimizer/?pk_campaign=badge&pk_source=vendor" rel="nofollow">
-<img alt="Partner 2025" src="https://sourceforge.net/cdn/syndication/badge_img/3636727/light-partner" height="100px" width="100px"></a>
-
 ---
 
 ## Contents
@@ -57,7 +54,7 @@ The examples are grouped by level. Each level has a README, and each example has
 
 | Category | Description | Link |
 |---|---|---|
-| **Basic** | First optimizations, nodes, resources, time windows, I/O, result reading, licensing | [Base examples](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic) |
+| **Basic** | First optimizations, nodes, resources, time windows, I/O, result reading, licensing | [Basic examples](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic) |
 | **Advanced** | Constraints, conditions, relations, PND, clustering, zones, overnight, FlexTime, CO2 | [Advanced examples](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced) |
 | **Expert** | Custom assessors, optimization schemes, performance mode, warm-start, exception handling | [Expert examples](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert) |
 | **RESTful** | Bridge between the Java SDK and the REST API: serialize problems to JSON, run JSON payloads locally | [RESTful examples](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/restful) |
@@ -66,7 +63,7 @@ The examples are grouped by level. Each level has a README, and each example has
 
 ## Recommended learning path
 
-If you are new to JOpt, follow this progression through the Base examples first, then branch into the Advanced or Expert sections as needed.
+If you are new to JOpt, follow this progression through the Basic examples first, then branch into the Advanced or Expert sections as needed.
 
 ### Basic
 

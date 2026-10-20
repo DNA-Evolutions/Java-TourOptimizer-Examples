@@ -115,7 +115,7 @@ You need a JDK in the version that the examples pom sets. You need no license fi
 - [LoadOptimizationToFreshRunExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/io_03/LoadOptimizationToFreshRunExample.java): loads the snapshot but ignores its solution.
 - [Pillar nodes with hard time windows](../pillar_07/Pillar.md): pillar nodes in general; `PillarExample` builds pillars attached to resources, from scratch.
 - [Recommended ways to run an optimization](../recommendedimplementation_02/RecommendedImplementation.md): the recommended run pattern, a synchronous run and the legacy callback methods.
-- [Base examples](../README.md): the overview of all Base examples.
+- [Basic examples](../README.md): the overview of all Basic examples.
 
 ---
 

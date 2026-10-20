@@ -98,7 +98,7 @@ Run the `main` method of `Export2KMLExample` from your IDE. You need a JDK in th
 - [Event nodes for tasks without a location](../eventnode_06/EventNode.md): a KML export with a title, and how the file shows a node without a position.
 - [Pillar nodes with hard time windows](../pillar_07/Pillar.md): an example that writes its result to a KML file as well.
 - [Recommended ways to run an optimization](../recommendedimplementation_02/RecommendedImplementation.md): the recommended run pattern, a synchronous run and the legacy callback methods.
-- [Base examples](../README.md): the overview of all Base examples.
+- [Basic examples](../README.md): the overview of all Basic examples.
 
 ---
 
