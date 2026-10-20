@@ -1,25 +1,28 @@
 package com.dna.jopt.touroptimizer.java.examples.advanced.clustering;
-
 /*-
  * #%L
  * JOpt TourOptimizer Examples
  * %%
- * Copyright (C) 2017 - 2020 DNA Evolutions GmbH
+ * Copyright (C) 2017 - 2023 DNA Evolutions GmbH
  * %%
- * This file is subject to the terms and conditions defined in file 'LICENSE.txt',
- * which is part of this source code package.
+ * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
+ * which is part of this repository.
  *
- * If not, see <https://www.dna-evolutions.com/agb-conditions-and-terms/>.
+ * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
-import static java.util.Calendar.MAY;
 import static javax.measure.MetricPrefix.KILO;
 import static tech.units.indriya.unit.Units.METRE;
+import static java.time.Month.MAY;
 
-import java.io.FileNotFoundException;
+import tech.units.indriya.quantity.Quantities;
+
+import javax.measure.Quantity;
+import javax.measure.quantity.Length;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.OutputStream;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -28,256 +31,296 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import javax.measure.Quantity;
-import javax.measure.quantity.Length;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import com.dna.jopt.config.types.Position;
 import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
-import com.dna.jopt.io.exporting.IEntityExporter;
 import com.dna.jopt.io.exporting.kml.EntityKMLExporter;
-
-import com.dna.jopt.member.unit.hours.IWorkingHours;
 import com.dna.jopt.member.unit.hours.IOpeningHours;
-import com.dna.jopt.member.unit.hours.WorkingHours;
+import com.dna.jopt.member.unit.hours.IWorkingHours;
 import com.dna.jopt.member.unit.hours.OpeningHours;
-import com.dna.jopt.member.unit.node.INode;
+import com.dna.jopt.member.unit.hours.WorkingHours;
 import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.resource.CapacityResource;
-import com.dna.jopt.member.unit.resource.IResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
-import com.google.common.collect.ImmutableList;
-
-import tech.units.indriya.quantity.Quantities;
 
 /**
- * ATTENTION: This example contains more than 20 elements therefore a full
- * license is required.
+ * Builds a plan for 1000 nodes and 50 resources in the west of Koeln with the clustering
+ * construction alone, without the genetic evolution and the simulated annealing after it.
  *
- * <p>
- * Example of clustering construction. Multiple nodes within the City Cologne
- * need to be visited. Resources are also spread around Cologne. The Nodes and
- * Resources are positioned in a Phyllotaxis pattern. The task is to create a
- * solution purely based on clustering construction without using optimization
- * algorithms.
+ * <p>Needs a full license: the example has more elements than the public evaluation license
+ * allows. With the public evaluation license the run ends with a license error before the
+ * construction starts.
  *
- * @author jrich
- * @version Mar 26, 2021
- * @since Mar 26, 2021
+ * <p>Scenario: the nodes and the resources lie on two phyllotaxis patterns around a point in the
+ * west of Koeln (50.9333, 6.85): element i lies at the distance spacing x sqrt(i) from that point
+ * and at i times the golden angle. The nodes are open and the resources work on May 6, 2023, from
+ * 08:00 to 22:00 (Europe/Berlin).
+ *
+ * <p>Look for: the routes of the result, and the file ClusteringInnerCityExample.kml, which shows
+ * them on a map.
+ *
+ * <p>Prerequisites: your own full license file where ExampleLicenseHelper looks for it.
+ *
+ * @see <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/clustering/Clustering.md">Clustering.md</a>
  */
 public class ClusteringInnerCityExample extends Optimization {
 
-  // 1/10 coordinate difference shifts by roughly 12km = 10min driving
-  private static final double RES_SPACING = 0.004 + 0.006;
-  private static final double NODE_SPACING = 0.002;
+  // A point in the west of Koeln, the area that the figures of this example in the clustering
+  // feature guide show. Both patterns lie around it.
+  private static final Position PATTERN_ORIGIN = Position.of(50.9333, 6.85);
 
-  private static final int NUM_RESS = 50;
+  private static final int NUM_RESOURCES = 50;
   private static final int NUM_NODES = 1000;
 
-  private static final boolean ADD_EVEN_ODD_SPLITTING = !true;
+  // Spacings of the two patterns in degrees: the outermost resource lies 0.07 degrees from
+  // PATTERN_ORIGIN and the outermost node about 0.063, so the resources spread over the area of
+  // the nodes.
+  private static final double RESOURCE_SPACING = 0.01;
+  private static final double NODE_SPACING = 0.002;
+
+  // true moves the nodes and resources with an even index to May 7, which splits the plan into two
+  // days.
+  private static final boolean ADD_EVEN_ODD_SPLITTING = false;
 
   /**
-   * The main method.
+   * Runs the example.
    *
-   * @param args the arguments
-   * @throws IOException             Signals that an I/O exception has occurred.
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws InterruptedException    the interrupted exception
-   * @throws ExecutionException      the execution exception
+   * @param args not used
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
    */
   public static void main(String[] args)
-      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException {
     new ClusteringInnerCityExample().example();
   }
 
-  /**
-   * To string.
-   *
-   * @return the string
-   */
+  @Override
   public String toString() {
-    return "Example of clustering construction - InnerCity.";
+    return "Builds a plan for 1000 nodes and 50 resources in the west of Koeln with the clustering"
+        + " construction alone, without the genetic evolution and the simulated annealing"
+        + " after it.";
   }
 
   /**
-   * Example.
+   * Builds the optimization, runs it, prints the result and writes it to a KML file.
    *
-   * @throws IOException             Signals that an I/O exception has occurred.
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws InterruptedException    the interrupted exception
-   * @throws ExecutionException      the execution exception
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
    */
   public void example()
-      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
-
-    // Set license via helper
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException {
+    // Needs your own full license file where ExampleLicenseHelper looks for it: the public
+    // evaluation license does not allow this many elements.
     ExampleLicenseHelper.setLicense(this);
+    addProperties(this);
+    addNodes(this);
+    addResources(this);
+    attachToObservables(this);
+    IOptimizationResult result = startAndPresentResult(this);
+    exportToKml(result);
+  }
 
-    // Properties!
-    this.setProperties();
+  /**
+   * Adds the properties that leave out the genetic evolution and the simulated annealing.
+   *
+   * @param opti the optimization
+   */
+  private static void addProperties(IOptimization opti) {
+    Properties props = new Properties();
+    // Zero generations and zero iterations: no genetic evolution and no simulated annealing after
+    // the construction.
+    props.setProperty("JOptExitCondition.JOptGenerationCount", "0");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "0");
+    opti.addElement(props);
+  }
 
-    this.addNodes();
-    this.addResources();
+  /**
+   * Adds the nodes on a phyllotaxis pattern around a point in the west of Koeln.
+   *
+   * @param opti the optimization
+   */
+  private static void addNodes(IOptimization opti) {
+    List<Position> positions = samplePhyllotaxis(PATTERN_ORIGIN, NUM_NODES, NODE_SPACING);
 
-    // Attach to observables
-    ClusteringInnerCityExample.attachToObservables(this);
+    // Each visit takes 5 minutes and counts toward the working time, like the driving.
+    Duration visitDuration = Duration.ofMinutes(5);
 
-    CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
+    // The same importance for every node, so no node is preferred over another.
+    int importance = 1;
 
-    // It is important to block the call, otherwise optimization will be terminated
-    IOptimizationResult result = resultFuture.get();
-
-    // Show result
-    System.out.println(result);
-
-    // Export to kml
-    try {
-      String jsonFile =
-          "" + this.getClass().getSimpleName() + "_nr-" + NUM_RESS + "_sr-" + RES_SPACING + "_nn-"
-              + NUM_NODES + "_sn-" + NODE_SPACING + ".kml";
-
-      IEntityExporter exporter = new EntityKMLExporter();
-      exporter.export(result.getContainer(), new FileOutputStream(jsonFile));
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
+    for (int ii = 0; ii < positions.size(); ii++) {
+      Position pos = positions.get(ii);
+      opti.addElement(
+          new TimeWindowGeoNode(
+              "N_" + ii,
+              pos.latitude(),
+              pos.longitude(),
+              createOpeningHours(dayOfMay(ii)),
+              visitDuration,
+              importance));
     }
   }
 
-  /** Sets the properties. */
-  private void setProperties() {
+  /**
+   * Adds the resources on a phyllotaxis pattern around a point in the west of Koeln.
+   *
+   * @param opti the optimization
+   */
+  private static void addResources(IOptimization opti) {
+    List<Position> positions = samplePhyllotaxis(PATTERN_ORIGIN, NUM_RESOURCES, RESOURCE_SPACING);
 
-    Properties props = new Properties();
-
-    // Set Algorithms to zero iterations => Pure Construction
-    props.setProperty("JOptExitCondition.JOptGenerationCount", "0");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "0");
-
-    this.addElement(props);
-  }
-
-  /** Adds the resources. */
-  private void addResources() {
-
-    getResources().stream().forEach(this::addElement);
-  }
-
-  public static List<IWorkingHours> getWorkingHours(boolean addDay) {
-
-    List<IWorkingHours> workingHoursOne = new ArrayList<>();
-    workingHoursOne.add(new WorkingHours(
-        ZonedDateTime.of(2023, MAY, 6 + (addDay ? (ADD_EVEN_ODD_SPLITTING ? 1 : 0) : 0), 8, 0, 0, 0,
-            ZoneId.of("Europe/Berlin")),
-        ZonedDateTime.of(2023, MAY, 6 + (addDay ? (ADD_EVEN_ODD_SPLITTING ? 1 : 0) : 0), 22, 0, 0,
-            0,
-            ZoneId.of("Europe/Berlin"))));
-
-    return workingHoursOne;
-  }
-
-  public List<IResource> getResources() {
-
-    // 1.) add the nodes to be visited
-    Position koelnCenterPos = Position.of(50.9333, 6.85);
-
-    // Create other positions
-    // 1/10 coordinate difference shifts by roughly 12km = 10min driving
-
-    List<Position> poss = samplePhyllotaxis(koelnCenterPos, NUM_RESS, RES_SPACING);
-
+    // 12 h per day, a sample value.
     Duration maxWorkingTime = Duration.ofHours(12);
+    // 2200 km per day, more than a resource can drive in 24 hours at its average speed
+    // (setAvgSpeed).
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(2200.0, KILO(METRE));
 
-    // Create the Resources and return
-    return IntStream.range(0, poss.size()).mapToObj(ii -> {
-
-      boolean addDay = ii % 2 == 0;
-
-      IResource rep =
-          new CapacityResource("R_" + ii, poss.get(ii).latitude(), poss.get(ii).longitude(),
-              maxWorkingTime, maxDistanceKmW, getWorkingHours(addDay));
-      rep.setCost(0, 1, 1);
-
-      return rep;
-    }).collect(Collectors.toList());
-  }
-
-  /** Adds the nodes. */
-  private void addNodes() {
-
-    getNodes().stream().forEach(this::addElement);
-  }
-
-  public static List<INode> getNodes() {
-
-    Duration visitDuration = Duration.ofMinutes(5);
-
-    // 1.) add the nodes to be visited
-    Position koelnCenterPos = Position.of(50.9333, 6.85);
-
-    // Create other positions
-    // 1/10 coordinate difference shifts by roughly 12km = 10min driving
-
-    List<Position> poss = samplePhyllotaxis(koelnCenterPos, NUM_NODES, NODE_SPACING);
-
-    // Create the nodes and return
-    return IntStream.range(0, poss.size()).mapToObj(ii -> {
-      List<IOpeningHours> weeklyOpeningHoursOne = new ArrayList<>();
-
-      boolean addDay = ii % 2 == 0;
-
-      weeklyOpeningHoursOne.add(new OpeningHours(
-          ZonedDateTime.of(2023, MAY, 6 + (addDay ? (ADD_EVEN_ODD_SPLITTING ? 1 : 0) : 0), 8, 0, 0,
-              0,
-              ZoneId.of("Europe/Berlin")),
-          ZonedDateTime.of(2023, MAY, 6 + (addDay ? (ADD_EVEN_ODD_SPLITTING ? 1 : 0) : 0), 22, 0, 0,
-              0,
-              ZoneId.of("Europe/Berlin"))));
-
-      return new TimeWindowGeoNode("N_" + ii, poss.get(ii).latitude(), poss.get(ii).longitude(),
-          weeklyOpeningHoursOne, visitDuration, 1);
-    }).collect(Collectors.toList());
-  }
-
-  public static List<Position> samplePhyllotaxis(Position centerPos, int n, double spacing) {
-
-    return samplePhyllotaxis(centerPos.latitude(), centerPos.longitude(), n, spacing);
-  }
-
-  public static List<Position> samplePhyllotaxis(double centerLat, double centerLon, int n,
-      double spacing) {
-    double theta = Math.PI * (3 - Math.sqrt(5));
-
-    return IntStream.range(0, n).mapToObj(i -> {
-      double radius = spacing * Math.sqrt(i);
-      double angle = i * theta;
-      double x = radius * Math.cos(angle);
-      double y = radius * Math.sin(angle);
-
-      return Position.of(centerLat + y, centerLon + x);
-    }).collect(ImmutableList.toImmutableList());
+    for (int ii = 0; ii < positions.size(); ii++) {
+      Position pos = positions.get(ii);
+      opti.addElement(
+          new CapacityResource(
+              "R_" + ii,
+              pos.latitude(),
+              pos.longitude(),
+              maxWorkingTime,
+              maxDistanceKmW,
+              createWorkingHours(dayOfMay(ii))));
+    }
   }
 
   /**
-   * Attach to observables.
+   * Returns the day in May 2023 of the node or resource with the given index.
    *
-   * @param opti the opti
+   * @param index the index of the node or resource
+   * @return 7 for an even index when ADD_EVEN_ODD_SPLITTING is true, 6 otherwise
+   */
+  private static int dayOfMay(int index) {
+    return ADD_EVEN_ODD_SPLITTING && index % 2 == 0 ? 7 : 6;
+  }
+
+  /**
+   * Creates the opening hours of a node: the given day in May 2023, from 08:00 to 22:00.
+   *
+   * @param day the day in May 2023
+   * @return the opening hours
+   */
+  private static List<IOpeningHours> createOpeningHours(int day) {
+    // The same frame as the working hours of the resources, so a node matches every resource
+    // of its day in time.
+    List<IOpeningHours> openingHours = new ArrayList<>();
+    openingHours.add(
+        new OpeningHours(
+            ZonedDateTime.of(2023, MAY.getValue(), day, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2023, MAY.getValue(), day, 22, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+    return openingHours;
+  }
+
+  /**
+   * Creates the working hours of a resource: the given day in May 2023, from 08:00 to 22:00.
+   *
+   * @param day the day in May 2023
+   * @return the working hours
+   */
+  private static List<IWorkingHours> createWorkingHours(int day) {
+    // 08:00 to 22:00, a frame of 14 hours for the 12 h maximal working time: the working hours
+    // are a frame for matching resources with the opening hours of the nodes.
+    List<IWorkingHours> workingHours = new ArrayList<>();
+    workingHours.add(
+        new WorkingHours(
+            ZonedDateTime.of(2023, MAY.getValue(), day, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2023, MAY.getValue(), day, 22, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+    return workingHours;
+  }
+
+  /**
+   * Places n points on a phyllotaxis pattern around an origin: point i lies at the distance spacing
+   * x sqrt(i) from the origin and at i times the golden angle.
+   *
+   * @param origin the point around which the pattern lies
+   * @param n the number of points
+   * @param spacing the spacing factor in degrees
+   * @return the positions of the points
+   */
+  private static List<Position> samplePhyllotaxis(Position origin, int n, double spacing) {
+    // The golden angle in radians.
+    double goldenAngle = Math.PI * (3 - Math.sqrt(5));
+
+    List<Position> positions = new ArrayList<>();
+    for (int i = 0; i < n; i++) {
+      double radius = spacing * Math.sqrt(i);
+      double angle = i * goldenAngle;
+      positions.add(
+          Position.of(
+              origin.latitude() + radius * Math.sin(angle),
+              origin.longitude() + radius * Math.cos(angle)));
+    }
+    return positions;
+  }
+
+  /**
+   * Prints the progress, warning, status and error events of the run.
+   *
+   * @param opti the optimization
    */
   private static void attachToObservables(IOptimization opti) {
+    // Subscribe before the start: the subjects replay only a few past events.
+    opti.getOptimizationEvents()
+        .progressSubject()
+        .subscribe(p -> System.out.println(p.getProgressString()));
+    opti.getOptimizationEvents().warningSubject().subscribe(w -> System.out.println(w.toString()));
+    opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s.toString()));
+    opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
+  }
 
-    PrintStream out = System.out;
+  /**
+   * Starts the run, waits for the result, prints it and returns it.
+   *
+   * @param opti the optimization
+   * @return the result of the run
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   */
+  private static IOptimizationResult startAndPresentResult(IOptimization opti)
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException {
+    CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
+    // Wait for the result; without the wait the JVM would end before the run does.
+    IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
+    System.out.println(result);
+    return result;
+  }
 
-    opti.getOptimizationEvents().progressSubject()
-        .subscribe(p -> out.println(p.getProgressString()));
+  /**
+   * Writes the result to ClusteringInnerCityExample.kml in the working directory.
+   *
+   * @param result the result of the run
+   * @throws IOException if a file cannot be read or written
+   */
+  private static void exportToKml(IOptimizationResult result) throws IOException {
+    String kmlFile = "ClusteringInnerCityExample.kml";
 
-    opti.getOptimizationEvents().warningSubject().subscribe(w -> out.println(w.toString()));
+    EntityKMLExporter kmlExporter = new EntityKMLExporter();
+    kmlExporter.setTitle("ClusteringInnerCityExample");
 
-    opti.getOptimizationEvents().statusSubject().subscribe(s -> out.println(s.toString()));
-
-    opti.getOptimizationEvents().errorSubject().subscribe(e -> out.println(e.toString()));
+    // export flushes the stream but does not close it; the try block closes it.
+    try (OutputStream out = new FileOutputStream(kmlFile)) {
+      if (!kmlExporter.export(result, out)) {
+        System.out.println("KML export failed: " + kmlFile);
+      }
+    }
   }
 }
