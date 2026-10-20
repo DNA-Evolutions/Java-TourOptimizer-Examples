@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.includevisitduration;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -58,16 +58,19 @@ import tech.units.indriya.quantity.Quantities;
  */
 public class IncludeVisitDurationExample extends Optimization {
 
-  public static void main(String[] args) throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+  public static void main(String[] args)
+      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
     new IncludeVisitDurationExample().example();
   }
-  
+
   public String toString() {
-	  return "Setting a Node to use a defined timeWindow as access window. Meaning, a Resource should arrive\r\n" +
-	      " during the timeWindow but does not need to be finished with the job during the timewindow.";
+    return "Setting a Node to use a defined timeWindow as access window. Meaning, a Resource should arrive\r\n"
+        +
+        " during the timeWindow but does not need to be finished with the job during the timewindow.";
   }
 
-  public void example() throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+  public void example()
+      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);

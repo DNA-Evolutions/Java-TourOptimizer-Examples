@@ -72,204 +72,212 @@ import tech.units.indriya.quantity.Quantities;
  */
 public class ClusteringInnerCityExample extends Optimization {
 
+  // 1/10 coordinate difference shifts by roughly 12km = 10min driving
+  private static final double RES_SPACING = 0.004 + 0.006;
+  private static final double NODE_SPACING = 0.002;
+
+  private static final int NUM_RESS = 50;
+  private static final int NUM_NODES = 1000;
+
+  private static final boolean ADD_EVEN_ODD_SPLITTING = !true;
+
+  /**
+   * The main method.
+   *
+   * @param args the arguments
+   * @throws IOException             Signals that an I/O exception has occurred.
+   * @throws InvalidLicenceException the invalid licence exception
+   * @throws InterruptedException    the interrupted exception
+   * @throws ExecutionException      the execution exception
+   */
+  public static void main(String[] args)
+      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+    new ClusteringInnerCityExample().example();
+  }
+
+  /**
+   * To string.
+   *
+   * @return the string
+   */
+  public String toString() {
+    return "Example of clustering construction - InnerCity.";
+  }
+
+  /**
+   * Example.
+   *
+   * @throws IOException             Signals that an I/O exception has occurred.
+   * @throws InvalidLicenceException the invalid licence exception
+   * @throws InterruptedException    the interrupted exception
+   * @throws ExecutionException      the execution exception
+   */
+  public void example()
+      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+
+    // Set license via helper
+    ExampleLicenseHelper.setLicense(this);
+
+    // Properties!
+    this.setProperties();
+
+    this.addNodes();
+    this.addResources();
+
+    // Attach to observables
+    ClusteringInnerCityExample.attachToObservables(this);
+
+    CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
+
+    // It is important to block the call, otherwise optimization will be terminated
+    IOptimizationResult result = resultFuture.get();
+
+    // Show result
+    System.out.println(result);
+
+    // Export to kml
+    try {
+      String jsonFile =
+          "" + this.getClass().getSimpleName() + "_nr-" + NUM_RESS + "_sr-" + RES_SPACING + "_nn-"
+              + NUM_NODES + "_sn-" + NODE_SPACING + ".kml";
+
+      IEntityExporter exporter = new EntityKMLExporter();
+      exporter.export(result.getContainer(), new FileOutputStream(jsonFile));
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /** Sets the properties. */
+  private void setProperties() {
+
+    Properties props = new Properties();
+
+    // Set Algorithms to zero iterations => Pure Construction
+    props.setProperty("JOptExitCondition.JOptGenerationCount", "0");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "0");
+
+    this.addElement(props);
+  }
+
+  /** Adds the resources. */
+  private void addResources() {
+
+    getResources().stream().forEach(this::addElement);
+  }
+
+  public static List<IWorkingHours> getWorkingHours(boolean addDay) {
+
+    List<IWorkingHours> workingHoursOne = new ArrayList<>();
+    workingHoursOne.add(new WorkingHours(
+        ZonedDateTime.of(2023, MAY, 6 + (addDay ? (ADD_EVEN_ODD_SPLITTING ? 1 : 0) : 0), 8, 0, 0, 0,
+            ZoneId.of("Europe/Berlin")),
+        ZonedDateTime.of(2023, MAY, 6 + (addDay ? (ADD_EVEN_ODD_SPLITTING ? 1 : 0) : 0), 22, 0, 0,
+            0,
+            ZoneId.of("Europe/Berlin"))));
+
+    return workingHoursOne;
+  }
+
+  public List<IResource> getResources() {
+
+    // 1.) add the nodes to be visited
+    Position koelnCenterPos = Position.of(50.9333, 6.85);
+
+    // Create other positions
     // 1/10 coordinate difference shifts by roughly 12km = 10min driving
-    private static final double RES_SPACING = 0.004 + 0.006;
-    private static final double NODE_SPACING = 0.002;
 
-    private static final int NUM_RESS = 50;
-    private static final int NUM_NODES = 1000;
+    List<Position> poss = samplePhyllotaxis(koelnCenterPos, NUM_RESS, RES_SPACING);
 
-    private static final boolean ADD_EVEN_ODD_SPLITTING = !true;
+    Duration maxWorkingTime = Duration.ofHours(12);
+    Quantity<Length> maxDistanceKmW = Quantities.getQuantity(2200.0, KILO(METRE));
 
-    /**
-     * The main method.
-     *
-     * @param args the arguments
-     * @throws IOException             Signals that an I/O exception has occurred.
-     * @throws InvalidLicenceException the invalid licence exception
-     * @throws InterruptedException    the interrupted exception
-     * @throws ExecutionException      the execution exception
-     */
-    public static void main(String[] args)
-	    throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
-	new ClusteringInnerCityExample().example();
-    }
+    // Create the Resources and return
+    return IntStream.range(0, poss.size()).mapToObj(ii -> {
 
-    /**
-     * To string.
-     *
-     * @return the string
-     */
-    public String toString() {
-	return "Example of clustering construction - InnerCity.";
-    }
+      boolean addDay = ii % 2 == 0;
 
-    /**
-     * Example.
-     *
-     * @throws IOException             Signals that an I/O exception has occurred.
-     * @throws InvalidLicenceException the invalid licence exception
-     * @throws InterruptedException    the interrupted exception
-     * @throws ExecutionException      the execution exception
-     */
-    public void example() throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+      IResource rep =
+          new CapacityResource("R_" + ii, poss.get(ii).latitude(), poss.get(ii).longitude(),
+              maxWorkingTime, maxDistanceKmW, getWorkingHours(addDay));
+      rep.setCost(0, 1, 1);
 
-	// Set license via helper
-	ExampleLicenseHelper.setLicense(this);
+      return rep;
+    }).collect(Collectors.toList());
+  }
 
-	// Properties!
-	this.setProperties();
+  /** Adds the nodes. */
+  private void addNodes() {
 
-	this.addNodes();
-	this.addResources();
+    getNodes().stream().forEach(this::addElement);
+  }
 
-	// Attach to observables
-	ClusteringInnerCityExample.attachToObservables(this);
+  public static List<INode> getNodes() {
 
-	CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
+    Duration visitDuration = Duration.ofMinutes(5);
 
-	// It is important to block the call, otherwise optimization will be terminated
-	IOptimizationResult result = resultFuture.get();
+    // 1.) add the nodes to be visited
+    Position koelnCenterPos = Position.of(50.9333, 6.85);
 
-	// Show result
-	System.out.println(result);
+    // Create other positions
+    // 1/10 coordinate difference shifts by roughly 12km = 10min driving
 
-	// Export to kml
-	try {
-	    String jsonFile = "" + this.getClass().getSimpleName() + "_nr-" + NUM_RESS + "_sr-" + RES_SPACING + "_nn-"
-		    + NUM_NODES + "_sn-" + NODE_SPACING + ".kml";
+    List<Position> poss = samplePhyllotaxis(koelnCenterPos, NUM_NODES, NODE_SPACING);
 
-	    IEntityExporter exporter = new EntityKMLExporter();
-	    exporter.export(result.getContainer(), new FileOutputStream(jsonFile));
-	} catch (FileNotFoundException e) {
-	    e.printStackTrace();
-	}
-    }
+    // Create the nodes and return
+    return IntStream.range(0, poss.size()).mapToObj(ii -> {
+      List<IOpeningHours> weeklyOpeningHoursOne = new ArrayList<>();
 
-    /** Sets the properties. */
-    private void setProperties() {
+      boolean addDay = ii % 2 == 0;
 
-	Properties props = new Properties();
+      weeklyOpeningHoursOne.add(new OpeningHours(
+          ZonedDateTime.of(2023, MAY, 6 + (addDay ? (ADD_EVEN_ODD_SPLITTING ? 1 : 0) : 0), 8, 0, 0,
+              0,
+              ZoneId.of("Europe/Berlin")),
+          ZonedDateTime.of(2023, MAY, 6 + (addDay ? (ADD_EVEN_ODD_SPLITTING ? 1 : 0) : 0), 22, 0, 0,
+              0,
+              ZoneId.of("Europe/Berlin"))));
 
-	// Set Algorithms to zero iterations => Pure Construction
-	props.setProperty("JOptExitCondition.JOptGenerationCount", "0");
-	props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "0");
+      return new TimeWindowGeoNode("N_" + ii, poss.get(ii).latitude(), poss.get(ii).longitude(),
+          weeklyOpeningHoursOne, visitDuration, 1);
+    }).collect(Collectors.toList());
+  }
 
-	this.addElement(props);
-    }
+  public static List<Position> samplePhyllotaxis(Position centerPos, int n, double spacing) {
 
-    /** Adds the resources. */
-    private void addResources() {
+    return samplePhyllotaxis(centerPos.latitude(), centerPos.longitude(), n, spacing);
+  }
 
-	getResources().stream().forEach(this::addElement);
-    }
+  public static List<Position> samplePhyllotaxis(double centerLat, double centerLon, int n,
+      double spacing) {
+    double theta = Math.PI * (3 - Math.sqrt(5));
 
-    public static List<IWorkingHours> getWorkingHours(boolean addDay) {
+    return IntStream.range(0, n).mapToObj(i -> {
+      double radius = spacing * Math.sqrt(i);
+      double angle = i * theta;
+      double x = radius * Math.cos(angle);
+      double y = radius * Math.sin(angle);
 
-	List<IWorkingHours> workingHoursOne = new ArrayList<>();
-	workingHoursOne.add(new WorkingHours(
-		ZonedDateTime.of(2023, MAY, 6 + (addDay ? (ADD_EVEN_ODD_SPLITTING ? 1 : 0) : 0), 8, 0, 0, 0,
-			ZoneId.of("Europe/Berlin")),
-		ZonedDateTime.of(2023, MAY, 6 + (addDay ? (ADD_EVEN_ODD_SPLITTING ? 1 : 0) : 0), 22, 0, 0, 0,
-			ZoneId.of("Europe/Berlin"))));
+      return Position.of(centerLat + y, centerLon + x);
+    }).collect(ImmutableList.toImmutableList());
+  }
 
-	return workingHoursOne;
-    }
+  /**
+   * Attach to observables.
+   *
+   * @param opti the opti
+   */
+  private static void attachToObservables(IOptimization opti) {
 
-    public List<IResource> getResources() {
+    PrintStream out = System.out;
 
-	// 1.) add the nodes to be visited
-	Position koelnCenterPos = Position.of(50.9333, 6.85);
+    opti.getOptimizationEvents().progressSubject()
+        .subscribe(p -> out.println(p.getProgressString()));
 
-	// Create other positions
-	// 1/10 coordinate difference shifts by roughly 12km = 10min driving
+    opti.getOptimizationEvents().warningSubject().subscribe(w -> out.println(w.toString()));
 
-	List<Position> poss = samplePhyllotaxis(koelnCenterPos, NUM_RESS, RES_SPACING);
+    opti.getOptimizationEvents().statusSubject().subscribe(s -> out.println(s.toString()));
 
-	Duration maxWorkingTime = Duration.ofHours(12);
-	Quantity<Length> maxDistanceKmW = Quantities.getQuantity(2200.0, KILO(METRE));
-
-	// Create the Resources and return
-	return IntStream.range(0, poss.size()).mapToObj(ii -> {
-
-	    boolean addDay = ii % 2 == 0;
-
-	    IResource rep = new CapacityResource("R_" + ii, poss.get(ii).latitude(), poss.get(ii).longitude(),
-		    maxWorkingTime, maxDistanceKmW, getWorkingHours(addDay));
-	    rep.setCost(0, 1, 1);
-
-	    return rep;
-	}).collect(Collectors.toList());
-    }
-
-    /** Adds the nodes. */
-    private void addNodes() {
-
-	getNodes().stream().forEach(this::addElement);
-    }
-
-    public static List<INode> getNodes() {
-
-	Duration visitDuration = Duration.ofMinutes(5);
-
-	// 1.) add the nodes to be visited
-	Position koelnCenterPos = Position.of(50.9333, 6.85);
-
-	// Create other positions
-	// 1/10 coordinate difference shifts by roughly 12km = 10min driving
-
-	List<Position> poss = samplePhyllotaxis(koelnCenterPos, NUM_NODES, NODE_SPACING);
-
-	// Create the nodes and return
-	return IntStream.range(0, poss.size()).mapToObj(ii -> {
-	    List<IOpeningHours> weeklyOpeningHoursOne = new ArrayList<>();
-
-	    boolean addDay = ii % 2 == 0;
-
-	    weeklyOpeningHoursOne.add(new OpeningHours(
-		    ZonedDateTime.of(2023, MAY, 6 + (addDay ? (ADD_EVEN_ODD_SPLITTING ? 1 : 0) : 0), 8, 0, 0, 0,
-			    ZoneId.of("Europe/Berlin")),
-		    ZonedDateTime.of(2023, MAY, 6 + (addDay ? (ADD_EVEN_ODD_SPLITTING ? 1 : 0) : 0), 22, 0, 0, 0,
-			    ZoneId.of("Europe/Berlin"))));
-
-	    return new TimeWindowGeoNode("N_" + ii, poss.get(ii).latitude(), poss.get(ii).longitude(),
-		    weeklyOpeningHoursOne, visitDuration, 1);
-	}).collect(Collectors.toList());
-    }
-
-    public static List<Position> samplePhyllotaxis(Position centerPos, int n, double spacing) {
-
-	return samplePhyllotaxis(centerPos.latitude(), centerPos.longitude(), n, spacing);
-    }
-
-    public static List<Position> samplePhyllotaxis(double centerLat, double centerLon, int n, double spacing) {
-	double theta = Math.PI * (3 - Math.sqrt(5));
-
-	return IntStream.range(0, n).mapToObj(i -> {
-	    double radius = spacing * Math.sqrt(i);
-	    double angle = i * theta;
-	    double x = radius * Math.cos(angle);
-	    double y = radius * Math.sin(angle);
-
-	    return Position.of(centerLat + y, centerLon + x);
-	}).collect(ImmutableList.toImmutableList());
-    }
-
-    /**
-     * Attach to observables.
-     *
-     * @param opti the opti
-     */
-    private static void attachToObservables(IOptimization opti) {
-
-	PrintStream out = System.out;
-
-	opti.getOptimizationEvents().progressSubject().subscribe(p -> out.println(p.getProgressString()));
-
-	opti.getOptimizationEvents().warningSubject().subscribe(w -> out.println(w.toString()));
-
-	opti.getOptimizationEvents().statusSubject().subscribe(s -> out.println(s.toString()));
-
-	opti.getOptimizationEvents().errorSubject().subscribe(e -> out.println(e.toString()));
-    }
+    opti.getOptimizationEvents().errorSubject().subscribe(e -> out.println(e.toString()));
+  }
 }

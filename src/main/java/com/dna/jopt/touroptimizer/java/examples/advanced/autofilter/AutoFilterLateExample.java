@@ -8,7 +8,7 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.autofilter;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -102,13 +102,13 @@ public class AutoFilterLateExample extends Optimization {
 
     // Other autofilter options are:
     /* ========================
-	     props.setProperty("JOpt.SelectiveAutoFilter.TimeWindow.Early", "TRUE");
-	     props.setProperty("JOpt.SelectiveAutoFilter.MaximalRouteDistanceExceeded", "TRUE");
-	     props.setProperty("JOpt.SelectiveAutoFilter.WorkingHoursExceeded", "TRUE");
-	     props.setProperty("JOpt.SelectiveAutoFilter.DoubleBooking", "TRUE"); // Usually not required
-	     props.setProperty("JOpt.SelectiveAutoFilter.RelationShip", "TRUE");
-	     props.setProperty("JOpt.SelectiveAutoFilter.ResourceMismatch", "TRUE");
-	     props.setProperty("JOpt.SelectiveAutoFilter.NodeType", "TRUE");
+       props.setProperty("JOpt.SelectiveAutoFilter.TimeWindow.Early", "TRUE");
+       props.setProperty("JOpt.SelectiveAutoFilter.MaximalRouteDistanceExceeded", "TRUE");
+       props.setProperty("JOpt.SelectiveAutoFilter.WorkingHoursExceeded", "TRUE");
+       props.setProperty("JOpt.SelectiveAutoFilter.DoubleBooking", "TRUE"); // Usually not required
+       props.setProperty("JOpt.SelectiveAutoFilter.RelationShip", "TRUE");
+       props.setProperty("JOpt.SelectiveAutoFilter.ResourceMismatch", "TRUE");
+       props.setProperty("JOpt.SelectiveAutoFilter.NodeType", "TRUE");
      */
 
     props.setProperty("JOpt.NumCPUCores", "4");

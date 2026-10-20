@@ -67,10 +67,13 @@ public class JointVisitDurationExample extends Optimization {
   }
 
   public String toString() {
-	  return "In the case nodes share the same geographical location the visitDuration for each node may become different.\r\n" +
-	      " Therefore, a joint visitDuration can be defined. In case nodes (sharing the same geoLocation) are visited\r\n" +
-	      " directly after each other only the first node gets the full visitDuration. All following nodes get the\r\n" + 
-	      " joined visit duration. By default, the joint visit duration equals the \"normal\" visit duration.";
+    return "In the case nodes share the same geographical location the visitDuration for each node may become different.\r\n"
+        +
+        " Therefore, a joint visitDuration can be defined. In case nodes (sharing the same geoLocation) are visited\r\n"
+        +
+        " directly after each other only the first node gets the full visitDuration. All following nodes get the\r\n"
+        +
+        " joined visit duration. By default, the joint visit duration equals the \"normal\" visit duration.";
   }
 
   public void example()

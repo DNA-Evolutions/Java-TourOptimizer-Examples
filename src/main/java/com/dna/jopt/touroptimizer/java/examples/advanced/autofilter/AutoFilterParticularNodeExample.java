@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.autofilter;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -59,16 +59,17 @@ import tech.units.indriya.quantity.Quantities;
  */
 public class AutoFilterParticularNodeExample extends Optimization {
 
-  public static void main(String[] args) throws InvalidLicenceException, InterruptedException, ExecutionException, IOException {
+  public static void main(String[] args)
+      throws InvalidLicenceException, InterruptedException, ExecutionException, IOException {
     new AutoFilterParticularNodeExample().example();
   }
-  
+
   public String toString() {
-	  return "Simple example for using the selective autofilter for late violations only for a particular node.";
+    return "Simple example for using the selective autofilter for late violations only for a particular node.";
   }
 
-
-  public void example() throws InvalidLicenceException, InterruptedException, ExecutionException, IOException {
+  public void example()
+      throws InvalidLicenceException, InterruptedException, ExecutionException, IOException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
@@ -159,7 +160,6 @@ public class AutoFilterParticularNodeExample extends Optimization {
     INode nuernberg =
         new TimeWindowGeoNode("Nuernberg", 49.4478, 11.0683, weeklyOpeningHours, visitDuration, 1);
     this.addElement(nuernberg);
-    
 
     // Assign a local Constraint to "Nuernberg"
     // By adding a local late Constraint to "Nuernberg" this Node and only this Node will be filtered out of the

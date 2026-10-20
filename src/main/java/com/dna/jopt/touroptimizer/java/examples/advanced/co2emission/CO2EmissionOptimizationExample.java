@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.co2emission;
  * %%
  * This file is subject to the terms and conditions defined in file 'LICENSE.txt',
  * which is part of this source code package.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/agb-conditions-and-terms/>.
  * #L%
  */

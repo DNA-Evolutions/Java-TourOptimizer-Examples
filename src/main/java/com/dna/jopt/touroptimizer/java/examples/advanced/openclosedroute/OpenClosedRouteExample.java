@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.openclosedroute;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -59,7 +59,8 @@ import tech.units.indriya.quantity.Quantities;
  */
 public class OpenClosedRouteExample extends Optimization {
 
-  public static void main(String[] args) throws InvalidLicenceException, IOException, InterruptedException, ExecutionException {
+  public static void main(String[] args)
+      throws InvalidLicenceException, IOException, InterruptedException, ExecutionException {
     new OpenClosedRouteExample().example();
   }
 
@@ -67,7 +68,8 @@ public class OpenClosedRouteExample extends Optimization {
     return "In an open Route the Resource does not have to go back to its starting location.";
   }
 
-  public void example() throws InvalidLicenceException, IOException, InterruptedException, ExecutionException {
+  public void example()
+      throws InvalidLicenceException, IOException, InterruptedException, ExecutionException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
