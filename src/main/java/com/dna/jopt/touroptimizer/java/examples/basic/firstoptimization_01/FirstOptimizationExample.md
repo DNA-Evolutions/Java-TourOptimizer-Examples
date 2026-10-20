@@ -1,76 +1,16 @@
-# First Optimization — `FirstOptimizationExample`
+# First optimization example
 
-A compact “first run” example for **JOpt TourOptimizer (Java)**: define a small set of time-windowed geo nodes, add a single capacity resource, tune a few solver properties, subscribe to runtime events, and print the resulting plan.
+`FirstOptimizationExample` plans two working days of one resource, Jack from Aachen, who visits seven cities in Germany: the class sets the license and the properties, adds the nodes and the resource, prints the events of the run and then the result. It is for Java developers who start with JOpt. The [First optimization tutorial](https://www.dna-evolutions.com/docs/getting-started/tutorials/first-optimization) covers the same code step by step.
 
-## Links
+## What the example shows
 
-- Example source (GitHub):  
-  [FirstOptimizationExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/firstoptimization_01)
+`FirstOptimizationExample` extends `Optimization` and builds a complete run in one method, `example()`. Each step is a method of its own: `addProperties`, `addNodes`, `addResources`, `attachToObservables` and `startAndPresentResult`. Most other Base examples use the same names for `attachToObservables` and `startAndPresentResult`; their other steps depend on what they show.
 
-- Tutorial walk-through:  
-  https://www.dna-evolutions.com/docs/learn-and-explore/base-examples/firstoptimizationexample
+The run starts asynchronously, and the example waits for the result with a timeout. It prints the progress, warning, status and error events while the run is going, and the result at the end.
 
----
+## Scenario
 
-## What happens when you run it
-
-Think of the execution flow as a short pipeline:
-
-1. **License is applied** (`ExampleLicenseHelper`, the public evaluation license).
-2. **Solver properties** are registered.
-3. **Nodes** (places to visit) are registered.
-4. **Resources** (people/vehicles) are registered.
-5. **Observers** are attached (progress, warnings, status, errors).
-6. The optimizer starts asynchronously and the code **waits for up to 5 minutes** for a result.
-7. The **result object is printed** to stdout.
-
-This is implemented in `example()` by calling five helper methods in order:
-- `addProperties(...)`
-- `addNodes(...)`
-- `addResources(...)`
-- `attachToObservables(...)`
-- `startAndPresentResult(...)`
-
----
-
-## A quick “code tour” (by method)
-
-### `main(...)` and `example()`: the orchestration layer
-
-- `main(...)` simply instantiates the class and calls `example()`.
-- `example()` contains the full run sequence and is the best entry point when you want to modify the scenario.
-
-Notable behavior:
-- The example applies a license using `ExampleLicenseHelper.setLicense(this);`, which sets the public evaluation license (up to 20 elements, nodes and resources together), or your license file when it exists.
-
-### `addProperties(...)`: the runtime knobs
-
-This example sets four properties:
-
-- `JOptExitCondition.JOptGenerationCount = 1000`  
-  Controls how many generations the evolutionary phase is allowed to run.
-
-- `JOpt.Algorithm.PreOptimization.SA.NumIterations = 100000`  
-  Controls the number of iterations for the simulated annealing pre-optimization.
-
-- `JOpt.Algorithm.PreOptimization.SA.NumRepetitions = 1`  
-  Number of pre-optimization repetitions (note the spelling is exactly as in the source key).
-
-- `JOpt.NumCPUCores = 4`  
-  Provides a hint regarding CPU parallelism.
-
-Practical reading: these values intentionally keep the example deterministic and “busy enough” to show progress updates, but not so heavy that it becomes inconvenient during development.
-
-### `addNodes(...)`: the demand side (what must be visited)
-
-The example builds a shared **opening-hours list** spanning two calendar days (Europe/Berlin timezone):
-
-- May 6, 2020: 08:00–17:00  
-- May 7, 2020: 08:00–17:00
-
-All nodes share:
-- `visitDuration = 20 minutes`
-- `importance = 1`
+Jack from Aachen visits seven nodes. The Aachen node lies at Jack's start position. The nodes are open and Jack works from 08:00 to 17:00 on May 6 and May 7, 2020 (Europe/Berlin); the dates are sample values. Each visit takes 20 minutes.
 
 Then seven nodes are created as `TimeWindowGeoNode` objects and added:
 
@@ -82,93 +22,186 @@ Then seven nodes are created as `TimeWindowGeoNode` objects and added:
 - Wuppertal (51.2667, 7.18333)
 - Aachen (50.775346, 6.083887)
 
-Interpretation: this is a small, geographically distributed node set that is large enough to require trade-offs, but small enough to remain readable.
+Jack may work 9 hours and drive 1200 km per working day. The day with Nuernberg takes longer than 9 hours, so the result reports overtime. No day of this plan needs 1200 km.
 
-### `addResources(...)`: the supply side (who can perform visits)
+Interpretation: this is a geographically distributed node set that is small, but it already shows a trade-off: the second day runs into overtime. It stays small enough to remain readable.
 
-Working hours mirror the node opening hours (two days, 08:00–17:00 in Europe/Berlin).
+## How the code works
 
-One `CapacityResource` is created:
+The source is [FirstOptimizationExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/firstoptimization_01/FirstOptimizationExample.java).
 
-- Name: **Jack from Aachen**
-- Start/home location: Aachen (50.775346, 6.083887)
-- `maxWorkingTime = 9 hours`
-- `maxDistanceKmW = 1200 km` (configured as a unit-aware quantity)
+### The steps of the run
 
-Interpretation: one resource is often the simplest way to validate that your modeling is correct before introducing multi-resource and balancing effects.
+`main(...)` instantiates the class and calls `example()`. `example()` contains the full run sequence: start here when you want to modify the scenario.
 
-### `attachToObservables(...)`: making the run “feel alive”
+`example()` sets the license first. `ExampleLicenseHelper.setLicense` uses your license file if it finds one, otherwise the public evaluation license. Then it calls the steps in order:
 
-The example subscribes to four event streams and prints each event to the console:
+```java
+public void example()
+    throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+    IOException {
+  // The public evaluation license, or your own license if you put a license file where
+  // ExampleLicenseHelper looks for it.
+  ExampleLicenseHelper.setLicense(this);
+  addProperties(this);
+  addNodes(this);
+  addResources(this);
+  attachToObservables(this);
+  startAndPresentResult(this);
+}
+```
 
-- progress
-- warnings
-- status
-- errors
+### Properties
+
+`addProperties` sets two properties:
+
+- `JOptExitCondition.JOptGenerationCount`: controls how many generations the evolutionary phase is allowed to run.
+- `JOpt.Algorithm.PreOptimization.SA.NumIterations`: controls the number of iterations for the simulated annealing pre-optimization.
+
+Both values are lower than the core defaults, which keeps the run short. The [property reference](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties) lists the defaults.
+
+```java
+// Fewer generations and iterations than the defaults keep the run short.
+props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
+props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
+```
+
+Practical reading: our runs gave the same result each time; JOpt has no seed setting, so this is not guaranteed. These values keep the example "busy enough" to show progress updates, but not so heavy that it becomes inconvenient during development.
+
+### Nodes and the resource
+
+`addNodes` gives all seven nodes the same opening hours, a visit duration of 20 minutes and the importance 1. The visit time counts toward Jack's working time, like the driving. The block shows the first node; the other six follow the same pattern:
+
+```java
+// Each visit takes 20 minutes and counts toward Jack's working time, like the driving.
+Duration visitDuration = Duration.ofMinutes(20);
+
+// The same importance for every node, so no node is preferred over another.
+int importance = 1;
+
+INode koeln =
+    new TimeWindowGeoNode("Koeln", 50.9333, 6.95, openingHours, visitDuration, importance);
+opti.addElement(koeln);
+```
+
+`addResources` creates Jack with the working hours of both days, a maximal working time of 9 hours and a maximal distance of 1200 km per day:
+
+```java
+// 9 h per day, the length of the shift: the day with Nuernberg exceeds it (overtime).
+Duration maxWorkingTime = Duration.ofHours(9);
+// 1200 km per day, more than the longest day of this plan needs.
+Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
+
+IResource jack =
+    new CapacityResource(
+        "Jack from Aachen", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
+opti.addElement(jack);
+```
+
+### Events and the result
+
+`attachToObservables` subscribes to the progress, warning, status and error events and prints each one. It subscribes before the run starts, because the subjects replay only a few past events:
+
+```java
+// Subscribe before the start: the subjects replay only a few past events.
+opti.getOptimizationEvents()
+    .progressSubject()
+    .subscribe(p -> System.out.println(p.getProgressString()));
+opti.getOptimizationEvents().warningSubject().subscribe(w -> System.out.println(w.toString()));
+opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s.toString()));
+opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
+```
 
 This is helpful when you are learning:
 - you can see whether the solver is still active,
 - what the solver is trying to improve,
 - and whether there are modeling or feasibility issues.
 
-### `startAndPresentResult(...)`: run, wait, print
+`startAndPresentResult` starts the run with `startRunAsync()` and waits up to 5 minutes for the result.
 
-The optimizer is started asynchronously (`startRunAsync()`), then the code blocks:
-
-- waits **up to 5 minutes** via `get(5, TimeUnit.MINUTES)`,
-- prints the returned `IOptimizationResult`.
+```java
+CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
+// Wait for the result; without the wait the JVM would end before the run does.
+IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
+System.out.println(result);
+```
 
 Why the blocking wait matters:
 - if your process exits early, the asynchronous optimization run is terminated with it.
-- a time-bounded wait also prevents “hanging forever” if something is misconfigured.
+- without a timeout, the call can wait indefinitely if something is misconfigured.
 
----
+## Output and what to look for
 
-## How to run
+The output starts with status events and progress lines. Then comes the result, with one route per day. Route 0 on May 6 visits Aachen, Dueren, Koeln, Wuppertal and Essen. Route 1 on May 7 goes to Nuernberg and Heilbronn.
 
-Run the `main(String[] args)` method of `FirstOptimizationExample`.
+The route time of route 1 is its transit time plus 20 minutes for each of its two visits (trimmed to these lines of route 1):
 
-Notes:
-- The `main(...)` signature declares: `InterruptedException`, `ExecutionException`, `InvalidLicenceException`, `IOException`, `TimeoutException`.
-- If the run exceeds the 5-minute wait window, you will receive a `TimeoutException`.
+```text
+Route time       [min] : 653.18
+Transit time     [min] : 613.18
+Productive. time [min] : 40.0
+```
 
----
+653.18 minutes are more than the 9 hours that Jack may work, so route 1 shows a MAXTIME violation with the overtime in hours, followed by its two stops:
 
-## Making it your own (common edits)
+```text
+[ CONSTRAINTVIOLATION/MAXTIME/EXCEEDED/ Overtime [h]: 1.8863266666666654 Value: 1.8863266666666654 ]
 
-### Change problem size
+1.0 Nuernberg / Geo  / Arrival: 07.05.2020 12:47:54 (Europe/Berlin) , Departure: 07.05.2020 13:07:54 (Europe/Berlin) / Duration: 20.0 [min] / Driving: 287.91 [min], 380.04 [km]
+1.1 Heilbronn / Geo  / Arrival: 07.05.2020 14:52:19 (Europe/Berlin) , Departure: 07.05.2020 15:12:19 (Europe/Berlin) / Duration: 20.0 [min] / Driving: 104.42 [min], 137.83 [km]
+```
+
+The distance of route 1, 809.4 km, stays below the 1200 km limit, so there is no distance violation.
+
+## Run it
+
+Run the `main(String[] args)` method of `FirstOptimizationExample` from your IDE, with the repository imported as a Maven project. You need a JDK in the version that the examples pom sets. No license file is needed: without one, the example uses the public evaluation license (see `ExampleLicenseHelper`). The [license guide: element limits](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license#free-license) lists what each license allows.
+
+The `main(...)` signature declares: `InterruptedException`, `ExecutionException`, `TimeoutException`, `InvalidLicenceException`, `IOException`. If the run exceeds the 5-minute wait window, you will receive a `TimeoutException`.
+
+### Making it your own
+
+Change problem size:
 - Add/remove nodes (more nodes typically increases runtime and solution complexity).
-- Change visit durations (e.g., 5 min vs 60 min changes feasibility dramatically).
+- Change visit durations (e.g., 5 min vs 60 min changes feasibility).
 
-### Change constraints
+Change constraints:
 - Tighten working hours or opening hours to test feasibility boundaries.
 - Adjust `maxWorkingTime` and `maxDistanceKmW` to model operational limits.
 
-### Change solver effort
+Change solver effort:
 - Lower `JOptExitCondition.JOptGenerationCount` for quicker feedback loops.
 - Lower SA iterations to reduce pre-optimization time.
 
-### Change observability
+Change observability:
 - Keep progress subscription during development.
 - Consider disabling verbose output when embedding into an application or CI.
 
----
-
-## Troubleshooting checklist
+### Troubleshooting checklist
 
 - **License errors**: review `ExampleLicenseHelper` used by the example.
 - **Timeout**: increase the 5-minute wait (or reduce generations / SA iterations).
 - **No meaningful result**: verify time windows overlap (resource working hours vs node opening hours).
 - **Unexpected infeasibility**: check max working time and max distance relative to geography and visit durations.
 
----
+### Next steps
 
-## Next steps
-
-Once you understand this example, the natural next progression is:
+Once you understand this example, the next progression is:
 - multiple resources,
 - different node types or constraints,
 - capacity/skills/compatibility constraints,
 - alternative objective weighting and more advanced properties.
 
-The tutorial linked above provides the architectural narrative and explains the main modeling concepts in depth.
+The tutorial linked above explains the main modeling concepts in depth.
+
+## Related
+
+- [Basic elements tutorial](https://www.dna-evolutions.com/docs/getting-started/tutorials/basic-elements): the nodes, resources and other elements that this example uses.
+- [Reactive events and streams](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/reactive_events): the feature guide of the event API that `attachToObservables` uses.
+- [Recommended ways to run an optimization](../recommendedimplementation_02/RecommendedImplementation.md): the recommended run pattern, a synchronous run and the legacy callback methods.
+- [Base examples](../README.md): the overview of all Base examples.
+- [Optimization properties](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties): the property reference, with the defaults.
+
+---
+
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-20
