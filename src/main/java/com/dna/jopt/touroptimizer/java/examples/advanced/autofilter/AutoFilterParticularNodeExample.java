@@ -123,6 +123,38 @@ public class AutoFilterParticularNodeExample extends Optimization {
     // No violation category is switched on, so the AutoFilter acts only on the node that carries
     // a filter constraint of its own.
     props.setProperty("JOpt.SelectiveAutoFilter", "TRUE");
+    // The late category stays off: only the late filter constraint of Nuernberg filters.
+    props.setProperty("JOpt.SelectiveAutoFilter.TimeWindow.Late", "FALSE");
+    // JOpt.AutoFilter stays off too; it would switch on all categories for the other nodes.
+    props.setProperty("JOpt.AutoFilter", "FALSE");
+    // The last AutoFilter execution of the run filters in strict mode.
+    props.setProperty("JOpt.AutoFilter.useStrictFilterOnLastExecution", "TRUE");
+    // No margin: a visit that is late by one second or more counts as late for the AutoFilter.
+    props.setProperty("JOpt.AutoFilter.LateArrivalMargin", "0");
+    // No margin for early visits either, in seconds.
+    props.setProperty("JOpt.AutoFilter.EarlyArrivalMargin", "0");
+    // No margin for overtime, in seconds.
+    props.setProperty("JOpt.AutoFilter.WorkingHoursExceedMargin", "0");
+    // No margin for a route distance over the maximum, in meters.
+    props.setProperty("JOpt.AutoFilter.RouteDistanceExceedMargin", "0");
+    // Early visits do not count for the AutoFilter.
+    props.setProperty("JOpt.SelectiveAutoFilter.TimeWindow.Early", "FALSE");
+    // Double bookings do not count.
+    props.setProperty("JOpt.SelectiveAutoFilter.DoubleBooking", "FALSE");
+    // Visits by a wrong mandatory or preferred resource do not count.
+    props.setProperty("JOpt.SelectiveAutoFilter.ResourceMismatch", "FALSE");
+    // Visits by the wrong type of resource do not count.
+    props.setProperty("JOpt.SelectiveAutoFilter.NodeType", "FALSE");
+    // Broken relations to other nodes do not count.
+    props.setProperty("JOpt.SelectiveAutoFilter.RelationShip", "FALSE");
+    // Capacity overloads do not count.
+    props.setProperty("JOpt.SelectiveAutoFilter.CapacityOverload", "FALSE");
+    // Overtime does not count.
+    props.setProperty("JOpt.SelectiveAutoFilter.WorkingHoursExceeded", "FALSE");
+    // Route distances over the maximum do not count.
+    props.setProperty("JOpt.SelectiveAutoFilter.MaximalRouteDistanceExceeded", "FALSE");
+    // Nodes after an end anchor do not count.
+    props.setProperty("JOpt.SelectiveAutoFilter.AfterEndAnchor", "FALSE");
     opti.addElement(props);
   }
 

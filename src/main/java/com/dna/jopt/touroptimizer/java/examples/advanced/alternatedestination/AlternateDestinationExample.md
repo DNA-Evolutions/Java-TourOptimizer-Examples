@@ -1,6 +1,6 @@
 # Alternate destination at the end of a route
 
-`AlternateDestinationExample` ends every route of the resource Jack in Essen instead of at his start position in Aachen, while each working day starts in Aachen again. The page is for developers who plan resources that end their working day at another place than their start, for example a driver who starts every working day at home and ends it at a depot, with the way back home outside the working hours. It uses the nodes, resources and working hours of the [Basic elements tutorial](https://www.dna-evolutions.com/docs/getting-started/tutorials/basic-elements).
+This advanced example, `AlternateDestinationExample`, shows how to terminate a resource route at an alternate destination: it ends every route of the resource Jack in Essen instead of at his start position in Aachen, the resource's home/start location, while each working day starts in Aachen again. The page is for developers who plan resources that end their working day at another place than their start, for example a driver who starts every working day at home and ends it at a depot, with the way back home outside the working hours. It uses the nodes, resources and working hours of the [Basic elements tutorial](https://www.dna-evolutions.com/docs/getting-started/tutorials/basic-elements).
 
 ## What the example shows
 
@@ -9,7 +9,7 @@ Three setters on the resource define the alternate destination:
 - `setDestinationLatitude` and `setDestinationLongitude` set the position where each route ends.
 - `setAlternateDestination(true)` switches the alternate destination on.
 
-Each route then ends at the alternate destination. The next working day starts at the start position of the resource again; the drive from the alternate destination back to the start position lies outside the working hours and is not part of the plan. For working days that start where the day before ended, see the [Overnight stay feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/overnight_stay).
+Each route then ends at the alternate destination, a different location than the start (e.g., a hotel, a secondary depot, a handover location): in operational terms, the driver or technician starts at a home base, performs the work during the WorkingHours and ends the working day there. The next working day starts at the start position of the resource again; the drive from the alternate destination back to the start position lies outside the working hours and is not part of the plan: the resource "returns home" outside WorkingHours. For working days that start where the day before ended, see the [Overnight stay feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/overnight_stay).
 
 ## Scenario
 
@@ -91,6 +91,37 @@ The drive to Essen counts toward the route time, so route 1 ends at 19:45:41, af
 
 The KML file draws the line of each route to Essen, but it places the `End - Jack` mark at Jack's start position in Aachen.
 
+## Why alternate destinations are useful
+
+Typical field-service and logistics scenarios:
+
+- **Multi-day tours**: end near the last customer to reduce deadhead time.
+- **Hotel/overnight logic**: terminate at a hotel location while still modeling a "home base" for the next day.
+- **Shift handover**: terminate at a hub where another resource continues (advanced multi-resource patterns).
+- **Regional depots**: start at one depot and end at another.
+
+The key benefit is that the plan reflects operations as they happen, without forcing an artificial "return home within shift hours" pattern.
+
+## Practical considerations
+
+### 1) Validate your KPI interpretation
+When you change termination behavior, route totals can be interpreted differently:
+- distance/time within WorkingHours,
+- termination distance/time,
+- "outside WorkingHours" repositioning.
+
+Ensure your reporting aligns with your business interpretation of:
+- paid shift time,
+- repositioning time,
+- overnight travel policy.
+
+### 2) Combine with external distances when accuracy matters
+If you rely on fallback distance models, ensure they match your business. For road-based distances/times consider external connections or a customized fallback connector.
+
+### 3) Consider multi-day consistency
+This example demonstrates a conceptually "daily" alternate end point but assumes start is still home each morning.  
+For true multi-day routing where day N ends at a place and day N+1 starts there, you typically need an extended modeling strategy (advanced/expert patterns).
+
 ## Run it
 
 Run the `main(String[] args)` method of `AlternateDestinationExample` from your IDE. You need a JDK in the version that the examples pom sets. You need no license file: without one, the example uses the public evaluation license (see the [license guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license)). The run writes `AlternateDestinationExample.kml` into the working directory.
@@ -106,4 +137,4 @@ Run the `main(String[] args)` method of `AlternateDestinationExample` from your 
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-20
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
