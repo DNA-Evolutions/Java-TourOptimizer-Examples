@@ -53,12 +53,14 @@ public void example()
 
 ### Properties
 
-`addProperties` sets two properties:
+Of these four properties, this example sets two in `addProperties`:
 
-- `JOptExitCondition.JOptGenerationCount`: controls the number of generations of the genetic evolution.
-- `JOpt.Algorithm.PreOptimization.SA.NumIterations`: controls the number of iterations for the simulated annealing pre-optimization.
+- `JOptExitCondition.JOptGenerationCount` (`= 1000`): controls the number of generations of the genetic evolution, that is how many generations the evolutionary phase is allowed to run.
+- `JOpt.Algorithm.PreOptimization.SA.NumIterations` (`= 100000`): controls the number of iterations for the simulated annealing pre-optimization.
+- `JOpt.Algorithm.PreOptimization.SA.NumRepetitions`: number of pre-optimization repetitions (note the spelling is exactly as in the source key; the core also accepts the legacy spelling `JOpt.Algorithm.PreOptimization.SA.NumRepetions`). The class does not set it.
+- `JOpt.NumCPUCores`: defines the number of cores JOpt uses. The class does not set it.
 
-Both values are lower than the core defaults, which keeps the run short. The [property reference](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties) lists the defaults.
+Both values that the class sets are lower than the core defaults, which keeps the run short. The [property reference](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties) lists the defaults and describes the two keys that the class does not set.
 
 ```java
 // Fewer generations and iterations than the defaults keep the run short.
@@ -66,7 +68,7 @@ props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
 props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
 ```
 
-Our runs gave the same result each time; JOpt has no seed setting, so this is not guaranteed.
+Practical reading: these values intentionally keep the example "busy enough" to show progress updates, but not so heavy that it becomes inconvenient during development. They do not make it deterministic: JOpt has no seed property, and its search draws random numbers without a fixed seed, so the plan can change between runs. Our runs gave the same result each time, but this is not guaranteed.
 
 ### Nodes and the resource
 
@@ -84,7 +86,7 @@ INode koeln =
 opti.addElement(koeln);
 ```
 
-`addResources` creates Jack with the working hours of both days, a maximal working time of 9 hours and a maximal distance of 1200 km per day:
+`addResources` creates Jack: one `CapacityResource` is created, with the name **Jack from Aachen**, the start/home location Aachen (50.775346, 6.083887), the working hours of both days, a maximal working time of 9 hours and a maximal distance of 1200 km per day. The working hours mirror the node opening hours (two days, 08:00-17:00 in Europe/Berlin), and `maxDistanceKmW` is configured as a unit-aware quantity:
 
 ```java
 // 9 h per day, the length of the shift: the day with Nuernberg exceeds it (overtime).
@@ -98,9 +100,11 @@ IResource jack =
 opti.addElement(jack);
 ```
 
+Interpretation: one resource is often the simplest way to validate that your modeling is correct before introducing multi-resource and balancing effects.
+
 ### Events and the result
 
-`attachToObservables` subscribes to the progress, warning, status and error events and prints each one. It subscribes before the run starts, because the subjects replay only a few past events:
+In the example, `attachToObservables` subscribes to four event streams, the progress, warning, status and error events, and prints each one to the console. It subscribes before the run starts, because the subjects replay only a few past events:
 
 ```java
 // Subscribe before the start: the subjects replay only a few past events.
@@ -112,7 +116,7 @@ opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s
 opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
 ```
 
-The printed events show whether the run is still going and whether it reports warnings or errors.
+This is helpful when you are learning: the printed events show you whether the run is still going (the solver still active), what the solver is trying to improve, whether it reports warnings or errors, and whether there are modeling or feasibility issues, so you can see them early.
 
 `startAndPresentResult` starts the run with `startRunAsync()` and waits up to 5 minutes for the result.
 
@@ -148,6 +152,16 @@ Productive. time [min] : 40.0
 
 The distance of route 1, 809.4 km, stays below the 1200 km limit, so there is no distance violation.
 
+## Next steps
+
+Once you understand this example, the natural next progression is:
+- multiple resources,
+- different node types or constraints,
+- capacity/skills/compatibility constraints,
+- alternative objective weighting and more advanced properties.
+
+The tutorial linked above provides the architectural narrative and explains the main modeling concepts in depth.
+
 ## Run it
 
 Run the `main(String[] args)` method of `FirstOptimizationExample` from your IDE, with the repository imported as a Maven project. You need a JDK in the version that the examples pom sets. No license file is needed: without one, the example uses the public evaluation license (see `ExampleLicenseHelper`). The [license guide: element limits](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license#free-license) lists what each license allows.
@@ -158,7 +172,7 @@ The `main(...)` signature declares: `InterruptedException`, `ExecutionException`
 
 Change problem size:
 - Add/remove nodes (more nodes typically increases runtime and solution complexity).
-- Change visit durations (e.g., 5 min vs 60 min changes feasibility).
+- Change visit durations (e.g., 5 min vs 60 min changes feasibility dramatically).
 
 Change constraints:
 - Tighten working hours or opening hours to test feasibility boundaries.
@@ -189,4 +203,4 @@ Change observability:
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-20
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21

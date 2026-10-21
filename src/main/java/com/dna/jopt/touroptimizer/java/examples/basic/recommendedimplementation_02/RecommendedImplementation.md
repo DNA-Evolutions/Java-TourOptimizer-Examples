@@ -35,7 +35,7 @@ Use *Reactive events* (both event API classes) when...
 
 ### A recommended default integration blueprint
 
-For most applications that need both **results** and **runtime insight**, the recommended approach is:
+For most applications that need both **results** and **runtime insight**, the recommended and most robust approach is:
 
 1. Build the optimization model (nodes/resources/properties).
 2. Attach event subscribers (progress/status/error).
@@ -43,6 +43,11 @@ For most applications that need both **results** and **runtime insight**, the re
 4. Consume the result:
    - **CLI/batch**: block at the boundary (`get()` / timed get).
    - **service/UI**: chain continuations (`thenAccept`, `handle`) and return/propagate completion.
+
+This yields a clean separation of concerns:
+- modeling,
+- observability,
+- lifecycle management.
 
 ## Scenario
 
@@ -52,13 +57,17 @@ Jack may work 13 hours and drive 1200 km per day, so the day with Nuernberg, abo
 
 ## How the code works
 
-The three classes build the optimization with the same steps as the first optimization example. They differ in how they receive the events and the result. The sources:
+The three classes build the optimization with the same steps as the first optimization example. They differ in how they receive the events and the result. The sources (these links point to the examples in the public repository):
 
 - [RecommendedImplementationReactiveJavaExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/recommendedimplementation_02/RecommendedImplementationReactiveJavaExample.java)
 - [RecommendedSynchImplementationExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/recommendedimplementation_02/RecommendedSynchImplementationExample.java)
 - [RecommendedAsynchImplementationExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/basic/recommendedimplementation_02/RecommendedAsynchImplementationExample.java)
 
+(If you mirror the repository or pin to a commit, consider replacing `master` with a commit hash for stable references.)
+
 ### RecommendedImplementationReactiveJavaExample
+
+This is the recommended pattern for "observable" apps: reactive events plus an async run. The class follows three steps: 1) subscribe to event streams, before the start (the subjects replay only a few past events); 2) start asynchronously; 3) retrieve and print the result (blocking here, but not required).
 
 `attachToObservables` subscribes to the progress, warning, status and error subjects before the run starts and prints each event:
 
@@ -83,14 +92,27 @@ IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
 System.out.println(result);
 ```
 
+**Why this pattern is often the "best default":**
+
+- You get **continuous visibility** into the run (progress/status/errors).
+- You can route events to:
+  - logs,
+  - metrics/telemetry,
+  - UI updates,
+  - structured incident signals (alerts).
+- You keep the result as a `CompletableFuture`, which integrates well with modern Java runtimes.
+
 Practical guidance:
 
 - In server environments, avoid calling `get()` on request threads. Prefer chaining (`thenAccept`, `handle`, `whenComplete`) and propagating completion.
 - Always ensure errors are surfaced (either via `exceptionally(...)` on the future, or via your chosen error observable/callback).
+- Consider centralizing event subscriptions into a small "wiring" method so that:
+  - your optimization model stays clean,
+  - your logging/telemetry strategy remains consistent across examples.
 
 ### RecommendedSynchImplementationExample
 
-`attachToObservables` makes the same four subscriptions as in the recommended class. `startAndPresentResult` runs the optimization synchronously:
+This is the synchronous run with an explicit timeout. `attachToObservables` makes the same four subscriptions as in the recommended class. `startAndPresentResult` runs the optimization synchronously:
 
 ```java
 // Blocks until the result is there; after 5 minutes without a result it throws a
@@ -99,10 +121,15 @@ IOptimizationResult result = opti.startRunSync(5, TimeUnit.MINUTES);
 System.out.println(result);
 ```
 
+**Why this pattern exists:** it is designed for execution contexts where blocking is acceptable and often desirable:
+- predictable application lifecycle,
+- straightforward error handling (exceptions bubble up),
+- no risk of "forgetting" to wait on the result.
+
 Practical guidance:
 
-- Prefer a **real timeout** in production so you can fail fast and recover gracefully.
-- Subscribe before you call `startRunSync(...)`: the subjects replay only a few past events.
+- Prefer a **real timeout** in production (rather than `Long.MAX_VALUE`) so you can fail fast and recover gracefully.
+- If you run synchronously (`startRunSync(...)`) but still want event output, also the progress/status output, ensure your chosen event/callback approach is wired *before* calling `startRunSync(...)`: subscribe **before** starting the run, that is before you call it, because the subjects replay only a few past events (the example explicitly warns about this).
 
 ### RecommendedAsynchImplementationExample
 
@@ -169,6 +196,15 @@ StatusEvent(OPTIMIZATION_DONE, Optimization done)
 
 The legacy class prints the result in `onAsynchronousOptimizationResult`, and `StatusEvent(OPTIMIZATION_DONE, Optimization done)` follows as the last line of the output in two test runs.
 
+## Next steps
+
+Once these patterns are clear, the most useful next enhancements tend to be:
+
+- structured logging of events (JSON logs, correlation IDs),
+- robust timeout/retry policies around long-running optimization runs,
+- persisting intermediate checkpoints or partial results (if applicable in your architecture),
+- multi-resource scenarios (to validate scaling behavior and dispatch policies).
+
 ## Run it
 
 Run the `main` method of each class from your IDE, with the repository imported as a Maven project. You need a JDK in the version that the examples pom sets. No license file is needed: without one, the classes use the public evaluation license (see `ExampleLicenseHelper`).
@@ -189,4 +225,4 @@ Run the `main` method of each class from your IDE, with the repository imported 
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-20
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
