@@ -4,6 +4,25 @@
 
 ## What the example shows
 
+In many operational scenarios, planners want routes to begin or end with specific stops, for example:
+
+- "Start the day with a key customer."
+- "Finish the day at a handover location."
+- "Visit a depot first for pickup, then execute deliveries."
+- "End with a return-to-base inspection site."
+
+JOpt supports this behavior with **first/last node importance**:
+- `setFirstNodeInRouteImportance(int importance)`
+- `setLastNodeInRouteImportance(int importance)`
+
+These settings create **soft route anchoring**:
+- the optimizer is incentivized (by penalty cost) to place the node first/last,
+- but it may still choose a different first/last node if the global savings outweigh the penalty.
+
+This makes the feature practical and safe:
+* it guides the optimizer strongly,
+* but it does not instantly destroy feasibility when reality prevents strict anchoring.
+
 - `setFirstNodeInRouteImportance(int)` asks for a node as the first node of the route that holds it; `setLastNodeInRouteImportance(int)` asks for the last node. The example sets the value 10 on Koeln and on Wuppertal.
 - The value scales the extra cost of a route in which the node is not first (or not last). The weights `JOptWeight.NodeImportance` and `JOptWeight.NodeType` scale the same cost; the example raises both.
 - Each setting applies to the route that holds the node. Jack has two working days, and in the result one route holds Koeln and Wuppertal, the other neither of them.
@@ -13,9 +32,9 @@
 
 The dates, times and coordinates are sample values.
 
-- **Resource:** `Jack` starts at 50.775346, 6.083887 (Aachen) and works on May 6 and 7, 2020, from 08:00 to 18:00 (Europe/Berlin). His maximal working time is 10 hours, the length of the working hours, and his maximal distance 1200 km.
-- **Nodes:** five `TimeWindowGeoNode` objects: Koeln, Essen, Dueren, Wuppertal and Aachen. They are open on May 6 and 7, 2020, from 08:00 to 12:00. Each visit takes 20 minutes, and all nodes have the importance 1. The Aachen node lies at Jack's start position.
-- **First and last:** Koeln with `setFirstNodeInRouteImportance(10)`, Wuppertal with `setLastNodeInRouteImportance(10)`.
+- **Resource:** `Jack` starts at 50.775346, 6.083887 (Aachen) and works (resource `WorkingHours`) on May 6 and May 7, 2020, from 08:00 to 18:00 (Europe/Berlin). His maximal working time is 10 hours, the length of the working hours, and his maximal distance 1200 km. With a single resource, the first/last behavior is easy to interpret.
+- **Nodes:** the example uses five `TimeWindowGeoNode` objects for five cities: Koeln, Essen, Dueren, Wuppertal and Aachen. They are open (node `OpeningHours`) on May 6 and May 7, 2020, from 08:00 to 12:00 (Europe/Berlin). Each visit takes 20 minutes, and all nodes have the importance 1. The Aachen node lies at Jack's start position.
+- **First and last:** Koeln (first-node preference) with `setFirstNodeInRouteImportance(10)`, Wuppertal (last-node preference) with `setLastNodeInRouteImportance(10)`.
 
 `addProperties` sets four properties:
 
@@ -41,8 +60,8 @@ startAndPresentResult(this);
 
 - `ExampleLicenseHelper.setLicense(this)` uses your license file if you put one where the helper looks for it, and the public evaluation license otherwise.
 - `addProperties` sets the four properties.
-- `addNodes` adds the five nodes, with the first and last node settings on Koeln and Wuppertal.
-- `addResources` adds Jack.
+- `addNodes` adds the five nodes, with the first and last node settings on Koeln and Wuppertal. All nodes share a visit duration of 20 minutes and the importance 1 (base importance).
+- `addResources` adds Jack, the one resource that is created, starting in Aachen, with a max working time of 10 hours, a max distance of 1200 km, no cost configuration of its own (the class does not call `setCost`) and two working days (see the time model in Scenario above).
 - `attachToObservables` subscribes to the progress, warning, status and error events with the event API, before the run starts.
 - `startAndPresentResult` starts the run, waits up to 5 minutes for the result and prints it.
 
@@ -101,6 +120,88 @@ The violation summaries of both routes are empty.
 
 To see what the settings change, compare a run without them. In a test run with the two setter calls removed, all five nodes were on the route of May 6, in the order Aachen, Dueren, Koeln, Wuppertal, Essen. With the settings, Aachen and Dueren move to May 7, so that the route of May 6 can start with Koeln and end with Wuppertal.
 
+## Hard vs soft interpretation (important)
+
+First/last-node importance is a **soft constraint mechanism**:
+- It is implemented as a penalty term (importance-driven) rather than as an architectural feasibility rule.
+
+Meaning:
+- The solver *can* violate it.
+- You should not expect a guaranteed "first/last" if time windows, working hours, or hard constraints make it impossible or very expensive.
+
+If you need a strict hard constraint (e.g., "pickup must happen first"), you typically model it differently (e.g., via explicit structure), depending on your overall architecture. Relationships do not give a strict hard constraint: they are pseudo constraints, and a broken relation adds a cost weighted by `JOptWeight.Relationships` (see [Relations between nodes](../relationship/Relations.md)).
+
+## How "importance" works
+
+### The importance value is the strength of the preference
+Higher importance means:
+- higher penalty cost if the node is not first/last,
+- therefore stronger pull towards being first/last.
+
+Lower importance means:
+- the preference can be violated more easily when it improves the plan elsewhere.
+
+The value is an integer, and the example uses `10` to make the effect visible.
+
+### Importance interacts with weights
+The example increases general weights related to node handling:
+
+- `JOptWeight.NodeImportance = 5`
+- `JOptWeight.NodeType = 5.0`
+
+This is done to ensure penalties and node-related costs are strong enough to "matter" in the global objective.
+
+Practical guidance:
+- If first/last preferences appear too weak, increase:
+  - first/last importance value, and/or
+  - the relevant weights for node importance.
+- If first/last preferences dominate too aggressively, reduce them.
+
+## When to use first/last node importance in production
+
+### Strong fit use cases
+- "Try to start with a VIP customer" (preference, not a legal must)
+- "Try to end with refueling location" (preference)
+- "Try to end near a depot" (preference, not strict)
+- "Try to start at a pickup location but allow exceptions" (preference)
+
+### Cases where you should consider alternative modeling
+If the "first/last" requirement is truly hard, such as:
+- "Pickup must happen first, otherwise deliveries cannot happen."
+- "End must be a mandatory depot return for compliance."
+
+Then you usually want an architectural hard constraint model (pillars, etc.), rather than an importance-based preference. Relationships are pseudo constraints as well: a broken relation is a weighted cost, not a hard rule.
+
+## How to tune and validate behavior
+
+### Step 1: Start with moderate importance (e.g., 5-10)
+Confirm:
+- the preference is usually satisfied in normal instances.
+
+### Step 2: Stress test with infeasible conditions
+Deliberately create cases where:
+- time windows force a different first/last order,
+- working hours are tight.
+
+Confirm:
+- the solver violates the preference only when it produces a better global result or restores feasibility.
+
+### Step 3: Validate downstream KPIs
+If first/last anchoring is used for operational workflow reasons, ensure:
+- route execution system agrees with "planned first/last" semantics,
+- waiting times and arrival times remain sensible,
+- the business understands when and why exceptions occur.
+
+## Summary
+
+- `setFirstNodeInRouteImportance(...)` and `setLastNodeInRouteImportance(...)` provide **soft** route anchoring.
+- A higher importance increases the penalty for not being first/last, making the preference stronger.
+- The optimizer can still violate the preference when the global savings outweigh the penalty or when constraints make it impractical.
+- The example demonstrates:
+  - Koeln as first node (importance 10),
+  - Wuppertal as last node (importance 10),
+  and uses higher node-related weights to make the effect clearly observable.
+
 ## Run it
 
 Run the `main(String[] args)` method of `FirstLastNodeExample` from your IDE, with the repository imported as a Maven project. You need a JDK in the version that the examples pom sets. You need no license file: without one, the example uses the public evaluation license (see the [license guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license)).
@@ -114,4 +215,4 @@ Run the `main(String[] args)` method of `FirstLastNodeExample` from your IDE, wi
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-20
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21

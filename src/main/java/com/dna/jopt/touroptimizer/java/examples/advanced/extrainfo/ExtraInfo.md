@@ -4,7 +4,25 @@
 
 ## What the example shows
 
-- Every node and every resource has an extra info string. `setExtraInfo(String)` sets it, and `getExtraInfo()` returns it as an `Optional<String>`. JOpt does not use the string in the optimization.
+In real-world optimization systems you almost always need to carry **domain metadata** alongside routing entities, for example:
+- customer contact information,
+- service instructions,
+- order identifiers,
+- technician phone numbers,
+- compliance notes,
+- UI labels or external system keys.
+
+JOpt.TourOptimizer supports this directly via an **`extraInfo` string** on both:
+- `INode`
+- `IResource`
+
+The `extraInfo` value is intentionally modeled as a **plain string** so you can store:
+- a compact text note, or
+- structured data (typically JSON) that your application can parse.
+
+This document explains the recommended pattern and how the provided example implements it.
+
+- Every node and every resource has an extra info string; both nodes and resources support `setExtraInfo(String extraInfo)`, which sets it, and `getExtraInfo()`, which returns it as an `Optional<String>`. JOpt does not use the string in the optimization.
 - The example writes a plain Java object into this string as JSON and reads it back after the run. Both steps use `ConfigSerialization.objectMapper()`, a Jackson `ObjectMapper` from the JOpt core (package `com.dna.jopt.config.serialize`).
 - The objects come back from the result with the values the code wrote, including the `Instant` of the resource.
 
@@ -119,6 +137,110 @@ Phone: +00 000 0000003 / Birthday: 1900-01-01T00:00:00Z
 
 Each object prints the values that the code wrote before the run. The birthday comes back as the same `Instant`, so a field type beyond strings survives the JSON string and the run.
 
+## The concept: a domain payload attached to solver entities
+
+### What it is used for
+The solver treats `extraInfo` as **opaque**: it does not interpret the content.  
+That is by design.
+
+Your application uses it to:
+- reconstruct domain objects after optimization,
+- enrich reporting and UI,
+- pass identifiers into downstream systems (dispatch, ERP, CRM, WFM).
+
+## Recommended storage formats
+
+### Option A: Simple string
+Use when you only need a note or label:
+- "Gate code: 1947"
+- "Deliver to back entrance"
+- "VIP customer: call before arrival"
+
+### Option B: JSON (recommended)
+Use when you need structured metadata.
+
+Advantages:
+- stable schema,
+- easy parsing,
+- supports backward compatibility strategies,
+- easy to version and extend.
+
+The provided example uses JSON serialization for exactly this reason.
+
+## Best practices for production systems
+
+### 1) Treat extraInfo as a versioned contract
+Because extraInfo often ends up persisted (results, logs, exports), treat it like an API:
+- Add a version field in your JSON, e.g. `"schemaVersion": 1`
+- Use backward compatible decoding logic
+- Avoid breaking changes (rename/remove fields) without migration
+
+### 2) Prefer IDs over copying large payloads
+A very robust pattern is:
+- store only stable domain keys (orderId, customerId),
+- and look up full objects in your database.
+
+This avoids:
+- duplicating sensitive data,
+- large result payloads,
+- schema drift.
+
+### 3) Keep it small and intentional
+ExtraInfo is attached to every entity and can be copied around in:
+- optimization snapshots,
+- JSON exports,
+- logging output of your application.
+
+Therefore:
+- avoid huge payloads,
+- avoid embedding binary data,
+- avoid verbose nested structures unless necessary.
+
+### 4) Security and privacy
+Do not store sensitive PII in extraInfo unless:
+- you have a strong reason,
+- and you have a secure storage/transport policy.
+
+If you must store personal data:
+- encrypt the payload before setting it,
+- or store only references and resolve at runtime.
+
+### 5) Use a consistent mapper configuration
+If you serialize/deserialize JSON:
+- ensure all services use the same ObjectMapper settings,
+- especially for time types (`Instant`), field naming, and null handling.
+
+The example uses `ConfigSerialization.objectMapper()` to keep this consistent.
+
+## Typical application patterns
+
+### UI enrichment
+Display node cards with:
+- contact person,
+- phone,
+- delivery notes.
+
+### Dispatch export
+When exporting routes, include:
+- order IDs,
+- external system references.
+
+### Post-run analytics
+Store:
+- customer segment,
+- planned SLA type,
+- business priority,
+in extraInfo so analytics does not need to rejoin on external systems.
+
+## Summary
+
+- `extraInfo` is an **opaque string field** available on nodes and resources.
+- It is ideal for attaching domain metadata that the solver should not interpret.
+- JSON is the recommended format for structured metadata.
+- The provided example demonstrates end-to-end:
+  - POJO -> JSON -> setExtraInfo -> run -> getExtraInfo -> JSON -> POJO.
+- In production, treat extraInfo as a small, versioned contract and be mindful of privacy and payload size.
+
 ## Run it
 
 Run the `main(String[] args)` method of `ExtraInfoExample` from your IDE, with the repository imported as a Maven project. You need a JDK in the version that the examples pom sets. No license file is needed: without one, the example uses the public evaluation license (see `ExampleLicenseHelper`). The [license guide: element limits](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license#free-license) lists what each license allows.
@@ -132,4 +254,4 @@ Run the `main(String[] args)` method of `ExtraInfoExample` from your IDE, with t
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-20
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21

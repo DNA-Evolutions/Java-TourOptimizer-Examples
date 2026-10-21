@@ -28,6 +28,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -36,6 +37,9 @@ import java.util.concurrent.TimeoutException;
 
 import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
+import com.dna.jopt.framework.body.scheme.DefaultOptimizationScheme;
+import com.dna.jopt.framework.body.scheme.helper.AbstractConstructionOptimizationAlgorithmConfig.ConstructionOptimizationAlgorithm;
+import com.dna.jopt.framework.body.scheme.helper.ConstructionOptimizationAlgorithmConfig;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
 import com.dna.jopt.io.exporting.kml.EntityKMLExporter;
@@ -107,12 +111,29 @@ public class ClusteringCityToCityExample extends Optimization {
     // Needs your own full license file where ExampleLicenseHelper looks for it: the public
     // evaluation license does not allow this many elements.
     ExampleLicenseHelper.setLicense(this);
+    setConstructionAlgorithm(this);
     addProperties(this);
     addNodes(this);
     addResources(this);
     attachToObservables(this);
     IOptimizationResult result = startAndPresentResult(this);
     exportToKml(result);
+  }
+
+  /**
+   * Chooses SmartConstructionAlgo as the construction algorithm of the run.
+   *
+   * @param opti the optimization
+   */
+  private static void setConstructionAlgorithm(IOptimization opti) {
+    // SmartConstructionAlgo builds the start solution by clustering. Without a list of heuristic
+    // algorithms (Optional.empty()), the scheme runs its own; the properties set their run values.
+    ConstructionOptimizationAlgorithmConfig construction =
+        ConstructionOptimizationAlgorithmConfig.builder()
+            .algorithm(ConstructionOptimizationAlgorithm.SMART_CONSTR_ALGO)
+            .build();
+    opti.setOptimizationScheme(
+        new DefaultOptimizationScheme(opti, Optional.of(construction), Optional.empty()));
   }
 
   /**
