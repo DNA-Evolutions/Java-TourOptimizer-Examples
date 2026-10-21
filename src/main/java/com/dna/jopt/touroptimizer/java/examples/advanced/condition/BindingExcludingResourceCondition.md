@@ -4,11 +4,17 @@ Four examples decide which resource visits a node. `MandatoryResourceConditionEx
 
 ## What the example shows
 
+These mechanisms are essential for real-world planning, where a task can be:
+* restricted to specific technicians/vehicles,
+* best served by certain resources (skills, customer preference),
+* prohibited for certain resources (regulatory limits, missing certifications),
+* possible but undesirable for certain resources (avoid overtime-skilled resource usage, soft dispatch rules).
+
 - **A resource constraint** is an `IConstraintResource`. The examples create one, add a resource by its id with `addResource(id, priority)` and attach the constraint to a node with `addConstraint`.
-- **Binding constraints** name the resources that should visit the node:
+- **Binding constraints** name the resources that should visit the node; each one defines this set of resources, which are considered "matching" for the node. If the current visiting resource is in the list, the constraint is satisfied; if not in the list, it depends on whether the constraint is hard or soft:
   - `MandatoryResourceConstraint` is hard: only the named resources may visit the node.
   - `PreferredResourceConstraint` is soft: a preferred resource is not guaranteed. The optimizer may give the node to another resource if the preferred one costs too much.
-- **Excluding constraints** name the resources that should not visit the node:
+- **Excluding constraints** name the resources that should not visit (or serve) the node; each one defines this set of resources. If the current visiting resource is not in the list, the constraint is satisfied; if the resource is listed, it depends on whether the constraint is hard or soft:
   - `BannedResourceConstraint` is hard: the named resources may not visit the node.
   - `UnPreferredResourceConstraint` is soft: the optimizer avoids the named resources where it can.
 - **Hard and soft:** A node that would break a hard resource condition stays unassigned, with a filter reason. In `UnPreferredResourceConditionExample` the soft constraint is broken for Stuttgart: the node is still planned, and the result shows a `RESOURCE_NOT_ALLOWED` violation and an extra cost. The properties `JOptWeight.PreferableResource` and `JOptWeight.UnPreferableResource` set the weight of that extra cost.
@@ -51,6 +57,8 @@ Each class adds its constraints at the end of `addNodes`.
 
 ### The mandatory resource
 
+In `MandatoryResourceConditionExample` a mandatory constraint is added: create a `MandatoryResourceConstraint`, add the resource `"John"` and attach it to the node `koeln1`:
+
 ```java
 // The mandatory resource constraint is hard: Koeln1 is for John only. Koeln, at the same
 // position, has no constraint.
@@ -62,6 +70,8 @@ koeln1.addConstraint(johnMandatory);
 ```
 
 ### The preferred resources
+
+In `PreferredResourceConditionExample`, the code establishes preferred `"Jack"` for node `koeln` and preferred `"John"` for node `koeln1`:
 
 ```java
 // A preferred resource constraint is soft: the optimizer may give the node to another
@@ -140,6 +150,8 @@ In both runs, Koeln1 was on John's route of March 6, together with Koeln and all
  Cost                    : 847.033054487167
 ```
 
+Result: the solver must allocate Koeln1 to John's route (if feasible). If it cannot, it will show up as a hard constraint issue: the node stays unassigned, with a filter reason, and the result shows no violation for it.
+
 ### PreferredResourceConditionExample
 
 The result was the same in two test runs. Koeln is on Jack's route and Koeln1 on John's route, both on March 6, so both preferences hold (trimmed to these lines):
@@ -154,6 +166,8 @@ Resource               : John
 ```
 
 Jack visits Aachen, Dueren, Koeln, Essen and Oberhausen. John visits Koeln1, Nuernberg and Stuttgart.
+
+Result: the solver will bias towards those assignments. If the preferred allocation causes other constraints to become infeasible or too expensive, it can still assign a different resource, but the plan pays an additional preference cost.
 
 ### BannedResourceConditionExample
 
@@ -197,6 +211,264 @@ John also visits Heilbronn. With banned resources instead, in `BannedResourceCon
 
 In `MandatoryResourceConditionExample` and `PreferredResourceConditionExample`, John's route of March 6 takes about 12 hours, so it ends hours after the end of his working hours at 17:00, and the result shows no violation. Overtime counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. John may work 14 hours; with Jack's 8 hours, a day this long would be overtime.
 
+## Hard constraints vs. soft constraints
+
+### Hard constraints are enforced by architecture (not by "high cost")
+For **Mandatory** and **Banned** constraints, the solver treats the assignment as **not allowed** (infeasible) when violated.
+
+This is critical:
+
+- Hard constraints are fulfilled by **solver architecture** (feasibility enforcement and violation handling), not by setting a huge penalty.
+- They represent real-world "must" and "must not" rules.
+
+### Soft constraints are enforced by cost (preference shaping)
+For **Preferred** and **UnPreferred** constraints, the assignment is still allowed, but the solver adds **extra cost** to make such assignments less attractive.
+
+Soft constraints are the correct tool for:
+- dispatch preferences,
+- customer affinity rules,
+- "use this resource if possible" skills.
+
+## The API surface you use in modeling
+
+### 1) Create a constraint object
+You typically create a constraint via one of:
+
+- `new MandatoryResourceConstraint()`
+- `new PreferredResourceConstraint()`
+- `new BannedResourceConstraint()`
+- `new UnPreferredResourceConstraint()`
+
+All of these implement the `IConstraintResource` contract.
+
+### 2) Add one or more resources to the constraint
+Each resource is added by **identifier** with a **priority**:
+
+- `constraint.addResource("John", 10);`
+
+You can add multiple resources if the node can be served by a set:
+- "Either John or Jack must serve this customer"
+- "Prefer John first; if not possible, Jack is still acceptable"
+
+### 3) Attach the constraint to a node
+In the examples, this is done via:
+
+- `node.addConstraint(constraint);`
+
+At runtime, the constraint is evaluated whenever the solver considers assigning/visiting the node with a given resource.
+
+## BindingResourceConstraint (the shared base for Mandatory and Preferred)
+
+### Hard vs soft behavior in the implementation
+The base class uses a boolean `isHard` flag:
+
+- **Hard binding** (Mandatory): `isHard = true`  
+  A non-matching resource is treated as not allowed: it does not get the node, and the result shows no violation for it.
+
+- **Soft binding** (Preferred): `isHard = false`  
+  A non-matching resource is allowed but receives a cost penalty.
+
+### Priority and cost shaping
+In the binding constraint implementation, the cost penalty of a listed resource is scaled by:
+
+- the difference between `maxPriority` and the visitor's priority, and
+- a solver weight used for preferable resources.
+
+A resource that is not listed is a mismatch: it costs a fixed penalty, scaled by the same weight, and counts as a violation (a mandatory resource constraint does not let such a resource visit the node).
+
+Meaning:
+- Higher priority -> better fit -> lower penalty.
+- Lower priority (or not listed) -> higher penalty.
+
+This yields a very natural "ranking" behavior.
+
+### Resource identifiers and aliases
+Matching uses either:
+- `resource.getConstraintAliasId()` (if present), otherwise
+- `resource.getId()`
+
+This allows a powerful pattern:
+- multiple resources can share the same **constraint alias**, enabling group-based constraints without listing every physical resource ID.
+
+## MandatoryResourceConstraint (Binding + hard)
+
+### What it means
+A node with a **mandatory** resource constraint can only be visited by the listed resources.
+
+This is appropriate for:
+- legally required certification,
+- physical equipment constraints,
+- customer-specific personnel requirements,
+- strict skill qualification.
+
+## PreferredResourceConstraint (Binding + soft)
+
+### What it means (Preferred)
+A node with a **preferred** resource constraint should be visited by the listed resources if possible, but it is not forbidden to serve it with a different resource.
+
+This is appropriate for:
+- customer affinity,
+- "avoid assigning inexperienced staff unless needed",
+- "prefer electric vehicles in certain zones",
+- dispatch quality preferences.
+
+### How to control how strongly "preferred" is enforced
+Preferred constraints are controlled via:
+- priority values (per resource; they rank the listed resources, while the cost of a resource that is not listed does not depend on them), and
+- the solver's weight for preferable resources (internally used by the cost computation).
+
+Operationally:
+- increase the weight if you want stronger preference adherence,
+- lower the weight if preferences should "yield" easily to operational feasibility.
+
+## ExcludingResourceConstraint (the shared base for Banned and UnPreferred)
+
+### Hard vs soft behavior in the implementation (Excluding)
+- **Hard excluding** (Banned): `isHard = true`  
+  Listed resources are not allowed to visit the node.
+
+- **Soft excluding** (UnPreferred): `isHard = false`  
+  Listed resources are allowed but incur a penalty cost.
+
+### Why excluding is not the same as binding
+Binding answers:
+- "Who *should* do it?"
+
+Excluding answers:
+- "Who *must not* do it?" (hard) or "Who *should ideally not* do it?" (soft)
+
+In practice you will often use both:
+- bind a node to a skill group,
+- exclude one specific technician due to a compliance issue.
+
+## BannedResourceConstraint (Excluding + hard)
+
+### What it means (Banned)
+A node with a **banned** resource constraint cannot be visited by listed resources.
+
+Use this for:
+- safety restrictions (resource must not enter a zone),
+- legal restrictions (driver hours classification),
+- customer bans ("never again this technician"),
+- incompatible equipment.
+
+Hard banning is often the safest modeling choice when the restriction is real.
+
+## UnPreferredResourceConstraint / UnPreferredResource (Excluding + soft)
+
+### What it means (UnPreferred)
+A node with an **unpreferred** resource constraint should *avoid* certain resources, but can still use them if needed.
+
+Use this for:
+- reserving premium technicians for premium work,
+- avoiding high-cost resources for low-value tasks,
+- soft "districting" rules,
+- soft skill matching ("prefer specialized staff, but allow others").
+
+### How strength is controlled
+Just like preferred constraints, unpreferred constraints apply a cost that is scaled by:
+- the resource's priority, and
+- a solver weight for unpreferable resources.
+
+Operationally:
+- increase the unpreferred weight to avoid those resources more strongly,
+- decrease it to allow the solver to use them more freely.
+
+## Priority: what does the number mean?
+
+All resource constraints use:
+
+- `addResource(resourceId, priority)`
+
+### A practical interpretation
+- Higher priority means "more preferred / more important" in binding constraints.
+- In excluding constraints, "priority" can be used as severity ranking (how strongly we want to avoid this resource). For an unpreferred resource the priority scales the extra cost; a banned resource is kept away whatever its priority.
+
+### Recommended conventions
+To keep your model consistent across teams:
+- choose a small integer scale (e.g., 1-10),
+- document it internally ("10 = strongest preference or strongest unpreferred severity"),
+- avoid mixing "severity" and "preference" semantics within the same constraint type.
+
+## How AutoFilter interacts with resource mismatch constraints
+
+The constraint implementations call into a node's AutoFilter collector for resource-mismatch statistics:
+- one path for "mismatch violation"
+- another path for "mismatch but no violation" (a visit that keeps the constraint)
+
+Practical implication:
+- If you enable AutoFilter selective categories such as resource mismatch, these constraints can feed into filtering decisions.
+- This can be useful for "optional tasks" that systematically cannot be served by allowed resources.
+
+If you use AutoFilter in production, ensure you:
+- log filter reasons,
+- surface unscheduled tasks to dispatchers with actionable explanations.
+
+## Recommended modeling patterns (production-grade)
+
+### Pattern 1: Skills as "mandatory binding"
+If a node requires a certification:
+- use `MandatoryResourceConstraint`
+- list all certified resources (or use a constraint alias to represent the certified group)
+
+### Pattern 2: Customer affinity as "preferred binding"
+If a customer prefers a technician but it is not mandatory:
+- use `PreferredResourceConstraint`
+- set a meaningful priority and tune the preferable-resource weight
+
+### Pattern 3: Compliance and prohibitions as "banned excluding"
+If a resource must never visit a node:
+- use `BannedResourceConstraint`
+- do not model this via a preference (it must be hard)
+
+### Pattern 4: Soft territory rules as "unpreferred excluding"
+If you want stable territories but allow exceptions:
+- use `UnPreferredResourceConstraint` for out-of-territory assignments
+- tune the unpreferred-resource weight to control "leakage"
+
+## Pitfalls and how to avoid them
+
+### Pitfall A: Overconstraining (everything mandatory + banned)
+If you combine many hard rules, feasibility can collapse quickly.
+Recommended mitigation:
+- use hard constraints only for truly non-negotiable rules,
+- convert "preferences" to soft constraints,
+- add resources or relax time windows when infeasibility is real.
+
+### Pitfall B: Using soft constraints for true prohibitions
+If a prohibition is real (legal or physical), do not use UnPreferred. Use Banned.
+
+### Pitfall C: IDs not matching
+Constraints match resources by:
+- `constraintAliasId` if present, else `id`
+
+Therefore:
+- if you use aliases, ensure they are consistent across your resource creation pipeline,
+- if you do not use aliases, use stable unique resource IDs.
+
+### Pitfall D: "Why doesn't the solver always choose the preferred resource?"
+Because preferences are *trade-offs*:
+- time windows, working hours, distance, capacity, and other constraints can dominate.
+If you want stronger adherence:
+- increase the preferable weight,
+- increase priority separation (e.g., 10 vs 2),
+- reduce conflicting constraints.
+
+## Summary
+
+- **BindingResourceConstraint** governs "who should serve" a node.
+  - **Mandatory** = hard (architectural feasibility)
+  - **Preferred** = soft (cost shaping)
+
+- **ExcludingResourceConstraint** governs "who should not serve" a node.
+  - **Banned** = hard (architectural feasibility)
+  - **UnPreferred** = soft (cost shaping)
+
+Together, these four mechanisms are the foundation for realistic dispatch rules:
+- strict compliance as hard constraints,
+- operational preferences as weighted soft constraints,
+- and transparent, explainable outcomes in the result and (optionally) AutoFilter diagnostics.
+
 ## Run it
 
 Run the `main(String[] args)` method of one of the four classes from your IDE. You need a JDK in the version that the examples pom sets. You need no license file: without one, the examples use the public evaluation license (see the [license guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license)). Each run writes its KML file into the working directory.
@@ -211,4 +483,4 @@ Run the `main(String[] args)` method of one of the four classes from your IDE. Y
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-20
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21

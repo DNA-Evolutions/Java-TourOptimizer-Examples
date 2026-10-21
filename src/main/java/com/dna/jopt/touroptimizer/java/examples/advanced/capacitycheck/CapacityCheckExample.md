@@ -4,6 +4,8 @@
 
 ## What the example shows
 
+This example explains JOpt's **capacity plausibility check** and how to **deactivate it** if you *really* need to run with extreme or intentionally infeasible input.
+
 Before a run, JOpt divides the total visit duration of all nodes by the total length of the working hours of all resources. Only visit durations count: travel times and the maximal working time of a resource are not part of the quotient. At a quotient of 2.0 or more, the capacity check rejects the input:
 
 - The error event `ENTITY_CORRUPT_NOTENOUGHTWORKINGTIME` reports the rejection, with the quotient.
@@ -81,9 +83,15 @@ A constant of the class decides whether `addProperties` switches the check off:
 private static final boolean DO_DEACTIVATE_CAPACITY_CHECK = false;
 ```
 
+`addProperties` sets the property on every run, `TRUE` with the constant at `false` and `FALSE` with the constant at `true`:
+
 ```java
+// TRUE lets the capacity check reject an input whose visits need at least twice the time of
+// the working hours; FALSE switches the check off and lets the run start.
 if (DO_DEACTIVATE_CAPACITY_CHECK) {
   props.setProperty("JOpt.plausibility.doInputCheck.doCapacityCheck", "FALSE");
+} else {
+  props.setProperty("JOpt.plausibility.doInputCheck.doCapacityCheck", "TRUE");
 }
 ```
 
@@ -109,6 +117,59 @@ The example ends normally, with the exit code 0.
 
 In an earlier test run with `DO_DEACTIVATE_CAPACITY_CHECK` set to `true`, the warning 5000 came first, then the warnings 5100 (the input is not valid regarding the working hours, but the check is disabled) and 5101 (`Using performance mode.`). The run produced a result with all seven nodes planned and with overtime (MAXTIME) violations. Switching the check off does not make the input feasible; it only lets the run start.
 
+## What "capacity check" means in this context
+
+JOpt performs a basic plausibility check before starting optimization:
+
+- If the **available working hours** are *far below* the **required working time** implied by the input (the visit durations; travel times are not part of the check), the run is typically rejected early.
+
+In other words, it prevents you from running an optimization where the schedule is obviously impossible *by a factor of two or more*.  
+This protects production systems from wasting time on runs that cannot produce meaningful schedules.
+
+The example's `toString()` summarizes it clearly: the capacity check rejects an input whose visits need at least twice the time of the working hours. With `DO_DEACTIVATE_CAPACITY_CHECK` set to `false`, the class sets the check on (`JOpt.plausibility.doInputCheck.doCapacityCheck` set to `TRUE`).
+
+## Why this check exists (enterprise view)
+
+In real deployments, "bad input" happens:
+- imported data with wrong visit durations (e.g., 400 min instead of 40)
+- missing working hours (e.g., 1 hour defined for a full-day plan)
+- unrealistic travel time assumptions for long-distance instances (not caught by this check: travel times are not part of its quotient)
+
+The plausibility check:
+- fails fast with a clear signal,
+- prevents long-running jobs with no operational value,
+- improves reliability of batch planning pipelines.
+
+## How to deactivate the capacity check (not recommended unless necessary)
+
+The example uses a boolean switch:
+
+- `DO_DEACTIVATE_CAPACITY_CHECK`
+
+When enabled, it sets this property:
+
+- `JOpt.plausibility.doInputCheck.doCapacityCheck = FALSE`
+
+This allows the optimizer to start even if the input looks clearly infeasible.
+
+### Important note
+Deactivating the check does **not** "fix" infeasibility. It only removes the early guardrail.  
+Use this only when:
+- you intentionally run partial/soft scenarios,
+- you rely on other mechanisms to drop or relax elements,
+- you want to analyze behavior on extreme data.
+
+## How to use this safely in production
+
+If you consider disabling the check, also consider:
+- validating visit durations and working hours upstream
+- using data-quality rules and thresholds
+- logging warnings and run metadata for later auditing
+
+A good pattern is:
+1) keep the check enabled by default,  
+2) allow disabling only for **explicit** "expert mode" runs with monitoring.
+
 ## Run it
 
 Run the `main(String[] args)` method of `CapacityCheckExample` from your IDE, with the repository imported as a Maven project. You need a JDK in the version that the examples pom sets. No license file is needed: without one, the example uses the public evaluation license (see the [license guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license)).
@@ -124,4 +185,4 @@ To see the run with the check off, set `DO_DEACTIVATE_CAPACITY_CHECK` to `true` 
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-20
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21

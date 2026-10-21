@@ -110,7 +110,7 @@ public class CapacityCheckExample extends Optimization {
   }
 
   /**
-   * Adds the properties that keep the run short and, if set, the switch of the capacity check.
+   * Adds the properties that keep the run short and the switch of the capacity check.
    *
    * @param opti the optimization
    */
@@ -120,8 +120,12 @@ public class CapacityCheckExample extends Optimization {
     props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
 
+    // TRUE lets the capacity check reject an input whose visits need at least twice the time of
+    // the working hours; FALSE switches the check off and lets the run start.
     if (DO_DEACTIVATE_CAPACITY_CHECK) {
       props.setProperty("JOpt.plausibility.doInputCheck.doCapacityCheck", "FALSE");
+    } else {
+      props.setProperty("JOpt.plausibility.doInputCheck.doCapacityCheck", "TRUE");
     }
 
     opti.addElement(props);

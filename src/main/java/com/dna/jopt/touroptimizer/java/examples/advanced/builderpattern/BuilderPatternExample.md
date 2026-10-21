@@ -4,6 +4,9 @@
 
 ## What the example shows
 
+This example demonstrates the **builder pattern** approach to configure and execute an optimization run with **immutable input objects**.  
+Instead of wiring a large number of constructor calls, you create a complete optimization configuration using fluent builders and then run it with the **JSONOptimization** engine.
+
 - **One config object:** the builders of `OptimizationConfig`, `Node`, `Resource`, `WorkingHours`, `OpeningHours` and `JSONConfig` create the nodes, the resource, the extension and the properties. `build()` returns an immutable object.
 - **The JSON engine:** `JSONOptimization` runs the config with `startAsynchConfigFuture`. The future returns a config again: the input plus the solution.
 - **Three forms of the result:** `JSONOptimization.asJSON` prints the result config as JSON, the extension holds the text solution, and `solution()` gives the solution header, the route headers and the element details.
@@ -152,6 +155,101 @@ The text solution follows, in the form known from the other examples. Its route 
 
 The route takes 206.59 minutes and 219.9 km, far below both limits. The last lines are the `SolutionHeader`, the `RouteHeader` and one `RouteElementDetail` for each of the two nodes.
 
+## Why this example matters
+
+The builder pattern is a good fit for enterprise integrations where you want:
+
+- **Strong readability:** configuration reads like a specification ("add nodes", "add resources", "set extension", "set options")
+- **Immutability:** one final `build()` produces a **stable config snapshot**
+- **Reproducibility:** the resulting config can be serialized to **JSON** and used in other environments (for example REST / OpenAPI)
+- **Separation of concerns:** *build input* -> *run engine* -> *consume results*
+
+## Key sections in the code
+
+### 1) Creating the full config using builders
+The central idea is to construct everything via builders and "compose" the final config:
+
+- `OptimizationConfig.builder() ... build()`
+- `Node.builder() ... build()`
+- `Resource.builder() ... build()`
+- `WorkingHours.builder() ... build()`
+- `OpeningHours.builder() ... build()`
+- `JSONConfig.builder() ... build()`
+
+This yields a complete, immutable config object that can be executed and serialized.
+
+### 2) Running with JSONOptimization (and why JSON matters)
+The engine used is **JSONOptimization**, which enables:
+
+- **Direct JSON serialization** of the config
+- Interoperability with **REST / Swagger/OpenAPI** endpoints that accept a JSON snapshot-like structure
+
+In the example, the config is printed as JSON:
+
+- `JSONOptimization.asJSON(result)`
+
+This is a practical bridge between:
+- SDK-style configuration (Java builders)
+- API-style execution (JSON payloads)
+
+**Related docs:**
+- REST / OpenAPI usage: [Try the API and get the Schema](https://www.dna-evolutions.com/api)
+- Snapshot / schema compatibility: [Load and save optimization snapshots](../../basic/io_03/LoadAndSaveOptimization.md); the schema is behind the link above
+
+### 3) Attaching to observables (progress, warnings, status, errors)
+The example subscribes to event streams so you can:
+
+- report progress in a UI
+- log warnings and status updates
+- capture errors centrally
+
+This is the recommended approach for production systems because it:
+- improves observability
+- makes runs debuggable
+- supports "explainability" and operational acceptance
+
+**Related docs:** [Progress output frequency and progress requests](../progressfrequency/OptimizationProgress.md) (progress events and how often they are sent)
+
+### 4) Parsing the output for your application layer
+Beyond printing a solution, the example shows how to consume structured result objects:
+
+- solution header (global KPIs / meta)
+- route headers (per route stats)
+- route element details (visit sequence and per-stop details)
+
+This is typically how you map optimization output into:
+- dispatch UIs
+- reports
+- downstream systems (TMS/ERP/WFM)
+
+## Implementation notes
+
+### License handling (optional)
+The example demonstrates how to attach a JSON license via `OptimizationKeySetting`.  
+If no license is provided, JOpt runs in its free mode, as the code comment says.
+
+### OptimizationOptions (properties)
+The example sets a few optimization properties (generation count and pre-optimization settings).  
+This is the entry point for production tuning.
+
+**Related docs:**
+- [Optimization properties](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties)
+- [Performance mode](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/performance_mode)
+
+## When to choose the builder approach
+
+Use the builder approach when:
+- your config has many optional parts (open hours, constraints, metadata)
+- you want clean code and fewer constructor overloads
+- you want to reliably serialize the config into a portable JSON representation
+- you build configs dynamically (from DB, UI, API calls)
+
+## Next steps
+
+- Connect this pattern to your **REST workflow** (build config -> serialize JSON -> call API)
+- Extend nodes/resources with additional constraints (skills, zones, PND, relations)
+- Add progress streaming to your UI or monitoring pipeline
+
 ## Run it
 
 Run the `main(String[] args)` method of `BuilderPatternExample` from your IDE, with the repository imported as a Maven project. You need a JDK in the version that the examples pom sets. The example sets no license and needs no license file; the [license guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license) lists what the free mode allows. To run a larger config, put your license JSON into `myJSONLicenseOpt` in `createJSONExtension`.
@@ -166,4 +264,4 @@ Run the `main(String[] args)` method of `BuilderPatternExample` from your IDE, w
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-20
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21

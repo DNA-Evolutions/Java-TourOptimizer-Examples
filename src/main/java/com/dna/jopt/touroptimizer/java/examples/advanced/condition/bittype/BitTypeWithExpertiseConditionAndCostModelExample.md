@@ -4,17 +4,22 @@
 
 ## What the example shows
 
+This example demonstrates how to model **hard skill eligibility** with **expertise levels** using **BitType**, and how to attach a **cost model** for preference/penalty behavior, while keeping evaluation fast enough for large, constraint-heavy instances.
+
 - **Requirements and offers:** a node states a requirement with a `BitTypeWithExpertiseConstraint` and `addDictType(key, TypeLevelRequirement.of(level, isMinimum))`. A resource offers a skill with a `BitTypeWithExpertiseQualification` and `addDictType(key, TypeLevelOffering.of(level))`. The key is a string, here `Roof_Repair_Clean` and `Weight_Including_Equipment`.
 - **Minimum and maximum levels:** the second argument of `TypeLevelRequirement.of` is `true` for a minimum level and `false` for a maximum level. The repair level is a minimum, the weight level a maximum.
-- **Hard and soft:** `setIsHard(true)` makes the skill a must, and `setIsHardLevel(true)` makes the level limit a must as well. Without `setIsHardLevel`, a slater outside the level limit stays allowed and costs extra. The repair requirement of Oberhausen is the one soft requirement of the example.
-- **Cost models:** among the slaters who meet a requirement, the cost model of the constraint decides which one costs least.
+- **Hard and soft:** `setIsHard(true)` makes the skill a must, and `setIsHardLevel(true)` makes the level limit a must as well. Without `setIsHardLevel`, a slater outside the level limit stays allowed and costs extra. If a skill is required by a hard constraint, only matching resources are considered feasible: the optimizer enforces hard eligibility and does not let a resource that misses a hard requirement visit the node. The repair requirement of Oberhausen is the one soft requirement of the example.
+- **Cost models:** among the slaters who meet a requirement, the cost model of the constraint decides which one costs least, so a cost model can influence *preference* decisions (e.g., "prefer better match", "penalize weak match") without weakening hard feasibility.
   - `NO_PENALIZE_MATCHING_SKILL`: every slater within the limit, at no extra cost.
   - `PENALIZE_MATCHING_SKILL_LOW_DELTA`: the extra cost grows with the gap between the offered level and the top of the level scale, so the best qualified slater costs least.
   - `PENALIZE_MATCHING_SKILL_HIGH_DELTA`: the extra cost grows with the gap between the offered and the required level, so the closest match costs least.
 
+> Important: In JOpt.TourOptimizer, **hard skill constraints are fulfilled by architecture, not by high costs**.  
+> Costs are used for optimization trade-offs and preferences, not to "force feasibility".
+
 ## Scenario
 
-A roofing company plans May 6, 2025. The customers are open and the slaters work from 08:00 to 17:00 (Europe/Berlin); each slater may work 10 hours and drive 1200 km. The dates, levels, visit durations, limits and coordinates are sample values.
+The example builds a small optimization instance where nodes require **skills** (e.g., repair capability) and a **skill level** (expertise), and resources provide skills (and levels). A roofing company plans May 6, 2025. The customers are open and the slaters work from 08:00 to 17:00 (Europe/Berlin); each slater may work 10 hours and drive 1200 km. The dates, levels, visit durations, limits and coordinates are sample values.
 
 The repair level stands for the expertise in roof repair and cleaning (`Roof_Repair_Clean`), the weight level for the weight of the slater with equipment (`Weight_Including_Equipment`).
 
@@ -119,6 +124,12 @@ The [property reference](https://www.dna-evolutions.com/docs/learn-and-explore/f
 
 ## Output and what to look for
 
+When you run the `main()` method, focus on:
+
+1. **Feasibility / eligibility:** nodes that require a skill by a hard constraint must not be assigned to resources missing that skill. If expertise levels are required as *hard*, assignments must respect min/max level logic.
+2. **Preference behavior (cost model):** if multiple eligible resources exist, the cost model can steer selection (e.g., prefer stronger expertise match). The result should show trade-offs (e.g., better match vs. travel time), depending on the configured cost weighting.
+3. **Performance mindset:** even though the instance is small, the pattern scales: skill checks remain fast because they use bitset inclusion.
+
 The result has one route per slater. In two test runs the assignment and the costs were the same. Route 0 belongs to `John Oberhausen - Repair: 2 Weight: 8` and route 1 to `Jack Aachen - Repair: 10 Weight: 5` (trimmed to their stops):
 
 ```text
@@ -142,6 +153,59 @@ Cost TotalSum: 267.10952699653353,Cost Distance: 188.5400783854224,Cost RouteTim
 
 In an earlier test run without `setIsHardLevel`, the assignment was the same, because the chosen assignment breaks no level limit. With soft limits, a slater outside a limit would be allowed at a high cost; with `setIsHardLevel(true)`, the limit itself holds.
 
+## Why BitType?
+
+Skill and eligibility checks are evaluated *extremely often* during optimization (construction, swaps, reinsertions, exchanges).  
+BitType accelerates this by mapping skill keys (strings) to a **dictionary of integer IDs** and representing the skill set as a **bitset**:
+
+- `skillKey (String)` -> `dictionaryId (int)` -> `bit position`
+- matching becomes: **requiredBits is a subset of offeredBits** using fast bit operations
+
+This is especially relevant when you have:
+- many nodes/resources
+- many skills
+- expertise levels
+- frequent eligibility checks across many candidate moves
+
+## Key API idea: `addDictType(...)`
+
+In BitType, you typically attach requirements via `addDictType(...)`. Conceptually, this means:
+
+1. register the string skill key in the dictionary (if not already present),
+2. translate it into an integer ID,
+3. set the corresponding bit inside the requirement bitset,
+4. optionally attach expertise-level requirements.
+
+Examples shown in this file:
+
+- `addCustomerOberhausen`: `repairConstraint.addDictType(SKILL_TYPE_REPAIR, TypeLevelRequirement.of(minRepairLevel, true));`
+- `addCustomerOberhausen`: `weightConstraint.addDictType(SKILL_TYPE_WEIGHT, TypeLevelRequirement.of(maxWeightLevel, false));`
+- `addCustomerWuppertal`: `repairConstraint.addDictType(SKILL_TYPE_REPAIR, TypeLevelRequirement.of(minRepairLevel, true));`
+- `addCustomerWuppertal`: `weightConstraint.addDictType(SKILL_TYPE_WEIGHT, TypeLevelRequirement.of(maxWeightLevel, false));`
+- `addCustomerKoeln`: `constraint.addDictType(SKILL_TYPE_REPAIR, TypeLevelRequirement.of(minRepairLevel, true));`
+- `addCustomerKoeln`: `constraint.addDictType(SKILL_TYPE_WEIGHT, TypeLevelRequirement.of(maxWeightLevel, false));`
+- `addCustomerAachen`: `repairConstraint.addDictType(SKILL_TYPE_REPAIR, TypeLevelRequirement.of(minRepairLevel, true));`
+- `addCustomerAachen`: `weightConstraint.addDictType(SKILL_TYPE_WEIGHT, TypeLevelRequirement.of(maxWeightLevel, false));`
+
+## Customization patterns
+
+### Add or rename skills
+- Keep skill keys stable (constants) and reuse them across nodes/resources.
+- Treat the skill catalog as part of your data contract (especially when using REST clients).
+
+### Switch between hard and soft behavior
+- **Hard requirement:** used when "must have" (certification, equipment, compliance).
+- **Soft preference:** used when "should have" (best-fit dispatching, cost/quality trade-offs).
+
+### Expertise levels (minimum / maximum)
+BitType can represent expertise requirements such as:
+- **minimum requirement**: resource level must be >= required level
+- **maximum requirement**: resource level must be <= required level
+
+Use this for:
+- "only senior technicians"
+- "avoid overqualified resources for simple jobs" (if desired)
+
 ## Run it
 
 Run the `main(String[] args)` method of `BitTypeWithExpertiseConditionAndCostModelExample` from your IDE, with the repository imported as a Maven project. You need a JDK in the version that the examples pom sets. No license file is needed: without one, the example uses the public evaluation license (see the [license guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license)).
@@ -156,4 +220,4 @@ Run the `main(String[] args)` method of `BitTypeWithExpertiseConditionAndCostMod
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-20
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21

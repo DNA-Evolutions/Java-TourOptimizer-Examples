@@ -4,10 +4,24 @@
 
 ## What the example shows
 
+This example demonstrates how to **discourage unnecessary crossings between zones** using JOpt's **Zone Crossing Penalization**.
+
+It is designed for real-world scenarios where a boundary crossing has a meaningful overhead, for example:
+* toll bridges,
+* tunnels,
+* congestion zones,
+* security checkpoints,
+* ports / yards / restricted regions,
+* **river crossing** city layouts where switching sides frequently is inefficient.
+
+Instead of trying to approximate this behavior by manually tweaking distance matrices, JOpt provides an **architectural feature**:
+* keep normal distance/time costs,
+* and add an extra penalty when a route crosses from one zone into another.
+
 - **The switch and the multiplier:** `JOpt.Clustering.PenalizeZoneCodeCrossing` switches the penalty on or off, and `JOpt.Clustering.PenalizeZoneCodeCrossingMultiplier` scales it.
 - **Factors per direction:** a `ZoneConnection` sets a factor for one direction between two zones. The example charges steps from zone 1 to zone 3 with the sample factor 5.0 and switches the penalty off from zone 3 to zone 1 with the factor 0.0, like a toll that is charged in one direction only.
 - **The extra cost of a crossing step:** its distance times the `JOptWeight.TotalDistance` and `JOptWeight.RouteDistance` weights, times the factor of its `ZoneConnection`, times the multiplier. The cost is added to the normal distance cost.
-- **What counts as a crossing:** a step between two nodes whose zone codes do not match. The drive from the start of a resource to its first node, and back from the last node, never counts, because a resource is not a node.
+- **What counts as a crossing:** a step between two nodes whose zone codes do not match, or between a node with a zone and a node without one. The drive from the start of a resource to its first node, and back from the last node, never counts, because a resource is not a node.
 - **The JSON of the optimization without a license:** the example prints the optimization as JSON with an extension that has no key setting.
 
 ## Scenario
@@ -112,7 +126,7 @@ With the penalty on, the result has four routes, of which two are scheduled (tri
  Total Route Elements    : 18
 ```
 
-In both runs, one resource visits the eight `JerseyCity` nodes on May 6 and the other the eight `Manhattan` nodes; the routes of May 7 stay empty. No step of the result crosses between the zones, so the two `ZoneConnection` factors do not appear in its costs. Both runs had 67 km in total. In both runs Jack visited the JerseyCity nodes and Mel the Manhattan nodes; in an earlier test run the sides were swapped, so which resource takes which side can change between runs.
+In both runs, one resource visits the eight `JerseyCity` nodes on May 6 and the other the eight `Manhattan` nodes; the routes of May 7 stay empty. No step of the result crosses between the zones, so the two `ZoneConnection` factors do not appear in its costs. Both runs had 67 km in total. In one run Jack visited the JerseyCity nodes and Mel the Manhattan nodes, in the other the sides were swapped, so which resource takes which side can change between runs.
 
 In an earlier test run with `doPenalizeZoneCrossings` set to `false`, both routes had a mix of `Manhattan` and `JerseyCity` nodes: each route crossed the river twice, for 65 km in total. With the penalty, the plan is 2 km longer and has no crossing.
 
@@ -132,6 +146,127 @@ The JSON at the end lists the two connections, the same in both runs:
 
 Its extension holds only `"timeOut" : "PT10M"`.
 
+## What problem does this solve?
+
+Without the crossing penalty (`doPenalizeZoneCrossings` set to `false`), the optimizer will select the best solution with respect to:
+- travel distance/time,
+- visit/service times,
+- and any active constraints.
+
+In dense areas split by a river, tunnel, or toll border, the "best" distance solution can still look unrealistic:
+- a route zig-zags across zones multiple times, because each local step looks cheap,
+- but the boundary crossings are operationally expensive.
+
+Zone crossing penalization addresses this by making "crossing the border" itself expensive.
+
+The intended behavior is:
+- routes mostly stay inside one zone,
+- crossing happens only when it truly improves the global solution; the drive from the start of a resource to its first node, and back from the last node, never counts as a crossing.
+
+## Core mechanism (how penalization works)
+
+When enabled, JOpt applies an additional cost whenever an edge in the tour goes from **Zone A -> Zone B**.
+
+There are two layers:
+
+### 1) Global multiplier (optimizer property)
+
+The example sets:
+- `JOpt.Clustering.PenalizeZoneCodeCrossing = true/false` (toggle)
+- `JOpt.Clustering.PenalizeZoneCodeCrossingMultiplier = 10.0`
+
+Interpretation:
+- a zone-crossing edge becomes significantly more expensive than an intra-zone edge, unless its `ZoneConnection` sets the factor 0.0 (as from zone 3 to zone 1 in this example),
+- which nudges the optimizer away from frequent crossings.
+
+### 2) Direction-specific multipliers (ZoneConnection)
+
+For more control, the example also configures **directional zone connections**:
+
+- Zone `1` -> Zone `3` has an additional multiplier of `5.0`
+- Zone `3` -> Zone `1` has an additional multiplier of `0.0`
+
+This illustrates an important modeling capability:
+- you can penalize crossing **asymmetrically**, for example:
+  - "going into the city is expensive (toll), leaving the city is cheap", or
+  - "crossing east->west is congested in the morning, west->east is congested in the evening".
+
+In the code, this is configured via the zone manager:
+
+- `opti.getNodeConnector().getZoneManager().putZoneConnection(...)`
+
+## Zone modeling in this example
+
+This example uses **ZoneNumber** (integer ZoneCodes).
+
+### Zone sets (two "macro areas" with two codes each)
+To demonstrate multi-zone membership, the nodes are assigned as:
+
+- Manhattan-like area:
+  - Zone 1 (primary)
+  - Zone 2 (extra code on the same qualification)
+
+- Jersey City-like area:
+  - Zone 3 (primary)
+  - Zone 4 (extra code on the same qualification)
+
+This is done using:
+- `new ZoneNumberQualification(new ZoneNumber(1))` plus `addExtraCode(new ZoneNumber(2))` (and analogous for Zone 3/4)
+
+Practical note:
+- Multi-zone membership is the recommended way to model border areas or "shared service areas".
+- A job on a boundary can carry multiple zones, allowing either side to serve it without "hard polygon edges".
+
+## How to validate the effect (what to look for)
+
+### 1) Toggle penalization on/off
+The example defines:
+- `boolean doPenalizeZoneCrossings = true;`, with the comment "Set to false to see the routes without the crossing penalty." in the line above it
+
+Run twice:
+- once with `true`,
+- once with `false`.
+
+You should observe:
+- `false`: routes can switch zones (distance-optimal but unrealistic)
+- `true`: routes tend to cluster by zone and reduce crossings
+
+### 2) Visual inspection via KML export
+The example exports the solution to KML:
+
+- `BridgeTunnelCrossingZoneNumberConstraintExample-<true|false>.kml`
+
+Open the KML in Google Earth (or another KML viewer) and compare:
+- how often the route crosses the implicit zone boundary,
+- how "clean" the tours stay inside each zone.
+
+This is a quick, practical way to communicate the feature to end users and stakeholders.
+
+## Recommended modeling patterns
+
+### Pattern A: Penalize only specific borders
+Use ZoneConnection entries for:
+- bridge/tunnel edges,
+- controlled border crossings,
+- congestion-zone boundaries.
+
+Leave other zone-to-zone transitions unpenalized: give them a `ZoneConnection` with the factor 0.0, as the example does from zone 3 to zone 1, because a crossing between two zones without a `ZoneConnection` is penalized as well.
+
+### Pattern B: Use asymmetry intentionally
+Directional penalties allow you to model:
+- toll directionality,
+- "morning inbound / evening outbound" congestion,
+- one-way physical constraints.
+
+### Pattern C: Combine with hard territories when required
+If territories are mandatory:
+- enforce via ZoneCode constraints on WorkingHours (hard),
+- and still apply zone crossing penalties for "allowed but undesirable" transitions between adjacent territories.
+
+This provides a clean separation:
+- feasibility (hard territory rules),
+- realism/efficiency (crossing penalization).
+
 ## Run it
 
 Run the `main(String[] args)` method of `BridgeTunnelCrossingZoneNumberConstraintExample` from your IDE, with the repository imported as a Maven project. You need a JDK in the version that the examples pom sets.
@@ -142,12 +277,13 @@ To compare both settings, run the example once as it is and once with `doPenaliz
 
 ## Related
 
-- [Zone crossing penalization](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/zonecrossing): the feature guide of the crossing penalty, its properties and the factors per direction.
+- [Zone crossing penalization](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/zonecrossing): the feature guide of the crossing penalty, with its concept and properties and the factors per direction.
 - [ZoneCodes and territory management](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/zonecodes): zone codes on nodes and working hours, with hard or soft territories.
+- [Defining territories via ZoneCodes](https://www.dna-evolutions.com/docs/learn-and-explore/special/special_features#defining-territories-via-zonecodes): the foundation concept used by this feature.
 - [Optimization properties](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties): the property reference, with the defaults.
 - [Recommended ways to run an optimization](../../basic/recommendedimplementation_02/RecommendedImplementation.md): the recommended run pattern, a synchronous run and the legacy callback methods.
 - [Advanced examples](../README.md): the overview of all Advanced examples.
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-20
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
