@@ -33,11 +33,11 @@ Location ids are a practical tool when your "logical nodes" are not all distinct
 - multiple deliveries at one facility,
 - clustered tasks that should share travel-time semantics.
 
-In addition, location ids can reduce the number of distinct "places" your external matrix must cover, because multiple nodes map to one physical location identity.
+In addition, location ids can reduce the number of distinct "places" your external matrix must cover (depending on how you structure your integration), because multiple nodes map to one physical location identity.
 
 #### When to be careful
 
-If you assign the same `locationId` to nodes that do **not** share the same latitude/longitude, you create ambiguity:
+`locationId` is a powerful concept to represent multiple tasks at the same physical position; use it carefully and consistently. If you assign the same `locationId` to nodes that do **not** share the same latitude/longitude, you create ambiguity:
 
 - explicit connections might be applied unexpectedly,
 - fallback distances might be computed from an inconsistent geo position.
@@ -80,13 +80,13 @@ public void example()
 
 ### Connections are directed edges
 
-A `NodeEdgeConnectorItem` (via `INodeConnectorItem`) represents:
+Use `NodeEdgeConnectorItem` to inject external **distance** and **driving time** data. A `NodeEdgeConnectorItem` (via `INodeConnectorItem`) represents:
 
 - a directed edge from **element A to element B**
 - **distance** (unit-aware quantity)
 - **driving time** (`Duration`)
 
-A connection has a direction: an item from A to B says nothing about B to A. For the same values both ways, add one item per direction, as `addNodeConnections` does.
+Treat connections as **directed** (define both directions when needed). A connection has a direction: an item from A to B says nothing about B to A. For the same values both ways, add one item per direction, as `addNodeConnections` does.
 
 ### The connection items
 
@@ -120,11 +120,23 @@ private static void addNodeConnections(IOptimization opti, INode koeln, INode ob
 }
 ```
 
-Before you hand items to the connector, check that distance and driving time are not negative, that the units are right and that from and to point the right way.
+Before running optimization, verify every external edge before you hand items to the connector: check that distance and driving time are not negative (an edge has non-negative values only), that the units are right and that from and to point the right way, the correct "from/to" direction.
 
 ### The default backup connector
 
-A `NodeEdgeConnector` created with `new NodeEdgeConnector()` uses a `DefaultFlatEarthAverageSpeedBackupElementConnector`, an implementation of `IBackupElementConnector`. For every pair without an item, it calculates the straight-line distance of a flat-earth approximation from the coordinates of the two elements, and the driving time from that distance and the average speed of the resource. The average speed is a property of the resource, set with `setAvgSpeed`. To replace the straight-line fallback, pass your own `IBackupElementConnector` to `NodeEdgeConnector(IBackupElementConnector)`; the [BackupConnector feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/backupconnector#description-how-jopttouroptimizer-calculates-distances-and-times) shows how.
+When you do **not** supply all connections, fallback kicks in: missing connections fall back to **auto-calculated** values. A `NodeEdgeConnector` created with `new NodeEdgeConnector()` uses a `DefaultFlatEarthAverageSpeedBackupElementConnector`, an implementation of `IBackupElementConnector`. For every pair without an item, it calculates the straight-line distance of a flat-earth approximation from the coordinates of the two elements, and the driving time from that distance and the average speed of the resource. The average speed is a property of the resource, set with `setAvgSpeed`. Both classes set an average speed of 22 m/s on each resource. This fallback can be customized via **BackupConnector**: to replace the straight-line fallback, pass your own `IBackupElementConnector` to `NodeEdgeConnector(IBackupElementConnector)`; the [BackupConnector feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/backupconnector#description-how-jopttouroptimizer-calculates-distances-and-times) shows how.
+
+The BackupConnector documentation describes:
+
+- Default distance calculation: a flat-surface earth approximation (efficient; usually accurate enough for short edges in optimized tours).
+- Default driving time: derived from an assumed average speed (the docs mention a default average speed and show how to set a per-resource average speed).
+- How to override/adjust the calculation by providing a custom `IBackupElementConnector` implementation.
+
+Practical recommendation:
+
+- If you only provide a partial external matrix, consider whether fallback should be:
+  1) "good enough" straight-line + average speed, or
+  2) replaced with a custom BackupConnector (e.g., correction factor, haversine, custom terrain model).
 
 ### Location ids
 
@@ -204,6 +216,64 @@ The route is the same as in `ExternalNodeConnectionExample`, except that the ord
 2.2 Oberhausen / Geo  / Arrival: 06.03.2020 09:37:59 (Europe/Berlin) , Departure: 06.03.2020 09:57:59 (Europe/Berlin) / Duration: 20.0 [min] / Driving: 10.0 [min], 5.0 [km]
 ```
 
+## Partial external matrix (ExternalNodeConnectionExample)
+
+**File:** `ExternalNodeConnectionExample.java`  
+**Intent (from `toString()`):** "Sets the distance and the driving time between two nodes with a node connector."
+
+### Why this is a good "starter" pattern
+
+It is the cleanest mental model:
+
+- "Here are the edges I care about or got from an external system."
+- "For all other edges, do something reasonable."
+
+### Typical real-world usage
+
+- Provide external edges for:
+  - depot <-> customer,
+  - high-priority customers,
+  - cross-city edges (where straight-line is especially misleading),
+  - known restricted segments.
+- Leave the rest to fallback to reduce integration complexity.
+
+## A recommended implementation strategy (production-grade)
+
+### Step 1: Decide your external data scope
+Choose one:
+
+- **Full matrix** (best accuracy; highest integration cost).
+- **Partial matrix** + fallback (good ROI for many scenarios).
+- **No matrix** but custom BackupConnector (low integration; can improve on the default fallback).
+
+### Step 2: Generate directed edges
+Even if your external system returns symmetric values, explicitly create both directions.
+
+### Step 3: Use stable identifiers
+If you use `locationId`, ensure it is:
+- stable,
+- consistent across runs,
+- consistent with your geo-coordinate assignment.
+
+### Step 4: Observe and test
+Read the result legs to see if the connector is applied and if a missing connection forces fallback on a leg. Attach observables (progress/status/errors) early during development so you can immediately see if infeasible time windows emerge due to travel-time inflation.
+
+## Practical "interesting" thought experiments (to validate your integration)
+
+1. **Asymmetry test**  
+   Make A->B short and B->A long; verify the resulting tour order changes accordingly.
+
+2. **Fallback boundary test**  
+   Provide external edges for only 10% of pairs. Compare results with:
+   - default fallback,
+   - a custom BackupConnector (e.g., scaled distances),
+   to measure sensitivity.
+
+3. **LocationId consolidation test**  
+   Create multiple nodes at one physical location (same `locationId`) and observe whether:
+   - the run becomes faster (smaller effective geography),
+   - the solution becomes more "grouped" around those clustered tasks.
+
 ## Run it
 
 Run the `main` method of `ExternalNodeConnectionExample` or `ExternalNodeConnectionWithLocationIdExample` from your IDE. You need a JDK in the version that the examples pom sets. You need no license file: without one, the examples use the public evaluation license (see the [license guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license)). No other example needs to run first. `ExternalNodeConnectionExample` writes `ExternalNodeConnectionExample.kml` into the working directory.
@@ -219,4 +289,4 @@ Run the `main` method of `ExternalNodeConnectionExample` or `ExternalNodeConnect
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-20
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21

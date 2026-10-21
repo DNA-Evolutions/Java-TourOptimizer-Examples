@@ -14,6 +14,7 @@ package com.dna.jopt.touroptimizer.java.examples.basic.connection_04;
 import static java.time.Month.MARCH;
 import static javax.measure.MetricPrefix.KILO;
 import static tech.units.indriya.unit.Units.METRE;
+import static tech.units.indriya.unit.Units.METRE_PER_SECOND;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,6 +32,7 @@ import java.util.concurrent.TimeoutException;
 
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
+import javax.measure.quantity.Speed;
 
 import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
@@ -223,15 +225,20 @@ public class ExternalNodeConnectionExample extends Optimization {
     Duration maxWorkingTimeJohn = Duration.ofHours(14);
     // 1200 km per day, more than the longest day of this plan needs.
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
+    // 22 m/s (79.2 km/h), a sample value. The backup connector divides the straight-line
+    // distance of every pair without a connection by this speed.
+    Quantity<Speed> avgSpeed = Quantities.getQuantity(22.0, METRE_PER_SECOND);
 
     IResource jack =
         new CapacityResource(
             "Jack", 50.775346, 6.083887, maxWorkingTimeJack, maxDistanceKmW, createWorkingHours());
+    jack.setAvgSpeed(avgSpeed);
     opti.addElement(jack);
 
     IResource john =
         new CapacityResource(
             "John", 50.775346, 6.083887, maxWorkingTimeJohn, maxDistanceKmW, createWorkingHours());
+    john.setAvgSpeed(avgSpeed);
     opti.addElement(john);
   }
 
