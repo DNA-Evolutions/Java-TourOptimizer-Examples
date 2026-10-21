@@ -3,7 +3,7 @@ package com.dna.jopt.touroptimizer.java.examples.expert.uncaughtexception;
  * #%L
  * JOpt TourOptimizer Examples
  * %%
- * Copyright (C) 2017 - 2020 DNA Evolutions GmbH
+ * Copyright (C) 2017 - 2023 DNA Evolutions GmbH
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
@@ -30,9 +30,13 @@ import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
+import com.dna.jopt.framework.body.setup.DefaultOptimizationSetup;
+import com.dna.jopt.framework.body.setup.IOptimizationSetup;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
 import com.dna.jopt.member.unit.hours.IWorkingHours;
@@ -49,182 +53,138 @@ import com.dna.jopt.touroptimizer.java.examples.expert.uncaughtexception.customh
 import io.reactivex.rxjava3.functions.Consumer;
 
 /**
- * We implement some evil code within a custom onProgress subscription. Further, we define an
- * errorConsumer based on a custom uncaught exception handler and attach it during subscription
- * (MyUncaughtExceptionHandler).
+ * Throws an exception in an own subscription to the progress events, and hands it to the uncaught
+ * exception handler of the setup with an error consumer, which ends the run with that exception.
  *
- * @author jrich
- * @version Apr 6, 2020
- * @since Apr 6, 2020
+ * <p>Scenario: Jack from Aachen visits Koeln on May 6, 2020 (Europe/Berlin). The progress
+ * subscription prints each progress event, but throws an ArithmeticException in about one of three
+ * events.
+ *
+ * <p>Look for: the log line of JOpt's handler, the error event UNCAUGHT_EXCEPTION_IN_OPTIMIZATION,
+ * the two lines of MyUncaughtExceptionHandler and the line "The run failed:" with the exception.
+ * How many progress lines come first changes between runs. The example catches the failed wait and
+ * ends normally.
+ *
+ * <p>Prerequisites: None: without a license file the example uses the public evaluation license
+ * (see ExampleLicenseHelper).
+ *
+ * @see <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/uncaughtexception/UncaughtExceptionHandling.md">UncaughtExceptionHandling.md</a>
  */
 public class UncaughtExceptionHandlingRxJavaWithCustomErrorConsumer extends Optimization {
 
   /**
-   * The main method.
+   * Creates the optimization with a setup of its own.
    *
-   * @param args the arguments
-   * @throws InterruptedException the interrupted exception
-   * @throws ExecutionException the execution exception
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws IOException Signals that an I/O exception has occurred.
+   * @param setup the setup with the custom uncaught exception handler
+   */
+  public UncaughtExceptionHandlingRxJavaWithCustomErrorConsumer(IOptimizationSetup setup) {
+    super(setup);
+  }
+
+  /**
+   * Runs the example.
+   *
+   * @param args not used
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
    */
   public static void main(String[] args)
-      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
-    new UncaughtExceptionHandlingRxJavaWithCustomErrorConsumer().example();
+      throws InterruptedException, TimeoutException, InvalidLicenceException, IOException {
+    new UncaughtExceptionHandlingRxJavaWithCustomErrorConsumer(createSetup()).example();
   }
 
+  @Override
   public String toString() {
-    return "An attached uncaught exception handler will be used to create an errorConsumer"
-        + " for a custom subscription to the progress.";
+    return "Throws an exception in an own subscription to the progress events, and hands it to the"
+        + " uncaught exception handler of the setup with an error consumer, which ends the run"
+        + " with that exception.";
   }
 
   /**
-   * Method which executes the necessary parts for the optimization.
+   * Builds the optimization, runs it and prints the result or the exception that ended the run.
    *
-   * @throws InterruptedException the interrupted exception
-   * @throws ExecutionException the execution exception
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws IOException Signals that an I/O exception has occurred.
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
    */
   public void example()
-      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
-
+      throws InterruptedException, TimeoutException, InvalidLicenceException, IOException {
+    // The public evaluation license, or your own license if you put a license file where
+    // ExampleLicenseHelper looks for it.
     ExampleLicenseHelper.setLicense(this);
-
-    UncaughtExceptionHandlingRxJavaWithCustomErrorConsumer.addProperties(this);
-
-    // Adding nodes
-    UncaughtExceptionHandlingRxJavaWithCustomErrorConsumer.addNodes(this);
-
-    // Adding resources
-    UncaughtExceptionHandlingRxJavaWithCustomErrorConsumer.addResources(this);
-
-    // subscribe/Attach to observables using an error consumer
-    UncaughtExceptionHandlingRxJavaWithCustomErrorConsumer.attach2ProgressWithErrorConsumer(this);
-
-    // Starting the optimization and presenting the result
-    UncaughtExceptionHandlingRxJavaWithCustomErrorConsumer.startAndPresentResult(this);
+    addProperties(this);
+    addNodes(this);
+    addResources(this);
+    attachToObservables(this);
+    startAndPresentResult(this);
   }
 
   /**
-   * Attach 2 progress with error consumer.
+   * Creates the default setup with MyUncaughtExceptionHandler as its handler for uncaught
+   * exceptions.
    *
-   * @param opti the opti
+   * @return the setup
    */
-  private static void attach2ProgressWithErrorConsumer(IOptimization opti) {
-    // Create a custom UncaughtExceptionHandler
-    MyUncaughtExceptionHandler myUncaughtExceptionHandler = new MyUncaughtExceptionHandler();
-
-    // We attach the optimization to the handler
-    myUncaughtExceptionHandler.attachOptimization(opti);
-
-    // We create an error consumer based on our UncaughtExceptionHandler
-    Consumer<? super Throwable> errorConsumer =
-        t -> myUncaughtExceptionHandler.uncaughtException(Thread.currentThread(), t);
-
-    // Attach to Observables with custom error consumer
-    UncaughtExceptionHandlingRxJavaWithCustomErrorConsumer.attachToObservables(opti, errorConsumer);
+  private static IOptimizationSetup createSetup() {
+    IOptimizationSetup setup = new DefaultOptimizationSetup();
+    // JOpt wraps the handler in its own handler, which logs the exception, streams the error event
+    // UNCAUGHT_EXCEPTION_IN_OPTIMIZATION and then calls MyUncaughtExceptionHandler.
+    setup.setSlaveUncaughtExceptionHandler(new MyUncaughtExceptionHandler());
+    return setup;
   }
 
   /**
-   * Attach to different events (observables) of the optimization instance.
+   * Adds the properties that keep the run short.
    *
-   * @param opti the optimization instance
-   * @param errorConsumer the error consumer
-   */
-  private static void attachToObservables(
-      IOptimization opti, Consumer<? super Throwable> errorConsumer) {
-
-    opti.getOptimizationEvents()
-        .progressSubject()
-        .subscribe(
-            p -> {
-
-              // Some evil code
-              int randomNum = ThreadLocalRandom.current().nextInt(0, 3);
-              if (randomNum == 0) {
-                throw new ArithmeticException("Test Exception from overridden subscribed progress");
-              }
-
-              System.out.println(p.getProgressString());
-            },
-            errorConsumer);
-  }
-
-  /**
-   * Start the optimization and present the result.
-   *
-   * @param opti the optimization instance
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws InterruptedException the interrupted exception
-   * @throws ExecutionException the execution exception
-   */
-  private static void startAndPresentResult(IOptimization opti)
-      throws InvalidLicenceException, InterruptedException, ExecutionException {
-    // Extracting a completable future for the optimization result
-    CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
-
-    // It is important to block the call, otherwise optimization will be terminated
-    IOptimizationResult result = resultFuture.get();
-
-    // Presenting the result
-    System.out.println(result);
-  }
-
-  /**
-   * Adds the properties to the optimization.
-   *
-   * @param opti the optimization instance
+   * @param opti the optimization
    */
   private static void addProperties(IOptimization opti) {
-
     Properties props = new Properties();
-
-    props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "10000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
-    props.setProperty("JOpt.NumCPUCores", "4");
-
+    // Fewer generations and iterations than the defaults keep the run short.
+    props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
     opti.addElement(props);
   }
 
   /**
-   * Adds the nodes to the optimization.
+   * Adds one node.
    *
-   * @param opti the optimization instance
+   * @param opti the optimization
    */
   private static void addNodes(IOptimization opti) {
-
-    List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
-    weeklyOpeningHours.add(
+    List<IOpeningHours> openingHours = new ArrayList<>();
+    openingHours.add(
         new OpeningHours(
             ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
+    // Each visit takes 20 minutes and counts toward the working time, like the driving.
     Duration visitDuration = Duration.ofMinutes(20);
 
+    // The same importance for every node, so no node is preferred over another.
     int importance = 1;
 
-    // Define some nodes
     INode koeln =
-        new TimeWindowGeoNode(
-            "Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, importance);
+        new TimeWindowGeoNode("Koeln", 50.9333, 6.95, openingHours, visitDuration, importance);
     opti.addElement(koeln);
   }
 
   /**
-   * Adds the resources to the optimization.
+   * Adds Jack, who starts and ends his working day in Aachen.
    *
-   * @param opti the optimization instance
+   * @param opti the optimization
    */
   private static void addResources(IOptimization opti) {
-
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
         new WorkingHours(
             ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
+    // Sample limits of 9 h and 1200 km per day: the run ends at the exception, before a result.
     Duration maxWorkingTime = Duration.ofHours(9);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
@@ -232,5 +192,63 @@ public class UncaughtExceptionHandlingRxJavaWithCustomErrorConsumer extends Opti
         new CapacityResource(
             "Jack from Aachen", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
     opti.addElement(jack);
+  }
+
+  /**
+   * Subscribes to the progress with a faulty subscriber and an error consumer, and prints the
+   * warning, status and error events of the run.
+   *
+   * @param opti the optimization
+   */
+  private static void attachToObservables(IOptimization opti) {
+    // The error consumer hands an exception of the subscriber to the uncaught exception handler of
+    // the setup, the same handler that JOpt uses for its own threads.
+    Consumer<? super Throwable> errorConsumer =
+        t -> opti.getOptimizationSetup()
+            .getUncaughtExceptionHandler()
+            .uncaughtException(Thread.currentThread(), t);
+
+    // Subscribe before the start: the subjects replay only a few past events.
+    opti.getOptimizationEvents()
+        .progressSubject()
+        .subscribe(
+            p -> {
+              // The fault: a throw in about one of three progress events ends the run soon,
+              // after a number of progress lines that changes between runs.
+              int randomNum = ThreadLocalRandom.current().nextInt(0, 3);
+              if (randomNum == 0) {
+                throw new ArithmeticException("Test Exception from the progress subscription");
+              }
+
+              System.out.println(p.getProgressString());
+            },
+            errorConsumer);
+    opti.getOptimizationEvents().warningSubject().subscribe(w -> System.out.println(w.toString()));
+    opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s.toString()));
+    // The exception of the subscriber arrives here as UNCAUGHT_EXCEPTION_IN_OPTIMIZATION.
+    opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
+  }
+
+  /**
+   * Starts the run, waits for the result and prints it, or prints the exception that ended the
+   * run.
+   *
+   * @param opti the optimization
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   */
+  private static void startAndPresentResult(IOptimization opti)
+      throws InterruptedException, TimeoutException, InvalidLicenceException {
+    CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
+    try {
+      // Wait for the result; without the wait the JVM would end before the run does.
+      IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
+      System.out.println(result);
+    } catch (ExecutionException e) {
+      // MyUncaughtExceptionHandler completed the result future with the exception, so the wait
+      // ends with it. The example prints the cause and ends normally.
+      System.out.println("The run failed: " + e.getCause());
+    }
   }
 }
