@@ -3,22 +3,34 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.pickupanddelivery;
  * #%L
  * JOpt TourOptimizer Examples
  * %%
- * Copyright (C) 2017 - 2020 DNA Evolutions GmbH
+ * Copyright (C) 2017 - 2023 DNA Evolutions GmbH
  * %%
- * This file is subject to the terms and conditions defined in file 'LICENSE.txt',
- * which is part of this source code package.
+ * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
+ * which is part of this repository.
  *
- * If not, see <https://www.dna-evolutions.com/agb-conditions-and-terms/>.
+ * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
+import static java.time.Month.MARCH;
+import static javax.measure.MetricPrefix.KILO;
+import static tech.units.indriya.unit.Units.METRE;
+
+import tech.units.indriya.quantity.Quantities;
+
+import javax.measure.Quantity;
+import javax.measure.quantity.Length;
+
+import java.io.IOException;
+import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import javax.measure.Quantity;
-import javax.measure.quantity.Length;
 
 import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
@@ -43,311 +55,255 @@ import com.dna.jopt.member.unit.resource.CapacityResource;
 import com.dna.jopt.member.unit.resource.IResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
-import tech.units.indriya.quantity.Quantities;
-
-import java.util.List;
-import static java.time.Month.MARCH;
-import static javax.measure.MetricPrefix.KILO;
-import static tech.units.indriya.unit.Units.METRE;
-
-import java.io.IOException;
-import java.time.Duration;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-
 /**
- * In this example a Resource called "JackTruck" has to pickup "Trash" and "Garbage". Each customer
- * can decide what to pick up.
+ * Picks up Trash and Garbage and empties the truck at optional dumps with UnloadAllLoads, so that
+ * the depot does not overflow.
  *
- * <p>JackTruck starts empty and can use three optional dumps to avoid overloading. One of the
- * optional UnloadAllNodes is so far away, that the optimizer will not use it.
+ * <p>Scenario: JackTruck starts empty at 50.1167, 7.68333, with a depot of 30 in all, and works
+ * from 08:00 to 20:00 on March 11, 2020 (Europe/Berlin). Three customers at one point in Koeln,
+ * open from 08:00 to 18:00, supply 48 in all: CustomerOne 15 Trash and 10 Garbage, CustomerTwo 13
+ * Trash and CustomerThree 10 Garbage. UnloadAllNodeOne and UnloadAllNodeTwo lie at the same point;
+ * UnloadAllNodeFarAway lies at 57.9333, 11.95, far from all others. The three dumps are optional
+ * and take all Trash and Garbage on board.
  *
- * <p>Note: This problem could be also solved by using RequestFlexLoads. However, since we know that
- * we want to unload everything at our dumps, we can help the optimizer by using unloadAll Loads
- * instead.
+ * <p>Look for: a visit to UnloadAllNodeOne or UnloadAllNodeTwo between the pickups, so that the
+ * load never goes above 30, no visit to UnloadAllNodeFarAway, and no violation.
  *
- * @author Jens Richter
- * @version Mar 08, 2021
- * @since Jul 27, 2020
- *     <p>Example of pick up and delivery optimization problem.
+ * <p>Prerequisites: None: without a license file the example uses the public evaluation license
+ * (see ExampleLicenseHelper).
+ *
+ * @see <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/pickupanddelivery/PND.md">PND.md</a>
+ * @see <a href="https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/pickup_and_delivery">Pickup and delivery</a>
  */
 public class PNDOptionalUnloadAllLoadExample extends Optimization {
 
   /**
-   * The main method.
+   * Runs the example.
    *
-   * @param args the arguments
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws IOException Signals that an I/O exception has occurred.
-   * @throws InterruptedException the interrupted exception
-   * @throws ExecutionException the execution exception
-   * @throws TimeoutException the timeout exception
+   * @param args not used
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
    */
   public static void main(String[] args)
-      throws InvalidLicenceException, IOException, InterruptedException, ExecutionException,
-      TimeoutException {
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException {
     new PNDOptionalUnloadAllLoadExample().example();
   }
 
-  /**
-   * To string.
-   *
-   * @return the string
-   */
+  @Override
   public String toString() {
-    return "Example: Pick up goods and use UnloadAll loads to avoid overloading.";
+    return "Picks up Trash and Garbage and empties the truck at optional dumps with UnloadAllLoads,"
+        + " so that the depot does not overflow.";
   }
 
   /**
-   * Example.
+   * Builds the optimization, runs it and prints the result.
    *
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws IOException Signals that an I/O exception has occurred.
-   * @throws InterruptedException the interrupted exception
-   * @throws ExecutionException the execution exception
-   * @throws TimeoutException the timeout exception
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
    */
   public void example()
-      throws InvalidLicenceException, IOException, InterruptedException, ExecutionException,
-      TimeoutException {
-
-    // Set license via helper
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException {
+    // The public evaluation license, or your own license if you put a license file where
+    // ExampleLicenseHelper looks for it.
     ExampleLicenseHelper.setLicense(this);
-
-    this.setProperties();
-    this.addNodes();
-    this.addRes();
-
-    // Start the optimization
-    CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
-
-    // Subscribe to events
-    subscribeToEvents(this);
-
-    // It is important to block the call, otherwise the optimization will be terminated
-    IOptimizationResult result = resultFuture.get(2, TimeUnit.MINUTES);
-
-    System.out.println(result);
+    addProperties(this);
+    addNodes(this);
+    addResources(this);
+    attachToObservables(this);
+    startAndPresentResult(this);
   }
 
-  /** Sets the properties. */
-  public void setProperties() {
-
+  /**
+   * Adds the properties that keep the run short and raise the capacity weight.
+   *
+   * @param opti the optimization
+   */
+  private static void addProperties(IOptimization opti) {
     Properties props = new Properties();
+    // Fewer generations and iterations than the defaults keep the run short.
     props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000");
-
-    // We have to tell the optimizer that we have a high interest in capacity planning, default is
-    // 100
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
+    // A capacity weight above the default makes a capacity violation cost more against the route
+    // time and distance.
     props.setProperty("JOptWeight.Capacity", "200");
-    this.addElement(props);
+    opti.addElement(props);
   }
 
-  /** Adds the res. */
-  public void addRes() {
+  /**
+   * Adds three customers that supply Trash and Garbage, and three optional dumps.
+   *
+   * @param opti the optimization
+   */
+  private static void addNodes(IOptimization opti) {
+    List<IOpeningHours> openingHours = new ArrayList<>();
+    openingHours.add(
+        new OpeningHours(
+            ZonedDateTime.of(2020, MARCH.getValue(), 11, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MARCH.getValue(), 11, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-    /*
-     * Setting the resource JackTruck
-     */
+    // Each visit takes 30 minutes, a sample value.
+    Duration visitDuration = Duration.ofMinutes(30);
 
+    // The customers and two dumps are at one point in Koeln, so the order of the visits changes
+    // the loads on board, not the driving.
+    INode customerOne =
+        new TimeWindowGeoNode("CustomerOne", 50.9333, 6.95, openingHours, visitDuration, 1);
+    customerOne.setNodeDepot(createNodeDepot("CustomerOneDepot", 15, 10));
+    opti.addElement(customerOne);
+
+    INode customerTwo =
+        new TimeWindowGeoNode("CustomerTwo", 50.9333, 6.95, openingHours, visitDuration, 1);
+    customerTwo.setNodeDepot(createNodeDepot("CustomerTwoDepot", 13, 0));
+    opti.addElement(customerTwo);
+
+    INode customerThree =
+        new TimeWindowGeoNode("CustomerThree", 50.9333, 6.95, openingHours, visitDuration, 1);
+    customerThree.setNodeDepot(createNodeDepot("CustomerThreeDepot", 0, 10));
+    opti.addElement(customerThree);
+
+    // The optimizer decides whether the route visits an optional node.
+    INode unloadAllNodeOne =
+        new TimeWindowGeoNode("UnloadAllNodeOne", 50.9333, 6.95, openingHours, visitDuration, 1);
+    unloadAllNodeOne.setNodeDepot(createUnloadAllDepot("UnloadAllNodeOneDepot"));
+    unloadAllNodeOne.setIsOptional(true);
+    opti.addElement(unloadAllNodeOne);
+
+    INode unloadAllNodeTwo =
+        new TimeWindowGeoNode("UnloadAllNodeTwo", 50.9333, 6.95, openingHours, visitDuration, 1);
+    unloadAllNodeTwo.setNodeDepot(createUnloadAllDepot("UnloadAllNodeTwoDepot"));
+    unloadAllNodeTwo.setIsOptional(true);
+    opti.addElement(unloadAllNodeTwo);
+
+    // A dump far away, on purpose: the near dumps take the same goods.
+    INode unloadAllNodeFarAway =
+        new TimeWindowGeoNode(
+            "UnloadAllNodeFarAway", 57.9333, 11.95, openingHours, visitDuration, 1);
+    unloadAllNodeFarAway.setNodeDepot(createUnloadAllDepot("UnloadAllNodeFarAwayDepot"));
+    unloadAllNodeFarAway.setIsOptional(true);
+    opti.addElement(unloadAllNodeFarAway);
+  }
+
+  /**
+   * Creates the depot of a customer with fuzzy supplies of Trash and Garbage.
+   *
+   * @param depotId the id of the depot
+   * @param trashCount the Trash that the customer supplies
+   * @param garbageCount the Garbage that the customer supplies
+   * @return the node depot
+   */
+  private static INodeDepot createNodeDepot(String depotId, int trashCount, int garbageCount) {
+    ILoad trashLoad = new SimpleLoad("Trash", trashCount, false, true);
+    ILoad garbageLoad = new SimpleLoad("Garbage", garbageCount, false, true);
+
+    INodeDepot depot = new SimpleNodeDepot(depotId);
+
+    // A load of 0 is allowed; leaving it out keeps the depot report shorter.
+    if (trashCount > 0) {
+      depot.add(trashLoad);
+    }
+
+    if (garbageCount > 0) {
+      depot.add(garbageLoad);
+    }
+
+    return depot;
+  }
+
+  /**
+   * Creates the depot of a dump with an UnloadAllLoad of Trash and one of Garbage.
+   *
+   * @param depotId the id of the depot
+   * @return the node depot
+   */
+  private static INodeDepot createUnloadAllDepot(String depotId) {
+    // An UnloadAllLoad is a request of everything of its good that is on board.
+    ILoad trashLoad = new UnloadAllLoad("Trash");
+    ILoad garbageLoad = new UnloadAllLoad("Garbage");
+
+    INodeDepot depot = new SimpleNodeDepot(depotId);
+    depot.add(trashLoad);
+    depot.add(garbageLoad);
+    return depot;
+  }
+
+  /**
+   * Adds JackTruck with its depot.
+   *
+   * @param opti the optimization
+   */
+  private static void addResources(IOptimization opti) {
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
         new WorkingHours(
             ZonedDateTime.of(2020, MARCH.getValue(), 11, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MARCH.getValue(), 11, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
+    // 10 h, a sample value above what the route of this plan needs.
     Duration maxWorkingTime = Duration.ofHours(10);
-    Quantity<Length> maxDistanceKmW = Quantities.getQuantity(2800.0, KILO(METRE));
+    // 1200 km per day, more than the longest day of this plan needs.
+    Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
     IResource truckJack =
         new CapacityResource(
             "JackTruck", 50.1167, 7.68333, maxWorkingTime, maxDistanceKmW, workingHours);
-
-    // Setting a depot to our truck
-    truckJack.setResourceDepot(this.createResourceDepot());
-
-    // Adding the truck to our optimization
-    this.addElement(truckJack);
+    truckJack.setResourceDepot(createResourceDepot());
+    opti.addElement(truckJack);
   }
 
   /**
-   * Creates the resource depot.
+   * Creates the depot of JackTruck: Trash and Garbage, 30 in all, empty at the start.
    *
    * @return the resource depot
    */
-  public IResourceDepot createResourceDepot() {
-
-    /*
-     * Defining a ResourceDepot "JackTruckDepot" that can store Trash and Garbage.
-     *
-     */
-
-    // We can store a maximum of 20 Trash on our truck (assuming that no other Load is
-    // present)
-    ILoadCapacity trashCpacity = new SimpleLoadCapacity("Trash", 30, 0);
-
-    // We can store a maximum of 15 Garbage on our truck (assuming that no other Load is present)
+  private static IResourceDepot createResourceDepot() {
+    // Each good may fill all 30 units of the depot when it is alone on the truck; together they
+    // share the 30, for example 19 Trash and 11 Garbage.
+    ILoadCapacity trashCapacity = new SimpleLoadCapacity("Trash", 30, 0);
     ILoadCapacity garbageCapacity = new SimpleLoadCapacity("Garbage", 30, 0);
 
-    // Our depot can store a maximum of 30 total items. For example, 19 Trash
-    // and 11 Garbage.
     IResourceDepot depot = new SimpleResourceDepot("JackTruckDepot", 30);
-
-    // Adding the capacities to our depot
-    depot.add(trashCpacity);
+    depot.add(trashCapacity);
     depot.add(garbageCapacity);
-
     return depot;
   }
 
-  /** Adds the nodes. */
-  public void addNodes() {
-
-    List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
-    weeklyOpeningHours.add(
-        new OpeningHours(
-            ZonedDateTime.of(2020, MARCH.getValue(), 11, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MARCH.getValue(), 11, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    Duration visitDuration = Duration.ofMinutes(30);
-
-    /*
-     *
-     *
-     */
-
-    INode job1 =
-        new TimeWindowGeoNode("CustomerOne", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-
-    job1.setNodeDepot(this.createNodeDepot("CustomerOneDepot", 15, 10));
-    this.addElement(job1);
-
-    //
-    INode job2 =
-        new TimeWindowGeoNode("CustomerTwo", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-
-    job2.setNodeDepot(this.createNodeDepot("CustomerTwoDepot", 13, 0));
-    this.addElement(job2);
-
-    //
-    INode job3 =
-        new TimeWindowGeoNode("CustomerThree", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-
-    job3.setNodeDepot(this.createNodeDepot("CustomerThreeDepot", 0, 10));
-    this.addElement(job3);
-
-    // UnloadAll
-    INode unloadAllNodeOne =
-        new TimeWindowGeoNode(
-            "UnloadAllNodeOne", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-
-    unloadAllNodeOne.setNodeDepot(this.createUnloadAllDepot("UnloadAllNodeOneDepot"));
-    unloadAllNodeOne.setIsOptional(true);
-    this.addElement(unloadAllNodeOne);
-
-    // UnloadAll
-    INode unloadAllNodeTwo =
-        new TimeWindowGeoNode(
-            "UnloadAllNodeTwo", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-
-    unloadAllNodeTwo.setNodeDepot(this.createUnloadAllDepot("UnloadAllNodeTwoDepot"));
-    unloadAllNodeTwo.setIsOptional(true);
-    this.addElement(unloadAllNodeTwo);
-
-    // UnloadAll Faaar away - This nodes should be found to be not neccessary by the optimizer
-    INode unloadAllNodeFarAway =
-        new TimeWindowGeoNode(
-            "UnloadAllNodeFarAway", 57.9333, 11.95, weeklyOpeningHours, visitDuration, 1);
-
-    unloadAllNodeFarAway.setNodeDepot(this.createUnloadAllDepot("UnloadAllNodeFarAwayDepot"));
-    unloadAllNodeFarAway.setIsOptional(true);
-    this.addElement(unloadAllNodeFarAway);
-  }
-
   /**
-   * Creates the NodeDepot.
+   * Prints the progress, warning, status and error events of the run.
    *
-   * @param depotId the depot id
-   * @param trashCount the trash count
-   * @param garbageCount the garbage count
-   * @return the i node depot
+   * @param opti the optimization
    */
-  public INodeDepot createNodeDepot(String depotId, int trashCount, int garbageCount) {
-
-    ILoad trashLoad = new SimpleLoad("Trash", trashCount, false, true);
-    ILoad garbageLoad = new SimpleLoad("Garbage", garbageCount, false, true);
-
-    INodeDepot customerNodeDepot = new SimpleNodeDepot(depotId);
-
-    if (trashCount > 0) {
-      // Only add if count is bigger than zero.
-      // Strictly speaking this is not necessary but improves the readability of the result.
-      // The optimizer can also handle zero requests/supplies
-      customerNodeDepot.add(trashLoad);
-    }
-
-    if (garbageCount > 0) {
-      customerNodeDepot.add(garbageLoad);
-    }
-
-    return customerNodeDepot;
-  }
-
-  /**
-   * Creates the unload all depot.
-   *
-   * @param depotId the depot id
-   * @return the i node depot
-   */
-  public INodeDepot createUnloadAllDepot(String depotId) {
-
-    // Adding UnloadAllLoads that take whatever is on the truck
-    ILoad trashLoad = new UnloadAllLoad("Trash");
-
-    ILoad garbageLoad = new UnloadAllLoad("Garbage");
-
-    INodeDepot nodeDepotUnloadAllLoads = new SimpleNodeDepot(depotId);
-    nodeDepotUnloadAllLoads.add(trashLoad);
-    nodeDepotUnloadAllLoads.add(garbageLoad);
-
-    return nodeDepotUnloadAllLoads;
-  }
-
-  /**
-   * Subscribe to events.
-   *
-   * @param opti the opti
-   */
-  private static void subscribeToEvents(IOptimization opti) {
-
-    // Subscribe to events
+  private static void attachToObservables(IOptimization opti) {
+    // Subscribe before the start: the subjects replay only a few past events.
     opti.getOptimizationEvents()
         .progressSubject()
-        .subscribe(
-            p -> {
-              System.out.println(p.getProgressString());
-            });
+        .subscribe(p -> System.out.println(p.getProgressString()));
+    opti.getOptimizationEvents().warningSubject().subscribe(w -> System.out.println(w.toString()));
+    opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s.toString()));
+    opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
+  }
 
-    opti.getOptimizationEvents()
-        .errorSubject()
-        .subscribe(
-            e -> {
-              System.out.println(e.getCause() + " " + e.getCode());
-            });
-
-    opti.getOptimizationEvents()
-        .warningSubject()
-        .subscribe(
-            w -> {
-              System.out.println(w.getDescription() + w.getCode());
-            });
-
-    opti.getOptimizationEvents()
-        .statusSubject()
-        .subscribe(
-            s -> {
-              System.out.println(s.getDescription() + " " + s.getCode());
-            });
+  /**
+   * Starts the run, waits for the result and prints it.
+   *
+   * @param opti the optimization
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   */
+  private static void startAndPresentResult(IOptimization opti)
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException {
+    CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
+    // Wait for the result; without the wait the JVM would end before the run does.
+    IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
+    System.out.println(result);
   }
 }

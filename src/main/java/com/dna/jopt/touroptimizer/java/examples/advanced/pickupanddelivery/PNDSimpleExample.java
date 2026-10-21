@@ -1,30 +1,39 @@
 package com.dna.jopt.touroptimizer.java.examples.advanced.pickupanddelivery;
-
 /*-
  * #%L
  * JOpt TourOptimizer Examples
  * %%
- * Copyright (C) 2017 - 2020 DNA Evolutions GmbH
+ * Copyright (C) 2017 - 2023 DNA Evolutions GmbH
  * %%
- * This file is subject to the terms and conditions defined in file 'LICENSE.txt',
- * which is part of this source code package.
+ * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
+ * which is part of this repository.
  *
- * If not, see <https://www.dna-evolutions.com/agb-conditions-and-terms/>.
+ * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
+import static java.time.Month.MARCH;
+import static javax.measure.MetricPrefix.KILO;
+import static tech.units.indriya.unit.Units.METRE;
+
+import tech.units.indriya.quantity.Quantities;
+
+import javax.measure.Quantity;
+import javax.measure.quantity.Length;
+
+import java.io.IOException;
+import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import javax.measure.Quantity;
-import javax.measure.quantity.Length;
-
 import com.dna.jopt.config.convert.ConvertException;
-import com.dna.jopt.config.json.framework.JSONOptimization;
 import com.dna.jopt.config.json.types.JSONConfig;
-import com.dna.jopt.config.json.types.OptimizationKeySetting;
 import com.dna.jopt.config.serialize.SerializationException;
 import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
@@ -47,252 +56,236 @@ import com.dna.jopt.member.unit.pnd.load.simple.SimpleLoad;
 import com.dna.jopt.member.unit.resource.CapacityResource;
 import com.dna.jopt.member.unit.resource.IResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
-
-import tech.units.indriya.quantity.Quantities;
-
-import java.util.List;
-import java.util.Optional;
-
-import static java.time.Month.MARCH;
-import static javax.measure.MetricPrefix.KILO;
-import static tech.units.indriya.unit.Units.METRE;
-
-import java.io.IOException;
-import java.time.Duration;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
+import com.dna.jopt.touroptimizer.java.examples.util.jsonprinter.ResultJsonPrinter;
 
 /**
- * The Class PNDSimpleExample. In this example a Resource called "JackTruck" has
- * to deliver "Fruit" and has to pick up "Bread".
+ * Delivers Fruit to two customers and picks up Bread from them, with simple loads on one truck.
  *
- * @author Jens Richter
- * @version Mar 08, 2021
- * @since Jul 27, 2020
- *        <p>
- *        Example of pick up and delivery optimization problem.
+ * <p>Scenario: Truck starts at 50.1167, 7.68333 with 5 Fruit and 10 Bread on board and works
+ * from 08:00 to 20:00 on March 11, 2020 (Europe/Berlin). CustomerOne requests 2 Fruit and
+ * supplies 10 Bread; CustomerTwo requests 3 Fruit and supplies 10 Bread. Both customers are at
+ * one point in Koeln and open from 08:00 to 18:00.
+ *
+ * <p>Look for: the ResourceDepot report of Truck, with 5 Fruit and 10 Bread at the start and 0
+ * Fruit and 30 Bread at the termination, and the depot of each customer before and after its
+ * visit; then the JSON of the optimization, which holds no license.
+ *
+ * <p>Prerequisites: None: without a license file the example uses the public evaluation license
+ * (see ExampleLicenseHelper).
+ *
+ * @see <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/pickupanddelivery/PND.md">PND.md</a>
+ * @see <a href="https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/pickup_and_delivery">Pickup and delivery</a>
  */
 public class PNDSimpleExample extends Optimization {
 
   /**
-   * The main method.
+   * Runs the example.
    *
-   * @param args the arguments
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws IOException             Signals that an I/O exception has occurred.
-   * @throws InterruptedException    the interrupted exception
-   * @throws ExecutionException      the execution exception
-   * @throws TimeoutException
-   * @throws SerializationException
-   * @throws ConvertException
+   * @param args not used
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   * @throws ConvertException if the optimization cannot be converted to a config
+   * @throws SerializationException if the config cannot be serialized
    */
   public static void main(String[] args)
-      throws InvalidLicenceException, IOException, InterruptedException, ExecutionException,
-      TimeoutException, ConvertException, SerializationException {
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException, ConvertException, SerializationException {
     new PNDSimpleExample().example();
   }
 
-  /**
-   * To string.
-   *
-   * @return the string
-   */
+  @Override
   public String toString() {
-    return "Simple example of a pick up and delivery optimization problem.";
+    return "Delivers Fruit to two customers and picks up Bread from them, with simple loads on one"
+        + " truck.";
   }
 
   /**
-   * Example.
+   * Builds the optimization, runs it, prints the result and prints the JSON.
    *
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws IOException             Signals that an I/O exception has occurred.
-   * @throws InterruptedException    the interrupted exception
-   * @throws ExecutionException      the execution exception
-   * @throws TimeoutException
-   * @throws SerializationException
-   * @throws ConvertException
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   * @throws ConvertException if the optimization cannot be converted to a config
+   * @throws SerializationException if the config cannot be serialized
    */
   public void example()
-      throws InvalidLicenceException, IOException, InterruptedException, ExecutionException,
-      TimeoutException, ConvertException, SerializationException {
-
-    // Set license via helper
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException, ConvertException, SerializationException {
+    // The public evaluation license, or your own license if you put a license file where
+    // ExampleLicenseHelper looks for it.
     ExampleLicenseHelper.setLicense(this);
-
-    this.setProperties();
-    this.addNodes();
-    this.addRes();
-
-    // Start the optimization
-    CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
-
-    // Subscribe to events
-    subscribeToEvents(this);
-
-    // It is important to block the call, otherwise the optimization will be
-    // terminated
-    IOptimizationResult result = resultFuture.get(2, TimeUnit.MINUTES);
-
-    System.out.println(result);
-
-    // Transform to TourOptimizerInput
-    System.out.println("\n\n ====== JSON ======");
-    JSONConfig myExtension = JSONConfig.builder()
-        .keySetting(OptimizationKeySetting.of(ExampleLicenseHelper.PUBLIC_JSON_LICENSE))
-        .timeOut(Duration.ofMinutes(10)).build();
-
-    System.out.println(JSONOptimization.asJSON(
-        JSONOptimization.fromOptization(this, Optional.of(myExtension))
-            .withElementConnections(List.of())));
-
+    addProperties(this);
+    addNodes(this);
+    addResources(this);
+    attachToObservables(this);
+    startAndPresentResult(this);
+    printJson(this);
   }
 
-  /** Sets the properties. */
-  public void setProperties() {
-
+  /**
+   * Adds the properties that keep the run short and raise the capacity weight.
+   *
+   * @param opti the optimization
+   */
+  private static void addProperties(IOptimization opti) {
     Properties props = new Properties();
+    // Fewer generations and iterations than the defaults keep the run short.
     props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000");
-
-    // We have to tell the optimizer that we have a high interest in capacity
-    // planning, the default is
-    // 100
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
+    // A capacity weight above the default makes a capacity violation cost more against the route
+    // time and distance.
     props.setProperty("JOptWeight.Capacity", "200");
-    this.addElement(props);
+    opti.addElement(props);
   }
 
-  /** Adds the res. */
-  public void addRes() {
+  /**
+   * Adds CustomerOne and CustomerTwo, each with a request of Fruit and a supply of Bread.
+   *
+   * @param opti the optimization
+   */
+  private static void addNodes(IOptimization opti) {
+    List<IOpeningHours> openingHours = new ArrayList<>();
+    openingHours.add(
+        new OpeningHours(
+            ZonedDateTime.of(2020, MARCH.getValue(), 11, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MARCH.getValue(), 11, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-    /*
-     * Setting the resource JackTruck
-     */
+    // Each visit takes 30 minutes, a sample value.
+    Duration visitDuration = Duration.ofMinutes(30);
 
+    // Both customers are at one point in Koeln, so the order of the visits changes the loads on
+    // board, not the driving.
+    INode customerOne =
+        new TimeWindowGeoNode("CustomerOne", 50.9333, 6.95, openingHours, visitDuration, 1);
+    customerOne.setNodeDepot(createNodeDepot("CustomerOneDepot", 2, 10));
+    opti.addElement(customerOne);
+
+    INode customerTwo =
+        new TimeWindowGeoNode("CustomerTwo", 50.9333, 6.95, openingHours, visitDuration, 1);
+    customerTwo.setNodeDepot(createNodeDepot("CustomerTwoDepot", 3, 10));
+    opti.addElement(customerTwo);
+  }
+
+  /**
+   * Creates the depot of a customer: a request of Fruit and a supply of Bread.
+   *
+   * @param depotId the id of the depot
+   * @param fruitRequest the Fruit that the customer requests
+   * @param breadSupply the Bread that the customer supplies
+   * @return the node depot
+   */
+  private static INodeDepot createNodeDepot(String depotId, int fruitRequest, int breadSupply) {
+    // The third argument makes the load a request (true) or a supply (false); the fourth allows a
+    // partial exchange (fuzzy).
+    ILoad fruitLoad = new SimpleLoad("Fruit", fruitRequest, true, true);
+    ILoad breadLoad = new SimpleLoad("Bread", breadSupply, false, true);
+
+    INodeDepot depot = new SimpleNodeDepot(depotId);
+    depot.add(fruitLoad);
+    depot.add(breadLoad);
+    return depot;
+  }
+
+  /**
+   * Adds Truck with its depot.
+   *
+   * @param opti the optimization
+   */
+  private static void addResources(IOptimization opti) {
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
         new WorkingHours(
             ZonedDateTime.of(2020, MARCH.getValue(), 11, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MARCH.getValue(), 11, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
+    // 10 h, a sample value above what the route of this plan needs.
     Duration maxWorkingTime = Duration.ofHours(10);
-    Quantity<Length> maxDistanceKmW = Quantities.getQuantity(2800.0, KILO(METRE));
+    // 1200 km per day, more than the longest day of this plan needs.
+    Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
-    IResource truck = new CapacityResource("Truck", 50.1167, 7.68333, maxWorkingTime,
-        maxDistanceKmW, workingHours);
-
-    // Setting a depot to our truck
-    truck.setResourceDepot(this.createResourceDepot());
-
-    // Adding the truck to our optimization
-    this.addElement(truck);
+    IResource truck =
+        new CapacityResource(
+            "Truck", 50.1167, 7.68333, maxWorkingTime, maxDistanceKmW, workingHours);
+    truck.setResourceDepot(createResourceDepot());
+    opti.addElement(truck);
   }
 
   /**
-   * Creates the resource depot.
+   * Creates the depot of Truck: Fruit and Bread, which share a total capacity of 70.
    *
    * @return the resource depot
    */
-  public IResourceDepot createResourceDepot() {
-    /*
-     * Creating a ResourceDepot with two LoadCapacities and attach it to a Resource
-     * depot "truckDepot"
-     */
-
-    // Define the LoadCapacities "Fruit" and "Bread"
-
-    // We can carry a maximum of 70 pallets of "Fruit" (Assuming we have
-    // no "Bread" on our truck). We start with an initial load of 5 pallets of
-    // "Fruit".
-    ILoadCapacity fruitLoadCapacity = new SimpleLoadCapacity("Fruit", 70, 5);
-
-    // We can store a maximum of 70 "Bread" on our truck (assuming that no other
-    // Load is present).
-    // We start with an initial load of 10 pallets of "Bread" of the maximum 70.
+  private static IResourceDepot createResourceDepot() {
+    // Each good may fill all 70 units of the depot when it is alone on the truck; together they
+    // share the 70. Truck starts with 5 Fruit and 10 Bread on board.
+    ILoadCapacity fruitCapacity = new SimpleLoadCapacity("Fruit", 70, 5);
     ILoadCapacity breadCapacity = new SimpleLoadCapacity("Bread", 70, 10);
 
-    // Our depot can store a maximum of 70 total items. For example, 40 "Fruit"
-    // and 30 "Bread".
     IResourceDepot depot = new SimpleResourceDepot("truckDepot", 70);
-
-    // Adding the capacities to our depot
-    depot.add(fruitLoadCapacity);
+    depot.add(fruitCapacity);
     depot.add(breadCapacity);
-
     return depot;
   }
 
-  /** Adds the nodes. */
-  public void addNodes() {
-
-    List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
-    weeklyOpeningHours.add(
-        new OpeningHours(
-            ZonedDateTime.of(2020, MARCH.getValue(), 11, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MARCH.getValue(), 11, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    Duration visitDuration = Duration.ofMinutes(30);
-
-    /*
-     *
-     *
-     */
-
-    INode job1 =
-        new TimeWindowGeoNode("CustomerOne", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-
-    job1.setNodeDepot(this.createNodeDepot(2, 10, "CustomerOneDepot"));
-    this.addElement(job1);
-
-    //
-    INode job2 =
-        new TimeWindowGeoNode("CustomerTwo", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-
-    job2.setNodeDepot(this.createNodeDepot(3, 10, "CustomerTwoDepot"));
-    this.addElement(job2);
-
-    //
-
+  /**
+   * Prints the progress, warning, status and error events of the run.
+   *
+   * @param opti the optimization
+   */
+  private static void attachToObservables(IOptimization opti) {
+    // Subscribe before the start: the subjects replay only a few past events.
+    opti.getOptimizationEvents()
+        .progressSubject()
+        .subscribe(p -> System.out.println(p.getProgressString()));
+    opti.getOptimizationEvents().warningSubject().subscribe(w -> System.out.println(w.toString()));
+    opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s.toString()));
+    opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
   }
 
   /**
-   * Creates the node depot.
+   * Starts the run, waits for the result and prints it.
    *
-   * @param fruitRequest the fruit request
-   * @param breadSupply  the bread supply
-   * @param depotId      the depot id
-   * @return the i node depot
+   * @param opti the optimization
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
    */
-  public INodeDepot createNodeDepot(int fruitRequest, int breadSupply, String depotId) {
-
-    ILoad deliverGoodLoad = new SimpleLoad("Fruit", fruitRequest, true, true);
-
-    ILoad pickupGoodLoad = new SimpleLoad("Bread", breadSupply, false, true);
-
-    INodeDepot customerNodeDepot = new SimpleNodeDepot(depotId);
-    customerNodeDepot.add(deliverGoodLoad);
-    customerNodeDepot.add(pickupGoodLoad);
-
-    return customerNodeDepot;
+  private static void startAndPresentResult(IOptimization opti)
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException {
+    CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
+    // Wait for the result; without the wait the JVM would end before the run does.
+    IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
+    System.out.println(result);
   }
 
-  private static void subscribeToEvents(IOptimization opti) {
+  /**
+   * Prints the optimization as JSON, without the solution, the node connections and a license.
+   *
+   * @param opti the optimization
+   * @throws IOException if a file cannot be read or written
+   * @throws ConvertException if the optimization cannot be converted to a config
+   * @throws SerializationException if the config cannot be serialized
+   */
+  private static void printJson(IOptimization opti)
+      throws IOException, ConvertException, SerializationException {
+    // The JSON leaves out the solution and the node connections, so that it stays short.
+    boolean keepSolutionInJson = false;
+    boolean keepNodeConnectionsInJson = false;
 
-    // Subscribe to events
-    opti.getOptimizationEvents().progressSubject().subscribe(p -> {
-      System.out.println(p.getProgressString());
-    });
+    // The extension holds a timeout of 10 minutes, a sample value, and no key setting, so the
+    // printed JSON contains no license.
+    JSONConfig extension = JSONConfig.builder().timeOut(Duration.ofMinutes(10)).build();
 
-    opti.getOptimizationEvents().errorSubject().subscribe(e -> {
-      System.out.println(e.getCause() + " " + e.getCode());
-    });
-
-    opti.getOptimizationEvents().warningSubject().subscribe(w -> {
-      System.out.println(w.getDescription() + w.getCode());
-    });
-
-    opti.getOptimizationEvents().statusSubject().subscribe(s -> {
-      System.out.println(s.getDescription() + " " + s.getCode());
-    });
+    String json =
+        ResultJsonPrinter.toJsonOptimizationString(
+            ResultJsonPrinter.toJsonOptimization(
+                opti, extension, keepSolutionInJson, keepNodeConnectionsInJson));
+    System.out.println(json);
   }
 }

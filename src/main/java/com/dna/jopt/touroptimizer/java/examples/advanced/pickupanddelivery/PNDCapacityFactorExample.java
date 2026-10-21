@@ -3,22 +3,37 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.pickupanddelivery;
  * #%L
  * JOpt TourOptimizer Examples
  * %%
- * Copyright (C) 2017 - 2020 DNA Evolutions GmbH
+ * Copyright (C) 2017 - 2023 DNA Evolutions GmbH
  * %%
- * This file is subject to the terms and conditions defined in file 'LICENSE.txt',
- * which is part of this source code package.
+ * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
+ * which is part of this repository.
  *
- * If not, see <https://www.dna-evolutions.com/agb-conditions-and-terms/>.
+ * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
+import static java.time.Month.MARCH;
+import static javax.measure.MetricPrefix.CENTI;
+import static javax.measure.MetricPrefix.KILO;
+import static javax.measure.MetricPrefix.MILLI;
+import static tech.units.indriya.unit.Units.METRE;
+
+import tech.units.indriya.quantity.Quantities;
+
+import javax.measure.Quantity;
+import javax.measure.quantity.Length;
+
+import java.io.IOException;
+import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import javax.measure.Quantity;
-import javax.measure.quantity.Length;
 
 import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
@@ -47,217 +62,243 @@ import com.dna.jopt.member.unit.resource.CapacityResource;
 import com.dna.jopt.member.unit.resource.IResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
-import tech.units.indriya.quantity.Quantities;
-
-import java.util.List;
-import java.util.Optional;
-
-import static java.time.Month.MARCH;
-import static javax.measure.MetricPrefix.KILO;
-import static javax.measure.MetricPrefix.CENTI;
-import static javax.measure.MetricPrefix.MILLI;
-import static tech.units.indriya.unit.Units.METRE;
-
-import java.io.IOException;
-import java.time.Duration;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-
 /**
- * In this example a Resource called "JackTruck" has to deliver/pickup "Pianos" and has to
- * deliver/pickup "Cups". Each customer can decide what needs to be picked up (customer supply) and what needs
- * to be delivered (customer request).
+ * Turns the floor space of a truck, a piano and a pallet of cups into capacity factors with
+ * CargoSpace, so that one Piano uses more of the depot than one Cup.
  *
- * <p>It is obvious that a truck can load more units of "Cups" than units of "Pianos". Let's assume the
- * "Cups" are transported on pallets with a size of 1219, 1016 mm (48, 40 inches). We do not allow
- * to stack the pallets as otherwise, "Cups" could break. Each customer is only allowed to request or
- * provide pallets of "Cups".
+ * <p>Scenario: JackTruck starts at 50.1167, 7.68333 with 2 Piano and 5 Cup (pallets of cups) on
+ * board and works from 08:00 to 20:00 on March 11, 2020 (Europe/Berlin). Its floor is 7 x 2.5 m,
+ * a piano takes 160 x 140 cm and a pallet 1219 x 1016 mm, and neither good is stacked. Three
+ * customers and FlexNode are at one point in Koeln, open from 08:00 to 18:00: CustomerOne
+ * requests 2 Piano and supplies 3 Cup, CustomerTwo supplies 1 Piano and requests 4 Cup,
+ * CustomerThree supplies 1 Cup, and FlexNode holds a MixedFlexLoad of each good.
  *
- * <p>A "Piano" has a floor space of 160 x 140 cm (63 x 55 inches). Obviously we cannot stack "Pianos" as
- * well.
+ * <p>Look for: the lines printed before the run: at most 4 pianos or 10 pallets fit on the
+ * floor, the floor holds 17.5 square meters, and the factors are 4.375 for Piano and 1.75 for
+ * Cup. Then the ResourceDepot report of JackTruck: its used capacity at the start is 17.5 (2 x
+ * 4.375 + 5 x 1.75), the full depot.
  *
- * <p>The truck has floor space of 7 x 2.5 m (23 x 8 feet).
+ * <p>Prerequisites: None: without a license file the example uses the public evaluation license
+ * (see ExampleLicenseHelper).
  *
- * <p>The goal is to find a way to tell the Optimizer the maximal amount of both goods a
- * truck can carry without overloading. Therefore, we have to calculate the equivalent of one "Piano"
- * and one pallet of "Cups".
- *
- * <p>The ground unit for this calculation is square-meter.
- * What is the equivalent of a "Piano" and what is the equivalent of a pallet of "Cups" in this
- * ground unit?
- *
- * <p>TODO add Truck size
- *
- * @author Jens Richter
- * @version Mar 08, 2021
- * @since Jul 27, 2020
- *     <p>Example of pick up and delivery optimization problem.
+ * @see <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/pickupanddelivery/PND.md">PND.md</a>
+ * @see <a href="https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/pickup_and_delivery">Pickup and delivery</a>
  */
 public class PNDCapacityFactorExample extends Optimization {
 
   /**
-   * The main method.
+   * Runs the example.
    *
-   * @param args the arguments
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws IOException Signals that an I/O exception has occurred.
-   * @throws InterruptedException the interrupted exception
-   * @throws ExecutionException the execution exception
-   * @throws TimeoutException the timeout exception
+   * @param args not used
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
    */
   public static void main(String[] args)
-      throws InvalidLicenceException, IOException, InterruptedException, ExecutionException,
-      TimeoutException {
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException {
     new PNDCapacityFactorExample().example();
   }
 
-  /**
-   * To string.
-   *
-   * @return the string
-   */
+  @Override
   public String toString() {
-    return "Example: Pick up and delivery optimization with Cargo Space capacity factors.";
+    return "Turns the floor space of a truck, a piano and a pallet of cups into capacity factors"
+        + " with CargoSpace, so that one Piano uses more of the depot than one Cup.";
   }
 
   /**
-   * Example.
+   * Builds the optimization, runs it and prints the result.
    *
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws IOException Signals that an I/O exception has occurred.
-   * @throws InterruptedException the interrupted exception
-   * @throws ExecutionException the execution exception
-   * @throws TimeoutException the timeout exception
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
    */
   public void example()
-      throws InvalidLicenceException, IOException, InterruptedException, ExecutionException,
-      TimeoutException {
-
-    // Set license via helper
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException {
+    // The public evaluation license, or your own license if you put a license file where
+    // ExampleLicenseHelper looks for it.
     ExampleLicenseHelper.setLicense(this);
-
-    this.setProperties();
-    this.addNodes();
-    this.addRes();
-
-    // Start the optimization
-    CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
-
-    // Subscribe to events
-    subscribeToEvents(this);
-
-    // It is important to block the call, otherwise the optimization will be terminated
-    IOptimizationResult result = resultFuture.get(2, TimeUnit.MINUTES);
-
-    System.out.println(result);
+    addProperties(this);
+    addNodes(this);
+    addResources(this);
+    attachToObservables(this);
+    startAndPresentResult(this);
   }
 
-  /** Sets the properties. */
-  public void setProperties() {
-
+  /**
+   * Adds the properties that keep the run short and raise the capacity weight.
+   *
+   * @param opti the optimization
+   */
+  private static void addProperties(IOptimization opti) {
     Properties props = new Properties();
+    // Fewer generations and iterations than the defaults keep the run short.
     props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000");
-
-    // We have to tell the optimizer that we have a high interest in capacity planning, default is
-    // 100
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
+    // A capacity weight above the default makes a capacity violation cost more against the route
+    // time and distance.
     props.setProperty("JOptWeight.Capacity", "200");
-    this.addElement(props);
+    opti.addElement(props);
   }
 
-  /** Adds the res. */
-  public void addRes() {
+  /**
+   * Adds three customers with loads of Piano and Cup, and FlexNode with MixedFlexLoads.
+   *
+   * @param opti the optimization
+   */
+  private static void addNodes(IOptimization opti) {
+    List<IOpeningHours> openingHours = new ArrayList<>();
+    openingHours.add(
+        new OpeningHours(
+            ZonedDateTime.of(2020, MARCH.getValue(), 11, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MARCH.getValue(), 11, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-    /*
-     * Setting the resource JackTruck
-     */
+    // Each visit takes 30 minutes, a sample value.
+    Duration visitDuration = Duration.ofMinutes(30);
 
+    // All nodes are at one point in Koeln, so the order of the visits changes the loads on board,
+    // not the driving.
+    INode customerOne =
+        new TimeWindowGeoNode("CustomerOne", 50.9333, 6.95, openingHours, visitDuration, 1);
+    customerOne.setNodeDepot(createNodeDepot("CustomerOneDepot", 2, true, 3, false));
+    opti.addElement(customerOne);
+
+    INode customerTwo =
+        new TimeWindowGeoNode("CustomerTwo", 50.9333, 6.95, openingHours, visitDuration, 1);
+    customerTwo.setNodeDepot(createNodeDepot("CustomerTwoDepot", 1, false, 4, true));
+    opti.addElement(customerTwo);
+
+    INode customerThree =
+        new TimeWindowGeoNode("CustomerThree", 50.9333, 6.95, openingHours, visitDuration, 1);
+    customerThree.setNodeDepot(createNodeDepot("CustomerThreeDepot", 0, false, 1, false));
+    opti.addElement(customerThree);
+
+    INode flexNode =
+        new TimeWindowGeoNode("FlexNode", 50.9333, 6.95, openingHours, visitDuration, 1);
+    flexNode.setNodeDepot(createMixedFlexDepot("FlexNodeDepot"));
+    opti.addElement(flexNode);
+  }
+
+  /**
+   * Creates the depot of a customer with fuzzy loads of Piano and Cup.
+   *
+   * @param depotId the id of the depot
+   * @param pianoCount the pianos that the customer requests or supplies
+   * @param isPianoRequest true if the customer requests the pianos, false if it supplies them
+   * @param cupCount the pallets of cups that the customer requests or supplies
+   * @param isCupRequest true if the customer requests the pallets, false if it supplies them
+   * @return the node depot
+   */
+  private static INodeDepot createNodeDepot(
+      String depotId, int pianoCount, boolean isPianoRequest, int cupCount, boolean isCupRequest) {
+    ILoad pianoLoad = new SimpleLoad("Piano", pianoCount, isPianoRequest, true);
+    ILoad cupLoad = new SimpleLoad("Cup", cupCount, isCupRequest, true);
+
+    INodeDepot depot = new SimpleNodeDepot(depotId);
+
+    // A load of 0 is allowed; leaving it out keeps the depot report shorter.
+    if (pianoCount > 0) {
+      depot.add(pianoLoad);
+    }
+
+    if (cupCount > 0) {
+      depot.add(cupLoad);
+    }
+
+    return depot;
+  }
+
+  /**
+   * Creates the depot of FlexNode with a MixedFlexLoad of Piano and one of Cup.
+   *
+   * @param depotId the id of the depot
+   * @return the node depot
+   */
+  private static INodeDepot createMixedFlexDepot(String depotId) {
+    // A MixedFlexLoad whose value and direction the optimizer sets. Without start values it
+    // starts as a supply of 0.
+    ILoad pianoLoad = new MixedFlexLoad("Piano");
+
+    // Start values can be given: the MixedFlexLoad of Cup starts as a supply (false) of 2, a sample
+    // value.
+    ILoad cupLoad = new MixedFlexLoad("Cup", 2, false);
+
+    INodeDepot depot = new SimpleNodeDepot(depotId);
+    depot.add(pianoLoad);
+    depot.add(cupLoad);
+    return depot;
+  }
+
+  /**
+   * Adds JackTruck with its depot.
+   *
+   * @param opti the optimization
+   */
+  private static void addResources(IOptimization opti) {
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
         new WorkingHours(
             ZonedDateTime.of(2020, MARCH.getValue(), 11, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MARCH.getValue(), 11, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
+    // 10 h, a sample value above what the route of this plan needs.
     Duration maxWorkingTime = Duration.ofHours(10);
-    Quantity<Length> maxDistanceKmW = Quantities.getQuantity(2800.0, KILO(METRE));
+    // 1200 km per day, more than the longest day of this plan needs.
+    Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
     IResource truckJack =
         new CapacityResource(
             "JackTruck", 50.1167, 7.68333, maxWorkingTime, maxDistanceKmW, workingHours);
-
-    // Setting a depot to our truck
-    truckJack.setResourceDepot(this.createResourceDepot());
-
-    // Adding the truck to our optimization
-    this.addElement(truckJack);
+    truckJack.setResourceDepot(createResourceDepot());
+    opti.addElement(truckJack);
   }
 
   /**
-   * Creates the resource depot.
+   * Creates the depot of JackTruck from the floor space of the truck and of the two goods, and
+   * prints the values it computes.
    *
    * @return the resource depot
    */
-  public IResourceDepot createResourceDepot() {
-
-    /*
-     * Defining a ResourceDepot "JackTruckDepot"
-     *
-     */
-
-    /*
-     * First we have to do the Cargo calculation
-     */
-
-    // Define the cargo space of the truck
+  private static IResourceDepot createResourceDepot() {
     ICargoSpace truckCargoSpace =
         new CargoSpace(Quantities.getQuantity(7.0, METRE), Quantities.getQuantity(2.5, METRE));
 
-    // Define the cargo good for the piano
+    // A CargoSpaceGood with length and width only is not stacked.
     ICargoSpaceGood pianoCargoGood =
         new CargoSpaceGood(
             Quantities.getQuantity(160, CENTI(METRE)), Quantities.getQuantity(140, CENTI(METRE)));
-
-    // Define the cargo good for the cups
     ICargoSpaceGood cupsCargoGood =
         new CargoSpaceGood(
             Quantities.getQuantity(1219, MILLI(METRE)), Quantities.getQuantity(1016, MILLI(METRE)));
 
-    // What would be the maximal individual  load of a certain good in our cargoSpace?
+    // How many of one good fit on the floor when no other good is on board.
     int maxPianoLoad = pianoCargoGood.calculateMaxIndividualLoading(truckCargoSpace);
     int maxCupLoad = cupsCargoGood.calculateMaxIndividualLoading(truckCargoSpace);
-
     System.out.println("Found maxPianoLoad: " + maxPianoLoad);
     System.out.println("Found maxCupLoad: " + maxCupLoad);
 
-    /*
-     * Create the loads
-     */
-    // Create the loads - we have some initial load
-    // Note: The initial load is NOT an abstract unit. Here it is number of Pianos and number of
-    // Pallets
-    ILoadCapacity pianoCpacity = new SimpleLoadCapacity("Piano", maxPianoLoad, 2);
-    ILoadCapacity cupCpacity = new SimpleLoadCapacity("Cup", maxCupLoad, 5);
+    // The initial loads count goods, not square meters: 2 pianos and 5 pallets are on board.
+    ILoadCapacity pianoCapacity = new SimpleLoadCapacity("Piano", maxPianoLoad, 2);
+    ILoadCapacity cupCapacity = new SimpleLoadCapacity("Cup", maxCupLoad, 5);
 
-    /*
-     * Create the depot
-     */
-
-    // Calculate the max loading in the ground unit - For space this is in square meter
+    // The total capacity of the depot is the floor space in square meters.
     double maxTotalLoadValue = truckCargoSpace.calculateMaxTotalLoadingCapacity();
-
     System.out.println("Found max total loading in the ground unit: " + maxTotalLoadValue);
 
     IResourceDepot depot = new SimpleResourceDepot("JackTruckDepot", maxTotalLoadValue);
 
-    // Calculate the individual loading factors
-    // The loadFactor calculation can fail, in case the maximal individual load would be zero
+    // The factor of a good is the floor space divided by the units of the good that fit on it, in
+    // square meters per unit. There is no factor if not one unit fits.
     Optional<Double> pianoLoadFactorOpt =
         truckCargoSpace.calculateLoadingCapacityFactor(pianoCargoGood);
     Optional<Double> cupsLoadFactorOpt =
         truckCargoSpace.calculateLoadingCapacityFactor(cupsCargoGood);
 
-    // Add the factors
     if (pianoLoadFactorOpt.isPresent()) {
       Double pianoLoadFactor = pianoLoadFactorOpt.get();
       depot.add("Piano", pianoLoadFactor);
@@ -270,153 +311,40 @@ public class PNDCapacityFactorExample extends Optimization {
       System.out.println("Found Cup load factor: " + cupsLoadFactor);
     }
 
-    // Add the loads
-    depot.add(pianoCpacity);
-    depot.add(cupCpacity);
-
+    depot.add(pianoCapacity);
+    depot.add(cupCapacity);
     return depot;
   }
 
-  /** Adds the nodes. */
-  public void addNodes() {
-
-    List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
-    weeklyOpeningHours.add(
-        new OpeningHours(
-            ZonedDateTime.of(2020, MARCH.getValue(), 11, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MARCH.getValue(), 11, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    Duration visitDuration = Duration.ofMinutes(30);
-
-    /*
-     *
-     *
-     */
-
-    INode job1 =
-        new TimeWindowGeoNode("CustomerOne", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-
-    job1.setNodeDepot(this.createNodeDepot("CustomerOneDepot", 2, true, 3, false));
-    this.addElement(job1);
-
-    //
-    INode job2 =
-        new TimeWindowGeoNode("CustomerTwo", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-
-    job2.setNodeDepot(this.createNodeDepot("CustomerTwoDepot", 1, false, 4, true));
-    this.addElement(job2);
-
-    //
-    INode job3 =
-        new TimeWindowGeoNode("CustomerThree", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-
-    job3.setNodeDepot(this.createNodeDepot("CustomerThreeDepot", 0, false, 1, false));
-    this.addElement(job3);
-
-    // Flex
-    INode flexNode =
-        new TimeWindowGeoNode("FlexNode", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-
-    flexNode.setNodeDepot(this.createMixedFlexDepot("FlexNodeDepot"));
-    this.addElement(flexNode);
-  }
-
   /**
-   * Creates the node depot.
+   * Prints the progress, warning, status and error events of the run.
    *
-   * @param depotId the depot id
-   * @param pianoCount the piano count
-   * @param isPianoRequest the is piano request
-   * @param cupsPalletCount the cups pallet count
-   * @param isCupRequest the is cup request
-   * @return the i node depot
+   * @param opti the optimization
    */
-  public INodeDepot createNodeDepot(
-      String depotId,
-      int pianoCount,
-      boolean isPianoRequest,
-      int cupsPalletCount,
-      boolean isCupRequest) {
-
-    ILoad pianoLoad = new SimpleLoad("Piano", pianoCount, isPianoRequest, true);
-    ILoad cupLoad = new SimpleLoad("Cup", cupsPalletCount, isCupRequest, true);
-
-    INodeDepot customerNodeDepot = new SimpleNodeDepot(depotId);
-
-    if (pianoCount > 0) {
-      // Only add if count is bigger than zero.
-      // However, this is not necessary but improves the readability of the result.
-      // The optimizer can also handle zero requests/supplies
-      customerNodeDepot.add(pianoLoad);
-    }
-
-    if (cupsPalletCount > 0) {
-      customerNodeDepot.add(cupLoad);
-    }
-
-    return customerNodeDepot;
-  }
-
-  /**
-   * Creates the mixed flex depot.
-   *
-   * @param depotId the depot id
-   * @return the i node depot
-   */
-  public INodeDepot createMixedFlexDepot(String depotId) {
-
-    // Adding MixedFlexLoads that adjust load request or supply during optimization
-    ILoad pianoLoad = new MixedFlexLoad("Piano");
-
-    // The initial (before optimization) properties of a MixedFlexLoad are a request of 0.0
-    // For helping the optimizer to faster converge, and initial value for FlexLoad and
-    // and initial value for the request state can be provided.
-    //
-    // For example: Our MixedFlexLoad for TV starts as supply (isRequest is false) with a value of
-    // 2.0
-    ILoad cupLoad = new MixedFlexLoad("Cup", 2, false);
-
-    INodeDepot nodeDepotWithMixedFlexLoads = new SimpleNodeDepot(depotId);
-    nodeDepotWithMixedFlexLoads.add(pianoLoad);
-    nodeDepotWithMixedFlexLoads.add(cupLoad);
-
-    return nodeDepotWithMixedFlexLoads;
-  }
-
-  /**
-   * Subscribe to events.
-   *
-   * @param opti the opti
-   */
-  private static void subscribeToEvents(IOptimization opti) {
-
-    // Subscribe to events
+  private static void attachToObservables(IOptimization opti) {
+    // Subscribe before the start: the subjects replay only a few past events.
     opti.getOptimizationEvents()
         .progressSubject()
-        .subscribe(
-            p -> {
-              System.out.println(p.getProgressString());
-            });
+        .subscribe(p -> System.out.println(p.getProgressString()));
+    opti.getOptimizationEvents().warningSubject().subscribe(w -> System.out.println(w.toString()));
+    opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s.toString()));
+    opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
+  }
 
-    opti.getOptimizationEvents()
-        .errorSubject()
-        .subscribe(
-            e -> {
-              System.out.println(e.getCause() + " " + e.getCode());
-            });
-
-    opti.getOptimizationEvents()
-        .warningSubject()
-        .subscribe(
-            w -> {
-              System.out.println(w.getDescription() + w.getCode());
-            });
-
-    opti.getOptimizationEvents()
-        .statusSubject()
-        .subscribe(
-            s -> {
-              System.out.println(s.getDescription() + " " + s.getCode());
-            });
+  /**
+   * Starts the run, waits for the result and prints it.
+   *
+   * @param opti the optimization
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   */
+  private static void startAndPresentResult(IOptimization opti)
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException {
+    CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
+    // Wait for the result; without the wait the JVM would end before the run does.
+    IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
+    System.out.println(result);
   }
 }

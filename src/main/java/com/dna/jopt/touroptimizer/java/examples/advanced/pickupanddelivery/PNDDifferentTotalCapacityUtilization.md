@@ -1,92 +1,161 @@
-# Different Total Capacity Utilization: `PNDDifferentTotalCapacityUtilization`
+# A depot capacity shared by two goods
 
-This pickup and delivery (PND) example shows a truck whose depot has a **total capacity** that is shared by two **load capacities** with different limits. One good may only use a part of the truck (a special compartment); the other good may use the whole truck, including that compartment.
+`PNDDifferentTotalCapacityUtilization` gives a truck a depot of 70 that two goods share: `DelicateFruit` may use at most 30 of it, `GlassVials` all 70. Because the truck starts with 30 `DelicateFruit` on board, it has to deliver fruit before it can pick up a large supply of `GlassVials`. The page is for developers who give goods their own limits inside one shared capacity. The building blocks of pickup and delivery (PND) are explained in the [pickup and delivery feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/pickup_and_delivery), and [Pickup and delivery examples](PND.md) lists the other PND examples.
 
-For the PND building blocks (NodeDepot, ResourceDepot, Load, LoadCapacity), see [PND.md](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/pickupanddelivery/PND.md).
+## What the example shows
 
----
-
-## References
-
-- Example source: [PNDDifferentTotalCapacityUtilization.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/pickupanddelivery/PNDDifferentTotalCapacityUtilization.java)
-- Pickup and delivery documentation: [ResourceDepot and LoadCapacity](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/pickup_and_delivery#resourcedepot-and-loadcapacity)
-
----
+- A `SimpleResourceDepot` has a total capacity, here 70, that all its load capacities share. Each `SimpleLoadCapacity` has its own maximum and an initial load: 30 and 30 for `DelicateFruit`, 70 and 10 for `GlassVials`.
+- The space left for one good depends on the other goods on board. With 30 `DelicateFruit` and 10 `GlassVials`, 30 more fit, although `GlassVials` alone may use all 70.
+- In this example the shared capacity decides the order of the visits: the truck delivers the `DelicateFruit` of `CustomerOne` before it picks up the `GlassVials` of `CustomerTwo`.
 
 ## Scenario
 
-The truck transports two goods:
+The dates, times, coordinates and amounts are sample values.
 
-- pallets of `DelicateFruit`, which must be stored in a special compartment (temperature and humidity),
-- pallets of `GlassVials`, which are well packed and can be stored in the normal part of the truck or in the compartment for the fruit.
+- **Resource:** `Truck` starts at 50.1167, 7.68333 and works on March 11, 2020, from 08:00 to 20:00 (Europe/Berlin). Its maximal working time is 10 hours and its maximal distance 1200 km.
+- **Nodes:** `CustomerOne` and `CustomerTwo`, two `TimeWindowGeoNode` objects at one point in Koeln (50.9333, 6.95). They are open on March 11, 2020, from 08:00 to 18:00, and each visit takes 30 minutes. Both nodes are at one point, so the order of the visits changes no distance; only the loads on board decide it.
 
-### The truck and its depot
+The depot of the truck, `truckDepot`, is a `SimpleResourceDepot` with a total capacity of 70 and two load capacities:
 
-The resource `Truck` has one working day, March 11, 2020, 08:00 to 20:00 (Europe/Berlin), a max working time of 10 hours and a max distance of 2800 km.
+| Load capacity | Maximum | Initial load |
+|---|---|---|
+| `DelicateFruit` | 30 | 30 |
+| `GlassVials` | 70 | 10 |
 
-`createResourceDepot()` gives the truck a `SimpleResourceDepot` with a total capacity of 70 and two `SimpleLoadCapacity` entries:
+Each node has a `SimpleNodeDepot` with a request of `DelicateFruit` and a supply of `GlassVials`. Both loads are fuzzy, so a part of them can be exchanged:
+
+| Node | `DelicateFruit` (request) | `GlassVials` (supply) |
+|---|---|---|
+| `CustomerOne` | 25 | 5 |
+| `CustomerTwo` | 5 | 40 |
+
+`addProperties` sets three properties:
+
+- `JOptExitCondition.JOptGenerationCount` to 1000 and `JOpt.Algorithm.PreOptimization.SA.NumIterations` to 100000. Both are below their defaults, which keeps the run short.
+- `JOptWeight.Capacity` to 200, above its default, so that a capacity violation costs more against the route time and distance.
+
+The defaults are in the [property reference](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties).
+
+## How the code works
+
+The source is [PNDDifferentTotalCapacityUtilization.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/pickupanddelivery/PNDDifferentTotalCapacityUtilization.java). `example()` runs the steps in order:
 
 ```java
-IResourceDepot depot = new SimpleResourceDepot("truckDepot", 70);
-
-ILoadCapacity delicateFruitLoadCapacity = new SimpleLoadCapacity("DelicateFruit", 30, 5);
-ILoadCapacity glassVialCapacity = new SimpleLoadCapacity("GlassVials", 70, 10);
+// The public evaluation license, or your own license if you put a license file where
+// ExampleLicenseHelper looks for it.
+ExampleLicenseHelper.setLicense(this);
+addProperties(this);
+addNodes(this);
+addResources(this);
+attachToObservables(this);
+startAndPresentResult(this);
 ```
 
-| Load capacity | Maximum | Initial load | Meaning in the example |
-|---|---|---|---|
-| `DelicateFruit` | 30 | 5 | fits only into the compartment, which holds 30 |
-| `GlassVials` | 70 | 10 | fits everywhere, up to the total capacity of 70 |
+- `ExampleLicenseHelper.setLicense(this)` uses your license file if you put one where the helper looks for it, and the public evaluation license otherwise.
+- `addProperties` sets the three properties.
+- `addNodes` adds the two customers with their depots.
+- `addResources` adds `Truck` with its depot.
+- `attachToObservables` subscribes to the progress, warning, status and error events with the event API, before the run starts.
+- `startAndPresentResult` starts the run, waits up to 5 minutes for the result and prints it.
 
-Both load capacities share the total capacity of 70 of the depot. So the space left for `GlassVials` depends on how much `DelicateFruit` is on the truck, and the reverse.
+### The depot of the truck
+
+`createResourceDepot` builds the depot with its total capacity and the two load capacities:
+
+```java
+// The total capacity of 70, which DelicateFruit and GlassVials share.
+IResourceDepot depot = new SimpleResourceDepot("truckDepot", 70);
+
+// DelicateFruit may use at most 30 of the 70; Truck starts with 30 on board.
+ILoadCapacity fruitCapacity = new SimpleLoadCapacity("DelicateFruit", 30, 30);
+
+// GlassVials may use all 70; Truck starts with 10 on board.
+ILoadCapacity glassCapacity = new SimpleLoadCapacity("GlassVials", 70, 10);
+
+depot.add(fruitCapacity);
+depot.add(glassCapacity);
+return depot;
+```
+
+`addResources` attaches the depot to `Truck` with `setResourceDepot`.
 
 ### The customers
 
-Two nodes, `CustomerOne` and `CustomerTwo`, both at 50.9333, 6.95, are open on March 11, 2020, 08:00 to 18:00 (Europe/Berlin), with a visit duration of 30 minutes. `createNodeDepot(...)` gives each of them a `SimpleNodeDepot` with two `SimpleLoad` entries:
-
-| Node | `DelicateFruit` (request, delivered) | `GlassVials` (supply, picked up) |
-|---|---|---|
-| `CustomerOne` | 2 | 10 |
-| `CustomerTwo` | 3 | 10 |
+`addNodes` gives each customer its depot:
 
 ```java
-ILoad deliverGoodLoad = new SimpleLoad("DelicateFruit", fruitRequest, true, true);
-ILoad pickupGoodLoad = new SimpleLoad("GlassVials", glassRequest, false, true);
+INode customerOne =
+    new TimeWindowGeoNode("CustomerOne", 50.9333, 6.95, openingHours, visitDuration, 1);
+customerOne.setNodeDepot(createNodeDepot("CustomerOneDepot", 25, 5));
+opti.addElement(customerOne);
+
+INode customerTwo =
+    new TimeWindowGeoNode("CustomerTwo", 50.9333, 6.95, openingHours, visitDuration, 1);
+customerTwo.setNodeDepot(createNodeDepot("CustomerTwoDepot", 5, 40));
+opti.addElement(customerTwo);
 ```
 
-The third argument is the request flag (`true`: the node requests the good, `false`: the node supplies it). The fourth argument is the fuzzy flag; both loads are created with `true`.
+`createNodeDepot` creates the two loads of a customer and adds them to a `SimpleNodeDepot`:
+
+```java
+// The third argument makes the load a request (true) or a supply (false); the fourth allows a
+// partial exchange (fuzzy).
+ILoad fruitLoad = new SimpleLoad("DelicateFruit", fruitRequest, true, true);
+ILoad glassLoad = new SimpleLoad("GlassVials", glassSupply, false, true);
+```
+
+## Output and what to look for
+
+The run prints the status and progress lines, then the result. In two test runs the result had the same route, `CustomerOne` and then `CustomerTwo`, and an empty violation summary.
+
+The ResourceDepot report of `Truck`, the same in both runs:
+
+```text
+------- ResourceDepot Report (Truck)-------
+START:
+---
+Id: truckDepot / Type: SimpleResourceDepot  / MaxTotalCapacity: 70.0 / UsedCapacity: 40.0
+(0) LoadCapacity:
+ Id: DelicateFruit / Type: SimpleLoadCapacity / Load: 30.0 / maxCapacity: 30.0 /
+
+(1) LoadCapacity:
+ Id: GlassVials / Type: SimpleLoadCapacity / Load: 10.0 / maxCapacity: 70.0 /
+
+TERMINATION:
+---
+Id: truckDepot / Type: SimpleResourceDepot  / MaxTotalCapacity: 70.0 / UsedCapacity: 55.0
+(0) LoadCapacity:
+ Id: DelicateFruit / Type: SimpleLoadCapacity / Load: 0.0 / maxCapacity: 30.0 /
+
+(1) LoadCapacity:
+ Id: GlassVials / Type: SimpleLoadCapacity / Load: 55.0 / maxCapacity: 70.0 /
+------- ResourceDepot Report END -------
+```
+
+At the start, 40 of the 70 are in use. `CustomerOne` takes 25 `DelicateFruit` and gives 5 `GlassVials`, which leaves 20 in use. `CustomerTwo` takes the last 5 `DelicateFruit` and gives 40 `GlassVials`, so the truck ends with 55 `GlassVials` and no `DelicateFruit`. The visit lines of both customers, the same in both runs:
+
+```text
+0.0 CustomerOne / Geo  / Arrival: 11.03.2020 09:19:19 (Europe/Berlin) , Departure: 11.03.2020 09:49:19 (Europe/Berlin) / Duration: 30.0 [min] / Driving: 79.33 [min], 104.71 [km]
+0.1 CustomerTwo / Geo  / Arrival: 11.03.2020 09:49:19 (Europe/Berlin) , Departure: 11.03.2020 10:19:19 (Europe/Berlin) / Duration: 30.0 [min] / Driving: 0.0 [min], 0.0 [km]
+```
+
+After each visit, the depot line of the customer shows a desired load exchange of 0.0 for both goods: each load was exchanged in full.
+
+The order matters because of the shared capacity. Visited first, `CustomerTwo` would meet a truck that still carries 25 `DelicateFruit` and 10 `GlassVials` after the fruit delivery, 35 of 70 in use. Its 40 `GlassVials` do not fit into the 35 that are left, although 50 `GlassVials` would stay below their own maximum of 70. In a test run with `CustomerOne` left out, the truck picked up 35 of the 40 `GlassVials` at `CustomerTwo`. The result reported a total overload of 5 (reason `TOTAL_OVERLOAD`) and no overload with the reason `OVERLOAD`, which marks a load capacity above its own maximum.
+
+## Run it
+
+Run the `main(String[] args)` method of `PNDDifferentTotalCapacityUtilization` from your IDE, with the repository imported as a Maven project. You need a JDK in the version that the examples pom sets. You need no license file: without one, the example uses the public evaluation license (see the [license guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license)).
+
+## Related
+
+- [PNDDifferentTotalCapacityUtilization.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/pickupanddelivery/PNDDifferentTotalCapacityUtilization.java): the source of this example.
+- [Pickup and delivery examples](PND.md): the other PND examples, one line each.
+- [Pickup and delivery](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/pickup_and_delivery): the feature guide, with resource depots, load capacities and the types of capacity violations.
+- [Optimization properties](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties): the property reference, with `JOptWeight.Capacity` and its default.
+- [Recommended ways to run an optimization](../../basic/recommendedimplementation_02/RecommendedImplementation.md): the recommended run pattern, a synchronous run and the legacy callback methods.
+- [Advanced examples](../README.md): the overview of all Advanced examples.
 
 ---
 
-## Solver properties
-
-`setProperties()` registers:
-
-- `JOptExitCondition.JOptGenerationCount = 1000`
-- `JOpt.Algorithm.PreOptimization.SA.NumIterations = 1000`
-- `JOptWeight.Capacity = 200`, to give capacity planning a high weight
-
----
-
-## Execution flow
-
-1. Set the license via `ExampleLicenseHelper.setLicense(this);`
-2. `setProperties()`, `addNodes()`, `addRes()`
-3. Start the run with `startRunAsync()` and subscribe to progress, error, warning and status events.
-4. Wait for the result with `resultFuture.get(2, TimeUnit.MINUTES)` and print it.
-
----
-
-## What to look for in the result
-
-The printed result contains the depot information of the truck and of the two customers. Check:
-
-- that both customers receive their `DelicateFruit` (2 and 3, from the initial load of 5),
-- that both customers hand over their `GlassVials` (10 each, on top of the initial load of 10),
-- that the load of the truck never exceeds the total capacity of 70, and `DelicateFruit` never exceeds 30.
-
----
-
-## How to run
-
-Run the `main(String[] args)` method of `PNDDifferentTotalCapacityUtilization`.
+Added: 2026-10-15 (JOpt core 7.5.3-rc5-j17) | Last updated: 2026-10-21
