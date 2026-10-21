@@ -9,14 +9,16 @@ In JOpt, many nodes represent geo locations, for example a `TimeWindowGeoNode` w
 - it takes part in the plan like any other node, with opening hours, a visit duration and an importance,
 - but it has no geo coordinates.
 
-Typical event nodes are phone calls, paperwork, remote support sessions and internal meetings: they take time on the route but add no travel.
+Conceptually, it represents "work that must be done" rather than "a place to visit".
+
+Typical event nodes are phone calls, paperwork / compliance steps, remote support sessions and internal meetings, and follow-ups that can be done anywhere (within working hours): event nodes are useful when your planning problem includes tasks such as these. These tasks still take time on the route and must be placed in the route timeline, but they add no travel: they do not consume travel distance. This makes event nodes ideal for representing remote tasks that must happen between "real" visits.
 
 ### When to use an event node
 
 - **If only the time of a task matters, not its place, model it as an `EventNode`.**
 - **Use geo nodes when travel is part of the cost/constraints.** If there is any dependency on distance/time-to-reach, keep it as a geo node (or supply connection data).
-- **Be explicit about time windows**, for example: call the customer between 10 and 12. Ensure the opening hours reflect the business requirement, otherwise the optimizer places it anywhere inside the opening hours.
-- **Watch idle time.** Adding event nodes can reduce idle time (fill gaps between tight windows). Use result analysis to validate:
+- **Be explicit about time windows**, for example: call the customer between 10 and 12. Ensure the opening hours reflect the business requirement (not just broad working hours), otherwise the optimizer places it anywhere inside the opening hours.
+- **Watch idle time.** Adding event nodes can reduce idle time (fill gaps between tight windows), but it can also increase complexity. Use result analysis to validate:
   - whether the event nodes are scheduled where intended,
   - whether they create unexpected waiting time due to time-window interaction.
 
@@ -24,16 +26,16 @@ Typical event nodes are phone calls, paperwork, remote support sessions and inte
 
 The example builds one resource and nine nodes. The dates, times and coordinates are sample values.
 
-- **Resource:** `Jack` starts at 50.775346, 6.083887 (Aachen) and works on May 6 and 7, 2020, from 08:00 to 17:00 (Europe/Berlin). His maximal working time is 13 hours and his maximal distance 1200 km.
+- **Resource:** `Jack`, the one `CapacityResource` that `addResources()` creates, is based in Aachen and starts at 50.775346, 6.083887 (lat/long provided). He works on May 6 and 7, 2020, from 08:00 to 17:00 (Europe/Berlin): these are his working hours. His max working time is 13 hours and his maximal distance 1200 km.
 - **Geo nodes:** eight `TimeWindowGeoNode` objects: Koeln, Essen, Dueren, Nuernberg, Heilbronn, Stuttgart, Wuppertal and Aachen.
 - **Event node:** one `EventNode` with the id `Event`.
 - **All nine nodes** are open on May 6 and 7, 2020, from 08:00 to 17:00, take a visit of 20 minutes and have the same importance.
 
 The maximal working time of 13 hours is longer than the 9 hours of the working hours, so a day may run past 17:00 without overtime. The 1200 km per day are more than the longest day of this plan needs.
 
-The resource still has coordinates: each route starts and ends at Jack's position.
+The resource still has coordinates, even though the example includes an `EventNode`: resources have geo coordinates because they define the start/end location, so each route starts and ends at Jack's position, and the driving to the first node and back from the last node starts and ends there.
 
-`addProperties` sets two properties: `JOptExitCondition.JOptGenerationCount` to 1000 and `JOpt.Algorithm.PreOptimization.SA.NumIterations` to 100000. Both are below their defaults, which keeps the run short; the defaults are in the [property reference](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties).
+`addProperties` (`addProperties()`) sets two properties, relatively low effort parameters: `JOptExitCondition.JOptGenerationCount` to 1000 and `JOpt.Algorithm.PreOptimization.SA.NumIterations` to 100000; the class does not set `JOpt.Algorithm.PreOptimization.SA.NumRepetitions` and `JOpt.NumCPUCores`. Both are below their defaults, which keeps the run short: this example is configured for demonstration, to keep it quick; the defaults are in the [property reference](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties). Practical meaning: in typical tutorials you may start with smaller values and scale up once modeling is correct.
 
 ## How the code works
 
@@ -102,7 +104,7 @@ return result;
 
 ### The KML export
 
-`exportToKml` writes the result to `EventNodeExample.kml` in the working directory, with the title `EventNodeExample`:
+The example exports the result container to a KML file in `exportToKml(IOptimizationResult result)`. Its export behavior: it creates an `EntityKMLExporter`, sets the title to `EventNodeExample` (the simple name of the class, written as a literal string) and writes the result, with that title, to a file, `EventNodeExample.kml` in the working directory:
 
 ```java
 String kmlFile = "EventNodeExample.kml";
@@ -120,7 +122,7 @@ try (OutputStream out = new FileOutputStream(kmlFile)) {
 
 The example checks the boolean that `export` returns and prints `KML export failed: EventNodeExample.kml` if it is `false`.
 
-An event node has no position of its own: in the KML file it gets a placemark at the position of the element before it on the route, with its own icon style.
+This is valuable for quick inspection of route geometry and ordering. Note that an event node has no position of its own: in the KML file it gets a placemark at the position of the element before it on the route, with its own icon style.
 
 ## Output and what to look for
 
@@ -165,4 +167,4 @@ To extend the example:
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-20
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21

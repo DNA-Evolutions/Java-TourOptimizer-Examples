@@ -93,7 +93,7 @@ The route's visit sequence comes from `result.getOrderedRouteItems(route)`, in t
 
 ### The report of ReadOutResultWithHeadersExample
 
-This example takes the same extraction and turns it into a **console report**, modeled after the tutorial's result header and route header breakdown.
+This example takes the same extraction and turns it into a **human-friendly console report**, modeled after the tutorial's result header and route header breakdown.
 
 The job header uses the job getters of the result:
 
@@ -165,6 +165,14 @@ The route header holds:
 - the termination (return-to-home) time and distance (`getTerminationTransitTime()`, `getTerminationTransitDistance()`).
 
 Times print as whole minutes, distances as kilometers.
+
+Conceptually, this corresponds to what the tutorial calls:
+- route time,
+- transit time,
+- productive time,
+- idle time,
+- route distance,
+- termination time/distance.
 
 After the route header, the example prints the route cost (`result.getRouteCost(route)`), the ordered route items (`result.getOrderedRouteItems(route)`), the route violations (`result.getRouteViolations(route)`) and the node violations (`route.getRouteCostAndViolationController().getNodeViolations(...)`).
 
@@ -252,7 +260,111 @@ Look for the hours with two decimals. They agree with the route headers: the tra
 
 ### Beyond console output
 
-To go further, write the per-stop rows to CSV, or the result to KML as in [Export a result to a KML file](../io_03/Export2KMLExample.md).
+To go further, use one or more of these if you want to go beyond console output:
+
+- Write the per-stop rows to CSV (a per-stop table for analysts).
+- Serialize a compact "route plan JSON" for APIs/clients.
+- Write the result to KML for map visualization, as in [Export a result to a KML file](../io_03/Export2KMLExample.md), to see the routes on a map.
+- Build a UI timeline using arrival/departure timestamps.
+
+## Two complementary ways to "read" a result
+
+### 1) Use `result.toString()` for debugging and reproducibility
+The tutorial prints the textual representation produced by `OptimizationResult.toString()`; saving it is practical for later debugging and for comparing runs.
+
+Use this when:
+- you want a quick sanity check,
+- you store logs for support/replay,
+- you need a compact output without writing your own report logic.
+
+### 2) Use the API for structured, machine-readable extraction
+When you need more than a diagnostic dump (e.g., a table of planned arrivals, or a UI timeline), you should read the result object directly.
+
+This document focuses on the structured approach, while still encouraging you to also store the `toString()` output in logs.
+
+## Basic structured extraction (`ReadOutResultExample`)
+
+`ReadOutResultExample` shows the core technique without "pretty headers".
+
+### Collect violations
+The example demonstrates two layers of violations:
+
+**Route-level**:
+- `route.getRouteCostAndViolationController().getRouteViolations()`
+
+**Node-level (per element id)**:
+- `route.getRouteCostAndViolationController().getNodeViolations(detail.getElement().getId())`
+
+This pattern is ideal for:
+- feasibility checks,
+- SLA validation (late arrivals),
+- reporting constraint breaches per stop.
+
+## How to build your own "result reader" (recommended blueprint)
+
+If you want a robust implementation you can reuse across environments, the following structure works well:
+
+### Step 1: Always persist `toString()` for debugging
+Even if you parse the result structurally, keep a copy of the textual dump:
+- it accelerates incident triage,
+- it helps with comparing runs.
+
+### Step 2: Extract a job summary object
+Populate a DTO with:
+- total routes,
+- scheduled routes (if you use that concept),
+- total time/distance,
+- cost figure-of-merit,
+- termination totals.
+
+This is the data your UI/dashboard typically wants "up top".
+
+### Step 3: Extract per-route summaries
+For each route:
+- resource id,
+- working-hours index (if applicable in your scenario),
+- route start/stop (effective),
+- transit/productive/idle time,
+- distance,
+- termination metrics.
+
+### Step 4: Extract per-stop details
+From `getOrderedRouteItems(route)` build per-stop rows:
+- element id,
+- visiting index,
+- arrival/departure,
+- service duration,
+- travel time/distance from previous element.
+
+This is the data you want for:
+- customer notifications,
+- driver instructions,
+- Gantt/timeline renderings.
+
+### Step 5: Extract violations and classify them
+- route-level violations: "this route violates constraints overall"
+- node-level violations: "this stop violates constraints specifically"
+
+Then decide how to present them:
+- as hard errors,
+- as warnings,
+- or as "exceptions requiring review".
+
+## Practical "interesting" checks you can implement immediately
+
+These checks produce high value with minimal work:
+
+1. **Late arrival audit**  
+   Print any node violations, but group them by route and sort by severity.
+
+2. **Idle-time hotspots**  
+   Identify routes/stops with high idle time (often caused by tight time windows).
+
+3. **Distance vs. productive ratio**  
+   Compare transit time vs productive time per route; this quickly reveals unbalanced planning.
+
+4. **Termination cost control**  
+   Watch termination distance/time; it's an easy indicator that the last stop is far from the home base.
 
 ## Run it
 
@@ -269,4 +381,4 @@ Run the `main` method of `ReadOutResultExample` or `ReadOutResultWithHeadersExam
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-20
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
