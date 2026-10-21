@@ -74,13 +74,14 @@ public class RequestOnProgressViaExternalTimeExample extends Optimization {
     RequestOnProgressViaExternalTimeExample.addResources(this);
 
     // We are adding the external timer that requests a progress update
-    Timer progressRequestTimer = RequestOnProgressViaExternalTimeExample.createAndAttachTimeForResultRequest(this);
+    Timer progressRequestTimer =
+        RequestOnProgressViaExternalTimeExample.createAndAttachTimeForResultRequest(this);
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
     // It is important to block the call, otherwise the optimization will be terminated
     resultFuture.get();
-    
+
     // Stop timer
     progressRequestTimer.cancel();
   }
@@ -102,7 +103,7 @@ public class RequestOnProgressViaExternalTimeExample extends Optimization {
    * When added to the example this method will request a progress update in a fixed time frequency.
    *
    * @param opti the optimization
- * @return 
+  * @return
    */
   private static Timer createAndAttachTimeForResultRequest(IOptimization opti) {
 
@@ -111,7 +112,7 @@ public class RequestOnProgressViaExternalTimeExample extends Optimization {
     TimerTask task = new MyRequestProgressTimerTask(opti);
 
     timer.schedule(task, 0L, 500L);
-    
+
     return timer;
   }
 
@@ -125,9 +126,9 @@ public class RequestOnProgressViaExternalTimeExample extends Optimization {
 
     @Override
     public void run() {
-    	
-    	System.out.println("-------- REQUESTING PROGRESS -----------");
-    	this.opti.requestProgress();
+
+      System.out.println("-------- REQUESTING PROGRESS -----------");
+      this.opti.requestProgress();
     }
   }
 

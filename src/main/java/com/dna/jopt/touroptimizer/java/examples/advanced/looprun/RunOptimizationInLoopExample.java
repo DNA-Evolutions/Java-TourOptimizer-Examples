@@ -205,9 +205,9 @@ public class RunOptimizationInLoopExample extends Optimization {
 
   @Override
   public void onProgress(IOptimizationProgress rapoptProgress) {
-	  
-	  // We couple the loop counter to stage 2 (genetic phase) and increase the counter when we reach
-	  // 99.0 % of progress
+
+    // We couple the loop counter to stage 2 (genetic phase) and increase the counter when we reach
+    // 99.0 % of progress
     if (rapoptProgress.getOptimizationStage() == 2 && rapoptProgress.getProgress() == 99.0) {
       this.currentLoopCount++;
 

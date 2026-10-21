@@ -83,7 +83,7 @@ public class PNDReportExtractionExample extends Optimization {
    */
   public static void main(String[] args)
       throws InvalidLicenceException, IOException, InterruptedException, ExecutionException,
-          TimeoutException {
+      TimeoutException {
     new PNDReportExtractionExample().example();
   }
 
@@ -107,7 +107,7 @@ public class PNDReportExtractionExample extends Optimization {
    */
   public void example()
       throws InvalidLicenceException, IOException, InterruptedException, ExecutionException,
-          TimeoutException {
+      TimeoutException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
@@ -244,8 +244,8 @@ public class PNDReportExtractionExample extends Optimization {
 
     Collection<ILoad> loads = depot.getItems();
 
-    loads.stream().map(PNDReportExtractionExample::parseLoad).forEach(s->routeSB.append(" / Loads: "+s));
-    
+    loads.stream().map(PNDReportExtractionExample::parseLoad)
+        .forEach(s -> routeSB.append(" / Loads: " + s));
 
     return routeSB.toString();
   }

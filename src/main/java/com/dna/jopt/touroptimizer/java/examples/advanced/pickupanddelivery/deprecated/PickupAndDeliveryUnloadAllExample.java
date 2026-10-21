@@ -116,11 +116,11 @@ public class PickupAndDeliveryUnloadAllExample extends Optimization {
         new CapacityResource(
             "truck1", 50.1167, 7.68333, maxWorkingTime, maxDistanceKmW, workingHours);
 
-    double[] truck1InitialLoad = {1, 1};
+    double[] truck1InitialLoad = { 1, 1 };
     truck1.setInitialLoad(truck1InitialLoad);
 
     //  Add the capacity
-    truck1.setCapacity(new double[] {1,1});
+    truck1.setCapacity(new double[]{ 1, 1 });
 
     // As we set truck1InitialLoad to be 1,1 and the capacity to be 1,1, the Truck starts fully
     // loaded
@@ -131,7 +131,7 @@ public class PickupAndDeliveryUnloadAllExample extends Optimization {
   public void addNodes() {
 
     // We request to pick up load from the nodes (minus sign)
-    double[] unitsPerTrip = {-1, -1};
+    double[] unitsPerTrip = { -1, -1 };
 
     List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
     weeklyOpeningHours.add(

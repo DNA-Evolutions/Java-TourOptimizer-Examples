@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.condition;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -65,15 +65,17 @@ import tech.units.indriya.quantity.Quantities;
  */
 public class SelectiveTypeConditionExample extends Optimization {
 
-  public static void main(String[] args) throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
+  public static void main(String[] args)
+      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
     new SelectiveTypeConditionExample().example();
   }
-  
+
   public String toString() {
-	  return "Setting a type/skill for a resource based on its workingDays.";
+    return "Setting a type/skill for a resource based on its workingDays.";
   }
 
-  public void example() throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
+  public void example()
+      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
@@ -107,63 +109,62 @@ public class SelectiveTypeConditionExample extends Optimization {
   private void addResources(IOptimization opti) {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
-    
-    IWorkingHours firstWoh = 
+
+    IWorkingHours firstWoh =
         new WorkingHours(
             ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin")));
 
-    IWorkingHours secondWoh = 
+    IWorkingHours secondWoh =
         new WorkingHours(
             ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin")));
-    
-    IWorkingHours thirdWoh =
-            new WorkingHours(
-                ZonedDateTime.of(2020, MAY.getValue(), 8, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-                ZonedDateTime.of(2020, MAY.getValue(), 8, 17, 0, 0, 0, ZoneId.of("Europe/Berlin")));
-    
-    IWorkingHours fourthWoh = 
-            new WorkingHours(
-                ZonedDateTime.of(2020, MAY.getValue(), 9, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-                ZonedDateTime.of(2020, MAY.getValue(), 9, 17, 0, 0, 0, ZoneId.of("Europe/Berlin")));
-    
-    IWorkingHours fifthWoh = 
-            new WorkingHours(
-                ZonedDateTime.of(2020, MAY.getValue(), 10, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-                ZonedDateTime.of(2020, MAY.getValue(), 10, 17, 0, 0, 0, ZoneId.of("Europe/Berlin")));
 
-    
+    IWorkingHours thirdWoh =
+        new WorkingHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 8, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MAY.getValue(), 8, 17, 0, 0, 0, ZoneId.of("Europe/Berlin")));
+
+    IWorkingHours fourthWoh =
+        new WorkingHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 9, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MAY.getValue(), 9, 17, 0, 0, 0, ZoneId.of("Europe/Berlin")));
+
+    IWorkingHours fifthWoh =
+        new WorkingHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 10, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MAY.getValue(), 10, 17, 0, 0, 0, ZoneId.of("Europe/Berlin")));
+
     // Setting types
     IQualification typeQualification1 = new TypeQualification();
     ((TypeQualification) typeQualification1).addType("Cooling available");
-    
+
     IQualification typeQualification2 = new TypeQualification();
     ((TypeQualification) typeQualification2).addType("Chain Saw available");
-    
+
     IQualification typeQualification3 = new TypeQualification();
     ((TypeQualification) typeQualification3).addType("Loading ramp available");
-    
+
     IQualification typeQualification4 = new TypeQualification();
     ((TypeQualification) typeQualification4).addType("Second person on truck available");
-    
+
     IQualification typeQualification5 = new TypeQualification();
     ((TypeQualification) typeQualification5).addType("Pallet lift truck available");
-    
+
     IQualification typeQualification6 = new TypeQualification();
     ((TypeQualification) typeQualification6).addType("Certification for dangerous goods");
-    
+
     // First day
     firstWoh.addQualification(typeQualification6); // Expires on third day, since it will not be refreshed
     firstWoh.addQualification(typeQualification1);
     firstWoh.addQualification(typeQualification4);
     firstWoh.addQualification(typeQualification5);
-    
+
     // Second day
     secondWoh.addQualification(typeQualification6); // Expires on third day since it will not be refreshed
     secondWoh.addQualification(typeQualification3);
     secondWoh.addQualification(typeQualification2);
-    
+
     // Third day
     // typeQualification 6 and 1 are not refreshed and therefore are not available anymore
     thirdWoh.addQualification(typeQualification5);
@@ -173,21 +174,20 @@ public class SelectiveTypeConditionExample extends Optimization {
     fourthWoh.addQualification(typeQualification5);
     fourthWoh.addQualification(typeQualification4);
     fourthWoh.addQualification(typeQualification3);
-    
+
     // Fifth day
     fifthWoh.addQualification(typeQualification1);
     fifthWoh.addQualification(typeQualification2);
     fifthWoh.addQualification(typeQualification3);
     fifthWoh.addQualification(typeQualification4);
-    
+
     // Adding hours
     workingHours.add(firstWoh);
     workingHours.add(secondWoh);
     workingHours.add(thirdWoh);
     workingHours.add(fourthWoh);
     workingHours.add(fifthWoh);
-    
-    
+
     Duration maxWorkingTime = Duration.ofHours(13);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
@@ -210,50 +210,48 @@ public class SelectiveTypeConditionExample extends Optimization {
         new OpeningHours(
             ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-    
-    weeklyOpeningHours.add(
-            new OpeningHours(
-                ZonedDateTime.of(2020, MAY.getValue(), 8, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-                ZonedDateTime.of(2020, MAY.getValue(), 8, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-    
-    weeklyOpeningHours.add(
-            new OpeningHours(
-                ZonedDateTime.of(2020, MAY.getValue(), 9, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-                ZonedDateTime.of(2020, MAY.getValue(), 9, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
     weeklyOpeningHours.add(
-            new OpeningHours(
-                ZonedDateTime.of(2020, MAY.getValue(), 10, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-                ZonedDateTime.of(2020, MAY.getValue(), 10, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-    
+        new OpeningHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 8, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MAY.getValue(), 8, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+
+    weeklyOpeningHours.add(
+        new OpeningHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 9, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MAY.getValue(), 9, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+
+    weeklyOpeningHours.add(
+        new OpeningHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 10, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MAY.getValue(), 10, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+
     Duration visitDuration = Duration.ofMinutes(60);
-    
+
     // Setting constraints
     IConstraint typeConstraint1 = new TypeConstraint();
     ((TypeConstraint) typeConstraint1).addType("Cooling available");
     typeConstraint1.setIsHard(true);
-    
+
     IConstraint typeConstraint2 = new TypeConstraint();
     ((TypeConstraint) typeConstraint2).addType("Chain Saw available");
     typeConstraint2.setIsHard(true);
-    
+
     IConstraint typeConstraint3 = new TypeConstraint();
     ((TypeConstraint) typeConstraint3).addType("Loading ramp available");
     typeConstraint3.setIsHard(true);
-    
 
     IConstraint typeConstraint4 = new TypeConstraint();
     ((TypeConstraint) typeConstraint4).addType("Second person on truck available");
     typeConstraint4.setIsHard(true);
-    
+
     IConstraint typeConstraint5 = new TypeConstraint();
     ((TypeConstraint) typeConstraint5).addType("Pallet lift truck available");
     typeConstraint5.setIsHard(true);
-    
+
     IConstraint typeConstraint6 = new TypeConstraint();
     ((TypeConstraint) typeConstraint6).addType("Certification for dangerous goods");
     typeConstraint6.setIsHard(true);
-    
 
     // Define some Nodes and adding the respective constraints
     INode koeln =

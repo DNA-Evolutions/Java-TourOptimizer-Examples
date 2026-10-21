@@ -87,7 +87,7 @@ public class ChangeOnProgressDefaultFrequencyExample extends Optimization {
 
     // In the first stage, we want a progress update every 0.1%
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.OnProgressOutPercentage", "0.1");
-    
+
     // In the second stage, we want a progress update every 0.01%
     props.setProperty("JOpt.Algorithm.GE.OnProgressOutPercentage", "0.01");
 

@@ -193,7 +193,6 @@ public class ReadOutFullProgressExample extends Optimization {
 
     StringBuilder progressSB = new StringBuilder();
 
-
     long fullRouteTimeMillisExcludingFlexTime =
         winner.getJoinedDetailController().getCurTransitTime()
             + winner.getJoinedDetailController().getCurIdleTime()

@@ -76,7 +76,7 @@ public class ZoneNumberConstraintExample extends Optimization {
    */
   public static void main(String[] args)
       throws InvalidLicenceException, ConvertException, SerializationException,
-          FileNotFoundException, InterruptedException, ExecutionException, IOException {
+      FileNotFoundException, InterruptedException, ExecutionException, IOException {
 
     new ZoneNumberConstraintExample().example();
   }
@@ -103,7 +103,7 @@ public class ZoneNumberConstraintExample extends Optimization {
    */
   public void example()
       throws InterruptedException, ExecutionException, FileNotFoundException, IOException,
-          InvalidLicenceException, ConvertException, SerializationException {
+      InvalidLicenceException, ConvertException, SerializationException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
@@ -121,22 +121,19 @@ public class ZoneNumberConstraintExample extends Optimization {
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
     // Subscribe to events
-    this.getOptimizationEvents()
-        .progress
+    this.getOptimizationEvents().progress
         .subscribe(
             p -> {
               System.out.println(p.getProgressString());
             });
 
-    this.getOptimizationEvents()
-        .error
+    this.getOptimizationEvents().error
         .subscribe(
             e -> {
               System.out.println(e.getCause() + " " + e.getCode());
             });
 
-    this.getOptimizationEvents()
-        .status
+    this.getOptimizationEvents().status
         .subscribe(
             s -> {
               System.out.println(s.getDescription() + " " + s.getCode());
@@ -186,7 +183,7 @@ public class ZoneNumberConstraintExample extends Optimization {
 
     /*
      *  Defining WorkingHours and attach Constraints based on the Zones we created
-     *  
+     *
      *  For example: the first WorkingHour gets zoneOne and zoneTwo as Constraint. This means
      *  the Resource holding this WorkingHour should only visit ZoneOne and ZoneTwo during
      *  this WorkingHour.
@@ -220,11 +217,11 @@ public class ZoneNumberConstraintExample extends Optimization {
     woh2.addConstraint(zoneNumberConstraintWOHTwo);
 
     /*
-     * 
+     *
      *  Creating/Adding the Resource and attach constrained WorkingHours
-     *  
+     *
      */
-    
+
     Duration maxWorkingTime = Duration.ofHours(13);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
@@ -246,26 +243,24 @@ public class ZoneNumberConstraintExample extends Optimization {
             ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-
     /*
-     * 
+     *
      *  Define some Nodes and add ZoneNumberQualifications based on the ZoneNumbers we created.
-     *  
+     *
      *  For example: If a Node gets a Qualification for zoneOne, it should only be visited by a Resource
      *  holding a ZoneNumberOne Constraint along its Constraints.
-     *  
+     *
      *  Note: If a Resource is not holding any ZoneNumberConstraint it is free to visit all nodes.
-     *  
-     *  
+     *
+     *
      */
 
     IQualification zoneOneQuali = new ZoneNumberQualification(zoneOne);
     IQualification zoneTwoQuali = new ZoneNumberQualification(zoneTwo);
     IQualification zoneThreeQuali = new ZoneNumberQualification(zoneThree);
 
-
     Duration visitDuration = Duration.ofMinutes(20);
-    
+
     //
     INode koeln =
         new TimeWindowGeoNode("Koeln-Z1", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);

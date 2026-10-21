@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.overnightstay;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -56,15 +56,17 @@ import tech.units.indriya.quantity.Quantities;
  */
 public class OvernightStayExample extends Optimization {
 
-  public static void main(String[] args) throws IOException, InvalidLicenceException, InterruptedException, ExecutionException, TimeoutException {
+  public static void main(String[] args) throws IOException, InvalidLicenceException,
+      InterruptedException, ExecutionException, TimeoutException {
     new OvernightStayExample().example();
   }
-  
+
   public String toString() {
-	  return "Instead of going home a Resource may stay at a location (hotel) till the next workingDay.";
+    return "Instead of going home a Resource may stay at a location (hotel) till the next workingDay.";
   }
 
-  public void example() throws IOException, InvalidLicenceException, InterruptedException, ExecutionException, TimeoutException {
+  public void example() throws IOException, InvalidLicenceException, InterruptedException,
+      ExecutionException, TimeoutException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
@@ -95,11 +97,10 @@ public class OvernightStayExample extends Optimization {
 
     List<IWorkingHours> workingHours = new ArrayList<>();
 
-   
     workingHours.add(
-       new WorkingHours
-	    (ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-	    ZonedDateTime.of(2020, MAY.getValue(), 6, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+        new WorkingHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
     workingHours.add(
         new WorkingHours(
@@ -125,10 +126,9 @@ public class OvernightStayExample extends Optimization {
         new WorkingHours(
             ZonedDateTime.of(2020, MAY.getValue(), 11, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 11, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-    
+
     // By default every woringHour is NOT allowed for an overnight stay, so we explicitly have to enable it
-    workingHours.forEach(w->w.setIsAvailableForStay(true)); 
-   
+    workingHours.forEach(w -> w.setIsAvailableForStay(true));
 
     Duration maxWorkingTime = Duration.ofHours(12);
     Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));

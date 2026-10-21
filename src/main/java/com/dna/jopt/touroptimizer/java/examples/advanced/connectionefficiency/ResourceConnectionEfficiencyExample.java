@@ -63,8 +63,9 @@ public class ResourceConnectionEfficiencyExample extends Optimization {
   }
 
   public String toString() {
-    return "Simple example of setting a Resource connection efficiency factor. By setting a value smaller than one, " +
-            "the resource can drive faster compared to what is defined in the connection.";
+    return "Simple example of setting a Resource connection efficiency factor. By setting a value smaller than one, "
+        +
+        "the resource can drive faster compared to what is defined in the connection.";
   }
 
   public void example()
@@ -106,7 +107,8 @@ public class ResourceConnectionEfficiencyExample extends Optimization {
 
     IResource rep1 =
         new CapacityResource(
-            "Jack", 50.775346, 6.083887, maxWorkingTimeJack, maxDistanceKmW, getDefaultWorkingHours());
+            "Jack", 50.775346, 6.083887, maxWorkingTimeJack, maxDistanceKmW,
+            getDefaultWorkingHours());
 
     //The default connectionEfficiencyFactor is 1.0. Setting it to 0.2 means we onl need 20% of the time between
     // Nodes, as we have a veeery fast car

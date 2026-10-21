@@ -78,7 +78,7 @@ public class ResourceVisitDurationEfficiencyExample extends Optimization {
    */
   public static void main(String[] args)
       throws IOException, InvalidLicenceException, InterruptedException, ExecutionException,
-          TimeoutException {
+      TimeoutException {
     new ResourceVisitDurationEfficiencyExample().example();
   }
 
@@ -102,7 +102,7 @@ public class ResourceVisitDurationEfficiencyExample extends Optimization {
    */
   public void example()
       throws IOException, InvalidLicenceException, InterruptedException, ExecutionException,
-          TimeoutException {
+      TimeoutException {
 
     // Setting the Properties
     this.setProperties();
@@ -214,7 +214,8 @@ public class ResourceVisitDurationEfficiencyExample extends Optimization {
     // "Dueren - unlimited" is the only Node that is not limited by a minimum visitDuration or a fixed visitDuration.
     // We expect "Clara" to be able to do this job in 15 minutes.
     TimeWindowGeoNode dueren =
-        new TimeWindowGeoNode("Dueren - unlimited", 50.8, 6.48333, weeklyOpeningHours, visitDuration, 1);
+        new TimeWindowGeoNode("Dueren - unlimited", 50.8, 6.48333, weeklyOpeningHours,
+            visitDuration, 1);
     dueren.setHasRouteDependentVisitDuration(true);
     this.addElement(dueren);
   }

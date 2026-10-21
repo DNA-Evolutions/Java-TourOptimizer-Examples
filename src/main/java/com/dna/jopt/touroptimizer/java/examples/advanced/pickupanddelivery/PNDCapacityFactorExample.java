@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.pickupanddelivery;
  * %%
  * This file is subject to the terms and conditions defined in file 'LICENSE.txt',
  * which is part of this source code package.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/agb-conditions-and-terms/>.
  * #L%
  */
@@ -108,7 +108,7 @@ public class PNDCapacityFactorExample extends Optimization {
    */
   public static void main(String[] args)
       throws InvalidLicenceException, IOException, InterruptedException, ExecutionException,
-          TimeoutException {
+      TimeoutException {
     new PNDCapacityFactorExample().example();
   }
 
@@ -132,7 +132,7 @@ public class PNDCapacityFactorExample extends Optimization {
    */
   public void example()
       throws InvalidLicenceException, IOException, InterruptedException, ExecutionException,
-          TimeoutException {
+      TimeoutException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
@@ -252,8 +252,10 @@ public class PNDCapacityFactorExample extends Optimization {
 
     // Calculate the individual loading factors
     // The loadFactor calculation can fail, in case the maximal individual load would be zero
-    Optional<Double> pianoLoadFactorOpt = truckCargoSpace.calculateLoadingCapacityFactor(pianoCargoGood);
-    Optional<Double> cupsLoadFactorOpt = truckCargoSpace.calculateLoadingCapacityFactor(cupsCargoGood);
+    Optional<Double> pianoLoadFactorOpt =
+        truckCargoSpace.calculateLoadingCapacityFactor(pianoCargoGood);
+    Optional<Double> cupsLoadFactorOpt =
+        truckCargoSpace.calculateLoadingCapacityFactor(cupsCargoGood);
 
     // Add the factors
     if (pianoLoadFactorOpt.isPresent()) {

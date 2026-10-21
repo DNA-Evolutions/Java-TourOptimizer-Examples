@@ -71,7 +71,7 @@ public class ResourceTypeWithExpertiseConditionExample extends Optimization {
 
   public static void main(String[] args)
       throws InterruptedException, ExecutionException, InvalidLicenceException, IOException,
-          TimeoutException {
+      TimeoutException {
     new ResourceTypeWithExpertiseConditionExample().example();
   }
 
@@ -81,7 +81,7 @@ public class ResourceTypeWithExpertiseConditionExample extends Optimization {
 
   public void example()
       throws InterruptedException, ExecutionException, InvalidLicenceException, IOException,
-          TimeoutException {
+      TimeoutException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);

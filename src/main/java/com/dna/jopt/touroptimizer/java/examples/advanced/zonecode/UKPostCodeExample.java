@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.zonecode;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -64,7 +64,7 @@ public class UKPostCodeExample extends Optimization {
 
   public static void main(String[] args)
       throws InvalidLicenceException, ConvertException, SerializationException,
-          FileNotFoundException, InterruptedException, ExecutionException, IOException {
+      FileNotFoundException, InterruptedException, ExecutionException, IOException {
 
     new UKPostCodeExample().example();
   }
@@ -75,7 +75,7 @@ public class UKPostCodeExample extends Optimization {
 
   public void example()
       throws InterruptedException, ExecutionException, FileNotFoundException, IOException,
-          InvalidLicenceException, ConvertException, SerializationException {
+      InvalidLicenceException, ConvertException, SerializationException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
@@ -93,22 +93,19 @@ public class UKPostCodeExample extends Optimization {
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 
     // Subscribe to events
-    this.getOptimizationEvents()
-        .progress
+    this.getOptimizationEvents().progress
         .subscribe(
             p -> {
               System.out.println(p.getProgressString());
             });
 
-    this.getOptimizationEvents()
-        .error
+    this.getOptimizationEvents().error
         .subscribe(
             e -> {
               System.out.println(e.getCause() + " " + e.getCode());
             });
 
-    this.getOptimizationEvents()
-        .status
+    this.getOptimizationEvents().status
         .subscribe(
             s -> {
               System.out.println(s.getDescription() + " " + s.getCode());

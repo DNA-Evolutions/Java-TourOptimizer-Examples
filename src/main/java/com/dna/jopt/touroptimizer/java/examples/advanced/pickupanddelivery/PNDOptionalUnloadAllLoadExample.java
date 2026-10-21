@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.pickupanddelivery;
  * %%
  * This file is subject to the terms and conditions defined in file 'LICENSE.txt',
  * which is part of this source code package.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/agb-conditions-and-terms/>.
  * #L%
  */
@@ -86,7 +86,7 @@ public class PNDOptionalUnloadAllLoadExample extends Optimization {
    */
   public static void main(String[] args)
       throws InvalidLicenceException, IOException, InterruptedException, ExecutionException,
-          TimeoutException {
+      TimeoutException {
     new PNDOptionalUnloadAllLoadExample().example();
   }
 
@@ -110,7 +110,7 @@ public class PNDOptionalUnloadAllLoadExample extends Optimization {
    */
   public void example()
       throws InvalidLicenceException, IOException, InterruptedException, ExecutionException,
-          TimeoutException {
+      TimeoutException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);

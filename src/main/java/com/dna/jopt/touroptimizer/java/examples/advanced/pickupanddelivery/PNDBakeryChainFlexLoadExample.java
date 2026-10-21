@@ -88,292 +88,306 @@ import java.util.ArrayList;
  */
 public class PNDBakeryChainFlexLoadExample extends Optimization {
 
-    /**
-     * The main method.
-     *
-     * @param args the arguments
-     * @throws InvalidLicenceException the invalid licence exception
-     * @throws IOException             Signals that an I/O exception has occurred.
-     * @throws InterruptedException    the interrupted exception
-     * @throws ExecutionException      the execution exception
-     * @throws TimeoutException        the timeout exception
-     * @throws SerializationException
-     * @throws ConvertException
+  /**
+   * The main method.
+   *
+   * @param args the arguments
+   * @throws InvalidLicenceException the invalid licence exception
+   * @throws IOException             Signals that an I/O exception has occurred.
+   * @throws InterruptedException    the interrupted exception
+   * @throws ExecutionException      the execution exception
+   * @throws TimeoutException        the timeout exception
+   * @throws SerializationException
+   * @throws ConvertException
+   */
+  public static void main(String[] args)
+      throws InvalidLicenceException, IOException, InterruptedException,
+      ExecutionException, TimeoutException, ConvertException, SerializationException {
+    new PNDBakeryChainFlexLoadExample().example();
+  }
+
+  /**
+   * To string.
+   *
+   * @return the string
+   */
+  public String toString() {
+    return "Example: Use of SupplyFlexLoads for planning the manufacturing of goods.";
+  }
+
+  /**
+   * Example.
+   *
+   * @throws InvalidLicenceException the invalid licence exception
+   * @throws IOException             Signals that an I/O exception has occurred.
+   * @throws InterruptedException    the interrupted exception
+   * @throws ExecutionException      the execution exception
+   * @throws TimeoutException        the timeout exception
+   * @throws SerializationException
+   * @throws ConvertException
+   */
+  public void example()
+      throws InvalidLicenceException, IOException, InterruptedException, ExecutionException,
+      TimeoutException, ConvertException, SerializationException {
+
+    boolean isExportAsJson = true;
+
+    // Set license via helper
+    ExampleLicenseHelper.setLicense(this);
+
+    this.setProperties();
+    this.addNodes();
+    this.addRes();
+
+    // Start the optimization
+    CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
+
+    // Subscribe to events
+    subscribeToEvents(this);
+
+    // It is important to block the call, otherwise the optimization will be
+    // terminated
+    IOptimizationResult result = resultFuture.get(2, TimeUnit.MINUTES);
+
+    System.out.println(result);
+
+    if (isExportAsJson) {
+      // Transform to TourOptimizerInput
+      System.out.println("\n\n ====== JSON ======");
+      JSONConfig myExtension = JSONConfig.builder()
+          .keySetting(OptimizationKeySetting.of(ExampleLicenseHelper.PUBLIC_JSON_LICENSE))
+          .timeOut(Duration.ofMinutes(10)).build();
+
+      System.out
+          .println(JSONOptimization
+              .asJSON(JSONOptimization.fromOptization(this, Optional.of(myExtension))));
+    }
+  }
+
+  /** Sets the properties. */
+  public void setProperties() {
+
+    Properties props = new Properties();
+    props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000");
+
+    // We have to tell the optimizer that we have a high interest in capacity
+    // planning, default is
+    // 100
+    props.setProperty("JOptWeight.Capacity", "200");
+    this.addElement(props);
+  }
+
+  private static List<IWorkingHours> getDefaultWorkingHours() {
+
+    List<IWorkingHours> workingHours = new ArrayList<>();
+    workingHours.add(
+        new WorkingHours(
+            ZonedDateTime.of(2020, MARCH.getValue(), 11, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MARCH.getValue(), 11, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+    return workingHours;
+  }
+
+  /** Adds the res. */
+  public void addRes() {
+
+    /*
+     * Setting the resource JackTruck
      */
-    public static void main(String[] args) throws InvalidLicenceException, IOException, InterruptedException,
-	    ExecutionException, TimeoutException, ConvertException, SerializationException {
-	new PNDBakeryChainFlexLoadExample().example();
-    }
 
-    /**
-     * To string.
+    Duration maxWorkingTime = Duration.ofHours(10);
+    Quantity<Length> maxDistanceKmW = Quantities.getQuantity(2800.0, KILO(METRE));
+
+    /*
      *
-     * @return the string
-     */
-    public String toString() {
-	return "Example: Use of SupplyFlexLoads for planning the manufacturing of goods.";
-    }
-
-    /**
-     * Example.
      *
-     * @throws InvalidLicenceException the invalid licence exception
-     * @throws IOException             Signals that an I/O exception has occurred.
-     * @throws InterruptedException    the interrupted exception
-     * @throws ExecutionException      the execution exception
-     * @throws TimeoutException        the timeout exception
-     * @throws SerializationException
-     * @throws ConvertException
      */
-    public void example() throws InvalidLicenceException, IOException, InterruptedException, ExecutionException,
-	    TimeoutException, ConvertException, SerializationException {
 
-	boolean isExportAsJson = true;
+    IResource truckJack =
+        new CapacityResource("JackTruckCologne", 50.9333, 6.95, maxWorkingTime, maxDistanceKmW,
+            getDefaultWorkingHours());
 
-	// Set license via helper
-	ExampleLicenseHelper.setLicense(this);
+    // Setting a depot to our truck
+    truckJack.setResourceDepot(this.createResourceDepot("JackTruckCologneDepot"));
 
-	this.setProperties();
-	this.addNodes();
-	this.addRes();
+    // Adding the truck to our optimization
+    this.addElement(truckJack);
 
-	// Start the optimization
-	CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
-
-	// Subscribe to events
-	subscribeToEvents(this);
-
-	// It is important to block the call, otherwise the optimization will be
-	// terminated
-	IOptimizationResult result = resultFuture.get(2, TimeUnit.MINUTES);
-
-	System.out.println(result);
-
-	if (isExportAsJson) {
-	    // Transform to TourOptimizerInput
-	    System.out.println("\n\n ====== JSON ======");
-	    JSONConfig myExtension = JSONConfig.builder()
-		    .keySetting(OptimizationKeySetting.of(ExampleLicenseHelper.PUBLIC_JSON_LICENSE))
-		    .timeOut(Duration.ofMinutes(10)).build();
-
-	    System.out
-		    .println(JSONOptimization.asJSON(JSONOptimization.fromOptization(this, Optional.of(myExtension))));
-	}
-    }
-
-    /** Sets the properties. */
-    public void setProperties() {
-
-	Properties props = new Properties();
-	props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
-	props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "1000");
-
-	// We have to tell the optimizer that we have a high interest in capacity
-	// planning, default is
-	// 100
-	props.setProperty("JOptWeight.Capacity", "200");
-	this.addElement(props);
-    }
-
-    private static List<IWorkingHours> getDefaultWorkingHours() {
-
-	List<IWorkingHours> workingHours = new ArrayList<>();
-	workingHours.add(
-		new WorkingHours(ZonedDateTime.of(2020, MARCH.getValue(), 11, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-			ZonedDateTime.of(2020, MARCH.getValue(), 11, 20, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-	return workingHours;
-    }
-
-    /** Adds the res. */
-    public void addRes() {
-
-	/*
-	 * Setting the resource JackTruck
-	 */
-
-	Duration maxWorkingTime = Duration.ofHours(10);
-	Quantity<Length> maxDistanceKmW = Quantities.getQuantity(2800.0, KILO(METRE));
-
-	/*
-	 *
-	 *
-	 */
-
-	IResource truckJack = new CapacityResource("JackTruckCologne", 50.9333, 6.95, maxWorkingTime, maxDistanceKmW,
-		getDefaultWorkingHours());
-
-	// Setting a depot to our truck
-	truckJack.setResourceDepot(this.createResourceDepot("JackTruckCologneDepot"));
-
-	// Adding the truck to our optimization
-	this.addElement(truckJack);
-
-	/*
-	 * Add another Truck: JohnTruckAachen
-	 *
-	 */
-
-	IResource truckJohn = new CapacityResource("JohnTruckAachen", 50.775346, 6.083887, maxWorkingTime,
-		maxDistanceKmW, getDefaultWorkingHours());
-
-	// Setting a depot to our truck
-	truckJohn.setResourceDepot(this.createResourceDepot("JohnTruckAachenDepot"));
-
-	// Adding the truck to our optimization
-	this.addElement(truckJohn);
-    }
-
-    /**
-     * Creates the resource depot.
+    /*
+     * Add another Truck: JohnTruckAachen
      *
-     * @return the resource depot
      */
-    public IResourceDepot createResourceDepot(String depotId) {
 
-	/*
-	 * Defining a ResourceDepot "JackTruckDepot" that can store DeliverGood and
-	 * PickupGood.
-	 *
-	 */
+    IResource truckJohn =
+        new CapacityResource("JohnTruckAachen", 50.775346, 6.083887, maxWorkingTime,
+            maxDistanceKmW, getDefaultWorkingHours());
 
-	// We can store a maximum of 20 "Bread" on our truck (assuming that no other
-	// load is
-	// present)
-	ILoadCapacity breadCapacity = new SimpleLoadCapacity("Bread", 20, 0);
+    // Setting a depot to our truck
+    truckJohn.setResourceDepot(this.createResourceDepot("JohnTruckAachenDepot"));
 
-	// Adding the capacities to our depot, as we only transport a single good, the
-	// maxCapacity
-	// equals
-	// the individual capacity of the bread capacity.
-	IResourceDepot depot = new SimpleResourceDepot(depotId, 20);
-	depot.add(breadCapacity);
+    // Adding the truck to our optimization
+    this.addElement(truckJohn);
+  }
 
-	return depot;
-    }
+  /**
+   * Creates the resource depot.
+   *
+   * @return the resource depot
+   */
+  public IResourceDepot createResourceDepot(String depotId) {
 
-    /** Adds the nodes. */
-    public void addNodes() {
-
-	List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
-	weeklyOpeningHours.add(
-		new OpeningHours(ZonedDateTime.of(2020, MARCH.getValue(), 11, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-			ZonedDateTime.of(2020, MARCH.getValue(), 11, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-	Duration visitDuration = Duration.ofMinutes(80);
-
-	/*
-	 * Define some supermarkets that have bread request.
-	 *
-	 */
-
-	INode store1 = new TimeWindowGeoNode("StoreEssen", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
-	store1.setNodeDepot(this.createNodeDepot("StoreEssenDepot", 5));
-	this.addElement(store1);
-
-	INode store2 = new TimeWindowGeoNode("StoreDueren", 50.8, 6.48333, weeklyOpeningHours, visitDuration, 1);
-	store2.setNodeDepot(this.createNodeDepot("StoreDuerenDepot", 2));
-	this.addElement(store2);
-
-	INode store3 = new TimeWindowGeoNode("StoreWuppertal", 51.2667, 7.18333, weeklyOpeningHours, visitDuration, 1);
-	store3.setNodeDepot(this.createNodeDepot("StoreWuppertalDepot", 4));
-	this.addElement(store3);
-
-	INode store4 = new TimeWindowGeoNode("StoreDortmund", 51.51728, 7.48446, weeklyOpeningHours, visitDuration, 1);
-	store4.setNodeDepot(this.createNodeDepot("StoreDortmundDepot", 8));
-	this.addElement(store4);
-
-	INode store5 = new TimeWindowGeoNode("StoreMoenchengladbach", 51.19541, 6.41172, weeklyOpeningHours,
-		visitDuration, 1);
-	store5.setNodeDepot(this.createNodeDepot("StoreMoenchengladbachDepot", 1));
-	this.addElement(store5);
-
-	INode store6 = new TimeWindowGeoNode("StoreLeverkusen", 51.04154, 6.99944, weeklyOpeningHours, visitDuration,
-		1);
-	store6.setNodeDepot(this.createNodeDepot("StoreLeverkusenDepot", 7));
-	this.addElement(store6);
-
-	/*
-	 * SupplyNodes - These nodes will later on manufacture the required bread. They
-	 * are located at the resources' start locations.
-	 */
-
-	INode supplyFlexNodeAachen = new TimeWindowGeoNode("SupplyFlexNodeAachen", 50.77577, 6.08177,
-		weeklyOpeningHours, visitDuration, 1);
-	supplyFlexNodeAachen.setNodeDepot(this.createSupplyFlexDepot("SupplyFlexNodeAachenDepot"));
-
-	// Could also be an optional Node, which allows offloading cargo, if desired
-	boolean isAachenOptional = false;
-	supplyFlexNodeAachen.setIsOptional(isAachenOptional);
-
-	this.addElement(supplyFlexNodeAachen);
-
-	INode supplyFlexNodeCologne = new TimeWindowGeoNode("SupplyFlexNodeCologne", 50.9333, 6.95, weeklyOpeningHours,
-		visitDuration, 1);
-	supplyFlexNodeCologne.setNodeDepot(this.createSupplyFlexDepot("SupplyFlexNodeCologneDepot"));
-
-	// Could also be an optional Node, which allows offloading cargo, if desired
-	boolean isCologneOptional = false;
-	supplyFlexNodeCologne.setIsOptional(isCologneOptional);
-	this.addElement(supplyFlexNodeCologne);
-    }
-
-    /**
-     * Creates the node depot.
+    /*
+     * Defining a ResourceDepot "JackTruckDepot" that can store DeliverGood and
+     * PickupGood.
      *
-     * @param depotId    the depot id
-     * @param breadCount the bread count
-     * @return the i node depot
      */
-    public INodeDepot createNodeDepot(String depotId, int breadCount) {
 
-	ILoad breadLoad = new SimpleLoad("Bread", breadCount, true, true);
+    // We can store a maximum of 20 "Bread" on our truck (assuming that no other
+    // load is
+    // present)
+    ILoadCapacity breadCapacity = new SimpleLoadCapacity("Bread", 20, 0);
 
-	INodeDepot customerNodeDepot = new SimpleNodeDepot(depotId);
+    // Adding the capacities to our depot, as we only transport a single good, the
+    // maxCapacity
+    // equals
+    // the individual capacity of the bread capacity.
+    IResourceDepot depot = new SimpleResourceDepot(depotId, 20);
+    depot.add(breadCapacity);
 
-	customerNodeDepot.add(breadLoad);
+    return depot;
+  }
 
-	return customerNodeDepot;
-    }
+  /** Adds the nodes. */
+  public void addNodes() {
 
-    /**
-     * Creates the supply flex depot.
+    List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
+    weeklyOpeningHours.add(
+        new OpeningHours(
+            ZonedDateTime.of(2020, MARCH.getValue(), 11, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MARCH.getValue(), 11, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+
+    Duration visitDuration = Duration.ofMinutes(80);
+
+    /*
+     * Define some supermarkets that have bread request.
      *
-     * @param depotId the depot id
-     * @return the i node depot
      */
-    public INodeDepot createSupplyFlexDepot(String depotId) {
 
-	// We assume that a truck most likely needs to start fully loaded with "Bread"
-	ILoad breadLoad = new SupplyFlexLoad("Bread", 20);
+    INode store1 =
+        new TimeWindowGeoNode("StoreEssen", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
+    store1.setNodeDepot(this.createNodeDepot("StoreEssenDepot", 5));
+    this.addElement(store1);
 
-	INodeDepot nodeDepotWithSupplyFlexLoads = new SimpleNodeDepot(depotId);
-	nodeDepotWithSupplyFlexLoads.add(breadLoad);
+    INode store2 =
+        new TimeWindowGeoNode("StoreDueren", 50.8, 6.48333, weeklyOpeningHours, visitDuration, 1);
+    store2.setNodeDepot(this.createNodeDepot("StoreDuerenDepot", 2));
+    this.addElement(store2);
 
-	return nodeDepotWithSupplyFlexLoads;
-    }
+    INode store3 = new TimeWindowGeoNode("StoreWuppertal", 51.2667, 7.18333, weeklyOpeningHours,
+        visitDuration, 1);
+    store3.setNodeDepot(this.createNodeDepot("StoreWuppertalDepot", 4));
+    this.addElement(store3);
 
-    /**
-     * Subscribe to events.
-     *
-     * @param opti the opti
+    INode store4 = new TimeWindowGeoNode("StoreDortmund", 51.51728, 7.48446, weeklyOpeningHours,
+        visitDuration, 1);
+    store4.setNodeDepot(this.createNodeDepot("StoreDortmundDepot", 8));
+    this.addElement(store4);
+
+    INode store5 =
+        new TimeWindowGeoNode("StoreMoenchengladbach", 51.19541, 6.41172, weeklyOpeningHours,
+            visitDuration, 1);
+    store5.setNodeDepot(this.createNodeDepot("StoreMoenchengladbachDepot", 1));
+    this.addElement(store5);
+
+    INode store6 = new TimeWindowGeoNode("StoreLeverkusen", 51.04154, 6.99944, weeklyOpeningHours,
+        visitDuration,
+        1);
+    store6.setNodeDepot(this.createNodeDepot("StoreLeverkusenDepot", 7));
+    this.addElement(store6);
+
+    /*
+     * SupplyNodes - These nodes will later on manufacture the required bread. They
+     * are located at the resources' start locations.
      */
-    private static void subscribeToEvents(IOptimization opti) {
 
-	// Subscribe to events
-	opti.getOptimizationEvents().progressSubject().subscribe(p -> {
-	    System.out.println(p.getProgressString());
-	});
+    INode supplyFlexNodeAachen = new TimeWindowGeoNode("SupplyFlexNodeAachen", 50.77577, 6.08177,
+        weeklyOpeningHours, visitDuration, 1);
+    supplyFlexNodeAachen.setNodeDepot(this.createSupplyFlexDepot("SupplyFlexNodeAachenDepot"));
 
-	opti.getOptimizationEvents().errorSubject().subscribe(e -> {
-	    System.out.println(e.getCause() + " " + e.getCode());
-	});
+    // Could also be an optional Node, which allows offloading cargo, if desired
+    boolean isAachenOptional = false;
+    supplyFlexNodeAachen.setIsOptional(isAachenOptional);
 
-	opti.getOptimizationEvents().warningSubject().subscribe(w -> {
-	    System.out.println(w.getDescription() + w.getCode());
-	});
+    this.addElement(supplyFlexNodeAachen);
 
-	opti.getOptimizationEvents().statusSubject().subscribe(s -> {
-	    System.out.println(s.getDescription() + " " + s.getCode());
-	});
-    }
+    INode supplyFlexNodeCologne =
+        new TimeWindowGeoNode("SupplyFlexNodeCologne", 50.9333, 6.95, weeklyOpeningHours,
+            visitDuration, 1);
+    supplyFlexNodeCologne.setNodeDepot(this.createSupplyFlexDepot("SupplyFlexNodeCologneDepot"));
+
+    // Could also be an optional Node, which allows offloading cargo, if desired
+    boolean isCologneOptional = false;
+    supplyFlexNodeCologne.setIsOptional(isCologneOptional);
+    this.addElement(supplyFlexNodeCologne);
+  }
+
+  /**
+   * Creates the node depot.
+   *
+   * @param depotId    the depot id
+   * @param breadCount the bread count
+   * @return the i node depot
+   */
+  public INodeDepot createNodeDepot(String depotId, int breadCount) {
+
+    ILoad breadLoad = new SimpleLoad("Bread", breadCount, true, true);
+
+    INodeDepot customerNodeDepot = new SimpleNodeDepot(depotId);
+
+    customerNodeDepot.add(breadLoad);
+
+    return customerNodeDepot;
+  }
+
+  /**
+   * Creates the supply flex depot.
+   *
+   * @param depotId the depot id
+   * @return the i node depot
+   */
+  public INodeDepot createSupplyFlexDepot(String depotId) {
+
+    // We assume that a truck most likely needs to start fully loaded with "Bread"
+    ILoad breadLoad = new SupplyFlexLoad("Bread", 20);
+
+    INodeDepot nodeDepotWithSupplyFlexLoads = new SimpleNodeDepot(depotId);
+    nodeDepotWithSupplyFlexLoads.add(breadLoad);
+
+    return nodeDepotWithSupplyFlexLoads;
+  }
+
+  /**
+   * Subscribe to events.
+   *
+   * @param opti the opti
+   */
+  private static void subscribeToEvents(IOptimization opti) {
+
+    // Subscribe to events
+    opti.getOptimizationEvents().progressSubject().subscribe(p -> {
+      System.out.println(p.getProgressString());
+    });
+
+    opti.getOptimizationEvents().errorSubject().subscribe(e -> {
+      System.out.println(e.getCause() + " " + e.getCode());
+    });
+
+    opti.getOptimizationEvents().warningSubject().subscribe(w -> {
+      System.out.println(w.getDescription() + w.getCode());
+    });
+
+    opti.getOptimizationEvents().statusSubject().subscribe(s -> {
+      System.out.println(s.getDescription() + " " + s.getCode());
+    });
+  }
 }

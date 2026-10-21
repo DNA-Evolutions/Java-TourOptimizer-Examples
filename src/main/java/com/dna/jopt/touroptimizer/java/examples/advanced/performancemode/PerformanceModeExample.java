@@ -46,10 +46,9 @@ import com.dna.jopt.member.unit.resource.CapacityResource;
 import com.dna.jopt.member.unit.resource.IResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
-
 /**
  * The Class PerformanceModeExample.
- * 
+ *
  * Visit <a
  * href="https://docs.dna-evolutions.com/overview_docs/performancemode/performance_mode.html">https://docs.dna-evolutions.com/overview_docs/performancemode/performance_mode.html</a>
  * for a detailed explanation.
@@ -64,10 +63,11 @@ public class PerformanceModeExample extends Optimization {
    * @throws ExecutionException the execution exception
    * @throws InvalidLicenceException the invalid licence exception
    * @throws IOException
-   * @throws TimeoutException 
+   * @throws TimeoutException
    */
   public static void main(String[] args)
-      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException, TimeoutException {
+      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException,
+      TimeoutException {
     new PerformanceModeExample().example();
   }
 
@@ -82,14 +82,15 @@ public class PerformanceModeExample extends Optimization {
    * @throws ExecutionException the execution exception
    * @throws InvalidLicenceException the invalid licence exception
    * @throws IOException
-   * @throws TimeoutException 
+   * @throws TimeoutException
    */
   public void example()
-      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException, TimeoutException {
+      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException,
+      TimeoutException {
 
     // We use the public evaluation license (20 elements) for the example - please modify the ExampleLicenseHelper in case you
     // have a valid license.
-      
+
     // Performance mode gives an average boost of 50% but may miss some ideal solutions
     boolean usePerformanceMode = true;
 
@@ -97,7 +98,7 @@ public class PerformanceModeExample extends Optimization {
 
     // Setting Properties, adding all Elements, and attaching to Observables
     //    (1) Adding properties
-    PerformanceModeExample.addProperties(this,usePerformanceMode);
+    PerformanceModeExample.addProperties(this, usePerformanceMode);
 
     //    (2) Adding Nodes
     PerformanceModeExample.addNodes(this);
@@ -119,7 +120,7 @@ public class PerformanceModeExample extends Optimization {
    * @throws InvalidLicenceException the invalid licence exception
    * @throws InterruptedException the interrupted exception
    * @throws ExecutionException the execution exception
- * @throws TimeoutException 
+  * @throws TimeoutException
    */
   private static void startAndPresentResult(IOptimization opti)
       throws InvalidLicenceException, InterruptedException, ExecutionException, TimeoutException {
@@ -147,8 +148,8 @@ public class PerformanceModeExample extends Optimization {
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000000"); // THIS IS VEEEERY HIGH - 100 Million
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
     props.setProperty("JOpt.NumCPUCores", "4");
-    
-    props.setProperty("JOpt.PerformanceMode", ""+usePerformanceMode);
+
+    props.setProperty("JOpt.PerformanceMode", "" + usePerformanceMode);
 
     opti.addElement(props);
   }
@@ -249,12 +250,13 @@ public class PerformanceModeExample extends Optimization {
    */
   private static void attachToObservables(IOptimization opti) {
 
-      opti.getOptimizationEvents().progressSubject().subscribe(p -> System.out.println(p.getProgressString()));
+    opti.getOptimizationEvents().progressSubject()
+        .subscribe(p -> System.out.println(p.getProgressString()));
 
-      opti.getOptimizationEvents().warningSubject().subscribe(w -> System.out.println(w.toString()));
+    opti.getOptimizationEvents().warningSubject().subscribe(w -> System.out.println(w.toString()));
 
-      opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s.toString()));
+    opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s.toString()));
 
-      opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
+    opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
   }
 }

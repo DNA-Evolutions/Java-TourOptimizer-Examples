@@ -224,7 +224,7 @@ public class ReadOutFullProgressWithUtilExample extends Optimization {
     /*
      *
      */
-        
+
     opti.getOptimizationEvents().progressSubject().subscribe(progressConsumer::accept);
 
     opti.getOptimizationEvents().warningSubject().subscribe(w -> out.println(w.toString()));
