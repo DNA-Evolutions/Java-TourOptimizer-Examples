@@ -264,7 +264,6 @@ public class CustomNodeBackUpConnectorExample extends Optimization {
     System.out.println(rapoptResult);
   }
 
-
   /**
    * The Class MyResourceDependentBackupElementConnector.
    *
@@ -274,7 +273,6 @@ public class CustomNodeBackUpConnectorExample extends Optimization {
    */
   private class MyBackupElementConnector
       extends DefaultFlatEarthAverageSpeedBackupElementConnector {
-
 
     /**
      * Instantiates a new my resource dependent backup element connector.
@@ -312,11 +310,10 @@ public class CustomNodeBackUpConnectorExample extends Optimization {
 
       double distance =
           NodeEdgeConnector.distancePlacePlaceFlatEarth(
-                  fromElementLon, fromElementLat, toElementLon, toElementLat)
+              fromElementLon, fromElementLat, toElementLon, toElementLat)
               * 1.2;
-      
-      
-      System.out.println(fromElementId+"=>"+toElementId);
+
+      System.out.println(fromElementId + "=>" + toElementId);
 
       return Quantities.getQuantity(distance, METRE);
     }

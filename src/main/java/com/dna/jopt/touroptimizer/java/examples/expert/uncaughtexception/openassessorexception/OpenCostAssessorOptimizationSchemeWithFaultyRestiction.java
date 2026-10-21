@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.expert.uncaughtexception.openas
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -16,7 +16,8 @@ import com.dna.jopt.assessment.costassessorrestriction.nodelevel.custom.ICustomN
 import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.scheme.DefaultOptimizationScheme;
 
-public class OpenCostAssessorOptimizationSchemeWithFaultyRestiction extends DefaultOptimizationScheme {
+public class OpenCostAssessorOptimizationSchemeWithFaultyRestiction
+    extends DefaultOptimizationScheme {
 
   public OpenCostAssessorOptimizationSchemeWithFaultyRestiction(IOptimization optimization) {
     super(optimization);
@@ -24,8 +25,8 @@ public class OpenCostAssessorOptimizationSchemeWithFaultyRestiction extends Defa
 
   @Override
   public void postCreate() {
-	  
-	  this.getOptimization().getPropertyProvider();
+
+    this.getOptimization().getPropertyProvider();
 
     ICustomNodeLevelRestriction restiction =
         new FaultyInjectedRestriction(this.getOptimization().getPropertyProvider());

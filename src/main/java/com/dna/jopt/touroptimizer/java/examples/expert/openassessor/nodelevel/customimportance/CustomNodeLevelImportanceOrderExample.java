@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.expert.openassessor.nodelevel.c
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -53,7 +53,8 @@ import tech.units.indriya.quantity.Quantities;
  */
 public class CustomNodeLevelImportanceOrderExample extends Optimization {
 
-  public static void main(String[] args) throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+  public static void main(String[] args)
+      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
     new CustomNodeLevelImportanceOrderExample().example();
   }
 
@@ -62,7 +63,8 @@ public class CustomNodeLevelImportanceOrderExample extends Optimization {
         + " timeWindow get a penalty depending on their importance, even though no late violation is caused.";
   }
 
-  public void example() throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+  public void example()
+      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);

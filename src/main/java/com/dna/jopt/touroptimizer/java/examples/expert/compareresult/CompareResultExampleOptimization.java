@@ -61,7 +61,6 @@ import com.dna.jopt.util.optimizationresultanalyzer.exceptions.ResultStructureNo
 import com.dna.jopt.util.optimizationresultmodifier.helper.IModificationTask;
 import com.dna.jopt.util.optimizationresultmodifier.wrapper.OptimizationResultModificationWrapper;
 
-
 /**
  * Helps setting up an Optimization to show the Comparison Tool
  * <br><br>
@@ -76,277 +75,290 @@ import com.dna.jopt.util.optimizationresultmodifier.wrapper.OptimizationResultMo
  */
 public class CompareResultExampleOptimization extends Optimization {
 
+  public String toString() {
+    return "Class to create an Optimization used by the compare examples";
+  }
 
-    public String toString() {
-	return "Class to create an Optimization used by the compare examples";
+  /**
+   * The method which executes the necessary parts for the Optimization.
+   * @return
+   *
+   * @throws InterruptedException                the interrupted exception
+   * @throws ExecutionException                  the execution exception
+   * @throws InvalidLicenceException             the invalid licence exception
+   * @throws IOException
+   * @throws TimeoutException
+   * @throws SerializationException
+   * @throws ConvertException
+   * @throws ResultStructureNotMatchingException
+   */
+  public static IOptimization createCompareExampleOpti(boolean addFarAwayNodes) throws IOException {
+
+    IOptimization opti = new CompareResultExampleOptimization();
+
+    // We use the public evaluation license (20 elements) for the example - please modify the ExampleLicenseHelper
+    // in case you have a valid license.
+
+    // Set license via helper
+    ExampleLicenseHelper.setLicense(opti);
+
+    // Setting Properties, adding all Elements
+    // Adding properties
+    CompareResultExampleOptimization.addProperties(opti);
+
+    // Adding Nodes
+    CompareResultExampleOptimization.addNodes(opti, addFarAwayNodes);
+
+    // Adding Resources
+    CompareResultExampleOptimization.addResources(opti);
+
+    // Attaching to Observables
+    CompareResultExampleOptimization.attachToObservables(opti);
+
+    return opti;
+  }
+
+  /**
+   * Compare results.
+   *
+   * @param opti      the opti
+   * @param orgResult the org result
+   * @param modResult the mod result
+   * @throws ResultStructureNotMatchingException the result structure not matching
+   *                                             exception
+   */
+  static void compareResults(IOptimization opti, IOptimizationResult orgResult,
+      IOptimizationResult modResult)
+      throws ResultStructureNotMatchingException {
+
+    // Compare
+    Optional<JobAdvantageResult> comparissonResultOptional =
+        JobAdvantagesController.compare(orgResult, modResult);
+
+    if (comparissonResultOptional.isPresent()) {
+      JobAdvantageResult comparissonResult = comparissonResultOptional.get();
+
+      ICostAdvantagesInterpreter myInterpreter = new CostAdvantageInterpreter();
+
+      System.out.println(
+          "\n\n\n#########################  COMPARISON RESULT  #########################\n\n\n");
+      System.out.println(myInterpreter.generateTextReport(comparissonResult));
+
+    } else {
+      System.out.println("Comparisson failed");
     }
 
-    /**
-     * The method which executes the necessary parts for the Optimization.
-     * @return 
-     *
-     * @throws InterruptedException                the interrupted exception
-     * @throws ExecutionException                  the execution exception
-     * @throws InvalidLicenceException             the invalid licence exception
-     * @throws IOException
-     * @throws TimeoutException
-     * @throws SerializationException
-     * @throws ConvertException
-     * @throws ResultStructureNotMatchingException
-     */
-    public static IOptimization createCompareExampleOpti(boolean addFarAwayNodes) throws IOException {
-	
-	
-	IOptimization opti = new CompareResultExampleOptimization();
+  }
 
-	// We use the public evaluation license (20 elements) for the example - please modify the ExampleLicenseHelper
-	// in case you have a valid license.
+  /**
+   * Creates the initial result.
+   *
+   * @param opti the opti
+   * @return the i optimization result
+   * @throws InvalidLicenceException the invalid licence exception
+   * @throws InterruptedException the interrupted exception
+   * @throws ExecutionException the execution exception
+   * @throws TimeoutException the timeout exception
+   */
+  static IOptimizationResult createInitialResult(IOptimization opti)
+      throws InvalidLicenceException, InterruptedException, ExecutionException, TimeoutException {
 
-	// Set license via helper
-	ExampleLicenseHelper.setLicense(opti);
+    // Extracting a completable Future for the optimization result
+    CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
 
-	// Setting Properties, adding all Elements
-	// Adding properties
-	CompareResultExampleOptimization.addProperties(opti);
+    // It is important to block the call, otherwise the Optimization will be
+    // terminated
+    IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
 
-	// Adding Nodes
-	CompareResultExampleOptimization.addNodes(opti, addFarAwayNodes);
+    return result;
 
-	// Adding Resources
-	CompareResultExampleOptimization.addResources(opti);
+  }
 
-	// Attaching to Observables
-	CompareResultExampleOptimization.attachToObservables(opti);
-	
-	
-	return opti;
+  /**
+   * Apply tasks and create mod result.
+   *
+   * @param opti the opti
+   * @param tasks the tasks
+   * @return the i optimization result
+   * @throws InterruptedException the interrupted exception
+   * @throws ExecutionException the execution exception
+   * @throws InvalidLicenceException the invalid licence exception
+   * @throws ConvertException the convert exception
+   * @throws SerializationException the serialization exception
+   * @throws IOException Signals that an I/O exception has occurred.
+   */
+  static IOptimizationResult applyTasksAndCreateModResult(IOptimization opti,
+      List<IModificationTask> tasks)
+      throws InterruptedException, ExecutionException, InvalidLicenceException, ConvertException,
+      SerializationException, IOException {
+
+    OptimizationResultModificationWrapper myWrapper = new OptimizationResultModificationWrapper();
+
+    // FYI: You can do:
+    // IOptimizationResult recoveredOrgResult = myWrapper.getNewResult(opti, new ArrayList<>()); what creates an shallow copy of the result.
+
+    IOptimizationResult modiResult = myWrapper.getNewResult(opti, tasks);
+
+    return modiResult;
+  }
+
+  /*
+   *
+   *
+   *
+   */
+
+  /**
+   * Adds the Properties to the Optimization.
+   *
+   * @param opti the optimization instance
+   */
+  private static void addProperties(IOptimization opti) {
+
+    Properties props = new Properties();
+
+    props.setProperty("JOptExitCondition.JOptGenerationCount", "200");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "10000");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
+
+    props.setProperty("JOpt.NumCPUCores", "4");
+
+    opti.addElement(props);
+  }
+
+  /**
+   * Adds the Nodes to the Optimization.
+   *
+   * @param opti the optimization instance
+   */
+  private static void addNodes(IOptimization opti, boolean addFarAwayNodes) {
+
+    // Define the OpeningHours
+    List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
+    weeklyOpeningHours
+        .add(new OpeningHours(
+            ZonedDateTime.of(2030, MAY.getValue(), 8, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2030, MAY.getValue(), 8, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+
+    weeklyOpeningHours
+        .add(new OpeningHours(
+            ZonedDateTime.of(2030, MAY.getValue(), 9, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2030, MAY.getValue(), 9, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+
+    Duration visitDuration = Duration.ofMinutes(30);
+
+    int importance = 1;
+
+    // Define some Nodes
+    INode koeln = new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration,
+        importance);
+    opti.addElement(koeln);
+
+    INode essen = new TimeWindowGeoNode("Essen", 51.45, 7.01667, weeklyOpeningHours, visitDuration,
+        importance);
+    opti.addElement(essen);
+
+    INode dueren = new TimeWindowGeoNode("Dueren", 50.8, 6.48333, weeklyOpeningHours, visitDuration,
+        importance);
+    opti.addElement(dueren);
+
+    INode wuppertal =
+        new TimeWindowGeoNode("Wuppertal", 51.2667, 7.18333, weeklyOpeningHours, visitDuration,
+            importance);
+    opti.addElement(wuppertal);
+
+    INode aachen =
+        new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration,
+            importance);
+    opti.addElement(aachen);
+
+    INode krefeld =
+        new TimeWindowGeoNode("Krefeld", 51.305449, 6.631279, weeklyOpeningHours, visitDuration,
+            importance);
+    opti.addElement(krefeld);
+
+    if (addFarAwayNodes) {
+      INode nuernberg =
+          new TimeWindowGeoNode("Nuernberg", 49.4478, 11.0683, weeklyOpeningHours, visitDuration,
+              importance);
+      opti.addElement(nuernberg);
+
+      INode heilbronn =
+          new TimeWindowGeoNode("Heilbronn", 49.1403, 9.22, weeklyOpeningHours, visitDuration,
+              importance);
+      opti.addElement(heilbronn);
     }
 
+    // On purpose, we define a stricter opening hour for Duisburg
+    List<IOpeningHours> weeklyOpeningHoursStrict = new ArrayList<>();
+    weeklyOpeningHoursStrict
+        .add(new OpeningHours(
+            ZonedDateTime.of(2030, MAY.getValue(), 8, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2030, MAY.getValue(), 8, 9, 45, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-    /**
-     * Compare results.
-     *
-     * @param opti      the opti
-     * @param orgResult the org result
-     * @param modResult the mod result
-     * @throws ResultStructureNotMatchingException the result structure not matching
-     *                                             exception
-     */
-    static void compareResults(IOptimization opti, IOptimizationResult orgResult, IOptimizationResult modResult)
-	    throws ResultStructureNotMatchingException {
+    INode duisburg = new TimeWindowGeoNode("Duisburg", 51.47994, 6.75966, weeklyOpeningHoursStrict,
+        visitDuration,
+        importance);
+    opti.addElement(duisburg);
+  }
 
-	// Compare
-	Optional<JobAdvantageResult> comparissonResultOptional = JobAdvantagesController.compare(orgResult, modResult);
+  /**
+   * Adds the Resources to the Optimization.
+   *
+   * @param opti the optimization instance
+   */
+  private static void addResources(IOptimization opti) {
 
-	if (comparissonResultOptional.isPresent()) {
-	    JobAdvantageResult comparissonResult = comparissonResultOptional.get();
+    // Define the WorkingHours
+    List<IWorkingHours> workingHours = new ArrayList<>();
+    workingHours
+        .add(new WorkingHours(
+            ZonedDateTime.of(2030, MAY.getValue(), 8, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2030, MAY.getValue(), 8, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-	    ICostAdvantagesInterpreter myInterpreter = new CostAdvantageInterpreter();
+    workingHours
+        .add(new WorkingHours(
+            ZonedDateTime.of(2030, MAY.getValue(), 9, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2030, MAY.getValue(), 9, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-	    System.out.println("\n\n\n#########################  COMPARISON RESULT  #########################\n\n\n");
-	    System.out.println(myInterpreter.generateTextReport(comparissonResult));
+    Duration maxWorkingTime = Duration.ofHours(9);
+    Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
-	} else {
-	    System.out.println("Comparisson failed");
-	}
+    // Define the Resource
+    IResource jack = new CapacityResource("Jack from Aachen", 50.775346, 6.083887, maxWorkingTime,
+        maxDistanceKmW,
+        workingHours);
+    opti.addElement(jack);
+  }
 
-    }
+  /**
+   * Attach to different Events (Observables) of the optimization instance.
+   *
+   * @param opti the optimization instance
+   */
+  private static void attachToObservables(IOptimization opti) {
 
-    /**
-     * Creates the initial result.
-     *
-     * @param opti the opti
-     * @return the i optimization result
-     * @throws InvalidLicenceException the invalid licence exception
-     * @throws InterruptedException the interrupted exception
-     * @throws ExecutionException the execution exception
-     * @throws TimeoutException the timeout exception
-     */
-    static IOptimizationResult createInitialResult(IOptimization opti)
-	    throws InvalidLicenceException, InterruptedException, ExecutionException, TimeoutException {
+    opti.getOptimizationEvents().progressSubject()
+        .subscribe(p -> System.out.println(p.getProgressString()));
 
-	// Extracting a completable Future for the optimization result
-	CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
+    opti.getOptimizationEvents().warningSubject().subscribe(w -> System.out.println(w.toString()));
 
-	// It is important to block the call, otherwise the Optimization will be
-	// terminated
-	IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
+    opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s.toString()));
 
-	return result;
+    opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
+  }
 
-    }
+  /**
+   * Export to kml.
+   *
+   * @param kmlFile the kml file
+   * @param result  the result
+   * @throws FileNotFoundException the file not found exception
+   */
+  static void exportToKml(String kmlFile, IOptimizationResult result) throws FileNotFoundException {
 
-    /**
-     * Apply tasks and create mod result.
-     *
-     * @param opti the opti
-     * @param tasks the tasks
-     * @return the i optimization result
-     * @throws InterruptedException the interrupted exception
-     * @throws ExecutionException the execution exception
-     * @throws InvalidLicenceException the invalid licence exception
-     * @throws ConvertException the convert exception
-     * @throws SerializationException the serialization exception
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    static IOptimizationResult applyTasksAndCreateModResult(IOptimization opti, List<IModificationTask> tasks)
-	    throws InterruptedException, ExecutionException, InvalidLicenceException, ConvertException,
-	    SerializationException, IOException {
-	
-	OptimizationResultModificationWrapper myWrapper = new OptimizationResultModificationWrapper();
+    IEntityExporter exporter = new EntityKMLExporter();
+    exporter.export(result.getContainer(), new FileOutputStream(kmlFile));
 
-	// FYI: You can do: 
-	// IOptimizationResult recoveredOrgResult = myWrapper.getNewResult(opti, new ArrayList<>()); what creates an shallow copy of the result.
-	
-	IOptimizationResult modiResult = myWrapper.getNewResult(opti, tasks);
-
-	return modiResult;
-    }
-    
-    /*
-     * 
-     * 
-     * 
-     */
-
-    /**
-     * Adds the Properties to the Optimization.
-     *
-     * @param opti the optimization instance
-     */
-    private static void addProperties(IOptimization opti) {
-
-	Properties props = new Properties();
-
-	props.setProperty("JOptExitCondition.JOptGenerationCount", "200");
-	props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "10000");
-	props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
-
-	props.setProperty("JOpt.NumCPUCores", "4");
-
-	opti.addElement(props);
-    }
-
-    /**
-     * Adds the Nodes to the Optimization.
-     *
-     * @param opti the optimization instance
-     */
-    private static void addNodes(IOptimization opti, boolean addFarAwayNodes ) {
-
-	// Define the OpeningHours
-	List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
-	weeklyOpeningHours
-		.add(new OpeningHours(ZonedDateTime.of(2030, MAY.getValue(), 8, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-			ZonedDateTime.of(2030, MAY.getValue(), 8, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-	
-	weeklyOpeningHours
-	.add(new OpeningHours(ZonedDateTime.of(2030, MAY.getValue(), 9, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-		ZonedDateTime.of(2030, MAY.getValue(), 9, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-	Duration visitDuration = Duration.ofMinutes(30);
-
-	int importance = 1;
-
-	// Define some Nodes
-	INode koeln = new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, importance);
-	opti.addElement(koeln);
-
-	INode essen = new TimeWindowGeoNode("Essen", 51.45, 7.01667, weeklyOpeningHours, visitDuration, importance);
-	opti.addElement(essen);
-
-	INode dueren = new TimeWindowGeoNode("Dueren", 50.8, 6.48333, weeklyOpeningHours, visitDuration, importance);
-	opti.addElement(dueren);
-
-	INode wuppertal = new TimeWindowGeoNode("Wuppertal", 51.2667, 7.18333, weeklyOpeningHours, visitDuration,
-		importance);
-	opti.addElement(wuppertal);
-
-	INode aachen = new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration,
-		importance);
-	opti.addElement(aachen);
-
-	INode krefeld = new TimeWindowGeoNode("Krefeld", 51.305449, 6.631279, weeklyOpeningHours, visitDuration,
-		importance);
-	opti.addElement(krefeld);
-
-	
-	
-	if (addFarAwayNodes) {
-	    INode nuernberg = new TimeWindowGeoNode("Nuernberg", 49.4478, 11.0683, weeklyOpeningHours, visitDuration,
-		    importance);
-	    opti.addElement(nuernberg);
-
-	    INode heilbronn = new TimeWindowGeoNode("Heilbronn", 49.1403, 9.22, weeklyOpeningHours, visitDuration,
-		    importance);
-	    opti.addElement(heilbronn);
-	}
-	
-
-	// On purpose, we define a stricter opening hour for Duisburg
-	List<IOpeningHours> weeklyOpeningHoursStrict = new ArrayList<>();
-	weeklyOpeningHoursStrict
-		.add(new OpeningHours(ZonedDateTime.of(2030, MAY.getValue(), 8, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-			ZonedDateTime.of(2030, MAY.getValue(), 8, 9, 45, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-	INode duisburg = new TimeWindowGeoNode("Duisburg", 51.47994, 6.75966, weeklyOpeningHoursStrict, visitDuration,
-		importance);
-	opti.addElement(duisburg);
-    }
-
-    /**
-     * Adds the Resources to the Optimization.
-     *
-     * @param opti the optimization instance
-     */
-    private static void addResources(IOptimization opti) {
-
-	// Define the WorkingHours
-	List<IWorkingHours> workingHours = new ArrayList<>();
-	workingHours
-		.add(new WorkingHours(ZonedDateTime.of(2030, MAY.getValue(), 8, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-			ZonedDateTime.of(2030, MAY.getValue(), 8, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-	workingHours
-		.add(new WorkingHours(ZonedDateTime.of(2030, MAY.getValue(), 9, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-			ZonedDateTime.of(2030, MAY.getValue(), 9, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-	Duration maxWorkingTime = Duration.ofHours(9);
-	Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
-
-	// Define the Resource
-	IResource jack = new CapacityResource("Jack from Aachen", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW,
-		workingHours);
-	opti.addElement(jack);
-    }
-
-    /**
-     * Attach to different Events (Observables) of the optimization instance.
-     *
-     * @param opti the optimization instance
-     */
-    private static void attachToObservables(IOptimization opti) {
-
-	opti.getOptimizationEvents().progressSubject().subscribe(p -> System.out.println(p.getProgressString()));
-
-	opti.getOptimizationEvents().warningSubject().subscribe(w -> System.out.println(w.toString()));
-
-	opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s.toString()));
-
-	opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
-    }
-
-    /**
-     * Export to kml.
-     *
-     * @param kmlFile the kml file
-     * @param result  the result
-     * @throws FileNotFoundException the file not found exception
-     */
-    static void exportToKml(String kmlFile, IOptimizationResult result) throws FileNotFoundException {
-
-	IEntityExporter exporter = new EntityKMLExporter();
-	exporter.export(result.getContainer(), new FileOutputStream(kmlFile));
-
-    }
+  }
 }

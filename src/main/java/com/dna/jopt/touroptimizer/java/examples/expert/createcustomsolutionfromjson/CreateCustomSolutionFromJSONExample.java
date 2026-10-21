@@ -40,106 +40,113 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
  */
 public class CreateCustomSolutionFromJSONExample extends Optimization {
 
-    public static void main(String[] args) throws InterruptedException, ExecutionException, InvalidLicenceException,
-	    ConvertException, SerializationException, IOException {
-	new CreateCustomSolutionFromJSONExample().example();
+  public static void main(String[] args)
+      throws InterruptedException, ExecutionException, InvalidLicenceException,
+      ConvertException, SerializationException, IOException {
+    new CreateCustomSolutionFromJSONExample().example();
+  }
+
+  public String toString() {
+    return "Loading elements from a JSON file.";
+  }
+
+  public void example()
+      throws InterruptedException, ExecutionException, InvalidLicenceException, ConvertException,
+      SerializationException, IOException {
+
+    // Set the license via helper
+    ExampleLicenseHelper.setLicense(this);
+
+    // Set the file to load
+    boolean doLoadNodeConnector = true;
+    boolean doLoadProperties = true;
+
+    String jsonFile = "myopti.json.bz2";
+
+    try {
+      // Prepare the optimization by loading the Properties and NodeConnector and
+      // extract the solution
+      IEntity en = CreateCustomSolutionFromJSONExample.loadEntityFromJson(
+          new FileInputStream(jsonFile), this,
+          doLoadNodeConnector, doLoadProperties);
+
+      // Load elements
+
+      // YOUR TODO HERE THE CUSTOM SOLUTION CAN BE CREATED BY USING THE LOADED ELEMENTS
+      List<INode> nodes = this.getNodes(en);
+      List<IResource> ress = this.getResources(en);
+
+      // For now we simply add the elements - But you could create your own custom solution
+      this.addNodes(nodes);
+      this.addResources(ress);
+
+      this.startRunAsync().get();
+    } catch (FileNotFoundException e) {
+      System.out.println(
+          "JsonFile not existing. Run example 'SaveOptimizationToJsonExample.java' first.");
+      e.printStackTrace();
+    }
+  }
+
+  private List<IResource> getResources(IEntity en) {
+    return en.getAllEntityElements().stream().filter(e -> e instanceof IResource)
+        .map(e -> (IResource) e).distinct()
+        .collect(Collectors.toList());
+  }
+
+  private List<INode> getNodes(IEntity en) {
+    return en.getAllEntityElements().stream().filter(e -> e instanceof INode).map(e -> (INode) e)
+        .distinct()
+        .collect(Collectors.toList());
+  }
+
+  private static IEntity loadEntityFromJson(FileInputStream jsonFile, IOptimization opti,
+      boolean doLoadNodeConnector,
+      boolean doLoadProperties) {
+
+    IOptimization dummyOptimization = new Optimization();
+
+    IOptimizationImporter importer = new OptimizationJSONImporter();
+
+    importer.update(jsonFile, dummyOptimization);
+
+    IEntity en = dummyOptimization.getWorkEntity();
+
+    if (doLoadNodeConnector) {
+      opti.setNodeConnector(dummyOptimization.getNodeConnector());
     }
 
-    public String toString() {
-	return "Loading elements from a JSON file.";
+    Optional<Properties> propertiesOpt = dummyOptimization.getUserProperties();
+    if (doLoadProperties && propertiesOpt.isPresent()) {
+      opti.addElement(propertiesOpt.get());
     }
 
-    public void example() throws InterruptedException, ExecutionException, InvalidLicenceException, ConvertException,
-	    SerializationException, IOException {
+    return en;
+  }
 
-	// Set the license via helper
-	ExampleLicenseHelper.setLicense(this);
+  @Override
+  public void onAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {
+    System.out.println(rapoptResult);
+  }
 
-	// Set the file to load
-	boolean doLoadNodeConnector = true;
-	boolean doLoadProperties = true;
+  @Override
+  public void onError(int code, String message) {
+    System.out.println("code: " + code + " message:" + message);
+  }
 
-	String jsonFile = "myopti.json.bz2";
+  @Override
+  public void onStatus(int code, String message) {
+    System.out.println("code: " + code + " message:" + message);
+  }
 
-	try {
-	    // Prepare the optimization by loading the Properties and NodeConnector and
-	    // extract the solution
-	    IEntity en = CreateCustomSolutionFromJSONExample.loadEntityFromJson(new FileInputStream(jsonFile), this,
-		    doLoadNodeConnector, doLoadProperties);
+  @Override
+  public void onWarning(int code, String message) {
+    //
 
-	    // Load elements
+  }
 
-	    // YOUR TODO HERE THE CUSTOM SOLUTION CAN BE CREATED BY USING THE LOADED ELEMENTS
-	    List<INode> nodes = this.getNodes(en);
-	    List<IResource> ress = this.getResources(en);
-
-	    // For now we simply add the elements - But you could create your own custom solution
-	    this.addNodes(nodes);
-	    this.addResources(ress);
-
-	    this.startRunAsync().get();
-	} catch (FileNotFoundException e) {
-	    System.out.println("JsonFile not existing. Run example 'SaveOptimizationToJsonExample.java' first.");
-	    e.printStackTrace();
-	}
-    }
-
-    private List<IResource> getResources(IEntity en) {
-	return en.getAllEntityElements().stream().filter(e -> e instanceof IResource).map(e -> (IResource) e).distinct()
-		.collect(Collectors.toList());
-    }
-
-    private List<INode> getNodes(IEntity en) {
-	return en.getAllEntityElements().stream().filter(e -> e instanceof INode).map(e -> (INode) e).distinct()
-		.collect(Collectors.toList());
-    }
-
-    private static IEntity loadEntityFromJson(FileInputStream jsonFile, IOptimization opti, boolean doLoadNodeConnector,
-	    boolean doLoadProperties) {
-
-	IOptimization dummyOptimization = new Optimization();
-
-	IOptimizationImporter importer = new OptimizationJSONImporter();
-
-	importer.update(jsonFile, dummyOptimization);
-
-	IEntity en = dummyOptimization.getWorkEntity();
-
-	if (doLoadNodeConnector) {
-	    opti.setNodeConnector(dummyOptimization.getNodeConnector());
-	}
-
-	Optional<Properties> propertiesOpt = dummyOptimization.getUserProperties();
-	if (doLoadProperties && propertiesOpt.isPresent()) {
-	    opti.addElement(propertiesOpt.get());
-	}
-
-	return en;
-    }
-
-    @Override
-    public void onAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {
-	System.out.println(rapoptResult);
-    }
-
-    @Override
-    public void onError(int code, String message) {
-	System.out.println("code: " + code + " message:" + message);
-    }
-
-    @Override
-    public void onStatus(int code, String message) {
-	System.out.println("code: " + code + " message:" + message);
-    }
-
-    @Override
-    public void onWarning(int code, String message) {
-	//
-
-    }
-
-    @Override
-    public void onProgress(IOptimizationProgress rapoptProgress) {
-	//
-    }
+  @Override
+  public void onProgress(IOptimizationProgress rapoptProgress) {
+    //
+  }
 }

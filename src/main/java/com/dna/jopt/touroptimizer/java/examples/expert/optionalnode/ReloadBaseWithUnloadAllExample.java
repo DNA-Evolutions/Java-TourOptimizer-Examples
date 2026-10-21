@@ -105,7 +105,7 @@ public class ReloadBaseWithUnloadAllExample extends Optimization {
    */
   private void addResources() {
 
-    double[] rep1InitialLoad = {0};
+    double[] rep1InitialLoad = { 0 };
 
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
@@ -125,7 +125,7 @@ public class ReloadBaseWithUnloadAllExample extends Optimization {
         new CapacityResource(
             "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
     rep1.setCost(0, 1, 1);
-    rep1.setCapacity(new double[] {30});
+    rep1.setCapacity(new double[]{ 30 });
     rep1.setCost(0, 1, 1);
     rep1.setInitialLoad(rep1InitialLoad);
 
@@ -149,9 +149,9 @@ public class ReloadBaseWithUnloadAllExample extends Optimization {
 
     Duration visitDuration = Duration.of(20, MINUTES);
 
-    double[] loadPerNode = {-10}; // We pick up 10 items
-    double[] loadPerNodeHigh = {-15}; // We pick up 15 items
-    double[] unloadPerOptionalNode = {10}; // We drop 10 items
+    double[] loadPerNode = { -10 }; // We pick up 10 items
+    double[] loadPerNodeHigh = { -15 }; // We pick up 15 items
+    double[] unloadPerOptionalNode = { 10 }; // We drop 10 items
 
     INode koelnOptional =
         new TimeWindowGeoNode("KoelnOptional", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);

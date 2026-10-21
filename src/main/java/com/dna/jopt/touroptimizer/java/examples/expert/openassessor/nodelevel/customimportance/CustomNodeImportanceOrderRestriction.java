@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.expert.openassessor.nodelevel.c
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -31,7 +31,7 @@ public class CustomNodeImportanceOrderRestriction
 
   @Override
   public IEntityRestrictionResult invokeRestriction(
-		  IEntity en,
+      IEntity en,
       ILogicEntityRoute route,
       INode node,
       IOptimizationElement lastGeoLocationElement,
@@ -40,33 +40,34 @@ public class CustomNodeImportanceOrderRestriction
       IEntityCostAssessor ca,
       boolean resultRequested) {
 
-	  // Get importance
+    // Get importance
     int curNodeImportance = node.getImportance();
-    
+
     // Initially assign with same importance
     int prevNodeImportance = node.getImportance();
-    
-    if(prevElement instanceof INode) {
-    	prevNodeImportance = ((INode)prevElement).getImportance();
+
+    if (prevElement instanceof INode) {
+      prevNodeImportance = ((INode) prevElement).getImportance();
     }
-    
+
     // Calc delta of importances - If delta is positive the more importance node
     // is visited later. Therefore we assign costs
-    int deltaImportance = curNodeImportance-prevNodeImportance;
+    int deltaImportance = curNodeImportance - prevNodeImportance;
 
     double costWrongOrderedImprotance = 0.0;
     if (deltaImportance > 0) {
       // The more important node is visited later => assign cost
-    	costWrongOrderedImprotance = 100*deltaImportance;
-    	// maybe use:
-    	//this.getPropertyProvider().getPropertyProviderHelper().getWeightLateArrival();
+      costWrongOrderedImprotance = 100 * deltaImportance;
+      // maybe use:
+      //this.getPropertyProvider().getPropertyProviderHelper().getWeightLateArrival();
     }
 
     // Add cost
     if (costWrongOrderedImprotance > 0) {
       route
           .getRouteCostAndViolationController()
-          .setCostLate(route.getRouteCostAndViolationController().getCostLate() + costWrongOrderedImprotance);
+          .setCostLate(route.getRouteCostAndViolationController().getCostLate()
+              + costWrongOrderedImprotance);
 
       route
           .getRouteCostAndViolationController()

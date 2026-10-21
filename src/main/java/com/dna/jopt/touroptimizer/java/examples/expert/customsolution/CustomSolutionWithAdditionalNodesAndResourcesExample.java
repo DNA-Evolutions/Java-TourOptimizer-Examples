@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.expert.customsolution;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -68,7 +68,8 @@ public class CustomSolutionWithAdditionalNodesAndResourcesExample extends Optimi
         + "nodes and resources will be added to the optimization in an optimized way.";
   }
 
-  public void example() throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
+  public void example()
+      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
@@ -81,7 +82,7 @@ public class CustomSolutionWithAdditionalNodesAndResourcesExample extends Optimi
 
     // Add to Optimization - At this point
     this.setInitialEntity(initialEntity);
-    
+
     // Add more resources
     this.addReassignResources(this.getAdditionalResources());
 
@@ -250,30 +251,30 @@ public class CustomSolutionWithAdditionalNodesAndResourcesExample extends Optimi
     TimeWindowGeoNode essen =
         new TimeWindowGeoNode("Essen2", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
     myNodesAdditonal.add(essen);
-    
+
     // Lets add a pillar for our new resource
     OpeningHours pillarOpening = new OpeningHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 11, 9, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 11, 10, 0, 0, 0, ZoneId.of("Europe/Berlin")));
-            
+        ZonedDateTime.of(2020, MAY.getValue(), 11, 9, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+        ZonedDateTime.of(2020, MAY.getValue(), 11, 10, 0, 0, 0, ZoneId.of("Europe/Berlin")));
+
     IPillarNode pillarNode =
-            new PillarTimeWindowGeoNode(
-                "testPillarKoeln",
-                50.9333, 6.95,
-                pillarOpening);
+        new PillarTimeWindowGeoNode(
+            "testPillarKoeln",
+            50.9333, 6.95,
+            pillarOpening);
     myNodesAdditonal.add(pillarNode);
-    
+
     // Let also add a node, which is already present, and will be rejected
     TimeWindowGeoNode essenDuplicate =
-            new TimeWindowGeoNode("Essen", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
-        myNodesAdditonal.add(essenDuplicate);
+        new TimeWindowGeoNode("Essen", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
+    myNodesAdditonal.add(essenDuplicate);
 
     return myNodesAdditonal;
   }
 
   private List<IResource> getAdditionalResources() {
-	  
-	  List<IResource> ress = new ArrayList<>();
+
+    List<IResource> ress = new ArrayList<>();
 
     List<IWorkingHours> workingHours = new ArrayList<>();
     workingHours.add(
@@ -293,17 +294,17 @@ public class CustomSolutionWithAdditionalNodesAndResourcesExample extends Optimi
         new CapacityResource(
             "JackNew", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
     res1.setCost(0, 1, 1);
-    
+
     // Let also add a resource with existing id, which will be rejected
 
     IResource res2 =
         new CapacityResource(
             "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
     res2.setCost(0, 1, 1);
-    
+
     ress.add(res1);
     ress.add(res2);
-    
+
     return ress;
   }
 
@@ -319,7 +320,7 @@ public class CustomSolutionWithAdditionalNodesAndResourcesExample extends Optimi
 
   @Override
   public void onWarning(int code, String message) {
-	  System.out.println("code: " + code + " message:" + message);
+    System.out.println("code: " + code + " message:" + message);
 
   }
 

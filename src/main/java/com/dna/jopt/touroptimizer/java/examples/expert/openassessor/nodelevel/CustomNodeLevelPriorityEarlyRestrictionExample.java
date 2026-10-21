@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.expert.openassessor.nodelevel;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -54,16 +54,19 @@ import tech.units.indriya.quantity.Quantities;
  */
 public class CustomNodeLevelPriorityEarlyRestrictionExample extends Optimization {
 
-  public static void main(String[] args) throws InvalidLicenceException, InterruptedException, ExecutionException, IOException {
+  public static void main(String[] args)
+      throws InvalidLicenceException, InterruptedException, ExecutionException, IOException {
     new CustomNodeLevelPriorityEarlyRestrictionExample().example();
   }
-  
+
   public String toString() {
-	  return "Inject a custom restriction for the assessor. Here, nodes which are visited late in their\r\n" + 
-	      " timeWindow get a penalty, even though no late violation is caused.";
+    return "Inject a custom restriction for the assessor. Here, nodes which are visited late in their\r\n"
+        +
+        " timeWindow get a penalty, even though no late violation is caused.";
   }
 
-  public void example() throws InvalidLicenceException, InterruptedException, ExecutionException, IOException {
+  public void example()
+      throws InvalidLicenceException, InterruptedException, ExecutionException, IOException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
@@ -76,7 +79,6 @@ public class CustomNodeLevelPriorityEarlyRestrictionExample extends Optimization
 
     this.addNodes();
     this.addResources();
-
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 

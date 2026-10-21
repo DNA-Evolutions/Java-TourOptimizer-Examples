@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.expert.uncaughtexception.openas
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -33,7 +33,7 @@ public class FaultyInjectedRestriction
 
   @Override
   public IEntityRestrictionResult invokeRestriction(
-	  IEntity en,
+      IEntity en,
       ILogicEntityRoute route,
       INode node,
       IOptimizationElement lastGeoLocationElement,
@@ -43,10 +43,10 @@ public class FaultyInjectedRestriction
       boolean resultRequested) {
 
     // This example simply triggers a java.lang.ArithmeticException: / by zero at some point
-	int randomNum = ThreadLocalRandom.current().nextInt(0, 1000);
-	if(randomNum == 0) {
-		throw new ArithmeticException("Test Exception"); 
-	}
+    int randomNum = ThreadLocalRandom.current().nextInt(0, 1000);
+    if (randomNum == 0) {
+      throw new ArithmeticException("Test Exception");
+    }
 
     // Create the result and return
     return new EntityRestrictionResult();

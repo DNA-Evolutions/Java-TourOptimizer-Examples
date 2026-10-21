@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.expert.flextime;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -53,15 +53,17 @@ import tech.units.indriya.quantity.Quantities;
  */
 public class NegativeFlexTimeExample extends Optimization {
 
-  public static void main(String[] args) throws InvalidLicenceException, InterruptedException, ExecutionException, IOException {
+  public static void main(String[] args)
+      throws InvalidLicenceException, InterruptedException, ExecutionException, IOException {
     new NegativeFlexTimeExample().example();
   }
-  
+
   public String toString() {
-	  return "Simple example of negative flextime.";
+    return "Simple example of negative flextime.";
   }
 
-  public void example() throws InvalidLicenceException, InterruptedException, ExecutionException, IOException {
+  public void example()
+      throws InvalidLicenceException, InterruptedException, ExecutionException, IOException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
@@ -111,14 +113,14 @@ public class NegativeFlexTimeExample extends Optimization {
         new CapacityResource(
             "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
     rep1.setCost(0, 1, 1);
-    
+
     // We allow to start up to 2 hours earlier. The true boolean is indicating, that the
     // time is only allowed to be used for driving to a node (not working on it).
-    rep1.setMaxRouteStartReductionTime(Duration.ofHours(2),true);
-    
+    rep1.setMaxRouteStartReductionTime(Duration.ofHours(2), true);
+
     // The earlier start should be part of the total working time
     rep1.setReductionTimeIsIncludedInWorkingTime(true);
-    
+
     this.addElement(rep1);
   }
 

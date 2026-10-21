@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.expert.customsolution;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -53,21 +53,22 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
 import tech.units.indriya.quantity.Quantities;
 
-
 /**
  * Setting a custom solution for starting the optimization.
  */
 public class CustomSolutionExample extends Optimization {
 
-  public static void main(String[] args) throws InvalidLicenceException, InterruptedException, ExecutionException, IOException {
+  public static void main(String[] args)
+      throws InvalidLicenceException, InterruptedException, ExecutionException, IOException {
     new CustomSolutionExample().example();
   }
-  
+
   public String toString() {
-	  return "Setting a custom solution for starting the optimization.";
+    return "Setting a custom solution for starting the optimization.";
   }
 
-  public void example() throws InvalidLicenceException, InterruptedException, ExecutionException, IOException {
+  public void example()
+      throws InvalidLicenceException, InterruptedException, ExecutionException, IOException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
@@ -176,16 +177,14 @@ public class CustomSolutionExample extends Optimization {
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
     myNodes1.add(koeln);
 
-
     TimeWindowGeoNode dueren =
         new TimeWindowGeoNode("Dueren", 50.8, 6.48333, weeklyOpeningHours, visitDuration, 1);
     myNodes1.add(dueren);
-    
 
     TimeWindowGeoNode essen =
         new TimeWindowGeoNode("Essen", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
     myNodes1.add(essen);
-    
+
     return myNodes1;
   }
 
@@ -233,7 +232,7 @@ public class CustomSolutionExample extends Optimization {
 
   @Override
   public void onWarning(int code, String message) {
-	  System.out.println("code: " + code + " message:" + message);
+    System.out.println("code: " + code + " message:" + message);
 
   }
 

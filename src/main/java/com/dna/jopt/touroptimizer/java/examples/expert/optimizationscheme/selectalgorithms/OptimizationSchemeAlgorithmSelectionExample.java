@@ -61,253 +61,272 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
  */
 public class OptimizationSchemeAlgorithmSelectionExample extends Optimization {
 
-    /**
-     * The main method.
-     *
-     * @param args the arguments
-     * @throws InterruptedException    the interrupted exception
-     * @throws ExecutionException      the execution exception
-     * @throws InvalidLicenceException the invalid licence exception
-     * @throws IOException
+  /**
+   * The main method.
+   *
+   * @param args the arguments
+   * @throws InterruptedException    the interrupted exception
+   * @throws ExecutionException      the execution exception
+   * @throws InvalidLicenceException the invalid licence exception
+   * @throws IOException
+   */
+  public static void main(String[] args)
+      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
+    new OptimizationSchemeAlgorithmSelectionExample().example();
+  }
+
+  public String toString() {
+    return "Create an optimization and use a custom scheme for selecting the algorithms used for optimization.";
+  }
+
+  /**
+   * Method which executes the necessary parts for the optimization.
+   *
+   * @throws InterruptedException    the interrupted exception
+   * @throws ExecutionException      the execution exception
+   * @throws InvalidLicenceException the invalid licence exception
+   * @throws IOException
+   */
+  public void example()
+      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
+
+    // We use the public evaluation license (20 elements) for the example - modify ExampleLicenseHelper in case
+    // you have a valid
+    // license.
+
+    ExampleLicenseHelper.setLicense(this);
+
+    // Setting a modified optimization scheme
+    // (1) Setting scheme
+    OptimizationSchemeAlgorithmSelectionExample.setScheme(this);
+
+    // Setting properties, adding all elements, and attaching to observables
+    // (1a) Adding properties
+    OptimizationSchemeAlgorithmSelectionExample.addProperties(this);
+
+    // (2) Adding nodes
+    OptimizationSchemeAlgorithmSelectionExample.addNodes(this);
+
+    // (3) Adding resources
+    OptimizationSchemeAlgorithmSelectionExample.addResources(this);
+
+    // (4) Attach to Observables
+    OptimizationSchemeAlgorithmSelectionExample.attachToObservables(this);
+
+    // Starting the optimization via Completable Future
+    // and presenting the result
+    // (5) Starting the optimization and presenting the result
+    OptimizationSchemeAlgorithmSelectionExample.startAndPresentResult(this);
+  }
+
+  /**
+   * Sets the modified scheme.
+   *
+   * @param opti the new scheme
+   */
+  public static void setScheme(IOptimization opti) {
+
+    /*
+     * Select a construction algo - Default would be
+     * "SIMULTANEOUS_SPACE_SAVINGS_ALGO"
      */
-    public static void main(String[] args)
-	    throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
-	new OptimizationSchemeAlgorithmSelectionExample().example();
-    }
+    ConstructionOptimizationAlgorithmConfig constructionAlgo =
+        ConstructionOptimizationAlgorithmConfig.builder()
+            .algorithm(ConstructionOptimizationAlgorithm.SEQUENTIAL_SPACE_SAVINGS_ALGO).build();
 
-    public String toString() {
-	return "Create an optimization and use a custom scheme for selecting the algorithms used for optimization.";
-    }
-
-    /**
-     * Method which executes the necessary parts for the optimization.
-     *
-     * @throws InterruptedException    the interrupted exception
-     * @throws ExecutionException      the execution exception
-     * @throws InvalidLicenceException the invalid licence exception
-     * @throws IOException
+    /*
+     * Select heuristic algos
      */
-    public void example() throws InterruptedException, ExecutionException, InvalidLicenceException, IOException {
 
-	// We use the public evaluation license (20 elements) for the example - modify ExampleLicenseHelper in case
-	// you have a valid
-	// license.
+    List<HeuristicOptimizationAlgorithmConfig> myHeursticAlgoConfigs = new ArrayList<>();
 
-	ExampleLicenseHelper.setLicense(this);
-
-	// Setting a modified optimization scheme
-	// (1) Setting scheme
-	OptimizationSchemeAlgorithmSelectionExample.setScheme(this);
-
-	// Setting properties, adding all elements, and attaching to observables
-	// (1a) Adding properties
-	OptimizationSchemeAlgorithmSelectionExample.addProperties(this);
-
-	// (2) Adding nodes
-	OptimizationSchemeAlgorithmSelectionExample.addNodes(this);
-
-	// (3) Adding resources
-	OptimizationSchemeAlgorithmSelectionExample.addResources(this);
-
-	// (4) Attach to Observables
-	OptimizationSchemeAlgorithmSelectionExample.attachToObservables(this);
-
-	// Starting the optimization via Completable Future
-	// and presenting the result
-	// (5) Starting the optimization and presenting the result
-	OptimizationSchemeAlgorithmSelectionExample.startAndPresentResult(this);
-    }
-
-    /**
-     * Sets the modified scheme.
+    /*
+     * For this optimization we would like to have a quick simulated annealing
+     * optimization, before a longer additional simulated annealing starts.
      *
-     * @param opti the new scheme
+     * Note: AutoFiltering is disabled, not matter what properties are set for the
+     * optimization if hasAutoFilter(boolean hasAutoFilter) is set to false
      */
-    public static void setScheme(IOptimization opti) {
 
-	/*
-	 * Select a construction algo - Default would be
-	 * "SIMULTANEOUS_SPACE_SAVINGS_ALGO"
-	 */
-	ConstructionOptimizationAlgorithmConfig constructionAlgo = ConstructionOptimizationAlgorithmConfig.builder()
-		.algorithm(ConstructionOptimizationAlgorithm.SEQUENTIAL_SPACE_SAVINGS_ALGO).build();
+    HeuristicOptimizationAlgorithmConfig heuristicAlgoZero =
+        HeuristicOptimizationAlgorithmConfig.builder()
+            .algorithm(OptimizationAlgorithmConfig.SIMULATED_ANNEALING_ALGO)
+            .simulatedAnnealingOverrideNumIterationsValue(1000).hasAutoFilter(false).build();
 
-	/*
-	 * Select heuristic algos
-	 */
+    // When not providing "simulatedAnnealingOverrideNumIterationsValue", the value
+    // will be taken
+    // from the property "JOpt.Algorithm.PreOptimization.SA.NumIterations"
 
-	List<HeuristicOptimizationAlgorithmConfig> myHeursticAlgoConfigs = new ArrayList<>();
+    HeuristicOptimizationAlgorithmConfig heuristicAlgoOne =
+        HeuristicOptimizationAlgorithmConfig.builder()
+            .algorithm(OptimizationAlgorithmConfig.SIMULATED_ANNEALING_ALGO).hasAutoFilter(false)
+            .build();
 
-	/*
-	 * For this optimization we would like to have a quick simulated annealing
-	 * optimization, before a longer additional simulated annealing starts.
-	 *
-	 * Note: AutoFiltering is disabled, not matter what properties are set for the
-	 * optimization if hasAutoFilter(boolean hasAutoFilter) is set to false
-	 */
+    HeuristicOptimizationAlgorithmConfig heuristicAlgoTwo = HeuristicOptimizationAlgorithmConfig
+        .builder()
+        .algorithm(OptimizationAlgorithmConfig.GENETIC_EVOLUTION_ALGO).hasAutoFilter(true).build();
 
-	HeuristicOptimizationAlgorithmConfig heuristicAlgoZero = HeuristicOptimizationAlgorithmConfig.builder()
-		.algorithm(OptimizationAlgorithmConfig.SIMULATED_ANNEALING_ALGO)
-		.simulatedAnnealingOverrideNumIterationsValue(1000).hasAutoFilter(false).build();
+    // Construct modified scheme based on default scheme
+    myHeursticAlgoConfigs.add(heuristicAlgoZero);
+    myHeursticAlgoConfigs.add(heuristicAlgoOne);
+    myHeursticAlgoConfigs.add(heuristicAlgoTwo);
 
-	// When not providing "simulatedAnnealingOverrideNumIterationsValue", the value
-	// will be taken
-	// from the property "JOpt.Algorithm.PreOptimization.SA.NumIterations"
-
-	HeuristicOptimizationAlgorithmConfig heuristicAlgoOne = HeuristicOptimizationAlgorithmConfig.builder()
-		.algorithm(OptimizationAlgorithmConfig.SIMULATED_ANNEALING_ALGO).hasAutoFilter(false).build();
-
-	HeuristicOptimizationAlgorithmConfig heuristicAlgoTwo = HeuristicOptimizationAlgorithmConfig.builder()
-		.algorithm(OptimizationAlgorithmConfig.GENETIC_EVOLUTION_ALGO).hasAutoFilter(true).build();
-
-	// Construct modified scheme based on default scheme
-	myHeursticAlgoConfigs.add(heuristicAlgoZero);
-	myHeursticAlgoConfigs.add(heuristicAlgoOne);
-	myHeursticAlgoConfigs.add(heuristicAlgoTwo);
-
-	/*
-	 * Note: In case the constructionAlgoConfigOpt isn't present, the default
-	 * construction algorithm is used. In case the algoConfigsOpt isn't present, the
-	 * default heuristic algorithms are used. If algoConfigsOpt is present, but
-	 * contains an empty list, no heuristic algorithms are used at all.
-	 *
-	 */
-	IOptimizationScheme myScheme = new DefaultOptimizationScheme(opti, Optional.of(constructionAlgo),
-		Optional.of(myHeursticAlgoConfigs));
-
-	// Set scheme
-	opti.setOptimizationScheme(myScheme);
-    }
-
-    /**
-     * Start the optimization and present the result.
+    /*
+     * Note: In case the constructionAlgoConfigOpt isn't present, the default
+     * construction algorithm is used. In case the algoConfigsOpt isn't present, the
+     * default heuristic algorithms are used. If algoConfigsOpt is present, but
+     * contains an empty list, no heuristic algorithms are used at all.
      *
-     * @param opti the optimization instance
-     * @throws InvalidLicenceException the invalid licence exception
-     * @throws InterruptedException    the interrupted exception
-     * @throws ExecutionException      the execution exception
      */
-    private static void startAndPresentResult(IOptimization opti)
-	    throws InvalidLicenceException, InterruptedException, ExecutionException {
-	// Extracting a completable future for the optimization result
-	CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
+    IOptimizationScheme myScheme =
+        new DefaultOptimizationScheme(opti, Optional.of(constructionAlgo),
+            Optional.of(myHeursticAlgoConfigs));
 
-	// It is important to block the call, otherwise optimization will be terminated
-	IOptimizationResult result = resultFuture.get();
+    // Set scheme
+    opti.setOptimizationScheme(myScheme);
+  }
 
-	// Presenting the result
-	System.out.println(result);
-    }
+  /**
+   * Start the optimization and present the result.
+   *
+   * @param opti the optimization instance
+   * @throws InvalidLicenceException the invalid licence exception
+   * @throws InterruptedException    the interrupted exception
+   * @throws ExecutionException      the execution exception
+   */
+  private static void startAndPresentResult(IOptimization opti)
+      throws InvalidLicenceException, InterruptedException, ExecutionException {
+    // Extracting a completable future for the optimization result
+    CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
 
-    /**
-     * Adds the properties to the optimization.
-     *
-     * @param opti the optimization instance
-     */
-    private static void addProperties(IOptimization opti) {
+    // It is important to block the call, otherwise optimization will be terminated
+    IOptimizationResult result = resultFuture.get();
 
-	Properties props = new Properties();
+    // Presenting the result
+    System.out.println(result);
+  }
 
-	props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
-	props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "20000");
-	props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
-	props.setProperty("JOpt.NumCPUCores", "4");
+  /**
+   * Adds the properties to the optimization.
+   *
+   * @param opti the optimization instance
+   */
+  private static void addProperties(IOptimization opti) {
 
-	opti.addElement(props);
-    }
+    Properties props = new Properties();
 
-    /**
-     * Adds the nodes to the optimization.
-     *
-     * @param opti the optimization instance
-     */
-    private static void addNodes(IOptimization opti) {
+    props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "20000");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
+    props.setProperty("JOpt.NumCPUCores", "4");
 
-	List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
-	weeklyOpeningHours
-		.add(new OpeningHours(ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-			ZonedDateTime.of(2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+    opti.addElement(props);
+  }
 
-	weeklyOpeningHours
-		.add(new OpeningHours(ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-			ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+  /**
+   * Adds the nodes to the optimization.
+   *
+   * @param opti the optimization instance
+   */
+  private static void addNodes(IOptimization opti) {
 
-	Duration visitDuration = Duration.ofMinutes(20);
+    List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
+    weeklyOpeningHours
+        .add(new OpeningHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-	int importance = 1;
+    weeklyOpeningHours
+        .add(new OpeningHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-	// Define some nodes
-	INode koeln = new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, importance);
-	opti.addElement(koeln);
+    Duration visitDuration = Duration.ofMinutes(20);
 
-	INode essen = new TimeWindowGeoNode("Essen", 51.45, 7.01667, weeklyOpeningHours, visitDuration, importance);
-	opti.addElement(essen);
+    int importance = 1;
 
-	INode dueren = new TimeWindowGeoNode("Dueren", 50.8, 6.48333, weeklyOpeningHours, visitDuration, importance);
-	opti.addElement(dueren);
+    // Define some nodes
+    INode koeln = new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration,
+        importance);
+    opti.addElement(koeln);
 
-	INode nuernberg = new TimeWindowGeoNode("Nuernberg", 49.4478, 11.0683, weeklyOpeningHours, visitDuration,
-		importance);
-	opti.addElement(nuernberg);
+    INode essen = new TimeWindowGeoNode("Essen", 51.45, 7.01667, weeklyOpeningHours, visitDuration,
+        importance);
+    opti.addElement(essen);
 
-	INode heilbronn = new TimeWindowGeoNode("Heilbronn", 49.1403, 9.22, weeklyOpeningHours, visitDuration,
-		importance);
-	opti.addElement(heilbronn);
+    INode dueren = new TimeWindowGeoNode("Dueren", 50.8, 6.48333, weeklyOpeningHours, visitDuration,
+        importance);
+    opti.addElement(dueren);
 
-	INode wuppertal = new TimeWindowGeoNode("Wuppertal", 51.2667, 7.18333, weeklyOpeningHours, visitDuration,
-		importance);
-	opti.addElement(wuppertal);
+    INode nuernberg =
+        new TimeWindowGeoNode("Nuernberg", 49.4478, 11.0683, weeklyOpeningHours, visitDuration,
+            importance);
+    opti.addElement(nuernberg);
 
-	INode aachen = new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration,
-		importance);
-	opti.addElement(aachen);
-    }
+    INode heilbronn =
+        new TimeWindowGeoNode("Heilbronn", 49.1403, 9.22, weeklyOpeningHours, visitDuration,
+            importance);
+    opti.addElement(heilbronn);
 
-    /**
-     * Adds the resources to the optimization.
-     *
-     * @param opti the optimization instance
-     */
-    private static void addResources(IOptimization opti) {
+    INode wuppertal =
+        new TimeWindowGeoNode("Wuppertal", 51.2667, 7.18333, weeklyOpeningHours, visitDuration,
+            importance);
+    opti.addElement(wuppertal);
 
-	List<IWorkingHours> workingHours = new ArrayList<>();
-	workingHours
-		.add(new WorkingHours(ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-			ZonedDateTime.of(2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+    INode aachen =
+        new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration,
+            importance);
+    opti.addElement(aachen);
+  }
 
-	workingHours
-		.add(new WorkingHours(ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-			ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+  /**
+   * Adds the resources to the optimization.
+   *
+   * @param opti the optimization instance
+   */
+  private static void addResources(IOptimization opti) {
 
-	Duration maxWorkingTime = Duration.ofHours(9);
-	Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
+    List<IWorkingHours> workingHours = new ArrayList<>();
+    workingHours
+        .add(new WorkingHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-	IResource jack = new CapacityResource("Jack from Aachen", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW,
-		workingHours);
-	opti.addElement(jack);
-    }
+    workingHours
+        .add(new WorkingHours(
+            ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-    /**
-     * Attach to different events (observables) of the optimization instance.
-     *
-     * @param opti the optimization instance
-     */
-    private static void attachToObservables(IOptimization opti) {
+    Duration maxWorkingTime = Duration.ofHours(9);
+    Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
-	opti.getOptimizationEvents().progressSubject().subscribe(p -> {
-	    System.out.println(p.getProgressString());
-	});
+    IResource jack = new CapacityResource("Jack from Aachen", 50.775346, 6.083887, maxWorkingTime,
+        maxDistanceKmW,
+        workingHours);
+    opti.addElement(jack);
+  }
 
-	opti.getOptimizationEvents().warningSubject().subscribe(w -> {
-	    System.out.println(w.toString());
-	});
+  /**
+   * Attach to different events (observables) of the optimization instance.
+   *
+   * @param opti the optimization instance
+   */
+  private static void attachToObservables(IOptimization opti) {
 
-	opti.getOptimizationEvents().statusSubject().subscribe(s -> {
-	    System.out.println(s.toString());
-	});
+    opti.getOptimizationEvents().progressSubject().subscribe(p -> {
+      System.out.println(p.getProgressString());
+    });
 
-	opti.getOptimizationEvents().errorSubject().subscribe(e -> {
-	    System.out.println(e.toString());
-	});
-    }
+    opti.getOptimizationEvents().warningSubject().subscribe(w -> {
+      System.out.println(w.toString());
+    });
+
+    opti.getOptimizationEvents().statusSubject().subscribe(s -> {
+      System.out.println(s.toString());
+    });
+
+    opti.getOptimizationEvents().errorSubject().subscribe(e -> {
+      System.out.println(e.toString());
+    });
+  }
 }

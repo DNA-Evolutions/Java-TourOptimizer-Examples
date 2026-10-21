@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.expert.openassessor.nodelevel;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -54,16 +54,19 @@ import tech.units.indriya.quantity.Quantities;
  */
 public class CustomNodeLevelRestrictionExample extends Optimization {
 
-  public static void main(String[] args) throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+  public static void main(String[] args)
+      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
     new CustomNodeLevelRestrictionExample().example();
   }
-  
+
   public String toString() {
-	  return "Inject a custom restriction for the assessor. Here, nodes which start with a \"M\" in their id need to be\r\n" + 
-	      " visited before 11:00 (11 am, Europe/Berlin time). Otherwise, a penalty is assigned.";
+    return "Inject a custom restriction for the assessor. Here, nodes which start with a \"M\" in their id need to be\r\n"
+        +
+        " visited before 11:00 (11 am, Europe/Berlin time). Otherwise, a penalty is assigned.";
   }
 
-  public void example() throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+  public void example()
+      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
@@ -75,7 +78,6 @@ public class CustomNodeLevelRestrictionExample extends Optimization {
 
     this.addNodes();
     this.addResources();
-
 
     CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
 

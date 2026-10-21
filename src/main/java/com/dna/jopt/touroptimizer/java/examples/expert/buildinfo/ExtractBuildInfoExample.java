@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.expert.buildinfo;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */

@@ -48,7 +48,6 @@ import com.dna.jopt.touroptimizer.java.examples.expert.uncaughtexception.customh
 
 import io.reactivex.rxjava3.functions.Consumer;
 
-
 /**
  * We implement some evil code within a custom onProgress subscription. Further, we define an
  * errorConsumer based on a custom uncaught exception handler and attach it during subscription

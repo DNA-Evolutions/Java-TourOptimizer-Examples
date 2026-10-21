@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.expert.openassessor.nodelevel.c
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -32,7 +32,7 @@ public class CustomNodePriorityBasedEarlyVisitRestriction
 
   @Override
   public IEntityRestrictionResult invokeRestriction(
-		  IEntity en,
+      IEntity en,
       ILogicEntityRoute route,
       INode node,
       IOptimizationElement lastGeoLocationElement,
@@ -50,7 +50,8 @@ public class CustomNodePriorityBasedEarlyVisitRestriction
 
     // Calculate deviation to the start of the openingHours
     long curNodeHoursStartMillis =
-        node.getDutyHours().get(holder.getChoosenOpeningHoursIndex()).getTimeWindow().getHoursBeginInMillis();
+        node.getDutyHours().get(holder.getChoosenOpeningHoursIndex()).getTimeWindow()
+            .getHoursBeginInMillis();
 
     long deltaMillis = holder.getArrivalTime() - curNodeHoursStartMillis;
 
@@ -89,10 +90,10 @@ public class CustomNodePriorityBasedEarlyVisitRestriction
 
     // We connect this to the weight for late arrival
     double cost = curNodeImportante
-            * this.getPropertyProvider().getPropertyProviderHelper().getWeightLateArrival()
-            * deltaMillis
-            / 1000.0
-            / 60;
+        * this.getPropertyProvider().getPropertyProviderHelper().getWeightLateArrival()
+        * deltaMillis
+        / 1000.0
+        / 60;
 
     // Now lets adjust the cost
     cost = this.getCostAdjuster().getAdjustedCost(route, cost, EntityCostAdjuster.TIME_UNIT_MIN);

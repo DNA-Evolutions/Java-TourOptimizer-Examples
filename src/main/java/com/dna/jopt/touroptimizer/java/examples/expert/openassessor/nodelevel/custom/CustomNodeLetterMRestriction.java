@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.expert.openassessor.nodelevel.c
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -37,7 +37,7 @@ public class CustomNodeLetterMRestriction extends AbstractCustomNodeLevelRestric
 
   @Override
   public IEntityRestrictionResult invokeRestriction(
-		  IEntity en,
+      IEntity en,
       ILogicEntityRoute route,
       INode node,
       IOptimizationElement lastGeoLocationElement,
@@ -93,7 +93,8 @@ public class CustomNodeLetterMRestriction extends AbstractCustomNodeLevelRestric
       // In case we request a result we are also going to attach Violations
       if (resultRequested && costLate > 0) {
         curViolation = ViolationFactory.VIOLATION_CONSTRAINTVIOLATION_TIMECONSTRAINT_LATE.copy();
-        curViolation.setValue(" Late M Violation time [min]: " + delta.getSeconds() / 60.0, String.valueOf(delta.getSeconds() / 60.0));
+        curViolation.setValue(" Late M Violation time [min]: " + delta.getSeconds() / 60.0,
+            String.valueOf(delta.getSeconds() / 60.0));
       }
     }
 
@@ -109,9 +110,9 @@ public class CustomNodeLetterMRestriction extends AbstractCustomNodeLevelRestric
   private double calculatePenaltyCost(Duration delta, ILogicEntityRoute route) {
 
     // We connect this to the weight for late arrival
-    double baseCost = 10*
+    double baseCost = 10 *
         this.getPropertyProvider().getPropertyProviderHelper().getWeightLateArrival()
-            * delta.getSeconds()/60.0;
+        * delta.getSeconds() / 60.0;
 
     // We also use an exponential multiplier..more late is even more cost
     double expMultiplier = CustomNodeLetterMRestriction.exp(0.00009 * delta.getSeconds());

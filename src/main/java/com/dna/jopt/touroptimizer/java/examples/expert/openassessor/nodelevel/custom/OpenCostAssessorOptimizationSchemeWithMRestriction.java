@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.expert.openassessor.nodelevel.c
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -24,8 +24,8 @@ public class OpenCostAssessorOptimizationSchemeWithMRestriction extends DefaultO
 
   @Override
   public void postCreate() {
-	  
-	  this.getOptimization().getPropertyProvider();
+
+    this.getOptimization().getPropertyProvider();
 
     ICustomNodeLevelRestriction restiction =
         new CustomNodeLetterMRestriction(this.getOptimization().getPropertyProvider());

@@ -327,7 +327,7 @@ public class CustomNodeBackUpConnectorHaversineExample extends Optimization {
 
       double distance =
           CustomNodeBackUpConnectorHaversineExample.haversineDistanceMeter(
-                  fromElementLon, fromElementLat, toElementLon, toElementLat)
+              fromElementLon, fromElementLat, toElementLon, toElementLat)
               * 1.2;
 
       return Quantities.getQuantity(distance, METRE);

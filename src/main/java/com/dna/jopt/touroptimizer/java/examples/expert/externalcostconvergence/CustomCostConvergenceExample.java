@@ -7,7 +7,7 @@ package com.dna.jopt.touroptimizer.java.examples.expert.externalcostconvergence;
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
- * 
+ *
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
@@ -56,7 +56,8 @@ import tech.units.indriya.quantity.Quantities;
  */
 public class CustomCostConvergenceExample extends Optimization {
 
-  public static void main(String[] args) throws InvalidLicenceException, IOException, InterruptedException, ExecutionException {
+  public static void main(String[] args)
+      throws InvalidLicenceException, IOException, InterruptedException, ExecutionException {
     new CustomCostConvergenceExample().example();
   }
 
@@ -72,15 +73,16 @@ public class CustomCostConvergenceExample extends Optimization {
 
     @Override
     public double getConvergenceCost(IOptimizationProgress curP) {
-	// By default we use jobCost but now we want to use utilization
+      // By default we use jobCost but now we want to use utilization
 
-	// Default: curP.getJobCost();
+      // Default: curP.getJobCost();
 
-	return curP.getJobTransitionDistanceMeter();
+      return curP.getJobTransitionDistanceMeter();
     }
   }
 
-  public void example() throws InvalidLicenceException, IOException, InterruptedException, ExecutionException {
+  public void example()
+      throws InvalidLicenceException, IOException, InterruptedException, ExecutionException {
 
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
