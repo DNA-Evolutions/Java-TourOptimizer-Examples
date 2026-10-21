@@ -5,23 +5,22 @@ package com.dna.jopt.touroptimizer.java.examples.expert.connectionstore;
  * %%
  * Copyright (C) 2017 - 2023 DNA Evolutions GmbH
  * %%
- * This file is subject to the terms and conditions defined in file 'LICENSE.txt',
- * which is part of this source code package.
+ * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
+ * which is part of this repository.
  *
- * If not, see <https://www.dna-evolutions.com/agb-conditions-and-terms/>.
+ * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
-
-import static tech.units.indriya.unit.Units.METRE;
 import static java.time.Month.FEBRUARY;
 import static javax.measure.MetricPrefix.KILO;
+import static tech.units.indriya.unit.Units.METRE;
+
+import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalTime;
@@ -36,19 +35,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import com.dna.jopt.config.convert.ConvertException;
-import com.dna.jopt.config.serialize.ConfigSerialization;
-import com.dna.jopt.config.serialize.SerializationException;
-import com.dna.jopt.config.types.CoreConfig;
-import com.dna.jopt.config.types.OptimizationConfig;
 import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
-import com.dna.jopt.member.unit.hours.IWorkingHours;
 import com.dna.jopt.member.unit.IOptimizationElement;
 import com.dna.jopt.member.unit.hours.IOpeningHours;
-import com.dna.jopt.member.unit.hours.WorkingHours;
+import com.dna.jopt.member.unit.hours.IWorkingHours;
 import com.dna.jopt.member.unit.hours.OpeningHours;
+import com.dna.jopt.member.unit.hours.WorkingHours;
 import com.dna.jopt.member.unit.node.INode;
 import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.nodeedge.ConnectionBucket;
@@ -62,380 +57,274 @@ import com.dna.jopt.member.unit.nodeedge.time.DayDef;
 import com.dna.jopt.member.unit.nodeedge.time.RangeDef;
 import com.dna.jopt.member.unit.resource.CapacityResource;
 import com.dna.jopt.member.unit.resource.IResource;
+import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import com.dna.jopt.touroptimizer.java.examples.util.jsonprinter.ResultJsonPrinter;
 
-import tech.units.indriya.quantity.Quantities;
-import tech.units.indriya.unit.Units;
-
 /**
- * Demonstrates how to use a time-dependent connection store in JOpt.
+ * Makes the driving times depend on the day of the week and the time of day, with a
+ * time-dependent connection store.
  *
- * <p>This example shows how to model driving time and distance as a function of
- * the time of day and day of the week. For instance, driving between two nodes
- * during weekday rush hours will take longer compared to night or weekend times.
+ * <p>Scenario: Jessi from Aachen visits Koeln, KoelnWeek, KoelnWeekend, Essen and Dueren on
+ * Friday, February 19, and Sunday, February 21, 2100 (Europe/Berlin). Every connection between two
+ * places carries a weekday profile with rush hours and a weekend profile with light delays.
+ * KoelnWeek is open only on the Friday, KoelnWeekend only on the Sunday.
  *
- * <p>Each node connection can have a {@link ConnectionBucket} defining time-dependent
- * {@link TimedConnectionData}, allowing fine-grained modeling of realistic traffic scenarios.
+ * <p>Look for: the driving times in the result. The drive from Aachen to the Koeln point at 08:00
+ * takes longer on the Friday than on the Sunday. After the result the example prints the
+ * optimization as JSON, with the driving time of every hour of each connection.
  *
- * <p>In this example, we define different traffic profiles for weekdays and weekends
- * and attach them to node connections. This enables the optimizer to consider varying
- * travel times during different parts of the day.
+ * <p>Prerequisites: None: without a license file the example uses the public evaluation license
+ * (see ExampleLicenseHelper).
  *
- * <p>Run the example to observe how routing decisions adapt to traffic conditions over time.
- *
- * @author jrich
- * @version Jul 22, 2025
- * @since Jul 22, 2025
+ * @see <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/connectionstore/ConnectionStore.md">ConnectionStore.md</a>
  */
 public class ConnectionStoreExample extends Optimization {
 
   /**
-   * The main method.
+   * Runs the example.
    *
-   * @param args the arguments
-   * @throws InterruptedException    the interrupted exception
-   * @throws ExecutionException      the execution exception
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws IOException Signals that an I/O exception has occurred.
-   * @throws TimeoutException the timeout exception
-   * @throws ConvertException the convert exception
-   * @throws SerializationException the serialization exception
+   * @param args not used
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   * @throws ConvertException if the optimization cannot be converted to JSON
    */
   public static void main(String[] args)
-      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException,
-      TimeoutException, ConvertException, SerializationException {
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException, ConvertException {
     new ConnectionStoreExample().example();
   }
 
-  /**
-   * Returns a short description of the example.
-   *
-   * @return Description of the time-dependent connection store example.
-   */
+  @Override
   public String toString() {
-    return "Demonstrates how to apply a time-dependent connection store to node connections, "
-        + "making driving time and distance dynamic based on the time of day. "
-        + "Useful for modeling rush hour effects and weekend traffic patterns.";
+    return "Makes the driving times depend on the day of the week and the time of day, with a "
+        + "time-dependent connection store.";
   }
 
   /**
-   * Sets up and executes the optimization, including:
-   * <ul>
-   *   <li>Setting properties</li>
-   *   <li>Adding nodes and resources</li>
-   *   <li>Defining time-dependent connections</li>
-   *   <li>Subscribing to event observables</li>
-   *   <li>Running the optimization and displaying results</li>
-   * </ul>
+   * Builds the optimization with the connection store, runs it, prints the result and prints the
+   * optimization as JSON.
    *
-   * @throws InterruptedException If the process is interrupted.
-   * @throws ExecutionException If execution of the optimization fails.
-   * @throws InvalidLicenceException If the license is invalid.
-   * @throws IOException If I/O operations fail.
-   * @throws TimeoutException If execution exceeds allowed time.
-   * @throws ConvertException If configuration export fails.
-   * @throws SerializationException If serialization fails.
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   * @throws ConvertException if the optimization cannot be converted to JSON
    */
   public void example()
-      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException,
-      TimeoutException, ConvertException, SerializationException {
-
-    // We use the public evaluation license (20 elements) for the example - please modify the ExampleLicenseHelper
-    // in case you
-    // have a valid
-    // license.
-
-    // ExampleLicenseHelper.setLicense(this);
-
-    // Setting Properties, adding all Elements, and attaching to Observables
-    // (1) Adding properties
-    ConnectionStoreExample.addProperties(this);
-
-    // (2) Adding Nodes, Resources and connection store
-    ConnectionStoreExample.addNodesAndResourcesWithConnectionStore(this);
-
-    // (3) Attaching to Observables
-    ConnectionStoreExample.attachToObservables(this);
-
-    // (4) Starting the Optimization completable Future and presenting the results
-    ConnectionStoreExample.startAndPresentResult(this);
-
-    // (5) Show the JSON representation of the result
-    try {
-      ResultJsonPrinter.printResultAsJson(this, true);
-    } catch (IOException | ConvertException e) {
-      e.printStackTrace();
-    }
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException, ConvertException {
+    // The public evaluation license, or your own license if you put a license file where
+    // ExampleLicenseHelper looks for it.
+    ExampleLicenseHelper.setLicense(this);
+    addProperties(this);
+    List<IOptimizationElement> elements = new ArrayList<>();
+    elements.addAll(addNodes(this));
+    elements.addAll(addResources(this));
+    addConnections(this, elements);
+    attachToObservables(this);
+    startAndPresentResult(this);
+    printAsJson(this);
   }
 
   /**
-   * Start the Optimization and present the result.
+   * Adds the properties that keep the run short.
    *
-   * @param opti the optimization instance
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws InterruptedException    the interrupted exception
-   * @throws ExecutionException      the execution exception
-   * @throws TimeoutException the timeout exception
-   */
-  private static void startAndPresentResult(IOptimization opti)
-      throws InvalidLicenceException, InterruptedException, ExecutionException, TimeoutException {
-
-    // Extracting a completable Future for the optimization result
-    CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
-
-    // It is important to block the call, otherwise the Optimization will be
-    // terminated
-    IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
-
-    // Presenting the result
-    System.out.println(result);
-
-  }
-
-  /**
-   * Adds the Properties to the Optimization.
-   *
-   * @param opti the optimization instance
+   * @param opti the optimization
    */
   private static void addProperties(IOptimization opti) {
-
     Properties props = new Properties();
-
+    // Fewer generations and iterations than the defaults keep the run short.
     props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
-    props.setProperty("JOpt.NumCPUCores", "4");
-
     opti.addElement(props);
   }
 
   /**
-   * Adds the Nodes to the Optimization.
+   * Adds five nodes: Koeln, Essen and Dueren are open on both days, KoelnWeek only on the Friday
+   * and KoelnWeekend only on the Sunday.
    *
-   * @param opti the optimization instance
+   * @param opti the optimization
+   * @return the nodes
    */
-  private static void addNodesAndResourcesWithConnectionStore(IOptimization opti) {
+  private static List<INode> addNodes(IOptimization opti) {
+    // A Friday and a Sunday (sample dates), so that each of the two traffic profiles applies.
+    List<IOpeningHours> friday = new ArrayList<>();
+    friday.add(
+        new OpeningHours(
+            ZonedDateTime.of(2100, FEBRUARY.getValue(), 19, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(
+                2100, FEBRUARY.getValue(), 19, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-    List<IOptimizationElement> els = new ArrayList<>();
+    List<IOpeningHours> sunday = new ArrayList<>();
+    sunday.add(
+        new OpeningHours(
+            ZonedDateTime.of(2100, FEBRUARY.getValue(), 21, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(
+                2100, FEBRUARY.getValue(), 21, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-    /*
-     *
-     *
-     * RESOURCE
-     *
-     *
-     */
+    List<IOpeningHours> bothDays = new ArrayList<>();
+    bothDays.addAll(friday);
+    bothDays.addAll(sunday);
 
-    // Define the WorkingHours
-    List<IWorkingHours> workingHours = new ArrayList<>();
-    workingHours.add(new WorkingHours(
-        ZonedDateTime.of(2100, FEBRUARY.getValue(), 19, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")), // Friday
-        ZonedDateTime.of(2100, FEBRUARY.getValue(), 19, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    workingHours.add(new WorkingHours(
-        ZonedDateTime.of(2100, FEBRUARY.getValue(), 21, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")), // Sunday
-        ZonedDateTime.of(2100, FEBRUARY.getValue(), 21, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    Duration maxWorkingTime = Duration.ofHours(9);
-    Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
-
-    // Define the Resource
-    IResource jack = new CapacityResource("Jessi from Aachen", 50.775346, 6.083887, maxWorkingTime,
-        maxDistanceKmW,
-        workingHours);
-    els.add(jack);
-
-    /*
-     *
-     *
-     * NODES
-     *
-     *
-     */
-
-    // Define the OpeningHours
-    List<IOpeningHours> week = new ArrayList<>();
-    week.add(new OpeningHours(
-        ZonedDateTime.of(2100, FEBRUARY.getValue(), 19, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-        ZonedDateTime.of(2100, FEBRUARY.getValue(), 19, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    List<IOpeningHours> weekend = new ArrayList<>();
-    weekend.add(new OpeningHours(
-        ZonedDateTime.of(2100, FEBRUARY.getValue(), 21, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-        ZonedDateTime.of(2100, FEBRUARY.getValue(), 21, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    List<IOpeningHours> weekweekend = new ArrayList<>();
-    weekweekend.add(new OpeningHours(
-        ZonedDateTime.of(2100, FEBRUARY.getValue(), 19, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-        ZonedDateTime.of(2100, FEBRUARY.getValue(), 19, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    weekweekend.add(new OpeningHours(
-        ZonedDateTime.of(2100, FEBRUARY.getValue(), 21, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-        ZonedDateTime.of(2100, FEBRUARY.getValue(), 21, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
+    // Each visit takes 60 minutes and counts toward the working time, like the driving.
     Duration visitDuration = Duration.ofMinutes(60);
 
+    // The same importance for every node, so no node is preferred over another.
     int importance = 1;
 
-    // Define some Nodes
+    List<INode> nodes = new ArrayList<>();
+    nodes.add(new TimeWindowGeoNode("Koeln", 50.9333, 6.95, bothDays, visitDuration, importance));
+    // KoelnWeek and KoelnWeekend share the point of Koeln; only their opening days differ.
+    nodes.add(
+        new TimeWindowGeoNode("KoelnWeek", 50.9333, 6.95, friday, visitDuration, importance));
+    nodes.add(
+        new TimeWindowGeoNode("KoelnWeekend", 50.9333, 6.95, sunday, visitDuration, importance));
+    nodes.add(new TimeWindowGeoNode("Essen", 51.45, 7.01667, bothDays, visitDuration, importance));
+    nodes.add(new TimeWindowGeoNode("Dueren", 50.8, 6.48333, bothDays, visitDuration, importance));
 
-    INode koeln =
-        new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weekweekend, visitDuration, importance);
-    els.add(koeln);
-
-    INode koelnWeek =
-        new TimeWindowGeoNode("KoelnWeek", 50.9333, 6.95, week, visitDuration, importance);
-    els.add(koelnWeek);
-
-    INode koelnWeekend =
-        new TimeWindowGeoNode("KoelnWeekend", 50.9333, 6.95, weekend, visitDuration, importance);
-    els.add(koelnWeekend);
-
-    INode essen =
-        new TimeWindowGeoNode("Essen", 51.45, 7.01667, weekweekend, visitDuration, importance);
-    els.add(essen);
-
-    INode dueren =
-        new TimeWindowGeoNode("Dueren", 50.8, 6.48333, weekweekend, visitDuration, importance);
-    els.add(dueren);
-
-    // Add to opti
-    opti.addNodes(els.stream().filter(e -> e instanceof INode).map(e -> (INode) e).toList());
-    opti.addResources(
-        els.stream().filter(e -> e instanceof IResource).map(e -> (IResource) e).toList());
-
-    // Create time dependent connections
-
-    INodeEdgeConnector connector = new NodeEdgeConnector();
-    connector.putNodeConnections(createDummyConnections(els));
-
-    opti.setNodeConnector(connector);
-
+    opti.addNodes(nodes);
+    return nodes;
   }
 
   /**
-   * Creates the dummy connections.
+   * Adds Jessi, who starts and ends both working days in Aachen.
    *
-   * @param els the els
-   * @return the list
+   * @param opti the optimization
+   * @return the resources
    */
-  private static List<INodeConnectorItem> createDummyConnections(List<IOptimizationElement> els) {
+  private static List<IResource> addResources(IOptimization opti) {
+    List<IWorkingHours> workingHours = new ArrayList<>();
+    workingHours.add(
+        new WorkingHours(
+            ZonedDateTime.of(2100, FEBRUARY.getValue(), 19, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(
+                2100, FEBRUARY.getValue(), 19, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+    workingHours.add(
+        new WorkingHours(
+            ZonedDateTime.of(2100, FEBRUARY.getValue(), 21, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+            ZonedDateTime.of(
+                2100, FEBRUARY.getValue(), 21, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-    double avgResourceSpeedMetersPerHour = 22.0;
+    // 9 h per day, the length of the shift; both days of this plan stay below it.
+    Duration maxWorkingTime = Duration.ofHours(9);
+    // 1200 km per day, more than the longest day of this plan needs.
+    Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
 
-    List<INodeConnectorItem> cons = new ArrayList<>();
+    IResource jessi =
+        new CapacityResource(
+            "Jessi from Aachen", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
 
-    for (IOptimizationElement from : els) {
+    List<IResource> resources = new ArrayList<>();
+    resources.add(jessi);
+    opti.addResources(resources);
+    return resources;
+  }
 
-      for (IOptimizationElement to : els) {
+  /**
+   * Adds a connection between every two elements, with the two traffic profiles where the
+   * elements are at different places.
+   *
+   * @param opti the optimization
+   * @param elements the nodes and the resources
+   */
+  private static void addConnections(IOptimization opti, List<IOptimizationElement> elements) {
+    INodeEdgeConnector connector = new NodeEdgeConnector();
+    connector.putNodeConnections(createConnections(elements));
+    opti.setNodeConnector(connector);
+  }
 
+  /**
+   * Creates the connections between every two elements, with the flat-earth distance and a base
+   * driving time.
+   *
+   * @param elements the nodes and the resources
+   * @return the connections
+   */
+  private static List<INodeConnectorItem> createConnections(List<IOptimizationElement> elements) {
+    // The speed of the base driving times, in meters per second (a sample value).
+    double speedMeterPerSecond = 22.0;
+
+    List<INodeConnectorItem> connections = new ArrayList<>();
+
+    for (IOptimizationElement from : elements) {
+      for (IOptimizationElement to : elements) {
         if (from != to) {
-
-          double distanceMetre = NodeEdgeConnector.distancePlacePlaceFlatEarth(from.getLongitude(),
-              from.getLatitude(), to.getLongitude(), to.getLatitude());
+          double distanceMeter =
+              NodeEdgeConnector.distancePlacePlaceFlatEarth(
+                  from.getLongitude(), from.getLatitude(), to.getLongitude(), to.getLatitude());
 
           INodeConnectorItem connection = new NodeEdgeConnectorItem();
           connection.setFromOptimizationElement(from);
           connection.setToOptimizationElement(to);
-          connection.setDistance(Quantities.getQuantity(distanceMetre, Units.METRE));
-          connection.setDrivingTime(
-              element2ElementDuration(distanceMetre, avgResourceSpeedMetersPerHour));
+          connection.setDistance(Quantities.getQuantity(distanceMeter, METRE));
+          connection.setDrivingTime(element2ElementDuration(distanceMeter, speedMeterPerSecond));
 
-          cons.add(connection);
+          connections.add(connection);
 
-          if (distanceMetre > 0.0) {
+          // The three Koeln nodes share one point; their connections stay at zero, without
+          // profiles.
+          if (distanceMeter > 0.0) {
+            // The core turns the points of both buckets into one driving time per hour, and it
+            // sets the connection's own distance and driving time to the mean of all points.
             TimedNodeConnectorItem.setTimedBucketData(connection,
                 createConnectionBucket(connection));
           }
-
         }
       }
     }
 
-    return cons;
-
+    return connections;
   }
 
   /**
-   * Creates the connection bucket.
+   * Creates the two buckets of a connection: the weekend profile for Saturday and Sunday and the
+   * weekday profile for Monday to Friday.
    *
-   * @param connection the connection
-   * @return the list
+   * @param connection the connection with its base distance and driving time
+   * @return the buckets
    */
-  public static List<ConnectionBucket> createConnectionBucket(INodeConnectorItem connection) {
+  private static List<ConnectionBucket> createConnectionBucket(INodeConnectorItem connection) {
+    Quantity<Length> distance = Quantities.getQuantity(connection.getDistanceMeter(), METRE);
+    Duration driving = Duration.ofMillis(connection.getBaseTimeMillis());
 
-    ConnectionBucket weekendBucket = new ConnectionBucket(
-        RangeDef.of(DayDef.of(DayOfWeek.SATURDAY), DayDef.of(DayOfWeek.SUNDAY)),
-        createTimedWeekendConnections(connection));
+    ConnectionBucket weekendBucket =
+        new ConnectionBucket(
+            RangeDef.of(DayDef.of(DayOfWeek.SATURDAY), DayDef.of(DayOfWeek.SUNDAY)),
+            createTimedWeekendConnections(distance, driving));
 
-    ConnectionBucket weekBucket = new ConnectionBucket(
-        RangeDef.of(DayDef.of(DayOfWeek.MONDAY), DayDef.of(DayOfWeek.FRIDAY)),
-        createTimedWeekConnections(connection));
+    ConnectionBucket weekBucket =
+        new ConnectionBucket(
+            RangeDef.of(DayDef.of(DayOfWeek.MONDAY), DayDef.of(DayOfWeek.FRIDAY)),
+            createTimedWeekdayConnections(distance, driving));
 
     return List.of(weekendBucket, weekBucket);
-
-  }
-
-  /*
-   *
-   */
-
-  /**
-   * Creates the timed week connections.
-   *
-   * @param connection the connection
-   * @return the list
-   */
-  private static List<TimedConnectionData> createTimedWeekConnections(
-      INodeConnectorItem connection) {
-    return createTimedWeekdayConnections(
-        Quantities.getQuantity(connection.getDistanceMeter(), Units.METRE),
-        Duration.ofMillis(connection.getBaseTimeMillis()));
   }
 
   /**
-   * Creates the timed weekend connections.
+   * Creates the weekday profile (Monday to Friday) with a morning and an evening rush hour.
    *
-   * @param connection the connection
-   * @return the list
-   */
-  private static List<TimedConnectionData> createTimedWeekendConnections(
-      INodeConnectorItem connection) {
-    return createTimedWeekendConnections(
-        Quantities.getQuantity(connection.getDistanceMeter(), Units.METRE),
-        Duration.ofMillis(connection.getBaseTimeMillis()));
-  }
-
-  /*
+   * <p>Each point sets the driving time of its hour. The core gives the hours between two points
+   * the mean of the two, and the hours before the first and after the last point the mean of the
+   * first and the last. The multipliers are sample values:
    *
-   */
-
-  /**
-   * Creates a list of {@link TimedConnectionData} objects for weekday traffic conditions (Monday to Friday).
-   *
-   * <p>This method defines time-dependent connection data for typical weekday traffic patterns,
-   * including morning and evening rush hours. Each {@link LocalTime} in the list represents a
-   * time grid point where specific travel conditions (via multipliers) apply. Between these grid points,
-   * driving times are linearly interpolated.
-   *
-   * <p>Example profile:
    * <ul>
-   *   <li><b>6:00</b> Normal traffic (multiplier 1.0)</li>
-   *   <li><b>7:00-9:00</b> Morning rush hour (multiplier 1.8)</li>
-   *   <li><b>13:00</b> Normal midday traffic (multiplier 1.0)</li>
-   *   <li><b>16:00-19:00</b> Evening rush hour (multiplier 1.6)</li>
-   *   <li><b>20:00</b> Night traffic (multiplier 1.0)</li>
+   *   <li><b>06:00</b> normal traffic (multiplier 1.0)
+   *   <li><b>07:00 and 09:00</b> morning rush hour (multiplier 1.8)
+   *   <li><b>13:00</b> normal midday traffic (multiplier 1.0)
+   *   <li><b>16:00 and 19:00</b> evening rush hour (multiplier 1.6)
+   *   <li><b>20:00</b> normal night traffic (multiplier 1.0)
    * </ul>
    *
-   * @param distance The base distance between two nodes.
-   * @param driving  The base (unadjusted) driving duration.
-   * @return A list of {@code TimedConnectionData} defining weekday traffic variations.
+   * @param distance the base distance of the connection
+   * @param driving the base driving time of the connection
+   * @return the points of the profile
    */
-  private static List<TimedConnectionData> createTimedWeekdayConnections(Quantity<Length> distance,
-      Duration driving) {
-
-    // Monday-Friday
-
+  private static List<TimedConnectionData> createTimedWeekdayConnections(
+      Quantity<Length> distance, Duration driving) {
     double normalMultiplier = 1.0;
     double rushHourMorningMultiplier = 1.8;
     double rushHourEveningMultiplier = 1.6;
@@ -448,26 +337,26 @@ public class ConnectionStoreExample extends Optimization {
     LocalTime rushHourEveningEnd = LocalTime.of(19, 0);
     LocalTime normalNight = LocalTime.of(20, 0);
 
-    return List.of(createTimedConnection(normalMorning, distance, driving, normalMultiplier),
+    return List.of(
+        createTimedConnection(normalMorning, distance, driving, normalMultiplier),
         createTimedConnection(rushHourMorningStart, distance, driving, rushHourMorningMultiplier),
         createTimedConnection(rushHourMorningEnd, distance, driving, rushHourMorningMultiplier),
         createTimedConnection(normalNoon, distance, driving, normalMultiplier),
         createTimedConnection(rushHourEveningStart, distance, driving, rushHourEveningMultiplier),
         createTimedConnection(rushHourEveningEnd, distance, driving, rushHourEveningMultiplier),
         createTimedConnection(normalNight, distance, driving, normalMultiplier));
-
   }
 
   /**
-   * Creates the timed weekend connections.
+   * Creates the weekend profile (Saturday and Sunday) with light delays at the times of the
+   * weekday rush hours. The multipliers are sample values.
    *
-   * @param distance the distance
-   * @param driving the driving
-   * @return the list
+   * @param distance the base distance of the connection
+   * @param driving the base driving time of the connection
+   * @return the points of the profile
    */
-  private static List<TimedConnectionData> createTimedWeekendConnections(Quantity<Length> distance,
-      Duration driving) {
-
+  private static List<TimedConnectionData> createTimedWeekendConnections(
+      Quantity<Length> distance, Duration driving) {
     double normalMultiplier = 1.0;
     double rushHourMorningMultiplier = 1.05;
     double rushHourEveningMultiplier = 1.05;
@@ -480,96 +369,87 @@ public class ConnectionStoreExample extends Optimization {
     LocalTime rushHourEveningEnd = LocalTime.of(19, 0);
     LocalTime normalNight = LocalTime.of(20, 0);
 
-    return List.of(createTimedConnection(normalMorning, distance, driving, normalMultiplier),
+    return List.of(
+        createTimedConnection(normalMorning, distance, driving, normalMultiplier),
         createTimedConnection(rushHourMorningStart, distance, driving, rushHourMorningMultiplier),
         createTimedConnection(rushHourMorningEnd, distance, driving, rushHourMorningMultiplier),
         createTimedConnection(normalNoon, distance, driving, normalMultiplier),
         createTimedConnection(rushHourEveningStart, distance, driving, rushHourEveningMultiplier),
         createTimedConnection(rushHourEveningEnd, distance, driving, rushHourEveningMultiplier),
         createTimedConnection(normalNight, distance, driving, normalMultiplier));
-
   }
 
   /**
-   * Element 2 element duration.
+   * Calculates the driving time for a distance at a speed.
    *
-   * @param distanceMeter the distance meter
-   * @param speedMeterPerSecond the speed meter per second
-   * @return the duration
+   * @param distanceMeter the distance in meters
+   * @param speedMeterPerSecond the speed in meters per second
+   * @return the driving time
    */
-  public static Duration element2ElementDuration(double distanceMeter, double speedMeterPerSecond) {
-
-    long traveltime = (long) (distanceMeter / speedMeterPerSecond * 1000L);
-
-    return Duration.ofMillis(traveltime);
+  private static Duration element2ElementDuration(double distanceMeter,
+      double speedMeterPerSecond) {
+    long traveltimeMillis = (long) (distanceMeter / speedMeterPerSecond * 1000L);
+    return Duration.ofMillis(traveltimeMillis);
   }
 
   /**
-   * Creates the timed connection.
+   * Creates one point of a profile: the base driving time times the multiplier, at a time of day.
+   * The distance stays the base distance.
    *
-   * @param time the time
-   * @param distance the distance
-   * @param driving the driving
-   * @param multiplier the multiplier
-   * @return the timed connection data
+   * @param time the time of day of the point
+   * @param distance the base distance of the connection
+   * @param driving the base driving time of the connection
+   * @param multiplier the factor for the driving time
+   * @return the point
    */
-  private static TimedConnectionData createTimedConnection(LocalTime time,
-      Quantity<Length> distance,
-      Duration driving, double multiplier) {
-
-    return new TimedConnectionData(time, distance,
-        Duration.ofSeconds((long) (driving.getSeconds() * multiplier))
-
-    );
-  }
-
-  /*
-   *
-   *
-   */
-
-  /**
-   * Pretty serialize.
-   *
-   * @param exportedConfig the exported config
-   * @return the string
-   * @throws SerializationException the serialization exception
-   */
-  public static String prettySerialize(OptimizationConfig<CoreConfig> exportedConfig)
-      throws SerializationException {
-
-    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-    try {
-      ConfigSerialization.objectMapper().writerWithDefaultPrettyPrinter().writeValue(outStream,
-          exportedConfig);
-    } catch (IOException e) {
-      throw new SerializationException("Cannot serialize Config: " + e.getMessage());
-    }
-
-    return new String(outStream.toByteArray(), StandardCharsets.UTF_8);
+  private static TimedConnectionData createTimedConnection(
+      LocalTime time, Quantity<Length> distance, Duration driving, double multiplier) {
+    return new TimedConnectionData(
+        time, distance, Duration.ofMillis(Math.round(driving.toMillis() * multiplier)));
   }
 
   /**
-   * Attach to different Events (Observables) of the optimization instance.
+   * Prints the progress, warning, status and error events of the run.
    *
-   * @param opti the optimization instance
+   * @param opti the optimization
    */
   private static void attachToObservables(IOptimization opti) {
+    // Subscribe before the start: the subjects replay only a few past events.
+    opti.getOptimizationEvents()
+        .progressSubject()
+        .subscribe(p -> System.out.println(p.getProgressString()));
+    opti.getOptimizationEvents().warningSubject().subscribe(w -> System.out.println(w.toString()));
+    opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s.toString()));
+    opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
+  }
 
-    opti.getOptimizationEvents().progressSubject().subscribe(p -> {
-      System.out.println(p.getProgressString());
-    });
+  /**
+   * Starts the run, waits for the result and prints it.
+   *
+   * @param opti the optimization
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   */
+  private static void startAndPresentResult(IOptimization opti)
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException {
+    CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
+    // Wait for the result; without the wait the JVM would end before the run does.
+    IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
+    System.out.println(result);
+  }
 
-    opti.getOptimizationEvents().warningSubject().subscribe(w -> {
-      System.out.println(w.toString());
-    });
-
-    opti.getOptimizationEvents().statusSubject().subscribe(s -> {
-      System.out.println(s.toString());
-    });
-
-    opti.getOptimizationEvents().errorSubject().subscribe(e -> {
-      System.out.println(e.toString());
-    });
+  /**
+   * Prints the optimization as JSON, without the solution and the build options but with the
+   * connections, so the stored driving times of each connection show.
+   *
+   * @param opti the optimization
+   * @throws IOException if a file cannot be read or written
+   * @throws ConvertException if the optimization cannot be converted to JSON
+   */
+  private static void printAsJson(IOptimization opti) throws IOException, ConvertException {
+    // true keeps the connections in the JSON.
+    ResultJsonPrinter.printResultAsJson(opti, true);
   }
 }
