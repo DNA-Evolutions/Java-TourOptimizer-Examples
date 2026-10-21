@@ -42,7 +42,7 @@ import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.resource.CapacityResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import com.dna.jopt.touroptimizer.java.examples.expert.uncaughtexception.customhandler.MyUncaughtExceptionHandler;
-import com.dna.jopt.touroptimizer.java.examples.expert.uncaughtexception.openassessorexception.OpenCostAssessorOptimizationSchemeWithFaultyRestiction;
+import com.dna.jopt.touroptimizer.java.examples.expert.uncaughtexception.openassessorexception.OpenCostAssessorOptimizationSchemeWithFaultyRestriction;
 
 import tech.units.indriya.quantity.Quantities;
 
@@ -79,7 +79,7 @@ class UncaughtExceptionHandlingOptimization extends Optimization {
     // Set license via helper
     ExampleLicenseHelper.setLicense(this);
 
-    this.setOptimizationScheme(new OpenCostAssessorOptimizationSchemeWithFaultyRestiction(this));
+    this.setOptimizationScheme(new OpenCostAssessorOptimizationSchemeWithFaultyRestriction(this));
 
     // Properties!
     this.setProperties();
