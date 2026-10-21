@@ -16,10 +16,10 @@ import com.dna.jopt.assessment.costassessorrestriction.nodelevel.custom.ICustomN
 import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.scheme.DefaultOptimizationScheme;
 
-public class OpenCostAssessorOptimizationSchemeWithEarlyVisitRestiction
+public class OpenCostAssessorOptimizationSchemeWithEarlyVisitRestriction
     extends DefaultOptimizationScheme {
 
-  public OpenCostAssessorOptimizationSchemeWithEarlyVisitRestiction(IOptimization optimization) {
+  public OpenCostAssessorOptimizationSchemeWithEarlyVisitRestriction(IOptimization optimization) {
     super(optimization);
   }
 

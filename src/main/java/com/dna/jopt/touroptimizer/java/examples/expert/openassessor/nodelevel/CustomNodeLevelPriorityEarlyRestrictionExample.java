@@ -44,7 +44,7 @@ import com.dna.jopt.member.unit.hours.OpeningHours;
 import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.resource.CapacityResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
-import com.dna.jopt.touroptimizer.java.examples.expert.openassessor.nodelevel.custom.OpenCostAssessorOptimizationSchemeWithEarlyVisitRestiction;
+import com.dna.jopt.touroptimizer.java.examples.expert.openassessor.nodelevel.custom.OpenCostAssessorOptimizationSchemeWithEarlyVisitRestriction;
 
 import tech.units.indriya.quantity.Quantities;
 
@@ -72,7 +72,7 @@ public class CustomNodeLevelPriorityEarlyRestrictionExample extends Optimization
     ExampleLicenseHelper.setLicense(this);
 
     this.setOptimizationScheme(
-        new OpenCostAssessorOptimizationSchemeWithEarlyVisitRestiction(this));
+        new OpenCostAssessorOptimizationSchemeWithEarlyVisitRestriction(this));
 
     // Properties!
     this.setProperties();
