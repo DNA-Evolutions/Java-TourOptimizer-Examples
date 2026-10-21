@@ -3,7 +3,7 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.relationship;
  * #%L
  * JOpt TourOptimizer Examples
  * %%
- * Copyright (C) 2017 - 2020 DNA Evolutions GmbH
+ * Copyright (C) 2017 - 2023 DNA Evolutions GmbH
  * %%
  * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
  * which is part of this repository.
@@ -11,12 +11,16 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.relationship;
  * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
-import static java.time.Month.MAY;
 import static javax.measure.MetricPrefix.KILO;
 import static tech.units.indriya.unit.Units.METRE;
+import static java.time.Month.MAY;
+
+import tech.units.indriya.quantity.Quantities;
+
+import javax.measure.Quantity;
+import javax.measure.quantity.Length;
 
 import java.io.IOException;
-import java.io.PrintStream;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -25,17 +29,17 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import javax.measure.Quantity;
-import javax.measure.quantity.Length;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
-import com.dna.jopt.member.unit.hours.IWorkingHours;
 import com.dna.jopt.member.unit.hours.IOpeningHours;
-import com.dna.jopt.member.unit.hours.WorkingHours;
+import com.dna.jopt.member.unit.hours.IWorkingHours;
 import com.dna.jopt.member.unit.hours.OpeningHours;
+import com.dna.jopt.member.unit.hours.WorkingHours;
 import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.relation.node2node.tempus.INode2NodeTempusRelation;
 import com.dna.jopt.member.unit.relation.node2node.tempus.RelativeTimeWindow2RelatedNodeRelation;
@@ -44,202 +48,220 @@ import com.dna.jopt.member.unit.relation.node2node.visitor.RelativeVisitor2Relat
 import com.dna.jopt.member.unit.resource.CapacityResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
-import tech.units.indriya.quantity.Quantities;
-
 /**
- * In the SameVisitorRelationExample two Nodes should be visited by the same
- * Route and Resource. Further, another Relation defines a relative TimeWindow between the two
- * Nodes, effectively defining the order of visit within the route.
+ * Asks with two relations that two nodes, Essen and Aachen, are on the same route and that the
+ * visit to Aachen starts after the visit to Essen.
  *
- * @author jrich
- * @version Mar 14, 2021
- * @since Dec 23, 2020
+ * <p>Scenario: Jack starts in Aachen and works from 08:00 to 16:00 on May 6, May 7 and May 8, 2020
+ * (Europe/Berlin). He visits Koeln, Essen, Dueren, Wuppertal and Aachen; each visit takes 150
+ * minutes, so a working day holds at most two visits.
+ *
+ * <p>Look for: Essen and Aachen on the same route of the result, with Essen first.
+ *
+ * <p>Prerequisites: None: without a license file the example uses the public evaluation license
+ * (see ExampleLicenseHelper).
+ *
+ * @see <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/relationship/Relations.md">Relations.md</a>
  */
 public class SameRouteRelationAndRelativeTimeWindowExample extends Optimization {
 
   /**
-   * The main method.
+   * Runs the example.
    *
-   * @param args the arguments
-   * @throws IOException Signals that an I/O exception has occurred.
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws InterruptedException the interrupted exception
-   * @throws ExecutionException the execution exception
+   * @param args not used
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
    */
   public static void main(String[] args)
-      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException {
     new SameRouteRelationAndRelativeTimeWindowExample().example();
   }
 
-  /**
-   * To string.
-   *
-   * @return the string
-   */
+  @Override
   public String toString() {
-    return "Visiting two Nodes in the same Route in a predefined relative time window  by using Relations.";
+    return "Asks with two relations that two nodes, Essen and Aachen, are on the same route and"
+        + " that the visit to Aachen starts after the visit to Essen.";
   }
 
   /**
-   * Example.
+   * Builds the optimization, runs it and prints the result.
    *
-   * @throws IOException Signals that an I/O exception has occurred.
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws InterruptedException the interrupted exception
-   * @throws ExecutionException the execution exception
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
    */
   public void example()
-      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
-
-    // Set license via helper
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException {
+    // The public evaluation license, or your own license if you put a license file where
+    // ExampleLicenseHelper looks for it.
     ExampleLicenseHelper.setLicense(this);
-
-    // Set the properties
-    this.setProperties();
-
-    this.addNodes();
-    this.addResources();
-
-    SameRouteRelationAndRelativeTimeWindowExample.attachToObservables(this);
-
-    CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
-
-    // It is important to block the call, otherwise the optimization will be terminated
-    System.out.println(resultFuture.get());
-  }
-
-  /** Sets the properties. */
-  private void setProperties() {
-
-    Properties props = new Properties();
-
-    props.setProperty("JOptExitCondition.JOptGenerationCount", "2000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "10000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
-
-    // Related properties
-    props.setProperty("JOptWeight.Relationships", "100.0"); //  Default is 100.0
-
-    props.setProperty("JOpt.NumCPUCores", "4");
-
-    this.addElement(props);
-  }
-
-  /** Adds the resources. */
-  private void addResources() {
-
-    List<IWorkingHours> workingHours = new ArrayList<>();
-    workingHours.add(
-        new WorkingHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 14, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    workingHours.add(
-        new WorkingHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 14, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    workingHours.add(
-        new WorkingHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 8, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 8, 14, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    Duration maxWorkingTime = Duration.ofHours(6);
-    Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
-
-    CapacityResource rep1 =
-        new CapacityResource(
-            "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
-    rep1.setCost(0, 1, 1);
-    this.addElement(rep1);
-  }
-
-  /** Adds the nodes. */
-  private void addNodes() {
-
-    List<IOpeningHours> weeklyOpeningHours = new ArrayList<>();
-    weeklyOpeningHours.add(
-        new OpeningHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    weeklyOpeningHours.add(
-        new OpeningHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    weeklyOpeningHours.add(
-        new OpeningHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 8, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 8, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    Duration visitDuration = Duration.ofMinutes(150);
-
-    // Define some Nodes
-    TimeWindowGeoNode koeln =
-        new TimeWindowGeoNode("Koeln", 50.9333, 6.95, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(koeln);
-
-    TimeWindowGeoNode essen =
-        new TimeWindowGeoNode("Essen", 51.45, 7.01667, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(essen);
-
-    TimeWindowGeoNode dueren =
-        new TimeWindowGeoNode("Dueren", 50.8, 6.48333, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(dueren);
-
-    TimeWindowGeoNode wuppertal =
-        new TimeWindowGeoNode("Wuppertal", 51.2667, 7.18333, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(wuppertal);
-
-    TimeWindowGeoNode aachen =
-        new TimeWindowGeoNode("Aachen", 50.775346, 6.083887, weeklyOpeningHours, visitDuration, 1);
-    this.addElement(aachen);
-
-    // Without any Relation, Aachen->Dueren->Koeln would cluster together in the same Route for geographic reasons.
-    // Essen, Wupppertal would cluster in the other Route.
-    // Since we want to accomplish that Aachen and Essen are visited in the same Route we need to define Relations
-    // between these Nodes
-
-    // Create Relation
-    INode2NodeVisitorRelation relSameRoute = new RelativeVisitor2RelatedNodeRelation();
-    relSameRoute.setMasterNode(essen);
-    relSameRoute.setRelatedNode(aachen);
-    relSameRoute.setIsForcedSameRoute();
-
-    // Add the Relation to the respective Nodes
-    essen.addNode2NodeRelation(relSameRoute);
-    aachen.addNode2NodeRelation(relSameRoute);
-
-    // Create a relative timeWindowRelation as delta based on master node in order to set the order of the visits
-    // As of here, the relatedNode needs to arrive 1000 minutes after the masterNode has arrived.
-    INode2NodeTempusRelation relRelativeTimeWindow =
-        new RelativeTimeWindow2RelatedNodeRelation(Duration.ofMinutes(0), Duration.ofMinutes(1000));
-    relRelativeTimeWindow.setMasterNode(essen);
-    relRelativeTimeWindow.setRelatedNode(aachen);
-    relRelativeTimeWindow.setTimeComparisonJuncture(true, true);
-
-    essen.addNode2NodeRelation(relRelativeTimeWindow);
-    aachen.addNode2NodeRelation(relRelativeTimeWindow);
+    addProperties(this);
+    addNodes(this);
+    addResources(this);
+    attachToObservables(this);
+    startAndPresentResult(this);
   }
 
   /**
-   * Attach to observables.
+   * Adds the properties that keep the run short.
    *
-   * @param opti the opti
+   * @param opti the optimization
+   */
+  private static void addProperties(IOptimization opti) {
+    Properties props = new Properties();
+    // Fewer generations and iterations than the defaults keep the run short.
+    props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
+    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
+    opti.addElement(props);
+  }
+
+  /**
+   * Adds five nodes and the two relations between Essen and Aachen.
+   *
+   * @param opti the optimization
+   */
+  private static void addNodes(IOptimization opti) {
+    // Each visit takes 150 minutes and counts toward the working time, like the driving.
+    Duration visitDuration = Duration.ofMinutes(150);
+
+    // The same importance for every node, so no node is preferred over another.
+    int importance = 1;
+
+    TimeWindowGeoNode koeln =
+        new TimeWindowGeoNode(
+            "Koeln", 50.9333, 6.95, createOpeningHours(), visitDuration, importance);
+    opti.addElement(koeln);
+
+    TimeWindowGeoNode essen =
+        new TimeWindowGeoNode(
+            "Essen", 51.45, 7.01667, createOpeningHours(), visitDuration, importance);
+    opti.addElement(essen);
+
+    TimeWindowGeoNode dueren =
+        new TimeWindowGeoNode(
+            "Dueren", 50.8, 6.48333, createOpeningHours(), visitDuration, importance);
+    opti.addElement(dueren);
+
+    TimeWindowGeoNode wuppertal =
+        new TimeWindowGeoNode(
+            "Wuppertal", 51.2667, 7.18333, createOpeningHours(), visitDuration, importance);
+    opti.addElement(wuppertal);
+
+    TimeWindowGeoNode aachen =
+        new TimeWindowGeoNode(
+            "Aachen", 50.775346, 6.083887, createOpeningHours(), visitDuration, importance);
+    opti.addElement(aachen);
+
+    // Essen is the master node and Aachen the related node. setIsForcedSameRoute asks for the
+    // same route, which also means the same resource.
+    INode2NodeVisitorRelation sameRoute = new RelativeVisitor2RelatedNodeRelation();
+    sameRoute.setMasterNode(essen);
+    sameRoute.setRelatedNode(aachen);
+    sameRoute.setIsForcedSameRoute();
+
+    essen.addNode2NodeRelation(sameRoute);
+    aachen.addNode2NodeRelation(sameRoute);
+
+    // The visit to Aachen starts 0 to 1000 minutes after the start of the visit to Essen. 1000
+    // minutes are longer than a working day, so on one route the window only sets the order:
+    // Essen first.
+    INode2NodeTempusRelation essenBeforeAachen =
+        new RelativeTimeWindow2RelatedNodeRelation(Duration.ofMinutes(0), Duration.ofMinutes(1000));
+    essenBeforeAachen.setMasterNode(essen);
+    essenBeforeAachen.setRelatedNode(aachen);
+
+    essen.addNode2NodeRelation(essenBeforeAachen);
+    aachen.addNode2NodeRelation(essenBeforeAachen);
+  }
+
+  /**
+   * Adds Jack, who starts and ends each working day in Aachen.
+   *
+   * @param opti the optimization
+   */
+  private static void addResources(IOptimization opti) {
+    // 8 h per day, the length of the working hours: Aachen and Essen with the drives between them
+    // fit into one day.
+    Duration maxWorkingTime = Duration.ofHours(8);
+    // 1200 km per day, more than the longest day of this plan needs.
+    Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
+
+    CapacityResource jack =
+        new CapacityResource(
+            "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, createWorkingHours());
+    opti.addElement(jack);
+  }
+
+  /**
+   * Creates the opening hours of a node: May 6 to May 8, 2020, from 08:00 to 18:00.
+   *
+   * @return the opening hours
+   */
+  private static List<IOpeningHours> createOpeningHours() {
+    List<IOpeningHours> openingHours = new ArrayList<>();
+    for (int day = 6; day <= 8; day++) {
+      openingHours.add(
+          new OpeningHours(
+              ZonedDateTime.of(2020, MAY.getValue(), day, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+              ZonedDateTime.of(
+                  2020, MAY.getValue(), day, 18, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+    }
+    return openingHours;
+  }
+
+  /**
+   * Creates Jack's working hours: May 6 to May 8, 2020, from 08:00 to 16:00.
+   *
+   * @return the working hours
+   */
+  private static List<IWorkingHours> createWorkingHours() {
+    List<IWorkingHours> workingHours = new ArrayList<>();
+    for (int day = 6; day <= 8; day++) {
+      workingHours.add(
+          new WorkingHours(
+              ZonedDateTime.of(2020, MAY.getValue(), day, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+              ZonedDateTime.of(
+                  2020, MAY.getValue(), day, 16, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+    }
+    return workingHours;
+  }
+
+  /**
+   * Prints the progress, warning, status and error events of the run.
+   *
+   * @param opti the optimization
    */
   private static void attachToObservables(IOptimization opti) {
-
-    PrintStream out = System.out;
-
+    // Subscribe before the start: the subjects replay only a few past events.
     opti.getOptimizationEvents()
         .progressSubject()
-        .subscribe(p -> out.println(p.getProgressString()));
+        .subscribe(p -> System.out.println(p.getProgressString()));
+    opti.getOptimizationEvents().warningSubject().subscribe(w -> System.out.println(w.toString()));
+    opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s.toString()));
+    opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
+  }
 
-    opti.getOptimizationEvents().warningSubject().subscribe(w -> out.println(w.toString()));
-
-    opti.getOptimizationEvents().statusSubject().subscribe(s -> out.println(s.toString()));
-
-    opti.getOptimizationEvents().errorSubject().subscribe(e -> out.println(e.toString()));
+  /**
+   * Starts the run, waits for the result and prints it.
+   *
+   * @param opti the optimization
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   */
+  private static void startAndPresentResult(IOptimization opti)
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException {
+    CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
+    // Wait for the result; without the wait the JVM would end before the run does.
+    IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
+    System.out.println(result);
   }
 }

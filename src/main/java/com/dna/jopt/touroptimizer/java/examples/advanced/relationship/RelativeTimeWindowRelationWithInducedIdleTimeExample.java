@@ -3,17 +3,22 @@ package com.dna.jopt.touroptimizer.java.examples.advanced.relationship;
  * #%L
  * JOpt TourOptimizer Examples
  * %%
- * Copyright (C) 2017 - 2020 DNA Evolutions GmbH
+ * Copyright (C) 2017 - 2023 DNA Evolutions GmbH
  * %%
- * This file is subject to the terms and conditions defined in file 'LICENSE.txt',
- * which is part of this source code package.
+ * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
+ * which is part of this repository.
  *
- * If not, see <https://www.dna-evolutions.com/agb-conditions-and-terms/>.
+ * If not, see <https://www.dna-evolutions.com/>.
  * #L%
  */
-import static java.time.Month.MAY;
 import static javax.measure.MetricPrefix.KILO;
 import static tech.units.indriya.unit.Units.METRE;
+import static java.time.Month.MAY;
+
+import tech.units.indriya.quantity.Quantities;
+
+import javax.measure.Quantity;
+import javax.measure.quantity.Length;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -24,206 +29,237 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
-import javax.measure.Quantity;
-import javax.measure.quantity.Length;
-
+import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.body.Optimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
-import com.dna.jopt.framework.outcomewrapper.IOptimizationProgress;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
+import com.dna.jopt.member.unit.hours.IOpeningHours;
 import com.dna.jopt.member.unit.hours.IWorkingHours;
+import com.dna.jopt.member.unit.hours.OpeningHours;
 import com.dna.jopt.member.unit.condition.resource.IConstraintResource;
 import com.dna.jopt.member.unit.condition.resource.MandatoryResourceConstraint;
-import com.dna.jopt.member.unit.hours.IOpeningHours;
 import com.dna.jopt.member.unit.hours.WorkingHours;
-import com.dna.jopt.member.unit.hours.OpeningHours;
 import com.dna.jopt.member.unit.node.geo.TimeWindowGeoNode;
 import com.dna.jopt.member.unit.relation.node2node.tempus.INode2NodeTempusRelation;
 import com.dna.jopt.member.unit.relation.node2node.tempus.RelativeTimeWindow2RelatedNodeRelation;
 import com.dna.jopt.member.unit.resource.CapacityResource;
-import com.dna.jopt.member.unit.resource.IResource;
 import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 
-import tech.units.indriya.quantity.Quantities;
-
 /**
- * Connecting two Nodes by defining a relative timeWindow. Relative timeWindows are very useful when
- * defining tasks that have to be fulfilled consecutively. In this example the work orders take 60
- * minutes to fulfill. We ask the relatedNode to start work 40 minutes after the masterNode has
- * arrived, on purpose inducing 20 minutes of idle time for the relatedNode for the sake of this
- * demonstration. The function is very flexible. Separate variables would allow to set a minimal
- * time that has to pass between the tasks or setting a loose timeframe within which both tasks have
- * to be fulfilled.
+ * Keeps a relative time window between two nodes on the routes of two resources by letting one
+ * resource wait: the optimizer inserts an induced idle time before the related node.
  *
- * @author DNA
- * @version Mar 23, 2021
- * @since Mar 11, 2021
+ * <p>Scenario: Jack and John start in Aachen and work from 08:00 to 17:00 on May 6 and May 7, 2020
+ * (Europe/Berlin). John visits Essen, which opens at 09:30; Jack visits Aachen, which opens at
+ * 08:00. Each visit takes 60 minutes, and the visit to Aachen has to start 0 to 40 minutes after
+ * the start of the visit to Essen.
+ *
+ * <p>Look for: the IDLE_EVENT_RELATION element before Aachen on Jack's route, the induced idle time
+ * of that route (Ind. Idle time) and no relation violation.
+ *
+ * <p>Prerequisites: None: without a license file the example uses the public evaluation license
+ * (see ExampleLicenseHelper).
+ *
+ * @see <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/relationship/Relations.md">Relations.md</a>
  */
 public class RelativeTimeWindowRelationWithInducedIdleTimeExample extends Optimization {
 
+  /**
+   * Runs the example.
+   *
+   * @param args not used
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   */
   public static void main(String[] args)
-      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException {
     new RelativeTimeWindowRelationWithInducedIdleTimeExample().example();
   }
 
+  @Override
   public String toString() {
-    return "Connecting Nodes with each other by defining a relative timeWindow. A use case would be that a "
-        + "certain\r\n"
-        + " workOrder needs to be fulfilled before another one can start. In this example we "
-        + "induced 20 minutes of idle time for the relatedNode on purpose.";
+    return "Keeps a relative time window between two nodes on the routes of two resources by"
+        + " letting one resource wait: the optimizer inserts an induced idle time before the"
+        + " related node.";
   }
 
+  /**
+   * Builds the optimization, runs it and prints the result.
+   *
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   */
   public void example()
-      throws IOException, InvalidLicenceException, InterruptedException, ExecutionException {
-
-    // Set license via helper
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException {
+    // The public evaluation license, or your own license if you put a license file where
+    // ExampleLicenseHelper looks for it.
     ExampleLicenseHelper.setLicense(this);
-
-    // Properties!
-    this.setProperties();
-
-    this.addNodes();
-    this.addResources();
-
-    CompletableFuture<IOptimizationResult> resultFuture = this.startRunAsync();
-
-    // It is important to block the call, otherwise optimization will be terminated
-    resultFuture.get();
+    addProperties(this);
+    addNodes(this);
+    addResources(this);
+    attachToObservables(this);
+    startAndPresentResult(this);
   }
 
-  private void setProperties() {
-
+  /**
+   * Adds the properties that keep the run short.
+   *
+   * @param opti the optimization
+   */
+  private static void addProperties(IOptimization opti) {
     Properties props = new Properties();
-
+    // Fewer generations and iterations than the defaults keep the run short.
+    props.setProperty("JOptExitCondition.JOptGenerationCount", "1000");
     props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumIterations", "100000");
-    props.setProperty("JOpt.Algorithm.PreOptimization.SA.NumRepetitions", "1");
-    props.setProperty("JOptWeight.Relationships", "100");
-    props.setProperty("JOpt.NumCPUCores", "4");
-    props.setProperty("JOpt.UnlocatedIdleTime", "true");
-
-    this.addElement(props);
+    opti.addElement(props);
   }
 
-  private static List<IWorkingHours> getDefaultWorkingHours() {
-
-    List<IWorkingHours> workingHours = new ArrayList<>();
-    workingHours.add(
-        new WorkingHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    workingHours.add(
-        new WorkingHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    return workingHours;
-  }
-
-  private void addResources() {
-
-    Duration maxWorkingTime = Duration.ofHours(13);
-    Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
-
-    IResource rep1 =
-        new CapacityResource(
-            "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, getDefaultWorkingHours());
-    rep1.setCost(0, 1, 1);
-    this.addElement(rep1);
-
-    IResource rep2 =
-        new CapacityResource(
-            "John", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, getDefaultWorkingHours());
-    rep2.setCost(0, 1, 1);
-    this.addElement(rep2);
-  }
-
-  private void addNodes() {
-
-    List<IOpeningHours> weeklyOpeningHoursAachen = new ArrayList<>();
-    weeklyOpeningHoursAachen.add(
-        new OpeningHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 16, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    weeklyOpeningHoursAachen.add(
-        new OpeningHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 16, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    List<IOpeningHours> weeklyOpeningHoursEssen = new ArrayList<>();
-    weeklyOpeningHoursEssen.add(
-        new OpeningHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 12, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 6, 16, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
-    weeklyOpeningHoursEssen.add(
-        new OpeningHours(
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 12, 0, 0, 0, ZoneId.of("Europe/Berlin")),
-            ZonedDateTime.of(2020, MAY.getValue(), 7, 16, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
-
+  /**
+   * Adds Essen for John and Aachen for Jack, and the relative time window between them.
+   *
+   * @param opti the optimization
+   */
+  private static void addNodes(IOptimization opti) {
+    // Each visit takes 60 minutes and counts toward the working time, like the driving.
     Duration visitDuration = Duration.ofMinutes(60);
 
-    // Define some nodes
+    // The same importance for every node, so no node is preferred over another.
+    int importance = 1;
 
+    // Essen opens at 09:30, so its visit starts at 09:30 at the earliest, while Jack could start
+    // the visit to Aachen at 08:00. To keep the time window, Jack has to wait. The property
+    // JOpt.InducedIdleTime.max limits the length of one induced idle event.
     TimeWindowGeoNode essen =
         new TimeWindowGeoNode(
-            "Essen", 51.45, 7.01667, weeklyOpeningHoursEssen, visitDuration, 1);
-    IConstraintResource johnMandConstraint = new MandatoryResourceConstraint();
-    johnMandConstraint.addResource("John", 10);
-    essen.addConstraint(johnMandConstraint);
-    this.addElement(essen);
+            "Essen", 51.45, 7.01667, createOpeningHours(9, 30), visitDuration, importance);
+    // Only John may visit Essen.
+    IConstraintResource johnMandatory = new MandatoryResourceConstraint();
+    // addResource needs a priority above 0; with John alone its value does not matter.
+    johnMandatory.addResource("John", 10);
+    essen.addConstraint(johnMandatory);
+    opti.addElement(essen);
 
     TimeWindowGeoNode aachen =
         new TimeWindowGeoNode(
-            "Aachen", 50.775346, 6.083887, weeklyOpeningHoursAachen, visitDuration, 1);
-    IConstraintResource jackMandConstraint = new MandatoryResourceConstraint();
-    jackMandConstraint.addResource("Jack", 10);
-    aachen.addConstraint(jackMandConstraint);
-    this.addElement(aachen);
+            "Aachen", 50.775346, 6.083887, createOpeningHours(8, 0), visitDuration, importance);
+    // Only Jack may visit Aachen.
+    IConstraintResource jackMandatory = new MandatoryResourceConstraint();
+    jackMandatory.addResource("Jack", 10);
+    aachen.addConstraint(jackMandatory);
+    opti.addElement(aachen);
 
-    // Create a relative timeWindowRelation as delta based on master node
-    // The relatedNode has to start its task 40 minutes after the arrival of the masterNode. This
-    // results in 20
-    // minutes idle time for the relatedNode, since the tasks take 60 minutes to finish
-    INode2NodeTempusRelation rel =
+    // Essen is the master node and Aachen the related node: the visit to Aachen starts 0 to 40
+    // minutes after the start of the visit to Essen, a sample window. Its lower bound 0 makes
+    // Jack wait until the visit to Essen starts.
+    INode2NodeTempusRelation timeWindow =
         new RelativeTimeWindow2RelatedNodeRelation(Duration.ofMinutes(0), Duration.ofMinutes(40));
-    rel.setMasterNode(essen);
-    rel.setRelatedNode(aachen);
-    rel.setTimeComparisonJuncture(true, true);
-    essen.addNode2NodeRelation(rel);
-    aachen.addNode2NodeRelation(rel);
+    timeWindow.setMasterNode(essen);
+    timeWindow.setRelatedNode(aachen);
+
+    essen.addNode2NodeRelation(timeWindow);
+    aachen.addNode2NodeRelation(timeWindow);
   }
 
-  @Override
-  public void onError(int code, String message) {
-    System.out.println("code: " + code + " message:" + message);
+  /**
+   * Adds Jack and John, who both start and end each working day in Aachen.
+   *
+   * @param opti the optimization
+   */
+  private static void addResources(IOptimization opti) {
+    // 9 h per day, the length of the working hours.
+    Duration maxWorkingTime = Duration.ofHours(9);
+    // 1200 km per day, more than the longest day of this plan needs.
+    Quantity<Length> maxDistanceKmW = Quantities.getQuantity(1200.0, KILO(METRE));
+
+    CapacityResource jack =
+        new CapacityResource(
+            "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, createWorkingHours());
+    opti.addElement(jack);
+
+    CapacityResource john =
+        new CapacityResource(
+            "John", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, createWorkingHours());
+    opti.addElement(john);
   }
 
-  @Override
-  public void onStatus(int code, String message) {
-    System.out.println("code: " + code + " message:" + message);
+  /**
+   * Creates the opening hours of a node: May 6 and May 7, 2020, from the given time to 16:00.
+   *
+   * @param openHour the hour of the opening time
+   * @param openMinute the minute of the opening time
+   * @return the opening hours
+   */
+  private static List<IOpeningHours> createOpeningHours(int openHour, int openMinute) {
+    List<IOpeningHours> openingHours = new ArrayList<>();
+    for (int day = 6; day <= 7; day++) {
+      openingHours.add(
+          new OpeningHours(
+              ZonedDateTime.of(
+                  2020, MAY.getValue(), day, openHour, openMinute, 0, 0,
+                  ZoneId.of("Europe/Berlin")),
+              ZonedDateTime.of(
+                  2020, MAY.getValue(), day, 16, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+    }
+    return openingHours;
   }
 
-  @Override
-  public void onWarning(int code, String message) {
-    //
-
+  /**
+   * Creates the working hours of a resource: May 6 and May 7, 2020, from 08:00 to 17:00.
+   *
+   * @return the working hours
+   */
+  private static List<IWorkingHours> createWorkingHours() {
+    List<IWorkingHours> workingHours = new ArrayList<>();
+    for (int day = 6; day <= 7; day++) {
+      workingHours.add(
+          new WorkingHours(
+              ZonedDateTime.of(2020, MAY.getValue(), day, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
+              ZonedDateTime.of(
+                  2020, MAY.getValue(), day, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
+    }
+    return workingHours;
   }
 
-  @Override
-  public void onProgress(String winnerProgressString) {
-    System.out.println(winnerProgressString);
+  /**
+   * Prints the progress, warning, status and error events of the run.
+   *
+   * @param opti the optimization
+   */
+  private static void attachToObservables(IOptimization opti) {
+    // Subscribe before the start: the subjects replay only a few past events.
+    opti.getOptimizationEvents()
+        .progressSubject()
+        .subscribe(p -> System.out.println(p.getProgressString()));
+    opti.getOptimizationEvents().warningSubject().subscribe(w -> System.out.println(w.toString()));
+    opti.getOptimizationEvents().statusSubject().subscribe(s -> System.out.println(s.toString()));
+    opti.getOptimizationEvents().errorSubject().subscribe(e -> System.out.println(e.toString()));
   }
 
-  @Override
-  public void onProgress(IOptimizationProgress rapoptProgress) {
-    //
-  }
-
-  @Override
-  public void onAsynchronousOptimizationResult(IOptimizationResult rapoptResult) {
-    System.out.println(rapoptResult);
+  /**
+   * Starts the run, waits for the result and prints it.
+   *
+   * @param opti the optimization
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   */
+  private static void startAndPresentResult(IOptimization opti)
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException {
+    CompletableFuture<IOptimizationResult> resultFuture = opti.startRunAsync();
+    // Wait for the result; without the wait the JVM would end before the run does.
+    IOptimizationResult result = resultFuture.get(5, TimeUnit.MINUTES);
+    System.out.println(result);
   }
 }
