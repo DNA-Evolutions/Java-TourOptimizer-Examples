@@ -144,7 +144,7 @@ This adds CO2 emission as a goal in the cost function and the solver will trade 
 
 The documentation states that, by default, a vehicle has a CO2 emission factor of:
 
-- `0.377 [kg*CO2/km]`
+- `0.377 [kg*CO2/km]` (see the [CO2 emission feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/co2_emission))
 
 This corresponds approximately to an average fuel consumption of 14.3 liters diesel per 100 km, with the 2.629 kg CO2 per liter of diesel that the example uses (0.377 / 2.629 = 0.143 liters per km).
 
