@@ -55,7 +55,8 @@ import tech.units.indriya.quantity.Quantities;
  * <p>Scenario: Jack starts in Aachen and visits eight nodes on May 6 and May 7, 2020
  * (Europe/Berlin). Seven nodes are open from 08:00 to 17:00. Koeln is open only from 09:00 to 09:15
  * on May 6, shorter than its visit of 20 minutes, and its opening hours do not include the visit
- * duration (setIsDutyHoursIncludesVisitDuration(false)).
+ * duration (setIsDutyHoursIncludesVisitDuration(false)). The seven other nodes set
+ * setIsDutyHoursIncludesVisitDuration(true), and every node sets setWaitOnEarlyArrival(true).
  *
  * <p>Look for: the line of Koeln in the result. Jack arrives between 09:00 and 09:15 and leaves
  * after 09:15, and the line shows no violation. The example also writes the result to
@@ -157,44 +158,61 @@ public class IncludeVisitDurationExample extends Optimization {
     // The same importance for every node, so no node is preferred over another.
     int importance = 1;
 
+    // With true, as on the seven other nodes, the visit must start and end inside the opening
+    // hours. With false, Jack only has to arrive inside them, and the visit may go on after they
+    // end. setWaitOnEarlyArrival(true), on every node: a resource that arrives before a node
+    // opens waits until it opens.
     INode koeln =
         new TimeWindowGeoNode("Koeln", 50.9333, 6.95, koelnAccessHours, visitDuration, importance);
-    // By default the visit must start and end inside the opening hours. With false, Jack only has
-    // to arrive inside them, and the visit may go on after they end.
     koeln.setIsDutyHoursIncludesVisitDuration(false);
+    koeln.setWaitOnEarlyArrival(true);
     opti.addElement(koeln);
 
     INode essen =
         new TimeWindowGeoNode("Essen", 51.45, 7.01667, openingHours, visitDuration, importance);
+    essen.setIsDutyHoursIncludesVisitDuration(true);
+    essen.setWaitOnEarlyArrival(true);
     opti.addElement(essen);
 
     INode dueren =
         new TimeWindowGeoNode("Dueren", 50.8, 6.48333, openingHours, visitDuration, importance);
+    dueren.setIsDutyHoursIncludesVisitDuration(true);
+    dueren.setWaitOnEarlyArrival(true);
     opti.addElement(dueren);
 
     INode nuernberg =
         new TimeWindowGeoNode(
             "Nuernberg", 49.4478, 11.0683, openingHours, visitDuration, importance);
+    nuernberg.setIsDutyHoursIncludesVisitDuration(true);
+    nuernberg.setWaitOnEarlyArrival(true);
     opti.addElement(nuernberg);
 
     INode heilbronn =
         new TimeWindowGeoNode(
             "Heilbronn", 49.1403, 9.22, openingHours, visitDuration, importance);
+    heilbronn.setIsDutyHoursIncludesVisitDuration(true);
+    heilbronn.setWaitOnEarlyArrival(true);
     opti.addElement(heilbronn);
 
     INode stuttgart =
         new TimeWindowGeoNode(
             "Stuttgart", 48.7667, 9.18333, openingHours, visitDuration, importance);
+    stuttgart.setIsDutyHoursIncludesVisitDuration(true);
+    stuttgart.setWaitOnEarlyArrival(true);
     opti.addElement(stuttgart);
 
     INode wuppertal =
         new TimeWindowGeoNode(
             "Wuppertal", 51.2667, 7.18333, openingHours, visitDuration, importance);
+    wuppertal.setIsDutyHoursIncludesVisitDuration(true);
+    wuppertal.setWaitOnEarlyArrival(true);
     opti.addElement(wuppertal);
 
     INode aachen =
         new TimeWindowGeoNode(
             "Aachen", 50.775346, 6.083887, openingHours, visitDuration, importance);
+    aachen.setIsDutyHoursIncludesVisitDuration(true);
+    aachen.setWaitOnEarlyArrival(true);
     opti.addElement(aachen);
   }
 

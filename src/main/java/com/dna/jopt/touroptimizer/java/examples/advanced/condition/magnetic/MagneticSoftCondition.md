@@ -4,10 +4,10 @@
 
 ## What the example shows
 
-- **Attraction:** `setIsAttractingMagnet(true)` with `addNodeMagnetId("Aachen")` on Stuttgart: Aachen should be on the route that holds Stuttgart.
+- **Attraction:** keep selected target nodes on the **same route** as the constrained node, the magnet node. `setIsAttractingMagnet(true)` with `addNodeMagnetId("Aachen")` on Stuttgart: Aachen should be on the route that holds Stuttgart.
 - **Order:** `setOrder(NodeOrder.FRONT)` asks for the attracted nodes after the magnet node on the route, so Stuttgart comes first. `NodeOrder.BACK` asks for them before the magnet node, and `NodeOrder.NO_ORDER` asks only for the same route.
-- **Repulsion:** `setIsAttractingMagnet(false)` with the targets Wuppertal and Essen on Koeln: they should be on other routes than Koeln.
-- **Soft only:** a `MagnetoNodeConstraint` is not a hard constraint. `setIsHard(true)` does not make it hard; it only logs a warning. The example therefore does not call `setIsHard`.
+- **Repulsion:** keep selected target nodes on a **different route** than the constrained node. `setIsAttractingMagnet(false)` with the targets Wuppertal and Essen on Koeln: they should be on other routes than Koeln.
+- **Soft only:** this example demonstrates `MagnetoNodeConstraint` ("magnetic" node constraint), which works in **soft** mode only. A magnetic constraint attaches to a single node and influences the optimizer via **preferences**. Important: a `MagnetoNodeConstraint` is not a hard constraint. `setIsHard(true)` does not make it hard; it only logs a warning. The example therefore does not call `setIsHard`.
 - **Targets by id:** the targets are node ids, here the city names.
 
 ## Scenario
@@ -85,6 +85,45 @@ The route with Heilbronn and Koeln ends at 17:40:11, after the end of its workin
 
 To see what the magnets change, compare a run without them. In a test run with the two `addConstraint` calls removed, one route visited Aachen, Dueren, Koeln, Wuppertal, Essen and Oberhausen, starting at Aachen, and another route visited Stuttgart and Heilbronn.
 
+## Typical business scenarios
+
+Magnetic constraints are useful when you want *coordination preferences* without making the plan infeasible, for example:
+
+- "These visits should be handled by the **same person/vehicle** if possible."
+- "These visits should be **separated** if possible (load risk, customer preference, operational separation)."
+- "If we keep them together, this one should be **early** in the route" (ordering preference).
+
+Because it is a *soft* constraint, the optimizer can still find a schedule when reality conflicts with the preference.
+
+## Key configuration concepts
+
+### Attraction vs. repulsion
+- `setIsAttractingMagnet(true)` -> attraction (same-route preference)
+- `setIsAttractingMagnet(false)` -> repulsion (different-route preference)
+
+### Magnet targets by ID
+Targets are added via:
+- `addNodeMagnetId("...")`
+
+In this example, the IDs match the node identifiers (city names). In production systems, you typically use stable business IDs.
+
+### Optional ordering preference
+For attraction magnets you can optionally guide where the constrained node should appear in the route relative to its attracted nodes:
+- `NodeOrder.FRONT`
+- `NodeOrder.BACK`
+- `NodeOrder.NO_ORDER`
+
+## Notes for production use
+
+- Magnetic constraints are great for expressing "*prefer together* / *prefer apart*" without making plans brittle.
+- Use stable IDs for magnets (e.g., order IDs, customer IDs, task IDs), not human-readable labels.
+- Combine magnets with other constraints (skills, territories, time windows) to capture real operational policies.
+
+## Soft, hard and pseudo constraints (related topics)
+
+- Soft vs. hard constraints: hard constraints are fulfilled by architecture; soft constraints are optimized via cost trade-offs.
+- Relations (same route / different route) can model linkage between two nodes; they are pseudo constraints too: a broken relation adds a cost weighted by `JOptWeight.Relationships` (see [Relations between nodes](../../relationship/Relations.md)). Magnets are the preference-oriented counterpart.
+
 ## Run it
 
 Run the `main(String[] args)` method of `MagneticSoftConditionExample` from your IDE, with the repository imported as a Maven project. You need a JDK in the version that the examples pom sets. You need no license file: without one, the example uses the public evaluation license (see the [license guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license)). The run writes `MagneticSoftConditionExample.kml` into the working directory.
@@ -98,4 +137,4 @@ Run the `main(String[] args)` method of `MagneticSoftConditionExample` from your
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-20
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21

@@ -209,8 +209,9 @@ public class OpenClosedRouteExample extends Optimization {
             ZonedDateTime.of(2020, MAY.getValue(), 7, 8, 0, 0, 0, ZoneId.of("Europe/Berlin")),
             ZonedDateTime.of(2020, MAY.getValue(), 7, 17, 0, 0, 0, ZoneId.of("Europe/Berlin"))));
 
-    // Working hours are closed routes by default. Open routes end at the last node: the way back
-    // to the start is not part of the route.
+    // Working hours are closed routes with setIsClosedRoute(true); this example sets both days
+    // open with false. Open routes end at the last node: the way back to the start is not part of
+    // the route.
     workingHours.forEach(w -> w.setIsClosedRoute(false));
 
     // 13 h per day, more than any day of this plan needs.
