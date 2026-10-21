@@ -1,5 +1,16 @@
 package com.dna.jopt.touroptimizer.java.examples.expert.compareresult;
-
+/*-
+ * #%L
+ * JOpt TourOptimizer Examples
+ * %%
+ * Copyright (C) 2017 - 2023 DNA Evolutions GmbH
+ * %%
+ * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
+ * which is part of this repository.
+ *
+ * If not, see <https://www.dna-evolutions.com/>.
+ * #L%
+ */
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,156 +24,148 @@ import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
 import com.dna.jopt.member.bucket.route.ILogicEntityRoute;
+import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import com.dna.jopt.util.optimizationresultanalyzer.exceptions.ResultStructureNotMatchingException;
 import com.dna.jopt.util.optimizationresultmodifier.helper.IModificationTask;
 import com.dna.jopt.util.optimizationresultmodifier.helper.MoveOptimizableNodeModificationTask;
 
 /**
- * The class CompareResultsWithNodesMoveExample:
+ * Moves the nodes of the second route of an optimized result to the first route and compares the
+ * moved result with the original.
  *
- * The initial result will show two separate routes. Customers may ask: Can't the optimizer keep all jobs in a single route?
+ * <p>Scenario: the data of CompareResultExampleOptimization with the far away nodes: Jack from
+ * Aachen and nine nodes on May 8 and May 9, 2030 (Europe/Berlin). The optimizer plans two routes;
+ * the example moves Nuernberg and Heilbronn from the second day to the end of the first.
  *
- * <br><br>
- * Visit
- * <a
- * href="https://docs.dna-evolutions.com/overview_docs/comparison_tool/comparison_tool.html">https://docs.dna-evolutions.com/overview_docs/comparison_tool/comparison_tool.html</a>
- * for an explanation.
+ * <p>Look for: the two original routes, the second with an overtime (MAXTIME) violation; the
+ * modified first route, which ends after midnight with LATE violations at Nuernberg and Heilbronn
+ * and more overtime; and the comparison report, whose job result says that the base job has the
+ * lower cost.
  *
- * @author jrich
- * @version Feb 5, 2025
- * @since Feb 5, 2025
+ * <p>Prerequisites: None: without a license file the example uses the public evaluation license
+ * (see ExampleLicenseHelper). The example writes two KML files into the working directory.
+ *
+ * @see <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/compareresult/CompareResult.md">CompareResult.md</a>
  */
-public class CompareResultsWithNodesMoveExample {
+public class CompareResultsWithNodesMoveExample extends CompareResultExampleOptimization {
 
   /**
-   * The main method.
+   * Runs the example.
    *
-   * @param args the arguments
-   * @throws InterruptedException                the interrupted exception
-   * @throws ExecutionException                  the execution exception
-   * @throws InvalidLicenceException             the invalid licence exception
-   * @throws IOException
-   * @throws TimeoutException
-   * @throws SerializationException
-   * @throws ConvertException
-   * @throws ResultStructureNotMatchingException
+   * @param args not used
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   * @throws ConvertException if the optimization cannot be converted for the copy
+   * @throws SerializationException if the copy cannot be serialized
+   * @throws ResultStructureNotMatchingException if the two results do not have the same routes
    */
   public static void main(String[] args)
-      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException,
-      TimeoutException,
-      ConvertException, SerializationException, ResultStructureNotMatchingException {
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException, ConvertException, SerializationException, ResultStructureNotMatchingException {
     new CompareResultsWithNodesMoveExample().example();
   }
 
+  @Override
   public String toString() {
-    return "Example of a result modification and comparison to understand decision done by the Optimizer.";
+    return "Moves the nodes of the second route of an optimized result to the first route and "
+        + "compares the moved result with the original.";
   }
 
   /**
-   * The method which executes the necessary parts for the Optimization.
+   * Builds and runs the optimization, moves the nodes of the second route to the first route in a
+   * copy of the result and compares the two results.
    *
-   * @throws InterruptedException                the interrupted exception
-   * @throws ExecutionException                  the execution exception
-   * @throws InvalidLicenceException             the invalid licence exception
-   * @throws IOException
-   * @throws TimeoutException
-   * @throws SerializationException
-   * @throws ConvertException
-   * @throws ResultStructureNotMatchingException
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   * @throws ConvertException if the optimization cannot be converted for the copy
+   * @throws SerializationException if the copy cannot be serialized
+   * @throws ResultStructureNotMatchingException if the two results do not have the same routes
    */
   public void example()
-      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException,
-      TimeoutException, ConvertException, SerializationException,
-      ResultStructureNotMatchingException {
-
-    IOptimization opti = CompareResultExampleOptimization.createCompareExampleOpti(true);
-
-    // Starting the Optimization completable Future and presenting the results
-    IOptimizationResult orgResult = CompareResultExampleOptimization.createInitialResult(opti);
-
-    /*
-     * We have a result that we export to a kml. The result uses two separate
-     * routes to avoid overtime. Most often, such a result raises questions from
-     * end customers, for example why not all nodes are put into a single route.
-     */
-    CompareResultExampleOptimization.exportToKml(
-        "comparison_nodemove_intial_result_" + System.currentTimeMillis() + ".kml", orgResult);
-
-    // Create a modified result where we move all nodes of the second route into
-    // the first route and also export to kml
-    IOptimizationResult modResult =
-        CompareResultsWithNodesMoveExample.createModResult(opti, orgResult);
-
-    CompareResultExampleOptimization.exportToKml(
-        "comparison_nodemove_mod_result_" + System.currentTimeMillis() + ".kml", modResult);
-
-    // (8) Compare results to find out which one is better
-    CompareResultExampleOptimization.compareResults(opti, orgResult, modResult);
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException, ConvertException, SerializationException, ResultStructureNotMatchingException {
+    // The public evaluation license, or your own license if you put a license file where
+    // ExampleLicenseHelper looks for it.
+    ExampleLicenseHelper.setLicense(this);
+    addProperties(this);
+    addNodes(this, true);
+    addResources(this);
+    attachToObservables(this);
+    IOptimizationResult orgResult = startAndPresentResult(this);
+    exportToKml(orgResult, "CompareResultsWithNodesMoveExample_original.kml");
+    IOptimizationResult modResult = createModResult(this, orgResult);
+    exportToKml(modResult, "CompareResultsWithNodesMoveExample_modified.kml");
+    compareResults(orgResult, modResult);
   }
 
-  static IOptimizationResult createModResult(IOptimization opti, IOptimizationResult orgResult)
-      throws InterruptedException, ExecutionException, InvalidLicenceException, ConvertException,
-      SerializationException, IOException {
+  /**
+   * Moves the nodes of the second route to the first route in a copy of the result, prints the
+   * copy and returns it.
+   *
+   * @param opti the optimization that has run
+   * @param orgResult the original result
+   * @return the modified result
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   * @throws ConvertException if the optimization cannot be converted for the copy
+   * @throws SerializationException if the copy cannot be serialized
+   */
+  private static IOptimizationResult createModResult(
+      IOptimization opti, IOptimizationResult orgResult)
+      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException,
+      ConvertException, SerializationException {
+    // Customers often ask why the optimizer does not put all nodes into a single route; the move
+    // shows what one route costs.
+    IOptimizationResult modResult = moveSecondRouteNodesToFirstRoute(opti, orgResult);
 
-    /*
-     * The initial result will show two separate routes to avoid overtime. However, a customer may ask why the Optimizer is not putting all nodes into a single route.
-     */
-
-    // Now modify the result - We move all nodes from the second route into the first route.
-    IOptimizationResult modResult =
-        CompareResultsWithNodesMoveExample.moveSecondRouteNodesToFirstRoute(opti, orgResult);
-
-    // Presenting the result
-    System.out
-        .println("\n\n\n#########################  RESULT ORG  #########################\n\n\n");
-    System.out.println(orgResult);
-
-    System.out
-        .println("\n\n\n#########################  RESULT MOD  #########################\n\n\n");
+    String banner = "#########################  RESULT MOD  #########################";
+    System.out.println("\n\n\n" + banner + "\n\n\n");
     System.out.println(modResult);
 
     return modResult;
-
   }
 
   /**
-   * Move second route nodes to first route.
+   * Moves all nodes of the second route to the end of the first route in a copy of the result.
    *
-   * @param opti the opti
-   * @param orgResult the org result
-   * @return the i optimization result
-   * @throws InterruptedException the interrupted exception
-   * @throws ExecutionException the execution exception
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws ConvertException the convert exception
-   * @throws SerializationException the serialization exception
-   * @throws IOException Signals that an I/O exception has occurred.
+   * @param opti the optimization that has run
+   * @param orgResult the original result
+   * @return the modified result
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   * @throws ConvertException if the optimization cannot be converted for the copy
+   * @throws SerializationException if the copy cannot be serialized
    */
-  public static IOptimizationResult moveSecondRouteNodesToFirstRoute(IOptimization opti,
-      IOptimizationResult orgResult)
-      throws InterruptedException, ExecutionException, InvalidLicenceException,
-      ConvertException, SerializationException, IOException {
-
-    // We want to generate a modified result version. We move all nodes from the
-    // second day to the first day
+  private static IOptimizationResult moveSecondRouteNodesToFirstRoute(
+      IOptimization opti, IOptimizationResult orgResult)
+      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException,
+      ConvertException, SerializationException {
     List<ILogicEntityRoute> routes = orgResult.getRoutes();
     ILogicEntityRoute secondRoute = routes.get(1);
     List<String> secondRouteItemIds =
-        secondRoute.getRouteElementsDetailController().getAsSortedListByArrival()
-            .stream().map(node -> node.getElement().getId()).toList();
+        secondRoute.getRouteElementsDetailController().getAsSortedListByArrival().stream()
+            .map(node -> node.getElement().getId())
+            .toList();
 
-    IModificationTask moveTask = new MoveOptimizableNodeModificationTask(secondRouteItemIds, // moveNodes
-        "Jack from Aachen", // newResId - might be the same id if resource stays the same
-        0, // newResWorkingHoursIndex - the index of the target working hours
-        Optional.empty()); // afterNodeId - If nodes should be positioned that afterNodeId is the first
-    // nodes after the chunk of inserted nodes. Leave empty, if nodes are appended
-    // to the end
+    // Target: Jack's first working day (index 0). Optional.empty() appends the moved nodes at
+    // the end of the target route; a node id instead puts them before that node.
+    IModificationTask moveTask =
+        new MoveOptimizableNodeModificationTask(
+            secondRouteItemIds, "Jack from Aachen", 0, Optional.empty());
 
     List<IModificationTask> tasks = new ArrayList<>();
     tasks.add(moveTask);
 
-    // Follow methods applyTasksAndCreateModResult to understand how modification is triggered
-    return CompareResultExampleOptimization.applyTasksAndCreateModResult(opti, tasks);
+    return applyTasksAndCreateModResult(opti, tasks);
   }
-
 }

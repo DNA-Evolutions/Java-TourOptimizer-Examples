@@ -1,5 +1,16 @@
 package com.dna.jopt.touroptimizer.java.examples.expert.compareresult;
-
+/*-
+ * #%L
+ * JOpt TourOptimizer Examples
+ * %%
+ * Copyright (C) 2017 - 2023 DNA Evolutions GmbH
+ * %%
+ * This file is subject to the terms and conditions defined in file 'src/main/resources/LICENSE.txt',
+ * which is part of this repository.
+ *
+ * If not, see <https://www.dna-evolutions.com/>.
+ * #L%
+ */
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,155 +22,134 @@ import com.dna.jopt.config.serialize.SerializationException;
 import com.dna.jopt.framework.body.IOptimization;
 import com.dna.jopt.framework.exception.caught.InvalidLicenceException;
 import com.dna.jopt.framework.outcomewrapper.IOptimizationResult;
+import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import com.dna.jopt.util.optimizationresultanalyzer.exceptions.ResultStructureNotMatchingException;
 import com.dna.jopt.util.optimizationresultmodifier.helper.ExchangeOptimizableNodesModificationTask;
 import com.dna.jopt.util.optimizationresultmodifier.helper.IModificationTask;
 
 /**
- *  The class CompareResultsWithNodeExchangeExample:
+ * Swaps two nodes of an optimized route and compares the swapped result with the original.
  *
- * The initial result will show a geographical problem at the nodes Duisburg and
- * Krefeld. (Duisburg is visited before Krefeld, which induces a higher total
- * distance).
+ * <p>Scenario: the data of CompareResultExampleOptimization without the far away nodes: Jack from
+ * Aachen and seven nodes on May 8 and May 9, 2030 (Europe/Berlin). The optimizer visits Duisburg
+ * before Krefeld, which looks like a detour on a map; the example swaps the two.
  *
- * <br><br>
- * Visit
- * <a
- * href="https://docs.dna-evolutions.com/overview_docs/comparison_tool/comparison_tool.html">https://docs.dna-evolutions.com/overview_docs/comparison_tool/comparison_tool.html</a>
- * for an explanation.
+ * <p>Look for: the original route with Duisburg before Krefeld, the modified route with a LATE
+ * violation at Duisburg and a shorter distance, and the comparison report, whose job result says
+ * that the base job has the lower cost.
  *
- * @author jrich
- * @version Feb 5, 2025
- * @since Feb 5, 2025
+ * <p>Prerequisites: None: without a license file the example uses the public evaluation license
+ * (see ExampleLicenseHelper). The example writes two KML files into the working directory.
+ *
+ * @see <a href="https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert/compareresult/CompareResult.md">CompareResult.md</a>
  */
-public class CompareResultsWithNodeExchangeExample {
+public class CompareResultsWithNodeExchangeExample extends CompareResultExampleOptimization {
 
   /**
-   * The main method.
+   * Runs the example.
    *
-   * @param args the arguments
-   * @throws InterruptedException                the interrupted exception
-   * @throws ExecutionException                  the execution exception
-   * @throws InvalidLicenceException             the invalid licence exception
-   * @throws IOException
-   * @throws TimeoutException
-   * @throws SerializationException
-   * @throws ConvertException
-   * @throws ResultStructureNotMatchingException
+   * @param args not used
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   * @throws ConvertException if the optimization cannot be converted for the copy
+   * @throws SerializationException if the copy cannot be serialized
+   * @throws ResultStructureNotMatchingException if the two results do not have the same routes
    */
   public static void main(String[] args)
-      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException,
-      TimeoutException,
-      ConvertException, SerializationException, ResultStructureNotMatchingException {
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException, ConvertException, SerializationException, ResultStructureNotMatchingException {
     new CompareResultsWithNodeExchangeExample().example();
   }
 
+  @Override
   public String toString() {
-    return "Example of a result modification and comparison to understand decision done by the Optimizer.";
+    return "Swaps two nodes of an optimized route and compares the swapped result with the "
+        + "original.";
   }
 
   /**
-   * The method which executes the necessary parts for the Optimization.
+   * Builds and runs the optimization, swaps Krefeld and Duisburg in a copy of the result and
+   * compares the two results.
    *
-   * @throws InterruptedException                the interrupted exception
-   * @throws ExecutionException                  the execution exception
-   * @throws InvalidLicenceException             the invalid licence exception
-   * @throws IOException
-   * @throws TimeoutException
-   * @throws SerializationException
-   * @throws ConvertException
-   * @throws ResultStructureNotMatchingException
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws TimeoutException if the run does not finish within the wait
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   * @throws ConvertException if the optimization cannot be converted for the copy
+   * @throws SerializationException if the copy cannot be serialized
+   * @throws ResultStructureNotMatchingException if the two results do not have the same routes
    */
   public void example()
-      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException,
-      TimeoutException, ConvertException, SerializationException,
-      ResultStructureNotMatchingException {
-
-    IOptimization opti = CompareResultExampleOptimization.createCompareExampleOpti(false);
-
-    // Starting the Optimization completable Future and presenting the results
-    IOptimizationResult orgResult = CompareResultExampleOptimization.createInitialResult(opti);
-
-    /*
-     * We have a result that we export to a kml. The result will show a geographical
-     * problem at the nodes Duisburg and Krefeld. (Duisburg is visited before
-     * Krefeld, which induces a higher total distance) Most often, such a result
-     * raises questions from end customers. We move the node to a position that
-     * avoids the increased distance.
-     */
-    CompareResultExampleOptimization
-        .exportToKml("comparison_nodeexchange_intial_result_" + System.currentTimeMillis() + ".kml",
-            orgResult);
-
-    // Create a modified result where we exchange Krefeld and Duisburg and also
-    // export to kml
-    IOptimizationResult modResult =
-        CompareResultsWithNodeExchangeExample.createModResult(opti, orgResult);
-
-    CompareResultExampleOptimization
-        .exportToKml("comparison_nodeexchange_mod_result_" + System.currentTimeMillis() + ".kml",
-            modResult);
-
-    // Compare results to find out which one is better
-    CompareResultExampleOptimization.compareResults(opti, orgResult, modResult);
+      throws InterruptedException, ExecutionException, TimeoutException, InvalidLicenceException,
+      IOException, ConvertException, SerializationException, ResultStructureNotMatchingException {
+    // The public evaluation license, or your own license if you put a license file where
+    // ExampleLicenseHelper looks for it.
+    ExampleLicenseHelper.setLicense(this);
+    addProperties(this);
+    addNodes(this, false);
+    addResources(this);
+    attachToObservables(this);
+    IOptimizationResult orgResult = startAndPresentResult(this);
+    exportToKml(orgResult, "CompareResultsWithNodeExchangeExample_original.kml");
+    IOptimizationResult modResult = createModResult(this);
+    exportToKml(modResult, "CompareResultsWithNodeExchangeExample_modified.kml");
+    compareResults(orgResult, modResult);
   }
 
-  static IOptimizationResult createModResult(IOptimization opti, IOptimizationResult orgResult)
-      throws InterruptedException, ExecutionException, InvalidLicenceException, ConvertException,
-      SerializationException, IOException {
+  /**
+   * Swaps Krefeld and Duisburg in a copy of the result, prints the copy and returns it.
+   *
+   * @param opti the optimization that has run
+   * @return the modified result
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   * @throws ConvertException if the optimization cannot be converted for the copy
+   * @throws SerializationException if the copy cannot be serialized
+   */
+  private static IOptimizationResult createModResult(IOptimization opti)
+      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException,
+      ConvertException, SerializationException {
+    // Customers often ask why Duisburg comes before Krefeld; the swap shows what the other order
+    // costs.
+    IOptimizationResult modResult = exchangeNodes(opti, "Krefeld", "Duisburg");
 
-    /*
-     * We have a result that we export to a kml. The result will show a geographical
-     * problem at the nodes Duisburg and Krefeld. (Duisburg is visited before
-     * Krefeld, which induces a higher total distance) Most often, such a result
-     * raises questions from end customers. We move the node to a position that
-     * avoids the crossing.
-     */
-
-    // Now modify the result - Exchange Duisburg and Krefeld
-    IOptimizationResult modResult =
-        CompareResultsWithNodeExchangeExample.exchangeNodes(opti, "Krefeld",
-            "Duisburg");
-
-    // Presenting the result
-    System.out
-        .println("\n\n\n#########################  RESULT ORG  #########################\n\n\n");
-    System.out.println(orgResult);
-
-    System.out
-        .println("\n\n\n#########################  RESULT MOD  #########################\n\n\n");
+    String banner = "#########################  RESULT MOD  #########################";
+    System.out.println("\n\n\n" + banner + "\n\n\n");
     System.out.println(modResult);
 
     return modResult;
-
   }
 
   /**
-   * Exchange nodes.
+   * Exchanges the positions of two nodes in a copy of the result.
    *
-   * @param opti      the opti
-   * @param nodeOneId the node one id
-   * @param nodeTwoId the node two id
-   * @return the i optimization result
-   * @throws InterruptedException    the interrupted exception
-   * @throws ExecutionException      the execution exception
-   * @throws InvalidLicenceException the invalid licence exception
-   * @throws ConvertException        the convert exception
-   * @throws SerializationException  the serialization exception
-   * @throws IOException             Signals that an I/O exception has occurred.
+   * @param opti the optimization that has run
+   * @param nodeOneId the id of the first node
+   * @param nodeTwoId the id of the second node
+   * @return the modified result
+   * @throws InterruptedException if the wait for the result is interrupted
+   * @throws ExecutionException if the optimization run fails
+   * @throws InvalidLicenceException if the license is not valid
+   * @throws IOException if a file cannot be read or written
+   * @throws ConvertException if the optimization cannot be converted for the copy
+   * @throws SerializationException if the copy cannot be serialized
    */
-  static IOptimizationResult exchangeNodes(IOptimization opti, String nodeOneId, String nodeTwoId)
-      throws InterruptedException, ExecutionException, InvalidLicenceException, ConvertException,
-      SerializationException, IOException {
-
-    IModificationTask moveTask = new ExchangeOptimizableNodesModificationTask(nodeOneId, nodeTwoId);
+  private static IOptimizationResult exchangeNodes(
+      IOptimization opti, String nodeOneId, String nodeTwoId)
+      throws InterruptedException, ExecutionException, InvalidLicenceException, IOException,
+      ConvertException, SerializationException {
+    IModificationTask exchangeTask =
+        new ExchangeOptimizableNodesModificationTask(nodeOneId, nodeTwoId);
 
     List<IModificationTask> tasks = new ArrayList<>();
-    tasks.add(moveTask);
+    tasks.add(exchangeTask);
 
-    // Follow methods applyTasksAndCreateModResult to understand how modification is triggered
-    return CompareResultExampleOptimization.applyTasksAndCreateModResult(opti, tasks);
-
+    return applyTasksAndCreateModResult(opti, tasks);
   }
-
 }
