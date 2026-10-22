@@ -101,7 +101,7 @@ Effective Route Start  : 07.05.2020 08:00:00 (Europe/Berlin)
 Effective Route Stop   : 07.05.2020 19:58:18 (Europe/Berlin)
 ```
 
-The route ends at 19:58:18, after 17:00, and its violation summary is empty. Overtime counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation.
+The route ends at 19:58:18, after 17:00, and its violation summary is empty. Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation.
 
 ## Why this matters in real operations
 
@@ -189,4 +189,4 @@ Run the `main(String[] args)` method of `IncludeVisitDurationExample` from your 
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

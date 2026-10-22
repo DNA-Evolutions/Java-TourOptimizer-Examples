@@ -120,7 +120,7 @@ The Aachen node lies at the start position of both resources, and which resource
 - In two runs, Jack visited only Aachen and John the other seven nodes. John's route ended at 20:14:05, with a route time of 734.09 minutes.
 - In the other two runs, John visited all eight nodes, starting with Aachen, and Jack had no route. John's route ended at 20:34:05, with a route time of 754.09 minutes.
 
-In both outcomes John's route ends after his working hours end at 17:00, stays within his 14 hours and has no violation. Overtime counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation.
+In both outcomes John's route ends after his working hours end at 17:00, stays within his 14 hours and has no violation. Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation.
 
 ## Two different result callbacks (critical distinction)
 
@@ -268,4 +268,4 @@ Run the `main(String[] args)` method of `RequestResultExample` from your IDE, wi
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

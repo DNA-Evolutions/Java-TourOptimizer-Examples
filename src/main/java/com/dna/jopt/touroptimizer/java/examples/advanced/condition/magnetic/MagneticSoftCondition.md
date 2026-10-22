@@ -81,7 +81,7 @@ Aachen / Geo  / Arrival: 07.05.2020 16:57:25 (Europe/Berlin) , Departure: 07.05.
 
 Aachen comes after the long drive back from Stuttgart, and its visit ends 57 minutes after the end of its opening hours. The result keeps Aachen on the route of Stuttgart and shows this LATE violation.
 
-The route with Heilbronn and Koeln ends at 17:40:11, after the end of its working hours at 17:00, and its violation summary is empty. Overtime counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation.
+The route with Heilbronn and Koeln ends at 17:40:11, after the end of its working hours at 17:00, and its violation summary is empty. Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation.
 
 To see what the magnets change, compare a run without them. In a test run with the two `addConstraint` calls removed, one route visited Aachen, Dueren, Koeln, Wuppertal, Essen and Oberhausen, starting at Aachen, and another route visited Stuttgart and Heilbronn.
 
@@ -137,4 +137,4 @@ Run the `main(String[] args)` method of `MagneticSoftConditionExample` from your
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

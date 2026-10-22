@@ -65,7 +65,7 @@ Each of the five routes has an odd number of nodes, so none shows a violation:
 
 The rule shapes this plan. In two test runs of a copy of the class without the `setScheme` call, the same data gave two routes in both runs, 14 nodes on May 6 and 5 on May 7, without a violation, for a total cost of 1208.34 against 1336.36 with the rule.
 
-The route of May 7 ends at 20:38:18, after the working hours, within the maximal working time: it takes 758.31 of 780 minutes. Overtime counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation.
+The route of May 7 ends at 20:38:18, after the working hours, within the maximal working time: it takes 758.31 of 780 minutes. Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation.
 
 ## Open Assessor at route level
 
@@ -328,4 +328,4 @@ Run the `main(String[] args)` method of `CustomRouteLevelOddNumberOfElementsRest
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

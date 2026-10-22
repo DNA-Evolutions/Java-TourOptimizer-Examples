@@ -81,7 +81,7 @@ The result keeps each node on its day but changes the order on both days:
 1.2 Heilbronn / Geo  / Arrival: 07.05.2020 15:57:27 (Europe/Berlin) , Departure: 07.05.2020 16:17:27 (Europe/Berlin) / Duration: 20.0 [min] / Driving: 31.52 [min], 41.6 [km]
 ```
 
-The job cost (`JC`) in the progress lines is 1171.49, the cost of the result, from the first line of the simulated annealing to the end. The route of May 7 ends at 19:58:18, after Jack's working hours, with 718.31 minutes of his 13 hours. Overtime counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation.
+The job cost (`JC`) in the progress lines is 1171.49, the cost of the result, from the first line of the simulated annealing to the end. The route of May 7 ends at 19:58:18, after Jack's working hours, with 718.31 minutes of his 13 hours. Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation.
 
 ### CustomSolutionWithAdditionalNodesAndResourcesExample
 
@@ -94,7 +94,7 @@ StatusEvent(ADDITIONAL_ELEMENT, Adding additional elements to be reassigned to o
 WarningEvent(WarningEvent(5557, The element is already present in the solution.), The element is already present in the solution. Duplicate node ignored: Essen)
 ```
 
-The result plans Jack on May 6 with Dueren, Koeln, Nuernberg, Heilbronn and Stuttgart, and leaves his route of May 7 empty. The route of May 6 ends at 20:57:28, with 777.47 minutes of his 13 hours, without a violation. Overtime counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. JackNew works on May 11; the route without the two lines of `Essen` and `Essen2`:
+The result plans Jack on May 6 with Dueren, Koeln, Nuernberg, Heilbronn and Stuttgart, and leaves his route of May 7 empty. The route of May 6 ends at 20:57:28, with 777.47 minutes of his 13 hours, without a violation. Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. JackNew works on May 11; the route without the two lines of `Essen` and `Essen2`:
 
 ```text
 3.0 testPillarKoeln / Pillar  / Geo  / Idle: 12.01 [min] / Arrival: 11.05.2020 08:47:59 (Europe/Berlin) , Departure: 11.05.2020 10:00:00 (Europe/Berlin) / Duration: 60.0 [min] / Driving: 47.99 [min], 63.34 [km]
@@ -416,4 +416,4 @@ Run the `main(String[] args)` method of `CustomSolutionExample` or `CustomSoluti
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

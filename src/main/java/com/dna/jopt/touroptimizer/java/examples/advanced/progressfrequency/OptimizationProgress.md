@@ -159,7 +159,7 @@ One or more requests came after the end of the construction stage and before the
 
 ### The routes
 
-The result of both classes has one route per day. In four test runs of each class, route 1 on May 7 visits Nuernberg, Stuttgart and Heilbronn and has no violation. It ends at 19:58:18, after Jack's working hours end at 17:00, and its route time of 718.31 minutes stays within his 13 hours. Overtime counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation.
+The result of both classes has one route per day. In four test runs of each class, route 1 on May 7 visits Nuernberg, Stuttgart and Heilbronn and has no violation. It ends at 19:58:18, after Jack's working hours end at 17:00, and its route time of 718.31 minutes stays within his 13 hours. Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation.
 
 Route 0 on May 6 visits the six other nodes. In both classes the Aachen node was the first stop of route 0 in some test runs and the last stop in others, at the same cost, so the times of route 0 can change between runs.
 
@@ -337,4 +337,4 @@ Run the `main(String[] args)` method of either class from your IDE, with the rep
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

@@ -87,7 +87,7 @@ Termi. distance  [km]  : 367.66
 1.2 Nuernberg / Geo  / Arrival: 07.05.2020 14:47:09 (Europe/Berlin) , Departure: 07.05.2020 15:07:09 (Europe/Berlin) / Duration: 20.0 [min] / Driving: 119.28 [min], 157.44 [km]
 ```
 
-The drive to Essen counts toward the route time, so route 1 ends at 19:45:41, after the end of its working hours at 17:00, and the result shows no violation. Overtime counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. The 705.69 minutes of route 1 stay below Jack's maximal working time of 13 hours.
+The drive to Essen counts toward the route time, so route 1 ends at 19:45:41, after the end of its working hours at 17:00, and the result shows no violation. Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. The 705.69 minutes of route 1 stay below Jack's maximal working time of 13 hours.
 
 The KML file draws the line of each route to Essen, but it places the `End - Jack` mark at Jack's start position in Aachen.
 
@@ -137,4 +137,4 @@ Run the `main(String[] args)` method of `AlternateDestinationExample` from your 
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

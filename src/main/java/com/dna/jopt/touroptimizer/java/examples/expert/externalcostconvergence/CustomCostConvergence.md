@@ -90,7 +90,7 @@ Effective Route Stop   : 07.05.2020 19:58:18 (Europe/Berlin)
 Route time       [min] : 718.31
 ```
 
-It ends at 19:58:18, after the end of its working hours at 17:00, and the result shows no violation. Overtime counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. The 718.31 minutes stay below Jack's maximal working time of 13 hours.
+It ends at 19:58:18, after the end of its working hours at 17:00, and the result shows no violation. Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. The 718.31 minutes stay below Jack's maximal working time of 13 hours.
 
 ## Why stop on convergence
 
@@ -337,4 +337,4 @@ Run the `main(String[] args)` method of `CustomCostConvergenceExample` from your
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

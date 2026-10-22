@@ -119,7 +119,7 @@ int deltaImportance = curNodeImportance - prevNodeImportance;
 
 ## Output and what to look for
 
-Each run prints the status and progress lines, then the result. The results were the same in two test runs of each class. In all three classes the route of May 7 ends after 20:00, after the working hours: within the maximal working time of 13 hours (721.96 minutes for the first two classes, 727.6 minutes for the third). Overtime counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation.
+Each run prints the status and progress lines, then the result. The results were the same in two test runs of each class. In all three classes the route of May 7 ends after 20:00, after the working hours: within the maximal working time of 13 hours (721.96 minutes for the first two classes, 727.6 minutes for the third). Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. In `CustomNodeLevelRestrictionExample` and `CustomNodeLevelPriorityEarlyRestrictionExample` the summary of the route of May 7 still counts LATE violations: they come from the M rule at MHeilbronn and from the priority rule, which book their cost like a late visit, not from the end of the route.
 
 ### CustomNodeLevelRestrictionExample
 
@@ -397,4 +397,4 @@ Run the `main(String[] args)` method of `CustomNodeLevelRestrictionExample`, `Cu
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

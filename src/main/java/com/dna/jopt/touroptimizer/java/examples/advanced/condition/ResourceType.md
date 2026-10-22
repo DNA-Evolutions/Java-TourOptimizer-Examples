@@ -314,7 +314,7 @@ Effective Route Stop   : 06.03.2020 19:58:18 (Europe/Berlin)
 Route time       [min] : 718.31
 ```
 
-Overtime counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. John may work 14 hours, and the route takes about 12.
+Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. John may work 14 hours, and the route takes about 12.
 
 ### ResourceTypeWithExpertiseConditionExample
 
@@ -376,7 +376,7 @@ Effective Route Stop   : 07.05.2020 17:17:13 (Europe/Berlin)
 Effective Route Stop   : 09.05.2020 18:42:42 (Europe/Berlin)
 ```
 
-Overtime counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. The two routes take 557.22 and 642.71 minutes of the 13 hours that Jack may work.
+Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. The two routes take 557.22 and 642.71 minutes of the 13 hours that Jack may work.
 
 ## References
 
@@ -646,4 +646,4 @@ Run the `main(String[] args)` method of one of the five classes from your IDE. Y
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

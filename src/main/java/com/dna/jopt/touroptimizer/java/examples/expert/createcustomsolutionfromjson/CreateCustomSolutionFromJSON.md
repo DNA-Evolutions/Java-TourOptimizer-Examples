@@ -72,7 +72,7 @@ and the result had all 10 elements of the snapshot, at the cost of the run that 
  Cost                    : 847.033054487167
 ```
 
-The node Aachen lies at the start point of Jack and John, so either of them can visit it at no extra driving, and the runs differ in that: in some, Jack visits Aachen alone and John the other nine nodes, so two routes are scheduled; in others, John visits all ten nodes and one route is scheduled. The cost is the same in every run. John's route on March 6 ends after his working hours (08:00 to 17:00) in every run, within his 14 hours: at 20:14:05 with 734.09 minutes when Jack visits Aachen, at 20:34:05 with 754.09 minutes when John visits it too. Overtime counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation.
+The node Aachen lies at the start point of Jack and John, so either of them can visit it at no extra driving, and the runs differ in that: in some, Jack visits Aachen alone and John the other nine nodes, so two routes are scheduled; in others, John visits all ten nodes and one route is scheduled. The cost is the same in every run. John's route on March 6 ends after his working hours (08:00 to 17:00) in every run, within his 14 hours: at 20:14:05 with 734.09 minutes when Jack visits Aachen, at 20:34:05 with 754.09 minutes when John visits it too. Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation.
 
 ## What this example does (in plain language)
 
@@ -289,4 +289,4 @@ Run the `main(String[] args)` method of `SaveOptimizationToJsonExample` (package
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

@@ -94,7 +94,7 @@ Route Distance   [km]  : 774.75
 1.1 Stuttgart / Geo  / Arrival: 07.05.2020 13:20:19 (Europe/Berlin) , Departure: 07.05.2020 13:40:19 (Europe/Berlin) / Duration: 20.0 [min] / Driving: 37.84 [min], 49.95 [km]
 ```
 
-The two distance models give route distances within 1 km of each other on this day (773.97 km and 774.75 km). Both routes end after 18:00, after the end of their working hours at 17:00, and the results show no violation. Overtime counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. The 626.34 and 626.93 minutes stay below Jack's maximal working time of 13 hours.
+The two distance models give route distances within 1 km of each other on this day (773.97 km and 774.75 km). Both routes end after 18:00, after the end of their working hours at 17:00, and the results show no violation. Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. The 626.34 and 626.93 minutes stay below Jack's maximal working time of 13 hours.
 
 ## When the Backup Connector is used
 
@@ -308,4 +308,4 @@ Run the `main(String[] args)` method of `CustomNodeBackUpConnectorExample` or `C
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

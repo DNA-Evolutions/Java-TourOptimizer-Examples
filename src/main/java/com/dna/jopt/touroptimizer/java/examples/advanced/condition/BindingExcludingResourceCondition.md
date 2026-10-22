@@ -209,7 +209,7 @@ John also visits Heilbronn. With banned resources instead, in `BannedResourceCon
 
 ### John's long day
 
-In `MandatoryResourceConditionExample` and `PreferredResourceConditionExample`, John's route of March 6 takes about 12 hours, so it ends hours after the end of his working hours at 17:00, and the result shows no violation. Overtime counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. John may work 14 hours; with Jack's 8 hours, a day this long would be overtime.
+In `MandatoryResourceConditionExample` and `PreferredResourceConditionExample`, John's route of March 6 takes about 12 hours, so it ends hours after the end of his working hours at 17:00, and the result shows no violation. Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. John may work 14 hours; with Jack's 8 hours, a day this long would be overtime.
 
 ## Hard constraints vs. soft constraints
 
@@ -483,4 +483,4 @@ Run the `main(String[] args)` method of one of the four classes from your IDE. Y
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

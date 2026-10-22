@@ -110,7 +110,7 @@ StatusEvent(OPTIMIZATION_DONE, Optimization done)
 
 ### The routes
 
-The result has one route per day. Route 1 on May 7 visits Nuernberg, Stuttgart and Heilbronn and has no violation. It ends at 19:58:18, after Jack's working hours end at 17:00, and its route time of 718.31 minutes stays within his 13 hours. Overtime counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation.
+The result has one route per day. Route 1 on May 7 visits Nuernberg, Stuttgart and Heilbronn and has no violation. It ends at 19:58:18, after Jack's working hours end at 17:00, and its route time of 718.31 minutes stays within his 13 hours. Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation.
 
 Route 0 on May 6 visits the six other nodes. The Aachen node was its first stop in some test runs and its last stop in others, at the same cost, so the times of route 0 can change between runs.
 
@@ -252,4 +252,4 @@ Run the `main(String[] args)` method of `RunOptimizationInLoopExample` from your
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

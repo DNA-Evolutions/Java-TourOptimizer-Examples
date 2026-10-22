@@ -120,7 +120,7 @@ What to look for:
 - **Emission:** 83.67 kg for 127.31 km and 168.11 kg for 889.7 km match the two emission factors, 0.657 and 0.189 kg per km.
 - **CO2 cost:** the result has no line of its own for the CO2 cost. It is part of `Cost Distance`, which is why the 127.31 km of Vehicle One cost 964.06 there and the 889.7 km of Vehicle Two only 2570.89.
 - **Fix cost:** `Cost ResourceFixCost: 2000.0` is the fix cost of the one route of Vehicle Two.
-- **Overtime:** the route of Vehicle Two takes 754.02 minutes, a little more than its 12 hours, so the result shows a MAXTIME violation with 0.57 hours of overtime. The route stops at 20:34:01, more than three hours after the end of its working hours at 17:00; the 0.57 hours count only the time beyond the 12 hours. Overtime counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation.
+- **Overtime:** the route of Vehicle Two takes 754.02 minutes, a little more than its 12 hours, so the result shows a MAXTIME violation with 0.57 hours of overtime. The route stops at 20:34:01, more than three hours after the end of its working hours at 17:00; the 0.57 hours count only the time beyond the 12 hours. Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. Only the time beyond the maximal working time is overtime and a violation.
 
 In an earlier test run with `vehicleTwo.setFixCost(0.0)` instead, Vehicle Two drove a route on each of the two days, with every stop other than Aachen, which lies at the start of both vehicles.
 
@@ -275,4 +275,4 @@ Run the `main(String[] args)` method of `CO2EmissionOptimizationExample` from yo
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

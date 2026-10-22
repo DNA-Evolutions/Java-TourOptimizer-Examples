@@ -276,7 +276,7 @@ In both runs, one resource visited Dueren and Koeln on May 6, and the other reso
 
 In both runs, one resource visited Essen and the other Aachen, on the same day, and both visits started at 09:15:26, so the window of 0 to 20 minutes holds. The route with Aachen holds an `IDLE_EVENT_RELATION` element before Aachen: the optimizer let that resource wait, so that its visit falls into the window. Which resource takes which node, the day of the two visits, May 6 or May 7, and the other routes can change between runs.
 
-In both runs, the route with Nuernberg and Stuttgart ends at 19:27:07, after the working hours, and takes 687.12 minutes, within the maximal working time of 13 hours. Overtime counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation.
+In both runs, the route with Nuernberg and Stuttgart ends at 19:27:07, after the working hours, and takes 687.12 minutes, within the maximal working time of 13 hours. Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation.
 
 ### RelativeTimeWindowRelationWithInducedIdleTimeExample
 
@@ -457,4 +457,4 @@ Run the `main(String[] args)` method of one of the seven classes from your IDE, 
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

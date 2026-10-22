@@ -57,7 +57,7 @@ Idle time        [min] : 0.0
 0.0 Dueren / Geo  / Arrival: 06.05.2020 09:00:00 (Europe/Berlin) , Departure: 06.05.2020 09:20:00 (Europe/Berlin) / Duration: 20.0 [min] / Driving: 21.36 [min], 28.2 [km]
 ```
 
-The 38.64 minutes are the time Jack would have waited at Dueren: he leaves at 08:38:38, drives 21.36 minutes and arrives at 09:00. The FlexTime used is the waiting time only. Route 1 on May 7 starts at 08:00 and uses no FlexTime: its first node, Heilbronn, is 216.37 minutes away and open on arrival. Route 1 ends at 20:01:57, after the end of its working hours at 16:00, and the result shows no violation. Overtime counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. Its 721.96 minutes stay below Jack's maximal working time of 13 hours.
+The 38.64 minutes are the time Jack would have waited at Dueren: he leaves at 08:38:38, drives 21.36 minutes and arrives at 09:00. The FlexTime used is the waiting time only. Route 1 on May 7 starts at 08:00 and uses no FlexTime: its first node, Heilbronn, is 216.37 minutes away and open on arrival. Route 1 ends at 20:01:57, after the end of its working hours at 16:00, and the result shows no violation. Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. Its 721.96 minutes stay below Jack's maximal working time of 13 hours.
 
 ### NegativeFlexTimeExample
 
@@ -81,7 +81,7 @@ Route time       [min] : 718.31
 1.0 Nuernberg / Geo  / Arrival: 07.05.2020 10:47:54 (Europe/Berlin) , Departure: 07.05.2020 11:07:54 (Europe/Berlin) / Duration: 20.0 [min] / Driving: 287.91 [min], 380.04 [km]
 ```
 
-The route time of 718.31 minutes counts from 06:00, because the early start is part of the working time. Route 1 ends at 17:58:18, after the end of its working hours at 16:00, and the result shows no violation. Overtime counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. The 718.31 minutes stay below Jack's maximal working time of 13 hours.
+The route time of 718.31 minutes counts from 06:00, because the early start is part of the working time. Route 1 ends at 17:58:18, after the end of its working hours at 16:00, and the result shows no violation. Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. The 718.31 minutes stay below Jack's maximal working time of 13 hours.
 
 ## The idea of FlexTime
 
@@ -284,4 +284,4 @@ Run the `main(String[] args)` method of `PositiveFlexTimeExample` or `NegativeFl
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23
