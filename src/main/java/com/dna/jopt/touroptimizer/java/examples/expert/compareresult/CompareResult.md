@@ -199,7 +199,7 @@ Practical interpretation:
 
 - The initial plan visits *Duisburg* before *Krefeld*.
 - Visually, this can look like a "geographical mistake" and triggers customer questions.
-- The modified solution swaps those two nodes to remove the unnecessary detour.
+- The modified solution swaps those two nodes to remove what looks like an unnecessary detour.
 
 Implementation pattern:
 
@@ -226,7 +226,7 @@ In the example the swap is not beneficial: it saves 34.33 km, and the visit at D
 > "Can't the optimizer keep all jobs in a single route?"
 
 The example's baseline produces **two separate routes**; the second already has overtime.
-Then it creates a modified result where it moves a chunk of nodes from route 2 into route 1, using:
+Then it creates a modified result where it moves all nodes of route 2 to the end of route 1, using:
 
 - `MoveOptimizableNodeModificationTask(moveNodes, newResId, newResWorkingHoursIndex, afterNodeId)`
 
@@ -347,4 +347,4 @@ Run the `main(String[] args)` method of `CompareResultsWithNodeExchangeExample` 
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

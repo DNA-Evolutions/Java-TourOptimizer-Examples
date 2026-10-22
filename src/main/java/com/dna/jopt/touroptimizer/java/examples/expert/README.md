@@ -4,7 +4,7 @@ The Expert examples focus on manipulating how the optimizer behaves: the algorit
 
 **Danger zone (by design):** these features can fundamentally change performance characteristics and, if misused, can produce invalid problem definitions or misleading results. Use them when you have a concrete requirement and you can validate the behavior with tests and KPIs.
 
-The table below lists the packages and recommended entry points. Each package contains one or more runnable examples plus a dedicated Markdown companion document that explains the architecture and practical usage. The sources are in the [expert folder on GitHub](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert), one package per topic. Each row names the key documents / references of a package: its page and, where the Hub has one, its feature guide.
+The table below lists the packages and recommended entry points. Each package contains one or more runnable examples plus one or two dedicated Markdown companion documents (two in `openassessor` and `optimizationscheme`) that explain the architecture and practical usage. The sources are in the [expert folder on GitHub](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/tree/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/expert), one package per topic. Each row names the key documents / references of a package: its page and, where the Hub has one, its feature guide.
 
 | Example | What you learn | Feature guide |
 |---|---|---|
@@ -132,4 +132,4 @@ This structure keeps the example source concise while still providing a copy-pas
 
 ---
 
-Added: 2020-06-03 (JOpt core 7.4.4) | Last updated: 2026-10-21
+Added: 2020-06-03 (JOpt core 7.4.4) | Last updated: 2026-10-23

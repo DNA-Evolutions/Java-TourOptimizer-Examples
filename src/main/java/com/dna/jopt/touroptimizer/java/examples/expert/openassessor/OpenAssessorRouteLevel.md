@@ -74,7 +74,7 @@ The **Open Assessor** feature is the primary extensibility mechanism in JOpt.Tou
 It provides a structured way to inject:
 
 - additional **cost contributions** (soft preferences),
-- additional **violations** and feasibility logic (hard rules when supported by architecture),
+- additional **violations**, which steer softly like the costs (a rule that must always hold needs a hard constraint; see "Soft vs hard" below),
 - custom scoring KPIs,
 - and even domain-specific assessment hooks
 

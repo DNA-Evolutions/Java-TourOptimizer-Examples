@@ -30,7 +30,7 @@ The example sources in this package are [ReloadBaseExample.java](https://github.
 
 These two examples demonstrate Optional Nodes as *reload bases / unload points*:
 - Reload Base (the basic optional node concept, here with reload stops): `ReloadBaseExample`.
-- Reload Base + `unloadAll()` (mix of partial unload + full unload): `ReloadBaseWithUnloadAllExample`.
+- Reload Base + `setUnloadAll(true)` (mix of partial unload + full unload): `ReloadBaseWithUnloadAllExample`.
 
 Both examples are intentionally "didactic":
 - they show the mechanism clearly,
@@ -278,7 +278,7 @@ This example extends the idea:
 - Mandatory nodes represent pickups/loads.
 - The optimizer may insert an unload stop when the route would otherwise exceed capacity.
 
-In two test runs the route uses the unload-all node and one of the fixed drop nodes.
+In four test runs the route uses the unload-all node and one of the fixed drop nodes.
 
 This models a common real-world situation:
 - small drop points reduce load incrementally,
@@ -302,7 +302,7 @@ Optional nodes create a clean and explainable decision:
 Optional nodes are most valuable when visiting them changes some route state, such as:
 - capacity/load,
 - inventory,
-- temperature chain constraints,
+- temperature chain constraints, where your own model tracks the temperature,
 - or any other modeled resource state.
 
 This is why they appear frequently in PND-related workflows.
@@ -348,4 +348,4 @@ Run the `main(String[] args)` method of `ReloadBaseExample` or `ReloadBaseWithUn
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

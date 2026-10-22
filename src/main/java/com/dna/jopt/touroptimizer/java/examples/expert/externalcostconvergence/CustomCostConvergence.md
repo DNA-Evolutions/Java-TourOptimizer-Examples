@@ -135,7 +135,7 @@ For stability, your convergence metric should be:
 - or something that tends to repeat exactly across progress events.
 
 For example:
-- total distance meters as a `long` cast to `double`,
+- total distance in meters, an `int` (`getJobTransitionDistanceMeter()`) cast to `double`,
 - or cost rounded to 2 decimals.
 
 The counter is reset only by a changed metric and after `onDone(...)` (see below). While the metric stays the same and the run goes on, every further progress event counts as converged again.
@@ -250,8 +250,8 @@ Example pattern (conceptual):
 - converge on total distance in meters (what the example does):
   - return `curP.getJobTransitionDistanceMeter()`
 
-- converge on lateness minutes:
-  - return a lateness KPI if available in progress
+- converge on late visits:
+  - return the number of late visits: the progress has no lateness getter of its own, so sum `route.getRouteCostAndViolationController().getNumViolationsNodeTimewindowLate()` over the routes of `curP.getRoutes()`
 
 - converge on a rounded cost:
   - return `Math.round(curP.getJobCost() * 100.0) / 100.0`

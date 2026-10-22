@@ -182,7 +182,7 @@ Reference documentation: the [Open Assessor section of the special features page
 
 ## A note on examples vs real life
 
-Some node-level examples are intentionally stylized (e.g., "nodes starting with `M` must be visited early").
+Some node-level examples are intentionally stylized (e.g., "nodes whose id starts with `M` should be reached by 11:00").
 The purpose is to showcase the architecture and prove a point: if a rule can be expressed precisely, you can usually integrate it cleanly at the right level.
 
 ## What "node-level" means in the assessor architecture
