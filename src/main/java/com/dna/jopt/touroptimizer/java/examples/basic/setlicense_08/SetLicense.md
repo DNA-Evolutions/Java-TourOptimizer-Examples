@@ -26,7 +26,7 @@ A JOpt license is provided as a **JSON definition**. You can set it either:
 
 In the example repository, the license file path is `src/main/resources/license/YOUR_LICENSE.jli`: `SetLicenseExample` looks for the file there, the same path that `ExampleLicenseHelper` uses. The example checks whether the file exists, and if it does, the example sets the license from it with `setLicenseJSON(File)`. Otherwise (the file is missing), it calls `ExampleLicenseHelper.setLicense`, which sets the public evaluation license as a string (which is a safe behavior for demo/evaluation scenarios). Either way, the example prints which license it set.
 
-Without a license, JOpt runs in free mode with up to a limited number of optimization elements, and allows fewer elements than with the public evaluation license; nodes and resources count as elements, and they are counted together, for every license. The other examples in this repository set the public evaluation license through `ExampleLicenseHelper`, which allows more elements. The extended free license allows more nodes and resources still; it is available only with a free [sign-up](https://www.dna-evolutions.com/sign-up) on the DNA Evolutions website. Larger problems need a full license. The [license guide: element limits](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license#free-license) lists the limits.
+Without a license, JOpt runs in free mode with up to a limited number of optimization elements, and allows fewer elements than with the public evaluation license; nodes and resources count as elements, and without a license and with the public evaluation license they are counted together. The other examples in this repository set the public evaluation license through `ExampleLicenseHelper`, which allows more elements. The extended free license allows more elements still, with its own limits for nodes and for resources; it is available only with a free [sign-up](https://www.dna-evolutions.com/sign-up) on the DNA Evolutions website. Larger problems need a full license. The [license guide: element limits](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license#free-license) lists the limits.
 
 Implication:
 - Small "hello world" scenarios may run without an explicit license (depending on element count).
@@ -174,4 +174,4 @@ If you use the REST service:
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

@@ -142,7 +142,7 @@ Use it for checkpoints in long runs, or to save when a progress value is reached
 
 ### SaveOptimizationToJsonStringExample
 
-This example saves (or prints) as JSON without writing a file. It focuses on JSON **as a string-oriented payload**, which is useful when you want to:
+This example prints the optimization as a JSON string without writing a file. It focuses on JSON **as a string-oriented payload**, which is useful when you want to:
 
 - store snapshots in a database,
 - ship snapshots through a message queue,
@@ -237,7 +237,7 @@ The key switch and the load call are in the block above. The example explains th
 Use it to rerun the same model with new properties, or when the saved solution does not fit new constraints. When to use it:
 - you want to rerun with new solver settings from the same base model,
 - you suspect the prior solution is stale or incompatible with new constraints,
-- you want reproducible "from scratch" behavior while keeping model construction cheap.
+- you want a run "from scratch" while keeping model construction cheap.
 
 ### LoadOptimizationFromJsonAndReassignNodes
 
@@ -484,7 +484,7 @@ StatusEvent(OPTIMIZATION_ALGO_STARTING, SmartSimulatedAnnealingAlgo)
 
 Run the `main` method of a class from your IDE, with the root of the project as the working directory. The examples need a JDK in the version that the examples pom sets. They need no license: without a license file they use the public evaluation license (see the [license guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license)).
 
-Run `SaveOptimizationToJsonExample` first. It writes `myopti.json.bz2` into the working directory, where `LoadOptimizationFromJsonExample`, `LoadOptimizationToFreshRunExample` and `LoadOptimizationFromJsonAndReassignNodes` read it. Without the file, the code prints that `myopti.json.bz2` is not found and that `SaveOptimizationToJsonExample` must run first, and the example starts no run. `LoadOptimizationFromJsonString` needs no file in the working directory, because its JSON resource is on the class path.
+Run `SaveOptimizationToJsonExample` first. It writes `myopti.json.bz2` into the working directory, where `LoadOptimizationFromJsonExample`, `LoadOptimizationToFreshRunExample`, `LoadOptimizationFromJsonAndReassignNodes` and `LoadOptimizationFromJsonAndReassignPillar` read it. Without the file, the code prints that `myopti.json.bz2` is not found and that `SaveOptimizationToJsonExample` must run first, and the example starts no run. `LoadOptimizationFromJsonString` needs no file in the working directory, because its JSON resource is on the class path.
 
 ## Related
 
@@ -498,4 +498,4 @@ Run `SaveOptimizationToJsonExample` first. It writes `myopti.json.bz2` into the 
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

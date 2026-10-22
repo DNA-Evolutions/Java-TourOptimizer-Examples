@@ -1,6 +1,6 @@
 # Reading values from an optimization result
 
-An `IOptimizationResult` gives access to the job values, the routes, the route items and the violations of a run, and these examples read them out and print them as a report with headers. In the scenario, a maximal working time of 4 hours and opening hours that end at 12:00 produce overtime and late arrivals, so the violation part of the result has content to read. The page is for developers who process the result in code: for a console report, for automated checks or for your own export. If you have not run an example yet, start with the [First optimization example](../firstoptimization_01/FirstOptimizationExample.md); the [First optimization tutorial](https://www.dna-evolutions.com/docs/getting-started/tutorials/first-optimization#analyzing-the-result) explains the printed result.
+An `IOptimizationResult` gives access to the job values, the routes, the route items and the violations of a run, and these examples read them out; `ReadOutResultWithHeadersExample` also prints them as a report with headers. In the scenario, a maximal working time of 4 hours and opening hours that end at 12:00 produce overtime and late arrivals, so the violation part of the result has content to read. The page is for developers who process the result in code: for a console report, for automated checks or for your own export. If you have not run an example yet, start with the [First optimization example](../firstoptimization_01/FirstOptimizationExample.md); the [First optimization tutorial](https://www.dna-evolutions.com/docs/getting-started/tutorials/first-optimization#analyzing-the-result) explains the printed result.
 
 ## What the example shows
 
@@ -166,8 +166,7 @@ The route header holds:
 
 Times print as whole minutes, distances as kilometers.
 
-Conceptually, this corresponds to what the tutorial calls:
-- route time,
+Conceptually, this corresponds to what the tutorial calls (the tutorial's route header also has a route time, which this header does not print):
 - transit time,
 - productive time,
 - idle time,
@@ -360,7 +359,7 @@ These checks produce high value with minimal work:
 2. **Idle-time hotspots**  
    Identify routes/stops with high idle time (often caused by tight time windows).
 
-3. **Distance vs. productive ratio**  
+3. **Transit vs. productive ratio**  
    Compare transit time vs productive time per route; this quickly reveals unbalanced planning.
 
 4. **Termination cost control**  
@@ -381,4 +380,4 @@ Run the `main` method of `ReadOutResultExample` or `ReadOutResultWithHeadersExam
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

@@ -133,7 +133,7 @@ Recommended companion doc:
 
 ## `setlicense_08`: Leaving free mode (license setup)
 What you learn:
-- how licensing works and when it is required (more than the elements that the [free license](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license#free-license) allows)
+- how licensing works and when it is required (more than the elements that JOpt allows [without a license](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/license#free-license))
 - set license as JSON string or from file
 - recommended secure deployment patterns
 
@@ -164,4 +164,4 @@ Recommended companion doc:
 
 ---
 
-Added: 2020-05-27 (JOpt core 7.4.2) | Last updated: 2026-10-21
+Added: 2020-05-27 (JOpt core 7.4.2) | Last updated: 2026-10-23
