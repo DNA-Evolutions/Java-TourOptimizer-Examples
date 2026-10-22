@@ -192,8 +192,8 @@ Use when:
   - but only if delivery is within a fixed SLA window.
 
 The documentation's pizza scenario illustrates exactly this:
-- restaurants decide which location prepares which pizza,
-- and the optimizer enforces the delivery-within-time promise.
+- the optimizer decides which restaurant prepares which pizza,
+- and the delivery-within-time promise is a pseudo constraint: a delivery after the 90 minutes of its `TimedLoad` is not forbidden, but the result reports it as an OVERTIME violation with a penalty cost. In four test runs of the class, no route showed a violation.
 
 Example:
 - [PNDTimedPizzaDeliveryExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/pickupanddelivery/PNDTimedPizzaDeliveryExample.java)
@@ -366,4 +366,4 @@ Run the `main(String[] args)` method of a class from your IDE, with the reposito
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

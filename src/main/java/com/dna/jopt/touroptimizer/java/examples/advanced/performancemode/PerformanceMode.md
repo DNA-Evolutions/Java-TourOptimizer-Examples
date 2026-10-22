@@ -169,7 +169,7 @@ Practical effect:
 ## Expected outcome and trade-offs
 
 ### Speed
-The documentation reports that Performance Mode can make runs **up to ~50% faster** and demonstrates speedups around **1.4x-1.8x** in their evaluation setup.
+The documentation reports that Performance Mode can make runs **up to ~50% faster** and demonstrates speedups from about **1.45x to 1.7x** in their evaluation setup.
 
 ### Solution quality
 The same evaluation reports that solution quality remained around **~95%** of Standard Mode (in the tested scenario), while achieving the speed improvements.
@@ -201,9 +201,9 @@ Avoid (or carefully validate) Performance Mode when:
 
 ## How to enable Performance Mode
 
-Performance Mode is enabled using a single optimizer property:
+Performance Mode is enabled using a single optimizer property. A sketch, not code of the example classes:
 
-```properties
+```text
 JOpt.PerformanceMode = true
 ```
 
@@ -251,7 +251,7 @@ It uses a *phyllotaxis sampling* strategy to distribute positions deterministica
 ### Complexity toggles (important for performance testing)
 As constants of the class, the example defines switches such as:
 - `ADD_SKILL_CONSTRAINTS` (adds a skill requirement to ~half of the nodes and provides that skill only to a subset of resources)
-- `ADD_EVEN_ODD_SPLITTING` (allows visitations on different days, making results less geographically compact)
+- `ADD_EVEN_ODD_SPLITTING` (moves the nodes and resources with an even index to May 7, which splits the plan into two days, making results less geographically compact)
 
 This is a recommended pattern for serious performance evaluation:
 - benchmark the same instance under multiple "constraint intensities,"
@@ -311,7 +311,7 @@ This approach provides a pragmatic balance:
 ## Summary
 
 - Performance Mode accelerates optimization by setting a fixed population size of 50 and disabling several advanced genetic operators.
-- It can deliver significant runtime improvements (documented up to ~50%, and ~1.4x-1.8x in an evaluation), with an observed quality retention around ~95% in the tested setup.
+- It can deliver significant runtime improvements (documented up to ~50%, and ~1.45x-1.7x in an evaluation), with an observed quality retention around ~95% in the tested setup.
 - It is best for large, flexible, lightly constrained instances and operational re-optimization.
 - For tight, complex constraint landscapes, validate carefully or prefer Standard Mode.
 - Enable it via: `JOpt.PerformanceMode = true` in the optimizer properties.
@@ -336,4 +336,4 @@ This approach provides a pragmatic balance:
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

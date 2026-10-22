@@ -297,7 +297,7 @@ If your UI needs "improvement over time" charts:
 - not every progress event.
 
 ### 4) Stage-aware monitoring
-Use `callerId` to:
+Use `getCallerId()` to:
 - segment metrics by stage,
 - detect "we are stuck in a stage",
 - apply stage-specific early stopping rules.
@@ -324,4 +324,4 @@ Run the `main(String[] args)` method of either class from your IDE, with the rep
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

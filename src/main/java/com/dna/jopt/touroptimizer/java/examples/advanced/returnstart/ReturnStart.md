@@ -162,7 +162,7 @@ Interpretation:
 
 Why this matters:
 - without the dwell time, `setIsReturnStart` enables no return at all: a stay of less than 2 seconds returns `false`. A stay of a few seconds represents "drive home and immediately leave again".
-- with dwell time, you get a more realistic model and better time-window feasibility behavior.
+- with dwell time, you get a more realistic model: the plan holds the stay at the start location, so the time windows of the next nodes are checked against arrivals that include it.
 
 ## Why this can be better than modeling full PND (and when it is not)
 
@@ -246,4 +246,4 @@ Run the `main(String[] args)` method of `ReturnStartExample` from your IDE, with
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

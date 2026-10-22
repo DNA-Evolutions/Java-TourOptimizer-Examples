@@ -144,7 +144,7 @@ This is a clean architectural way to model:
 
 This pattern is realistic in many field service and delivery settings:
 
-- A technician cannot start before shift begins (HR / dispatch rule),
+- A technician cannot start work at the first customer before that customer opens (dispatch rule),
 - but once the technician is in the field, early arrivals can be served immediately, because:
   - the customer is happy to be served early,
   - service can begin as soon as the technician arrives,
@@ -206,4 +206,4 @@ Run the `main(String[] args)` method of `WaitOnEarlyArrivalFirstNodeExample` fro
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

@@ -216,7 +216,7 @@ This is a practical pattern:
 
 ### Why "per stage" matters
 Different stages have different dynamics:
-- SA often iterates many small changes and can produce extremely frequent progress events.
+- SA often iterates many small changes and, with a small `OnProgressOutPercentage` step, can produce extremely frequent progress events.
 - GE typically runs generations, and users often want more granular insight into improvements.
 
 Per-stage configuration avoids the "one size fits all" problem.
@@ -240,7 +240,7 @@ This example shows exactly that: it attaches a `Timer` that calls:
 every **500 ms**.
 
 ### What `requestProgress()` does (practical interpretation)
-`requestProgress()` asks the optimizer to **publish a progress update** at the next safe opportunity.
+`requestProgress()` asks the running stage to **publish a progress update**. In the runs of this page, only simulated annealing and genetic evolution published one; a request outside these two stages added no progress line.
 It is not meant to "interrupt" the solver; it is meant to:
 - surface the most recent progress state,
 - without waiting for the next internally scheduled output boundary.

@@ -14,7 +14,7 @@ Four examples give four resources the team names Team Aachen and Team Heilbronn 
   - `UnPreferredResourceConstraint` (soft): the named teams should not visit the node. A visit is allowed, at an extra cost and with a `RESOURCE_NOT_ALLOWED` violation.
 - **The extra cost:** the properties `JOptWeight.PreferableResource` and `JOptWeight.UnPreferableResource` set the weight of the extra cost of the two soft constraints.
 - **Mirrored rules:** with two teams, banning one team from a node leaves the node to the other team. The banned and unpreferred classes name Team Heilbronn where the mandatory and preferred classes name Team Aachen, and the other way around. In the runs, all four classes gave each team the same nodes, apart from Nuernberg, which the banned and unpreferred classes name for both teams.
-- **Long trips on purpose:** the rules send a member of Team Aachen to Heilbronn, where Carla and Jessi start, and a member of Team Heilbronn to Essen and Dueren, which lie near Aachen. The constraints force these long trips.
+- **Long trips on purpose:** the rules send a member of Team Aachen to Heilbronn, where Carla and Jessi start, and a member of Team Heilbronn to Essen and Dueren, which lie near Aachen. The hard constraints of the mandatory and banned classes force these long trips; in the runs, the soft constraints of the preferred and unpreferred classes led to the same trips.
 - **The priority:** `addResource` needs a priority above 0. The binding constraints of these examples name one team each, so the value of the priority does not matter there. A banned team is kept away whatever its priority. For an unpreferred team, the priority scales the extra cost of a visit.
 
 ## Scenario
@@ -359,4 +359,4 @@ Run the `main(String[] args)` method of one of the four classes from your IDE, w
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

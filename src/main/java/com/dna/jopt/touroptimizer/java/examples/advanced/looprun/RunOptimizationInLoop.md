@@ -152,7 +152,7 @@ The example uses:
 
 Important nuance:
 - This is an implementation coupling to the solver's progress reporting behavior.
-- It is intentionally simple and works well for examples and many production cases.
+- It is intentionally simple; in the runs of this page, the first count came on the first line of the second loop (see "Output and what to look for").
 - For mission-critical systems, you may want to additionally guard against:
   - repeated 99.0 events,
   - stage transitions,
@@ -205,7 +205,7 @@ This is often effective when you want:
 ## Pitfalls and how to avoid them
 
 ### Pitfall 1: Using a fragile loop boundary signal
-The example uses `(stage == 2 && progress == 99.0)`.
+The example uses `p.getOptimizationStage() == 2 && p.getProgress() == 99.0`.
 
 If you find in your environment that:
 - progress reports multiple times at 99.0,
@@ -232,7 +232,7 @@ In this example, stage `2` is explicitly commented as the genetic phase.
 ## Summary
 
 - The example shows how to run optimization in a controlled loop by using progress events (`progressSubject()`).
-- It counts "loops" of the genetic stage by watching for `stage == 2` and `progress == 99.0`.
+- It counts "loops" of the genetic stage by watching for `p.getOptimizationStage() == 2` and `p.getProgress() == 99.0`.
 - After `MAX_LOOP_COUNT_GE` loops (3), it calls `jumpToNextStage()` to exit the stage, which in continuous mode would otherwise run until it is stopped.
 - This pattern is valuable for deterministic compute budgeting, stage-specific control, and adaptive optimization pipelines.
 

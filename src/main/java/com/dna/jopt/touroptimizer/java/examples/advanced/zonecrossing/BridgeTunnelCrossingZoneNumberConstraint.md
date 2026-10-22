@@ -189,7 +189,7 @@ For more control, the example also configures **directional zone connections**:
 This illustrates an important modeling capability:
 - you can penalize crossing **asymmetrically**, for example:
   - "going into the city is expensive (toll), leaving the city is cheap", or
-  - "crossing east->west is congested in the morning, west->east is congested in the evening".
+  - "crossing east->west is often congested, west->east rarely".
 
 In the code, this is configured via the zone manager:
 
@@ -255,7 +255,7 @@ Leave other zone-to-zone transitions unpenalized: give them a `ZoneConnection` w
 ### Pattern B: Use asymmetry intentionally
 Directional penalties allow you to model:
 - toll directionality,
-- "morning inbound / evening outbound" congestion,
+- one direction that is congested more often than the other,
 - one-way physical constraints.
 
 ### Pattern C: Combine with hard territories when required
@@ -286,4 +286,4 @@ To compare both settings, run the example once as it is and once with `doPenaliz
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

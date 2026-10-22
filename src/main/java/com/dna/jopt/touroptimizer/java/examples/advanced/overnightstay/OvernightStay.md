@@ -245,7 +245,7 @@ Typical stay nodes:
 - safe parking areas.
 
 ### Pattern B: Use policy thresholds to avoid unnecessary stays
-The example's min distance/time thresholds are a best-practice:
+The example's min distance/time thresholds (sample values) follow this pattern:
 - short routes should return home,
 - staying out is for "far tours".
 
@@ -314,4 +314,4 @@ Run the `main(String[] args)` method of `OvernightStayExample` from your IDE, wi
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

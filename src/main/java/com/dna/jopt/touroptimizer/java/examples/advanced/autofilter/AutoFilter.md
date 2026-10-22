@@ -159,7 +159,7 @@ The other eight nodes stay on the two routes, although some of them are visited 
 
 ## AutoFilter in one sentence
 
-**AutoFilter continuously analyzes which nodes caused violations in each generated solution and filters out nodes whose violation pattern becomes dominant.**
+**AutoFilter continuously analyzes which nodes caused violations in each generated solution and, at each of its executions during the run, filters out nodes whose violation pattern becomes dominant.**
 
 ## Why AutoFilter is fundamentally different from "high penalty costs"
 
@@ -422,9 +422,9 @@ Both example classes set `JOpt.AutoFilter.useStrictFilterOnLastExecution` to `TR
 If you want more conservative filtering, you can disable it, but only after careful testing.
 
 ### Step 5: Use local constraints for optionality and controlled behavior
-Use node-level constraints (like the "particular node" example) to define:
-- which nodes are filterable,
-- which nodes are protected.
+Use node-level constraints (like the "particular node" example) and node protection to define:
+- which nodes are filterable (a filter constraint on the node, as in the example),
+- which nodes are protected (`setMinAutoFilterProtectedExecutions` on the node, for a number of AutoFilter executions; see the [AutoFilter feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/autofilter)).
 
 ### Step 6: Operationalize the result
 Build a standard post-processing contract:
@@ -488,7 +488,7 @@ Use when only some tasks may be dropped:
 
 - Enable selective filtering
 - Attach node-level AutoFilter constraints only to optional nodes
-- Keep mandatory nodes protected
+- Protect mandatory nodes with `setMinAutoFilterProtectedExecutions`
 
 ## Troubleshooting checklist
 
@@ -532,4 +532,4 @@ Run the `main(String[] args)` method of `AutoFilterLateExample` or `AutoFilterPa
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

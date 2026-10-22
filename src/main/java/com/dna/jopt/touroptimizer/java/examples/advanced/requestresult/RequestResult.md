@@ -238,7 +238,7 @@ In the example, the trigger condition uses:
 - `p.getProgress() == 20.0`
 
 In production, you often want to refine this:
-- check stage/caller (if available),
+- check stage/caller (`getOptimizationStage()`, `getCallerId()`),
 - ensure you only request once per stage,
 - avoid "progress == 20" triggering repeatedly (depending on progress reporting behavior).
 

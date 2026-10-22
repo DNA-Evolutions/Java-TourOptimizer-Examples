@@ -28,7 +28,7 @@ The dates are sample values.
 
 `ClusteringInnerCityExample` creates its elements in a loop: a large synthetic "inner-city" instance in/around Koeln, using a **Phyllotaxis** distribution (spiral sampling) to place nodes and resources.
 
-- **Nodes and resources:** 1000 nodes, `N_0` to `N_999`, and 50 resources, `R_0` to `R_49`, sampled using `samplePhyllotaxis(...)` on two phyllotaxis patterns around a point in the west of Koeln (50.9333, 6.85), the area that the figures of this example in the feature guide show. The resources also lie around the same center (multi-depot style).
+- **Nodes and resources:** 1000 nodes, `N_0` to `N_999`, and 50 resources, `R_0` to `R_49`, sampled using `samplePhyllotaxis(...)` on two phyllotaxis patterns around a point in the west of Koeln (50.9333, 6.85), the area of the phyllotaxis figures in the feature guide; those figures show a setup of their own, with 40 resources, while this class has 50 resources and chooses `SmartConstructionAlgo`. The resources also lie around the same center (multi-depot style).
 - **Pattern:** element i lies at the distance spacing x sqrt(i) from that point and at i times the golden angle. The spacing is 0.002 degrees for the nodes and 0.01 degrees for the resources, so the outermost node lies about 0.063 degrees from that point and the outermost resource 0.07 degrees: the resources spread over the area of the nodes.
 - **Times:** the nodes are open (node `OpeningHours`) and the resources work (resource `WorkingHours`) on May 6, 2023, from 08:00 to 22:00 (Europe/Berlin). Each visit takes 5 minutes, the visit duration per node; each resource may work 12 hours, a sample value, and drive 2200 km.
 - **Two days:** with the constant `ADD_EVEN_ODD_SPLITTING` set to `true`, the nodes and resources with an even index move to May 7, and the plan splits into two days: the opening hours are optionally split by even/odd node id into different days (multi-dimensional clustering behavior), and the working hours are produced via `createWorkingHours(dayOfMay(ii))`, which supports the even/odd day split. The committed value is `false`.
@@ -157,7 +157,7 @@ With the public evaluation license, each of the three classes ended with exit co
 
   The license error above it is the cause. The run prints no result and writes no KML file.
 
-The clustering construction feature guide shows figures of the construction results for the inner-city and the city-to-city data.
+The clustering construction feature guide shows figures of construction results for phyllotaxis data of its own, with 40 resources, and for city-to-city data across Germany.
 
 ### With a full license
 
@@ -190,7 +190,7 @@ JOpt's clustering construction is explicitly designed to be **multi-dimensional*
 
 ## The construction algorithm (as described in the documentation)
 
-The documentation describes the **HybridMultiDimensionalClusteringAlgorithm** (internal name: `MultiAttemptParallelMultiDimensionalHybridSavingsAlgo`) as the construction algorithm used to create the starting solution. The examples of this page choose `SmartConstructionAlgo` as the construction algorithm (`ConstructionOptimizationAlgorithm.SMART_CONSTR_ALGO`), which also builds clusters. The two test runs of each class with the public evaluation license show it in a status event before the license error: `StatusEvent(OPTIMIZATION_ALGO_INITIALIZED, SmartConstructionAlgo)`. The algorithm of the documentation runs when you choose it as the construction algorithm instead (`ConstructionOptimizationAlgorithm.CLUSTERED_SEQUENTIAL_SPACE_SAVINGS_ALGO`).
+The documentation describes the **HybridMultiDimensionalClusteringAlgorithm**, a clustering construction algorithm; without a choice of construction algorithm, JOpt runs `SmartConstructionAlgo`. The examples of this page choose `SmartConstructionAlgo` as the construction algorithm (`ConstructionOptimizationAlgorithm.SMART_CONSTR_ALGO`), which also builds clusters. The two test runs of each class with the public evaluation license show it in a status event before the license error: `StatusEvent(OPTIMIZATION_ALGO_INITIALIZED, SmartConstructionAlgo)`. The algorithm of the documentation runs when you choose it as the construction algorithm instead (`ConstructionOptimizationAlgorithm.CLUSTERED_SEQUENTIAL_SPACE_SAVINGS_ALGO`).
 
 ### Requirements the algorithm is designed to meet
 The algorithm is designed to be:
@@ -248,7 +248,7 @@ How the input is generated, how it runs and how you inspect the result: see "The
 The example writes:
 - `ClusteringCityToCityExample.kml`
 
-This is intended for visual inspection of cluster ownership, route coherence, and "outlier handling" (where the algorithm deliberately assigns borderline cities to avoid overtime).
+This is intended for visual inspection of cluster ownership, route coherence, and "outlier handling" (in the feature guide's city-to-city figure, Eberswalde is not on the route it would usually be assigned to, which would cause overtime).
 
 ### 3) `ClusteringCityToCityKeepClustersForOptimizationExample`: Keep construction clusters as hard constraints ("districting")
 
@@ -273,7 +273,7 @@ This enables robust "cluster-first, optimize-second" workflows for territory-dri
 The example writes:
 - `ClusteringCityToCityKeepClustersForOptimizationExample.kml`
 
-This allows you to compare:
+It holds the optimized solution only. Together with `ClusteringCityToCityExample.kml`, the constructed solution of the same data, it allows you to compare:
 - the constructed solution,
 - vs. the optimized solution that respects hard cluster boundaries.
 
@@ -351,7 +351,7 @@ If you want a single clear demonstration for customers, start with the KML outpu
 
 ## Related
 
-- [Clustering construction feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/clustering_construction): the construction algorithm, the figures of these examples and the clustering properties.
+- [Clustering construction feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/clustering_construction): the construction algorithm, figures of construction results and the clustering properties.
 - [ZoneCodes feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/zonecodes): zones, which `ClusteringCityToCityKeepClustersForOptimizationExample` creates from the clusters.
 - [Set a license from a file](../../basic/setlicense_08/SetLicense.md): how the examples read your own license file.
 - [Optimization properties](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties): the property reference, with the defaults.
@@ -360,4 +360,4 @@ If you want a single clear demonstration for customers, start with the KML outpu
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

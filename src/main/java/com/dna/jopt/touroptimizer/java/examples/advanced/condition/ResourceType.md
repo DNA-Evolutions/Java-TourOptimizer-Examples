@@ -381,7 +381,7 @@ Time after the end of the working hours counts against the maximal working time,
 ## References
 
 ### Example sources (GitHub)
-- This example is used to illustrate **BitTypeWithExpertise** and why it can be multiple orders of magnitude faster than string/list based matching:
+- The example below is used to illustrate **BitTypeWithExpertise** and why it can be multiple orders of magnitude faster than string/list based matching, as the [BitType feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/bittype_condition) reports:
   [bittype/BitTypeWithExpertiseConditionAndCostModelExample.java](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/src/main/java/com/dna/jopt/touroptimizer/java/examples/advanced/condition/bittype/BitTypeWithExpertiseConditionAndCostModelExample.java)
 
 ## Why "ResourceType" matters in tour optimization
@@ -512,7 +512,7 @@ A major benefit of this modeling approach is that it produces solutions that rem
 
 In the runs of this example, `Oberhausen (R>=2, W<=10)`, the one customer with `PENALIZE_MATCHING_SKILL_LOW_DELTA`, goes to John with repair level 2, because the days of Jack and Paula have no room for it (see "Output and what to look for").
 
-## SelectiveTypeCondition: time-dependent / expiring skills
+## Types per working day: time-dependent / expiring skills
 
 In some businesses, a qualification may be valid only for:
 - specific time windows,
@@ -565,7 +565,7 @@ The most important performance principle is:
 2) **Slow path (optional):** Only if all required skills are present and expertise levels are relevant, evaluate levels.  
    Level checking is inherently more "branchy" and typically uses a map (skill -> level).
 
-This strategy can yield "several thousand percent" speedups in large instances because:
+This strategy can yield speedups of orders of magnitude in large instances (see the [BitType feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/bittype_condition)) because:
 - most candidate assignments fail fast at the bitset level,
 - level checks are only performed for candidates that already passed the fast eligibility filter.
 
@@ -624,7 +624,7 @@ If you have large-scale optimization with many skills, BitTypeWithExpertise can 
 
 - **SkillWithExpertiseCostModel**: controls "quality of match" among feasible candidates (exact match vs best expert vs adequate match).
 
-- **SelectiveTypeCondition**: skills can be time-dependent by attaching qualifications to working hours segments.
+- **Types per working day** (`SelectiveTypeConditionExample`): skills can be time-dependent by attaching qualifications to working hours segments.
 
 - **BitTypeWithExpertise**: high-performance skill matching using bitsets; extremely fast for large problems due to CPU-efficient set inclusion checks with early failure.
 

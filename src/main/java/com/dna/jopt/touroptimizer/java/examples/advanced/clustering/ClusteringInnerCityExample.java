@@ -74,8 +74,8 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
  */
 public class ClusteringInnerCityExample extends Optimization {
 
-  // A point in the west of Koeln, the area that the figures of this example in the clustering
-  // feature guide show. Both patterns lie around it.
+  // A point in the west of Koeln, the area of the phyllotaxis figures in the clustering
+  // feature guide (a setup of their own, with 40 resources). Both patterns lie around it.
   private static final Position PATTERN_ORIGIN = Position.of(50.9333, 6.85);
 
   private static final int NUM_RESOURCES = 50;

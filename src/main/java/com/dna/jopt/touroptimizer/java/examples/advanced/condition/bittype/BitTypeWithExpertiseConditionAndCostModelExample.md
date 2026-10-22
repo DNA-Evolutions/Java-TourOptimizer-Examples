@@ -176,7 +176,7 @@ In BitType, you typically attach requirements via `addDictType(...)`. Conceptual
 3. set the corresponding bit inside the requirement bitset,
 4. optionally attach expertise-level requirements.
 
-Examples shown in this file:
+The `addDictType` calls of the requirements in `BitTypeWithExpertiseConditionAndCostModelExample.java`:
 
 - `addCustomerOberhausen`: `repairConstraint.addDictType(SKILL_TYPE_REPAIR, TypeLevelRequirement.of(minRepairLevel, true));`
 - `addCustomerOberhausen`: `weightConstraint.addDictType(SKILL_TYPE_WEIGHT, TypeLevelRequirement.of(maxWeightLevel, false));`
@@ -220,4 +220,4 @@ Run the `main(String[] args)` method of `BitTypeWithExpertiseConditionAndCostMod
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

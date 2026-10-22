@@ -5,7 +5,7 @@ This package contains the Advanced examples, feature-focused examples that show 
 | Example | What you learn | Feature guide |
 |---|---|---|
 | [Alternate destination at the end of a route](alternatedestination/AlternateDestinationExample.md) (`alternatedestination`) | Ends every route of a resource at another place than its start, while each working day starts at the start position again. | |
-| [AutoFilter for late visits](autofilter/AutoFilter.md) (`autofilter`) | Lets the AutoFilter take nodes that are visited late too often out of the run, for all nodes or for one node: automatic filtering, during the run, of nodes that are very likely infeasible (time windows, skills, etc.) to speed up optimization. | [AutoFilter](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/autofilter), [Special features: AutoFilter](https://www.dna-evolutions.com/docs/learn-and-explore/special/special_features#autofilter) |
+| [AutoFilter for late visits](autofilter/AutoFilter.md) (`autofilter`) | Lets the AutoFilter take nodes that are visited late too often out of the run, for all nodes or for one node: automatic filtering, during the run, of nodes that are very likely infeasible (time windows, skills, etc.). Fewer nodes also make the run faster, as a side effect. | [AutoFilter](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/autofilter), [Special features: AutoFilter](https://www.dna-evolutions.com/docs/learn-and-explore/special/special_features#autofilter) |
 | [Build an optimization config with builders](builderpattern/BuilderPatternExample.md) (`builderpattern`) | Builds the whole input as one immutable `OptimizationConfig` with builders and runs it with `JSONOptimization`. | |
 | [Capacity check of the input](capacitycheck/CapacityCheckExample.md) (`capacitycheck`) | Shows how the capacity check rejects an input whose visits need at least twice the time that the working hours offer, before a run. | |
 | [Clustering construction examples](clustering/Clustering.md) (`clustering`) | Builds the start solution with the clustering construction, for cities across Germany and for many nodes in one city; one class keeps the clusters as hard zones during the optimization. The three classes need a full license. | [Clustering during construction](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/clustering_construction) |
@@ -63,8 +63,8 @@ Packages for some common questions; the table above links their pages.
 ## Guidance on selecting the right feature
 
 ### If your main pain is runtime
-- Start with **AutoFilter** (remove infeasible nodes early) and **Performance Mode** (reduced genetic operator set).
-- If your instance grows large, evaluate **Clustering construction** for better initial solutions and faster convergence.
+- Start with **Performance Mode** (half the default population size and a reduced genetic operator set). The **AutoFilter** takes nodes that are very likely infeasible out of the run; fewer nodes also make the run faster, as a side effect.
+- If your instance grows large, evaluate the settings of the **Clustering construction** (`SmartConstructionAlgo`, the default construction algorithm), for better initial solutions and faster convergence.
 
 ### If you need strong business rules (structural feasibility or pseudo constraints)
 - Use **Relations** for coupling nodes across route/resource/time (a pseudo constraint: a broken relation adds a cost weighted by `JOptWeight.Relationships`).
@@ -76,7 +76,7 @@ Packages for some common questions; the table above links their pages.
 
 ## Notes on documentation files
 
-For many packages, this repository includes a dedicated Markdown document placed alongside the example sources. These documents are intended to be copied into other environments and provide:
+For each package in the table above, this repository includes a dedicated Markdown document placed alongside the example sources. These documents are intended to be copied into other environments and provide:
 - conceptual explanation of the feature,
 - implementation guidance and modeling patterns,
 - links back to the corresponding Java example(s) and official documentation.
@@ -95,4 +95,4 @@ If you are maintaining an internal knowledge base, these Markdown files can be u
 
 ---
 
-Added: 2020-05-30 (JOpt core 7.4.2) | Last updated: 2026-10-21
+Added: 2020-05-30 (JOpt core 7.4.2) | Last updated: 2026-10-23

@@ -89,9 +89,9 @@ The run prints the status and progress lines, then the result. In both runs, Jac
 
 The driving times are short for the distances because of the factor; the visits still take 20 minutes each.
 
-To see what the factor changes, compare a run without it. In two test runs of a variant of this class without the `setConnectionTimeEfficiencyFactor` calls, Jack visited only Aachen, and John visited the other seven nodes on March 6, in a route of 734.09 minutes. The drive between Heilbronn and Stuttgart, 41.6 km, took John 31.52 minutes in the variant; Jack drives the same 41.6 km, in the other direction, in 6.3 minutes, a fifth of that time.
+To see what the factor changes, compare a run without it. Four test runs of a variant of this class without the `setConnectionTimeEfficiencyFactor` calls showed two outcomes on March 6, at the same cost: in two runs, Jack visited only Aachen, and John visited the other seven nodes, in a route of 734.09 minutes; in the other two, John visited all eight nodes, starting with Aachen, in a route of 754.09 minutes, and Jack had no route. The drive between Heilbronn and Stuttgart, 41.6 km, took John 31.52 minutes in the variant; Jack drives the same 41.6 km, in the other direction, in 6.3 minutes, a fifth of that time.
 
-In the variant, John's route ended at 20:14:05, after the end of his working hours at 17:00, and showed no violation. Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. John may work 14 hours; with Jack's 8 hours, a day this long would be overtime.
+In the variant, John's route ended at 20:14:05, or at 20:34:05 with Aachen, after the end of his working hours at 17:00, and showed no violation in any of the four runs. Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. John may work 14 hours; with Jack's 8 hours, a day this long would be overtime.
 
 ## How to interpret the result
 
@@ -104,7 +104,7 @@ Connection time efficiency directly impacts:
 - and time-based objective components (if enabled in your model).
 
 ### What usually does *not* change directly
-In most models, scaling connection **time** does not inherently scale connection **distance**.
+Scaling connection **time** does not scale connection **distance**.
 
 So, depending on the rest of your configuration:
 - distance-related feasibility limits (maxDistance) may remain the binding factor,

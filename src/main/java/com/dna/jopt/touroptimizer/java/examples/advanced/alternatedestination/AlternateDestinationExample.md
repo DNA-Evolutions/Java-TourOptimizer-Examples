@@ -120,7 +120,7 @@ If you rely on fallback distance models, ensure they match your business. For ro
 
 ### 3) Consider multi-day consistency
 This example demonstrates a conceptually "daily" alternate end point but assumes start is still home each morning.  
-For true multi-day routing where day N ends at a place and day N+1 starts there, you typically need an extended modeling strategy (advanced/expert patterns).
+For true multi-day routing where day N ends at a place and day N+1 starts there, use overnight stays: a working day can end at a stay node, and the next working day starts there (see the [Overnight stay feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/overnight_stay)).
 
 ## Run it
 

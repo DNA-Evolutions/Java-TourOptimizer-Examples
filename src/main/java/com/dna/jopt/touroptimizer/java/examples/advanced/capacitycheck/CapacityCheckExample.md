@@ -121,7 +121,7 @@ In an earlier test run with `DO_DEACTIVATE_CAPACITY_CHECK` set to `true`, the wa
 
 JOpt performs a basic plausibility check before starting optimization:
 
-- If the **available working hours** are *far below* the **required working time** implied by the input (the visit durations; travel times are not part of the check), the run is typically rejected early.
+- If the **required working time** implied by the input (the visit durations; travel times are not part of the check) is twice the **available working hours** or more, the input is rejected before the run.
 
 In other words, it prevents you from running an optimization where the schedule is obviously impossible *by a factor of two or more*.  
 This protects production systems from wasting time on runs that cannot produce meaningful schedules.
@@ -185,4 +185,4 @@ To see the run with the check off, set `DO_DEACTIVATE_CAPACITY_CHECK` to `true` 
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23
