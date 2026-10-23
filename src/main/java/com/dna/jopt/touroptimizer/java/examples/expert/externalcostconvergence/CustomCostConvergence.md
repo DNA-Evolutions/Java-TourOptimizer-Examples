@@ -16,7 +16,7 @@ The dates, times and coordinates are sample values. The time zone is Europe/Berl
 
 - **Resource:** `Jack`, a `CapacityResource` at 50.775346, 6.083887 (Aachen), with working hours on May 6 and May 7, 2020, from 08:00 to 17:00. He may work up to 13 hours and drive up to 1200 km a day.
 - **Nodes:** nine `TimeWindowGeoNode` objects (Koeln, Oberhausen, Essen, Dueren, Nuernberg, Heilbronn, Stuttgart, Wuppertal and Aachen), open on the same two days from 08:00 to 17:00, each with a visit of 20 minutes and the same importance.
-- **Run values:** `addProperties` sets `JOptExitCondition.JOptGenerationCount` and `JOpt.Algorithm.PreOptimization.SA.NumIterations` below their defaults, which keeps the run short; the defaults are in the [property reference](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties). The converger, not these exit conditions, ends the run. With 20000 generations and 1000000 iterations, far above the defaults, the converger stopped the run at the same point in four test runs of an earlier version of the class.
+- **Run values:** `addProperties` sets `JOptExitCondition.JOptGenerationCount` and `JOpt.Algorithm.PreOptimization.SA.NumIterations` below their defaults, which keeps the run short; the defaults are in the [property reference](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties). The converger, not these exit conditions, ends the run. With 20000 generations and 1000000 iterations, far above the defaults, the converger stopped the run at the same point in two test runs of a copy of the class with these values.
 
 ## How the code works
 

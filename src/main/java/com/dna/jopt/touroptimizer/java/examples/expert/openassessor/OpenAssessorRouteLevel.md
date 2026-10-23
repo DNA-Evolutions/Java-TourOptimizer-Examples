@@ -76,9 +76,9 @@ It provides a structured way to inject:
 - additional **cost contributions** (soft preferences),
 - additional **violations**, which steer softly like the costs (a rule that must always hold needs a hard constraint; see "Soft vs hard" below),
 - custom scoring KPIs,
-- and even domain-specific assessment hooks
+- and even domain-specific assessment hooks.
 
-at well-defined levels of the model.
+All of them act at well-defined levels of the model.
 
 This document focuses on the **route-level** open assessor mechanism.
 

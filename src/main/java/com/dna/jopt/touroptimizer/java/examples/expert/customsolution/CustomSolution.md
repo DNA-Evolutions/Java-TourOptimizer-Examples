@@ -94,7 +94,7 @@ StatusEvent(ADDITIONAL_ELEMENT, Adding additional elements to be reassigned to o
 WarningEvent(WarningEvent(5557, The element is already present in the solution.), The element is already present in the solution. Duplicate node ignored: Essen)
 ```
 
-The result plans Jack on May 6 with Dueren, Koeln, Nuernberg, Heilbronn and Stuttgart, and leaves his route of May 7 empty. The route of May 6 ends at 20:57:28, with 777.47 minutes of his 13 hours, without a violation. Time after the end of the working hours counts against the maximal working time, and the working hours are a frame for matching resources with the opening hours of the nodes, so a route can end after its working hours without a violation. JackNew works on May 11; the route without the two lines of `Essen` and `Essen2`:
+The result plans Jack on May 6 with Dueren, Koeln, Nuernberg, Heilbronn and Stuttgart, and leaves his route of May 7 empty. The route of May 6 ends at 20:57:28, with 777.47 minutes of his 13 hours, without a violation. JackNew works on May 11; the route without the two lines of `Essen` and `Essen2`:
 
 ```text
 3.0 testPillarKoeln / Pillar  / Geo  / Idle: 12.01 [min] / Arrival: 11.05.2020 08:47:59 (Europe/Berlin) , Departure: 11.05.2020 10:00:00 (Europe/Berlin) / Duration: 60.0 [min] / Driving: 47.99 [min], 63.34 [km]
@@ -136,7 +136,7 @@ Optimization (problem container)
         +-- Optimizable elements: [NodeX, NodeY, ...]
 ```
 
-A **custom solution** means: you construct the right-hand side (the `IEntity`) explicitly and set it as the initial entity.
+A **custom solution** means: you construct the solution layer (the `IEntity`) explicitly and set it as the initial entity.
 
 ## How to inject a custom solution (the essential sequence)
 
@@ -251,10 +251,7 @@ These helper methods are designed for **incremental plan evolution**:
 
 The core puts the reassigned elements into the custom solution when the run starts (the `ADDITIONAL_ELEMENT` status lines above).
 
-This is the practical bridge between:
-- "I already have a plan"
-and
-- "the world changed; optimize again".
+This is the practical bridge between "I already have a plan" and "the world changed; optimize again".
 
 ### Duplicate IDs are reported (important!)
 The example explicitly adds duplicates to demonstrate behavior:

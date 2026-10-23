@@ -85,11 +85,7 @@ Instead of "we run v7.x", you can provide:
 This removes ambiguity and accelerates root cause analysis.
 
 ### Reproducibility and experiment traceability
-If you run optimizations as part of:
-- analytics pipelines,
-- scientific experiments,
-- or A/B deployments,
-you can store build info next to:
+If you run optimizations as part of analytics pipelines, scientific experiments or A/B deployments, you can store build info next to:
 - run inputs,
 - run outputs,
 - and performance metrics.
@@ -172,4 +168,4 @@ Run the `main(String[] args)` method of `ExtractBuildInfoExample` from your IDE,
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

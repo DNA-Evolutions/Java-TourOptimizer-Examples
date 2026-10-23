@@ -201,7 +201,7 @@ Key implication:
 
 The optimizer tends to visit an optional node when one of these applies:
 
-1. **Feasibility enabler**
+1. **Capacity relief**
    Visiting the optional node is necessary to avoid capacity violations (e.g., an overload or an underload). Capacity constraints are pseudo constraints in JOpt, so the visit does not satisfy a hard feasibility rule: a route that would otherwise need the visit does not become infeasible, but carries these violations and their cost (`JOptWeight.Capacity`).
 
 2. **Cost reducer**

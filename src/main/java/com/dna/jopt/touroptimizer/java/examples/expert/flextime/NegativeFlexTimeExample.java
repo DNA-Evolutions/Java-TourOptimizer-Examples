@@ -50,8 +50,8 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tech.units.indriya.quantity.Quantities;
 
 /**
- * Lets a resource drive to its first node up to 2 hours before its working hours start (negative
- * flex time), so that it can reach the node when the node opens.
+ * Lets a resource drive to its first node up to 2 hours before its working hours start
+ * (StartReductionTime), so that it can reach the node when the node opens.
  *
  * <p>Scenario: Jack starts in Aachen and visits eight nodes in Germany on May 6 and May 7, 2020. He
  * works from 08:00 to 16:00, and the nodes open from 08:00 to 17:00 (Europe/Berlin). No node lies at
@@ -87,7 +87,7 @@ public class NegativeFlexTimeExample extends Optimization {
   @Override
   public String toString() {
     return "Lets a resource drive to its first node up to 2 hours before its working hours start"
-        + " (negative flex time), so that it can reach the node when the node opens.";
+        + " (StartReductionTime), so that it can reach the node when the node opens.";
   }
 
   /**
@@ -216,7 +216,7 @@ public class NegativeFlexTimeExample extends Optimization {
         new CapacityResource(
             "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
 
-    // Negative flex time: Jack may start up to 2 hours before his working hours. true: he may use
+    // StartReductionTime: Jack may start up to 2 hours before his working hours. true: he may use
     // the early time only for driving to the first node, not for working on it.
     jack.setMaxRouteStartReductionTime(Duration.ofHours(2), true);
     // true: the early start counts toward his working time and its 13 h maximum.

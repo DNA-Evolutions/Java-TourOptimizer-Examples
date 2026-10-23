@@ -314,11 +314,10 @@ Take a planner-proposed alternative and compare it to the optimizer result:
   - or a model gap.
 
 ### Pattern C: acceptance-driven onboarding
-During rollout, allow planners to interactively validate:
+During rollout, allow planners to interactively validate the following, and build trust:
 - consolidation desires,
 - "geographical clean-up" swaps,
-- region assignment assumptions,
-and build trust.
+- region assignment assumptions.
 
 ## Summary
 

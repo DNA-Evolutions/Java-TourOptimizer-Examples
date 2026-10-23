@@ -111,9 +111,7 @@ Interpretation:
 
 - `IEntity en = dummyOptimization.getWorkEntity();`
 
-This pattern is important because it cleanly separates:
-- **deserialization concerns** (handled by the dummy optimization),
-- from your active run optimization container.
+This pattern is important because it cleanly separates the **deserialization concerns** (handled by the dummy optimization) from your active run optimization container.
 
 ## Optionally restoring the environment: NodeConnector and Properties
 

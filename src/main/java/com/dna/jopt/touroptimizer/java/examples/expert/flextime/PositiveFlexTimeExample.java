@@ -50,8 +50,8 @@ import com.dna.jopt.touroptimizer.java.examples.ExampleLicenseHelper;
 import tech.units.indriya.quantity.Quantities;
 
 /**
- * Lets a route start up to 2 hours after the start of the working hours (positive flex time), so
- * that the resource does not wait for its first node to open.
+ * Lets a route start up to 2 hours after the start of the working hours (FlexTime), so that the
+ * resource does not wait for its first node to open.
  *
  * <p>Scenario: Jack starts in Aachen and visits eight nodes in Germany on May 6 and May 7, 2020. He
  * works from 08:00 to 16:00, and the nodes open from 09:00 to 17:00 (Europe/Berlin). No node lies at
@@ -86,8 +86,8 @@ public class PositiveFlexTimeExample extends Optimization {
 
   @Override
   public String toString() {
-    return "Lets a route start up to 2 hours after the start of the working hours (positive flex"
-        + " time), so that the resource does not wait for its first node to open.";
+    return "Lets a route start up to 2 hours after the start of the working hours (FlexTime), so"
+        + " that the resource does not wait for its first node to open.";
   }
 
   /**
@@ -215,8 +215,8 @@ public class PositiveFlexTimeExample extends Optimization {
         new CapacityResource(
             "Jack", 50.775346, 6.083887, maxWorkingTime, maxDistanceKmW, workingHours);
 
-    // Positive flex time: a route may start up to 2 hours after the working hours start, when it
-    // would otherwise wait at its first node.
+    // FlexTime: a route may start up to 2 hours after the working hours start, when it would
+    // otherwise wait at its first node.
     jack.setFlexTime(Duration.ofHours(2));
 
     opti.addElement(jack);

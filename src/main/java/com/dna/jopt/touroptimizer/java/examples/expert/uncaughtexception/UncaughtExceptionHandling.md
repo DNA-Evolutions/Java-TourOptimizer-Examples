@@ -262,8 +262,8 @@ Most of these code paths are executed:
 - asynchronously,
 - and on solver threads that you do not directly control.
 
-If an exception escapes a callback and no handler is present, the system may:
-- silently stop improving solutions (worker thread died),
+If an exception escapes a callback and no handler of your own is set, the system may:
+- stop improving solutions (worker thread died), with only JOpt's log line and error event to show it,
 - deadlock (some component waits for a signal that never arrives),
 - or fail without a clean "result signal" to the caller.
 
@@ -431,4 +431,4 @@ Run the `main(String[] args)` method of `UncaughtExceptionHandlingExample`, `Unc
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

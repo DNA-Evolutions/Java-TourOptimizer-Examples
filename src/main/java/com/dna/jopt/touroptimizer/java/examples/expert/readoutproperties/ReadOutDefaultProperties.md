@@ -163,10 +163,7 @@ By exporting the full default property catalog for a version, you can:
 This is a best practice for regulated or audit-heavy environments.
 
 ### Support-ready bug reports
-When reporting an issue, providing:
-- the property keys you set,
-- and the solver default list (or at least the relevant category subset)
-greatly reduces ambiguity.
+When reporting an issue, provide the property keys you set and the solver default list (or at least the relevant category subset); this greatly reduces ambiguity.
 
 This is particularly important when:
 - a behavior is caused by an unexpected default rather than your explicit configuration.
@@ -250,4 +247,4 @@ Run the `main(String[] args)` method of `ReadOutDefaultPropertiesExample` from y
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23
