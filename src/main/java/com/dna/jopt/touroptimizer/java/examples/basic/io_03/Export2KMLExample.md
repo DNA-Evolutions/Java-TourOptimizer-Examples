@@ -28,7 +28,7 @@ Nodes added (as `TimeWindowGeoNode`):
 
 ### Resources (capacity resources)
 
-Two resources are created as `CapacityResource` objects, **Jack** and **John**, which start in Aachen: both starting positions are at the Aachen coordinates. They work on two days; their working hours are defined by `createWorkingHours()`: on March 6 from 08:00 to 17:00, and on March 7 from 08:00, when the second day extends to 20:00. Shared constraints: they may drive at most **1200 km** per working day (max distance), that is per route, more than any route of this plan needs. Jack may work 8 hours (max working time), less than either shift; John 14 hours, more than both. The class does not call `setCost(...)` on its resources.
+Two resources are created as `CapacityResource` objects, **Jack** and **John**, which start in Aachen: both starting positions are at the Aachen coordinates. They work on two days; their working hours are defined by `createWorkingHours()`: on March 6 from 08:00 to 17:00, and on March 7 from 08:00 to 20:00, so the second day is longer. Shared constraints: they may drive at most **1200 km** per working day (max distance), that is per route, more than any route of this plan needs. Jack may work 8 hours (max working time), less than either shift; John 14 hours, more than both. The class does not call `setCost(...)` on its resources.
 
 ### Solver properties (what the run is "allowed" to do)
 
@@ -112,7 +112,7 @@ The legacy callback methods (`onProgress`, `onAsynchronousOptimizationResult` an
 
 Practical takeaway: you can scale observability from "just print progress" to "feed structured telemetry" without changing your modeling logic.
 
-## Small curiosity
+## The `toString()` text
 
 The class-level string returned by `toString()` says that the example writes the result of an optimization run to a KML file, and the implementation exports to **KML**. Treat the Java source as authoritative.
 
@@ -131,4 +131,4 @@ Run the `main` method of `Export2KMLExample` from your IDE. You need a JDK in th
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

@@ -72,7 +72,7 @@ This is the save at the end of a run (the simplest baseline). Core idea (concept
 **Trigger point:** `saveToJson(...)`, which `example()` calls after `startAndPresentResult(...)`. When the run completes, the example:
 
 1. prints the result to stdout,
-2. writes a snapshot to `myopti.json.bz2` using `OptimizationJSONExporter`: after the result, the exporter is called with `exporter.export(opti, out)` in `saveToJson`, where `out` is a `FileOutputStream` on `JSON_FILE` (implementation notes).
+2. writes a snapshot to `myopti.json.bz2` using `OptimizationJSONExporter`: after the result, the exporter is called with `exporter.export(opti, out)` in `saveToJson`, where `out` is a `FileOutputStream` on `JSON_FILE`.
 
 The stream is opened in try-with-resources (in production code, prefer try-with-resources around the output stream, as the example does), and the example checks the boolean that `export` returns:
 

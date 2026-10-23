@@ -129,7 +129,7 @@ System.out.println(result);
 Practical guidance:
 
 - Prefer a **real timeout** in production (rather than `Long.MAX_VALUE`) so you can fail fast and recover gracefully.
-- If you run synchronously (`startRunSync(...)`) but still want event output, also the progress/status output, ensure your chosen event/callback approach is wired *before* calling `startRunSync(...)`: subscribe **before** starting the run, that is before you call it, because the subjects replay only a few past events (the example explicitly warns about this).
+- If you run synchronously (`startRunSync(...)`) but still want event output, also the progress/status output, ensure your chosen event/callback approach is wired **before** you call `startRunSync(...)`, because the subjects replay only a few past events (the example explicitly warns about this).
 
 ### RecommendedAsynchImplementationExample
 
@@ -225,4 +225,4 @@ Run the `main` method of each class from your IDE, with the repository imported 
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

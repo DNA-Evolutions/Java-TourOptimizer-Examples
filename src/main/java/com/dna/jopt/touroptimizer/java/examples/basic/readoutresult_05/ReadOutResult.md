@@ -259,7 +259,7 @@ Look for the hours with two decimals. They agree with the route headers: the tra
 
 ### Beyond console output
 
-To go further, use one or more of these if you want to go beyond console output:
+To go beyond console output, use one or more of these:
 
 - Write the per-stop rows to CSV (a per-stop table for analysts).
 - Serialize a compact "route plan JSON" for APIs/clients.

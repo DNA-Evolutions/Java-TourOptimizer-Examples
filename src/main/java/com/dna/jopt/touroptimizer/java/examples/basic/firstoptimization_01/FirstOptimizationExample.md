@@ -171,7 +171,7 @@ The `main(...)` signature declares: `InterruptedException`, `ExecutionException`
 ### Making it your own
 
 Change problem size:
-- Add/remove nodes (more nodes typically increases runtime and solution complexity).
+- Add/remove nodes (more nodes typically increase runtime and solution complexity).
 - Change visit durations (e.g., 5 min vs 60 min changes feasibility dramatically).
 
 Change constraints:
@@ -203,4 +203,4 @@ Change observability:
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

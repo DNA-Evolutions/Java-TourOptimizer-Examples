@@ -71,7 +71,7 @@ if (licenseFile.exists()) {
 }
 ```
 
-The string variant is also in the example repository: this is demonstrated by a helper method that shows it, `ExampleLicenseHelper.setLicense`, which sets the public evaluation license with `setLicenseJSON(String)`.
+The string variant is also in the example repository: the helper method `ExampleLicenseHelper.setLicense` shows it and sets the public evaluation license with `setLicenseJSON(String)`.
 
 ### The run
 

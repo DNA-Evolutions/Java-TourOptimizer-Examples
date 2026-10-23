@@ -86,7 +86,7 @@ Use `NodeEdgeConnectorItem` to inject external **distance** and **driving time**
 - **distance** (unit-aware quantity)
 - **driving time** (`Duration`)
 
-Treat connections as **directed** (define both directions when needed). A connection has a direction: an item from A to B says nothing about B to A. For the same values both ways, add one item per direction, as `addNodeConnections` does.
+Connections are **directed**: an item from A to B says nothing about B to A. Define both directions when you need them, one item per direction, also for the same values both ways, as `addNodeConnections` does.
 
 ### The connection items
 
@@ -120,7 +120,7 @@ private static void addNodeConnections(IOptimization opti, INode koeln, INode ob
 }
 ```
 
-Before running optimization, verify every external edge before you hand items to the connector: check that distance and driving time are not negative (an edge has non-negative values only), that the units are right and that from and to point the right way, the correct "from/to" direction.
+Before you hand external edges to the connector, verify every one of them: check that distance and driving time are not negative, that the units are right and that from and to point the right way.
 
 ### The default backup connector
 
@@ -289,4 +289,4 @@ Run the `main` method of `ExternalNodeConnectionExample` or `ExternalNodeConnect
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

@@ -33,9 +33,9 @@ The example builds one resource and nine nodes. The dates, times and coordinates
 
 The maximal working time of 13 hours is longer than the 9 hours of the working hours, so a day may run past 17:00 without overtime. The 1200 km per day are more than the longest day of this plan needs.
 
-The resource still has coordinates, even though the example includes an `EventNode`: resources have geo coordinates because they define the start/end location, so each route starts and ends at Jack's position, and the driving to the first node and back from the last node starts and ends there.
+The resource still has coordinates, even though the example includes an `EventNode`: resources have geo coordinates because each route starts and ends at the position of its resource, so the driving to the first node and back from the last node is measured from Jack's position.
 
-`addProperties` (`addProperties()`) sets two properties, relatively low effort parameters: `JOptExitCondition.JOptGenerationCount` to 1000 and `JOpt.Algorithm.PreOptimization.SA.NumIterations` to 100000; the class does not set `JOpt.Algorithm.PreOptimization.SA.NumRepetitions` and `JOpt.NumCPUCores`. Both are below their defaults, which keeps the run short: this example is configured for demonstration, to keep it quick; the defaults are in the [property reference](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties). Practical meaning: in typical tutorials you may start with smaller values and scale up once modeling is correct.
+`addProperties` sets two properties, relatively low effort parameters: `JOptExitCondition.JOptGenerationCount` to 1000 and `JOpt.Algorithm.PreOptimization.SA.NumIterations` to 100000; the class does not set `JOpt.Algorithm.PreOptimization.SA.NumRepetitions` and `JOpt.NumCPUCores`. Both are below their defaults, which keeps the run of this demonstration short; the defaults are in the [property reference](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties). Practical meaning: in typical tutorials you may start with smaller values and scale up once modeling is correct.
 
 ## How the code works
 
@@ -167,4 +167,4 @@ To extend the example:
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23
