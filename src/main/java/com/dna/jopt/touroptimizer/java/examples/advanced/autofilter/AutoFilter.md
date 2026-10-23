@@ -190,8 +190,8 @@ The key operational implication:
 > If a node repeatedly "shows up as the violator" across many solutions, it becomes a candidate for exclusion.
 
 This prevents cases where infeasibility "moves around" across alternative schedules:
-- Solution A violates Node D late,
-- Solution B violates Node A late,
+- in solution A, node D is late,
+- in solution B, node A is late,
 - both nodes accumulate penalty points,
 - the system can then filter the "worst offenders" and stabilize the planning problem.
 
@@ -291,13 +291,13 @@ Enable any of the following only if you want them to contribute to filtering dec
 - `JOpt.SelectiveAutoFilter.AfterEndAnchor`
   Filters nodes which are positioned after an end anchor.
 
-## "Instant filtering", custom reasons, and node protection (feature-level capabilities)
+## Strict filtering, custom reasons, and node protection (feature-level capabilities)
 
 The [Special Features documentation](https://www.dna-evolutions.com/docs/learn-and-explore/special/special_features#autofilter) highlights additional capabilities beyond the raw property list:
 
 - **Custom filter reasons** can be defined.
 - **Margins** can be set for being filtered out (covered above).
-- Certain reasons (e.g., late/early) can be set such that nodes are filtered **instantly** (in the strict mode of the last execution, without the ratio of violations).
+- Certain reasons (e.g., late/early) can be set such that nodes are filtered **without the ratio of violations**, in the strict mode of the last execution. Otherwise the AutoFilter usually removes nodes in chunks over several rounds, as in `AutoFilterLateExample` (see "Output and what to look for").
 - **Individual nodes can be protected** from being filtered out at all.
 
 The Java examples demonstrate how to hook into filtering events and, in the "particular node" scenario, how to attach filtering logic to a single node.
@@ -424,7 +424,7 @@ If you want more conservative filtering, you can disable it, but only after care
 ### Step 5: Use local constraints for optionality and controlled behavior
 Use node-level constraints (like the "particular node" example) and node protection to define:
 - which nodes are filterable (a filter constraint on the node, as in the example),
-- which nodes are protected (`setMinAutoFilterProtectedExecutions` on the node, for a number of AutoFilter executions; see the [AutoFilter feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/autofilter)).
+- which nodes are protected (`setMinAutoFilterProtectedExecutions` on the node, for a number of AutoFilter executions, or `setHasGeneralAutoFilterProtection(true)`, for every execution; see the [AutoFilter feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/autofilter)).
 
 ### Step 6: Operationalize the result
 Build a standard post-processing contract:
@@ -488,7 +488,7 @@ Use when only some tasks may be dropped:
 
 - Enable selective filtering
 - Attach node-level AutoFilter constraints only to optional nodes
-- Protect mandatory nodes with `setMinAutoFilterProtectedExecutions`
+- Protect mandatory nodes with `setHasGeneralAutoFilterProtection(true)`, or for a number of executions with `setMinAutoFilterProtectedExecutions`
 
 ## Troubleshooting checklist
 

@@ -9,7 +9,7 @@ Three setters on the resource define the alternate destination:
 - `setDestinationLatitude` and `setDestinationLongitude` set the position where each route ends.
 - `setAlternateDestination(true)` switches the alternate destination on.
 
-Each route then ends at the alternate destination, a different location than the start (e.g., a hotel, a secondary depot, a handover location): in operational terms, the driver or technician starts at a home base, performs the work during the WorkingHours and ends the working day there. The next working day starts at the start position of the resource again; the drive from the alternate destination back to the start position lies outside the working hours and is not part of the plan: the resource "returns home" outside WorkingHours. For working days that start where the day before ended, see the [Overnight stay feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/overnight_stay).
+Each route then ends at the alternate destination, a different location than the start (e.g., a hotel, a secondary depot, a handover location): in operational terms, the driver or technician starts at a home base, performs the work during the WorkingHours and ends the working day at the alternate destination. The next working day starts at the start position of the resource again; the drive from the alternate destination back to the start position lies outside the working hours and is not part of the plan: the resource "returns home" outside WorkingHours. For working days that start where the day before ended, see the [Overnight stay feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/overnight_stay).
 
 ## Scenario
 

@@ -18,7 +18,7 @@ This package contains the Advanced examples, feature-focused examples that show 
 | [Teams of resources with constraint alias ids](constraintaliasid/ResourceConstraintAliasId.md) (`constraintaliasid`) | Gives resources a team name with `setConstraintAliasId` and names the teams instead of the resources in the four resource constraint types, mandatory, preferred, banned and unpreferred, one class each; once set, the alias replaces the resource id in the lookup. | |
 | [Extra info on nodes and resources](extrainfo/ExtraInfo.md) (`extrainfo`) | Stores your own objects as JSON in the extra info of nodes and resources and reads them back from the result. | |
 | [First and last node of a route](firstlastnode/FirstLastNode.md) (`firstlastnode`) | Asks for one node as the first and another as the last node of its route, with soft settings using importance values, not hard fixing. | |
-| [Opening hours that bound only the arrival](includevisitduration/IncludeVisitDuration.md) (`includevisitduration`) | Lets the opening hours of a node bound only the arrival, so that the visit may end after them (arrival windows vs finish-within windows: include visit duration into time windows). | |
+| [Opening hours that bound only the arrival](includevisitduration/IncludeVisitDuration.md) (`includevisitduration`) | Lets the opening hours of a node bound only the arrival, so that the visit may end after them (arrival windows instead of finish-within windows, with `setIsDutyHoursIncludesVisitDuration(false)`). | |
 | [Shorter visits for nodes at the same place](jointvisitduration/JointVisitDuration.md) (`jointvisitduration`) | A joint visit duration: a shorter visit for a node that directly follows a node at the same place. | |
 | [Running the genetic evolution stage in a loop](looprun/RunOptimizationInLoop.md) (`looprun`) | Runs the genetic evolution stage in continuous mode and ends it after three loops with `jumpToNextStage()`, to implement external convergers or stop criteria. | [Reactive events and streams](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/reactive_events) |
 | [Open and closed routes](openclosedroute/OpenClosedRoute.md) (`openclosedroute`) | Open routes, which end at their last node instead of at the start position of the resource. | |
@@ -69,7 +69,7 @@ Packages for some common questions; the table above links their pages.
 ### If you need strong business rules (structural feasibility or pseudo constraints)
 - Use **Relations** for coupling nodes across route/resource/time (a pseudo constraint: a broken relation adds a cost weighted by `JOptWeight.Relationships`).
 - Use **ZoneCodes** for territories (hard or soft) and **ZoneCrossing** to discourage expensive boundary crossings.
-- Use **Return2Start** or **OvernightStay** to model operationally mandatory depot returns or multi-day tours.
+- Use **Return to start** or **OvernightStay** to model operationally mandatory depot returns or multi-day tours.
 
 ### If you optimize logistics flows, not just routes
 - Use **Pickup & Delivery (PND)** when feasibility depends on load state (underload/overload), timed transport, or production planning.

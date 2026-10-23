@@ -38,7 +38,7 @@ A broken visitor relation adds a fixed cost, multiplied by the weight `JOptWeigh
 Typical cases, as examples:
 
 - **Same route:** two jobs that one resource does in one tour, for example a pickup and a follow-up service.
-- **Same resource:** visits on several days for which a customer keeps the same technician. For the same technician on different days, use `setIsForcedSameVisitorForcedDifferentRoute()`.
+- **Same resource:** visits for which a customer keeps the same technician, on one day or on several. To require different days as well, use `setIsForcedSameVisitorForcedDifferentRoute()`.
 - **Different routes, same resource allowed:** two visits that must not fall on the same route, for example two appointments of one customer on different days.
 - **Different routes and different resources:** a check that another crew does, for example an inspection after an installation by a different team.
 - **Time window:** a visit that follows another within a set time, for example an inspection within a window after an installation. A lower bound above 0 sets a minimal gap between the starts of the two visits, for example for drying or curing.

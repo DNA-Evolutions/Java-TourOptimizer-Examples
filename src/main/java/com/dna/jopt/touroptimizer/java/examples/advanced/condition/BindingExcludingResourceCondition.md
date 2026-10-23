@@ -8,7 +8,7 @@ These mechanisms are essential for real-world planning, where a task can be:
 * restricted to specific technicians/vehicles,
 * best served by certain resources (skills, customer preference),
 * prohibited for certain resources (regulatory limits, missing certifications),
-* possible but undesirable for certain resources (avoid overtime-skilled resource usage, soft dispatch rules).
+* possible but undesirable for certain resources (avoiding overtime or the use of skilled resources, soft dispatch rules).
 
 - **A resource constraint** is an `IConstraintResource`. The examples create one, add a resource by its id with `addResource(id, priority)` and attach the constraint to a node with `addConstraint`.
 - **Binding constraints** name the resources that should visit the node; each one defines this set of resources, which are considered "matching" for the node. If the current visiting resource is in the list, the constraint is satisfied; if not in the list, it depends on whether the constraint is hard or soft:
@@ -144,7 +144,7 @@ The block is from `MandatoryResourceConditionExample`; `PreferredResourceConditi
 
 ### MandatoryResourceConditionExample
 
-In both runs, Koeln1 was on John's route of March 6, together with Koeln and all other nodes apart from Aachen. Aachen lies at the start position of both resources. Whether Jack visits it, as his only node, or John takes it as well and Jack has no route can change between runs, at the same cost:
+In two test runs, Koeln1 was on John's route of March 6, together with Koeln and all other nodes apart from Aachen. Aachen lies at the start position of both resources. Whether Jack visits it, as his only node, or John takes it as well and Jack has no route can change between runs, at the same cost:
 
 ```text
  Cost                    : 847.033054487167

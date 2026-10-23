@@ -1,6 +1,6 @@
 # Open and closed routes
 
-`OpenClosedRouteExample` plans two working days for Jack with open routes: each route ends at its last node, and the way back to Jack's start position is not part of the route. The setting is `setIsClosedRoute(false)` on each `WorkingHours` object; working hours are closed routes with `setIsClosedRoute(true)`, and the example sets both days open. The page is for developers whose resources do not return to their start at the end of a day, or whose return is not working time. If you have not built an optimization yet, start with the [First optimization example](../../basic/firstoptimization_01/FirstOptimizationExample.md).
+`OpenClosedRouteExample` plans two working days for Jack with open routes: each route ends at its last node, and the way back to Jack's start position is not part of the route. The setting is `setIsClosedRoute(false)` on each `WorkingHours` object; with `setIsClosedRoute(true)` the route of those working hours is closed, and the example sets both days open. The page is for developers whose resources do not return to their start at the end of a day, or whose return is not working time. If you have not built an optimization yet, start with the [First optimization example](../../basic/firstoptimization_01/FirstOptimizationExample.md).
 
 ## What the example shows
 
@@ -184,4 +184,4 @@ Run the `main(String[] args)` method of `OpenClosedRouteExample` from your IDE, 
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

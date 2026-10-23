@@ -108,7 +108,7 @@ The times are `Duration` values and print in the ISO form, for example `PT1H40M`
 
 - `getTime()`: the route time, the sum of the transit, the idle and the productive time, as in the other class.
 - `getProductiveTime()`: the time of the visits. `getIdleTime()`: the waiting time, for example at a node that is not open yet.
-- `getFlexTime()`: the flex time used, that is the shift of a route start at its first node. Positive flex time (`setFlexTime` on the resource) lets a route start later to cut the idle time at its first node; negative flex time (`setMaxRouteStartReductionTime`) lets it start earlier. Jack has neither, so the flex time is zero in every line. The [flexible start time feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/flextime) explains both.
+- `getFlexTime()`: meant as the FlexTime used, that is the shift of a route start at its first node. FlexTime (`setFlexTime` on the resource) lets a route start later to cut the idle time at its first node; StartReductionTime (`setMaxRouteStartReductionTime`) lets it start earlier. With the core version of this repository, the getter returns zero even when a route uses FlexTime: it reads the totals of the solution, which do not add the FlexTime of the routes. Read the FlexTime per route instead, with `getJoinedDetailController().getCurFlexTimeUsage()` of each route of `getResultEntity().getRoutes()`; the result shows it as `Reduc. time usage[min]` of the route. Jack has neither, and the flex time is zero in every line. The [flexible start time feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/flextime) explains both.
 - `getTransitTime()`: the driving time of all routes. `getTerminationTransitTime()`: the part of it from the last node to the end of the route, here the drive back to Aachen.
 - `getUtilization()`: the productive time divided by the route time. `getDistance()`: the distance of all routes.
 
@@ -244,10 +244,10 @@ While naming is self-explanatory, these distinctions matter in production:
 Time spent traveling between nodes (including start/termination legs, depending on model and metric definition).
 
 ### Flex Time
-Flex time is the shift of a route start at its first node, as described for `getFlexTime()` above: positive flex time lets a route start later to cut the idle time at its first node, negative flex time lets it start the drive earlier.  
-In dashboards, it is often useful because:
-- high positive flex time shows routes that start later instead of waiting at their first node,
-- or high negative flex time shows routes that drive to their first node before their working hours begin.
+Flex time is the shift of a route start at its first node, as described for `getFlexTime()` above: FlexTime lets a route start later to cut the idle time at its first node, StartReductionTime lets it start the drive earlier.  
+In dashboards, it is often useful, read per route as described above, because:
+- a high FlexTime shows routes that start later instead of waiting at their first node,
+- or a high StartReductionTime shows routes that drive to their first node before their working hours begin (`getFlexTime()` does not count it).
 
 ### Termination Transit
 Termination transit metrics relate to the "route termination" leg(s) in your model.  
@@ -317,7 +317,7 @@ Run the `main(String[] args)` method of either class from your IDE, with the rep
 
 - [Progress output frequency and progress requests](../progressfrequency/OptimizationProgress.md): sets how often a stage reports its progress and requests a progress event from outside the run.
 - [Running the genetic evolution stage in a loop](../looprun/RunOptimizationInLoop.md): uses the stage number and the progress of the events to count loops.
-- [Flexible start time](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/flextime): the feature guide of positive and negative flex time.
+- [Flexible start time](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/flextime): the feature guide of FlexTime and StartReductionTime.
 - [Reactive events and streams](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/reactive_events): the feature guide of the event API.
 - [Recommended ways to run an optimization](../../basic/recommendedimplementation_02/RecommendedImplementation.md): the recommended run pattern, a synchronous run and the legacy callback methods.
 - [Advanced examples](../README.md): the overview of all Advanced examples.

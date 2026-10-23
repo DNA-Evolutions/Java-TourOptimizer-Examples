@@ -7,7 +7,7 @@
 - **Attraction:** keep selected target nodes on the **same route** as the constrained node, the magnet node. `setIsAttractingMagnet(true)` with `addNodeMagnetId("Aachen")` on Stuttgart: Aachen should be on the route that holds Stuttgart.
 - **Order:** `setOrder(NodeOrder.FRONT)` asks for the attracted nodes after the magnet node on the route, so Stuttgart comes first. `NodeOrder.BACK` asks for them before the magnet node, and `NodeOrder.NO_ORDER` asks only for the same route.
 - **Repulsion:** keep selected target nodes on a **different route** than the constrained node. `setIsAttractingMagnet(false)` with the targets Wuppertal and Essen on Koeln: they should be on other routes than Koeln.
-- **Soft only:** this example demonstrates `MagnetoNodeConstraint` ("magnetic" node constraint), which works in **soft** mode only. A magnetic constraint attaches to a single node and influences the optimizer via **preferences**. Important: a `MagnetoNodeConstraint` is not a hard constraint. `setIsHard(true)` does not make it hard; it only logs a warning. The example therefore does not call `setIsHard`.
+- **Soft only:** this example demonstrates `MagnetoNodeConstraint` ("magnetic" node constraint), which works in **soft** mode only: it attaches to a single node and influences the optimizer via **preferences**. `setIsHard(true)` does not make it hard; it only logs a warning. The example therefore does not call `setIsHard`.
 - **Targets by id:** the targets are node ids, here the city names.
 
 ## Scenario

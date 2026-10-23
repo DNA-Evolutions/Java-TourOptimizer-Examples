@@ -35,7 +35,7 @@ The source is [CO2EmissionOptimizationExample.java](https://github.com/DNA-Evolu
 
 ### The CO2 weight
 
-In `addProperties(...)`, the example enables CO2 optimization explicitly; the class does not set `JOpt.Algorithm.PreOptimization.SA.NumRepetitions`. It sets the weight next to the two values that keep the run short, the general run controls that the example also sets:
+In `addProperties(...)`, the example enables CO2 optimization explicitly: it sets the weight next to the two general run controls that keep the run short (the class does not set `JOpt.Algorithm.PreOptimization.SA.NumRepetitions`):
 
 ```java
 // Fewer generations and iterations than the defaults keep the run short.

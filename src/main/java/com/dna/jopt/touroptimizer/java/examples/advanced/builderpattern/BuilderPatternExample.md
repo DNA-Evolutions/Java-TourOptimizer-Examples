@@ -128,7 +128,7 @@ System.out.println();
 
 ## Output and what to look for
 
-The output starts with the status events and the progress lines of the run. In both runs, the JOpt log also shows the line `Limiting run time` near the start.
+The output starts with the status events and the progress lines of the run. In two test runs, the JOpt log also shows the line `Limiting run time` near the start.
 
 Then the result config follows as JSON. It holds the nodes, the resource, the connections between the elements, the properties, the solution and the extension. Times in the JSON are in UTC: `2020-05-06T06:00:00Z` is 08:00 in Europe/Berlin. The resource part shows both levels of limits, trimmed to these lines in two test runs:
 
@@ -239,7 +239,7 @@ This is the entry point for production tuning.
 ## When to choose the builder approach
 
 Use the builder approach when:
-- your config has many optional parts (open hours, constraints, metadata)
+- your config has many optional parts (opening hours, constraints, metadata)
 - you want clean code and fewer constructor overloads
 - you want to reliably serialize the config into a portable JSON representation
 - you build configs dynamically (from DB, UI, API calls)
@@ -264,4 +264,4 @@ Run the `main(String[] args)` method of `BuilderPatternExample` from your IDE, w
 
 ---
 
-Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-21
+Added: 2026-02-17 (JOpt core 7.5.3-j17) | Last updated: 2026-10-23

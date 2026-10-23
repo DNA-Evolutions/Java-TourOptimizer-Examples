@@ -4,7 +4,7 @@
 
 ## What the example shows
 
-This is especially useful when:
+A connection time efficiency factor is especially useful when:
 * one vehicle is significantly faster (highway capable, emergency privileges, optimized routing device),
 * one vehicle is slower (heavy truck, restricted speed zones),
 * one resource is a bike/walker in dense cities,
@@ -13,7 +13,7 @@ This is especially useful when:
 - **The factor:** every time the optimizer evaluates a move, it needs **travel time** between two locations (nodes, or resource start/end to nodes). `setConnectionTimeEfficiencyFactor(double)` on a resource scales the driving time of each connection that the resource drives. JOpt multiplies the time by the factor, so a factor below 1 makes the resource faster and a factor above 1 makes it slower. A resource with the factor 1.0, as John in the example, drives with the times of the connections. The setter throws an `IllegalStateException` for a factor below 0.
 - **Time, not distance:** the factor changes the driving time only. The distance of a connection, and with it the distance cost, stays the same.
 - **Where the time comes from:** the factor scales the time of the connection, wherever that time comes from. In this example JOpt calculates the time from the straight-line distance and the average speed of the resource (`setAvgSpeed`), as the [Backup connector feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/backupconnector) describes. The factor also scales the times of connections that you add yourself with a node connector. Connections with time-dependent data, as in [Time-dependent driving times with a connection store](../../expert/connectionstore/ConnectionStore.md), are the exception: where the time-dependent data hold a time for the moment of the drive, JOpt uses that time without the factor.
-- **The effect on the plan:** both resources have the same costs, and the factor makes Jack's driving shorter. With the factor, Jack takes almost all nodes; in two test runs without it, John took them (see "Output and what to look for").
+- **The effect on the plan:** both resources have the same costs, and the factor makes Jack's driving shorter. With the factor, Jack takes almost all nodes; in four test runs without it, John took them, seven or all eight (see "Output and what to look for").
 - **Choosing a value:** the factor is the ratio of the two speeds. A vehicle that drives at 60 km/h on connections whose times assume 50 km/h gets 50/60, about 0.83; a vehicle that drives at 40 km/h gets 50/40, that is 1.25. This gives you consistent and explainable scaling. The speeds are sample values. The example uses 0.2, a value exaggerated so that the effect is easy to see.
 
 The example also writes its result to a KML file.
@@ -80,7 +80,7 @@ Duration maxWorkingTimeJohn = Duration.ofHours(14);
 
 ## Output and what to look for
 
-The run prints the status and progress lines, then the result. In both runs, Jack visited seven of the eight nodes on March 6, in a route of 258.35 minutes that ended at 12:18:21, and John visited only Aachen, the node at the start position of both resources. The violation summaries of both routes were empty. Koeln and Koeln1, at the same position, can change places in Jack's route between runs. Jack's first two node lines were the same in both runs:
+The run prints the status and progress lines, then the result. In two test runs, Jack visited seven of the eight nodes on March 6, in a route of 258.35 minutes that ended at 12:18:21, and John visited only Aachen, the node at the start position of both resources. The violation summaries of both routes were empty. Koeln and Koeln1, at the same position, can change places in Jack's route between runs. Jack's first two node lines were the same in both runs:
 
 ```text
 0.0 Stuttgart / Geo  / Arrival: 06.03.2020 08:47:15 (Europe/Berlin) , Departure: 06.03.2020 09:07:15 (Europe/Berlin) / Duration: 20.0 [min] / Driving: 47.25 [min], 311.85 [km]

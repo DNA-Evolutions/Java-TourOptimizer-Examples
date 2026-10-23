@@ -276,7 +276,7 @@ Example:
 This creates a robust and explainable model:
 - assignment must satisfy both *group rule* and *capability rule*.
 
-### Pattern B: Multiple aliases for the same resource (use with care)
+### Pattern B: Several group memberships for one resource (use with care)
 A resource supports only one `constraintAliasId` value. If you need multiple group memberships:
 - use skill/type constraints for one dimension,
 - and alias IDs for another,
@@ -318,7 +318,7 @@ If you need capability checks, use:
 - and cost models as needed.
 
 ### Pitfall 3: Team members with very different start locations
-If a team contains resources with very different depots, the solver may still assign the "wrong" depot if it is feasible and cheaper.
+If a team contains resources with very different start locations, the solver may still give a node to the "wrong" member, one that starts far away, if that is feasible and cheaper.
 If you need geographic separation, combine:
 - alias constraints with zone codes,
 - or with explicit location-based constraints.

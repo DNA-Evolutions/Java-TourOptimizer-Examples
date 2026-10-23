@@ -16,15 +16,15 @@ The `IncludeVisitDurationExample` demonstrates how to switch a node from strict 
 
 - **`setIsDutyHoursIncludesVisitDuration(true)`, set on the seven other nodes:** the opening hours of a node include its visit duration. This time-window behavior requires both: the visit must start and end inside them, **arrival and completion** within OpeningHours; a visit that ends later is late.
 - **`setIsDutyHoursIncludesVisitDuration(false)`:** changes a node to an **arrival-only** constraint: the opening hours act as an access window. The visit must start inside them and may end after them. This is essential for real cases where "access must start in the window" but work may finish afterwards.
-- **Per node:** only Koeln has the setting `false`, while the other seven nodes keep strict time windows with `true`: the example demonstrates the setting on Koeln, leaving the other nodes in strict mode and making the behavioral difference easy to observe.
+- **Per node:** only Koeln has the setting `false`, while the other seven nodes keep strict time windows with `true`, which makes the behavioral difference easy to observe.
 - **The visit still takes its time:** the departure from Koeln, the arrival at the next node and Jack's working time all include the 20 minutes.
 
 ## Scenario
 
 The dates, times and coordinates are sample values.
 
-- **Resource:** `Jack` starts at 50.775346, 6.083887 (Aachen) and works on May 6 and May 7, 2020, from 08:00 to 17:00 (Europe/Berlin); his maximal working time is 13 hours, more than the 9 hours of the working hours, and his maximal distance 1200 km. He is created as one `CapacityResource` with these `WorkingHours` for resources, the max working time and the max distance, and the class does not call `setCost` for a cost configuration: starting in Aachen, this single resource keeps the focus on the time-window semantics rather than resource differences.
-- **Koeln:** its own OpeningHours are open only on May 6, 2020, from 09:00 to 09:15, which is shorter than its visit of 20 minutes, and the node is set to `setIsDutyHoursIncludesVisitDuration(false)`. This flips the semantic switch for Koeln: it is "arrive in window, finish after allowed".
+- **Resource:** `Jack` starts at 50.775346, 6.083887 (Aachen) and works on May 6 and May 7, 2020, from 08:00 to 17:00 (Europe/Berlin); his maximal working time is 13 hours, more than the 9 hours of the working hours, and his maximal distance 1200 km. He is one `CapacityResource` with these working hours, the maximal working time and the maximal distance; the class does not call `setCost` for a cost configuration, so this single resource keeps the focus on the time-window semantics rather than on resource differences.
+- **Koeln:** its own OpeningHours are open only on May 6, 2020, from 09:00 to 09:15, which is shorter than its visit of 20 minutes, and the node is set to `setIsDutyHoursIncludesVisitDuration(false)`. This flips the semantic switch for Koeln: Jack must arrive inside these hours, and the visit may end after them.
 - **Seven other nodes:** Essen, Dueren, Nuernberg, Heilbronn, Stuttgart, Wuppertal and Aachen, all `TimeWindowGeoNode` objects, with the OpeningHours for nodes open on May 6 and 7, 2020, from 08:00 to 17:00 (Europe/Berlin). They are set to `setIsDutyHoursIncludesVisitDuration(true)` and remain strict.
 - **All eight nodes:** the example creates several `TimeWindowGeoNode` instances (cities), one per city, with a visit of 20 minutes and the importance 1; the visit duration is set per node. Every node is set to `setWaitOnEarlyArrival(true)`: a resource that arrives before a node opens waits until it opens.
 
@@ -89,7 +89,7 @@ The run prints the status and progress lines, then the result. In two test runs 
 0.1 Koeln / Geo  / Arrival: 06.05.2020 09:08:36 (Europe/Berlin) , Departure: 06.05.2020 09:28:36 (Europe/Berlin) / Duration: 20.0 [min] / Driving: 27.25 [min], 35.97 [km]
 ```
 
-Print and review the result to confirm it: Jack arrives at 09:08:36, inside the opening hours, so Koeln arrival occurs within the window. He leaves at 09:28:36, after their end at 09:15: Koeln completion occurs after the window end, because its visit of 20 minutes is longer than its window of 15 minutes. The line shows no violation, and the violation summary of route 0 is empty.
+Print and review the result to confirm it: Jack arrives at 09:08:36, inside the opening hours, and leaves at 09:28:36, after their end at 09:15, because the visit of 20 minutes is longer than the window of 15 minutes. The line shows no violation, and the violation summary of route 0 is empty.
 
 In a test run with `setIsDutyHoursIncludesVisitDuration(true)` on Koeln, as the seven other nodes set it, the line of Koeln showed a LATE violation of 5 minutes. With 15 minutes of opening hours and a visit of 20 minutes, a visit that must end inside the opening hours is at least 5 minutes late.
 

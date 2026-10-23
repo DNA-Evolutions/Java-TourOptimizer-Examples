@@ -604,9 +604,9 @@ Avoid accidental mismatches due to typos or inconsistent naming.
 - If you need level thresholds or utilization control, use `TypeWithExpertiseConstraint`.
 
 ### 3) Use cost models to protect expensive experts
-If you have many highly skilled resources, use cost models to prevent:
-- over-qualification waste,
-- or to enforce a "premium service" policy consistently.
+If you have many highly skilled resources, use cost models to:
+- prevent over-qualification waste,
+- or enforce a "premium service" policy consistently.
 
 ### 4) For very large instances: prefer BitTypeWithExpertise
 If you have large-scale optimization with many skills, BitTypeWithExpertise can dramatically reduce runtime by:

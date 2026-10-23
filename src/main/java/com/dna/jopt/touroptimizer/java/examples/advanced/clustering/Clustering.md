@@ -31,7 +31,7 @@ The dates are sample values.
 - **Nodes and resources:** 1000 nodes, `N_0` to `N_999`, and 50 resources, `R_0` to `R_49`, sampled using `samplePhyllotaxis(...)` on two phyllotaxis patterns around a point in the west of Koeln (50.9333, 6.85), the area of the phyllotaxis figures in the feature guide; those figures show a setup of their own, with 40 resources, while this class has 50 resources and chooses `SmartConstructionAlgo`. The resources also lie around the same center (multi-depot style).
 - **Pattern:** element i lies at the distance spacing x sqrt(i) from that point and at i times the golden angle. The spacing is 0.002 degrees for the nodes and 0.01 degrees for the resources, so the outermost node lies about 0.063 degrees from that point and the outermost resource 0.07 degrees: the resources spread over the area of the nodes.
 - **Times:** the nodes are open (node `OpeningHours`) and the resources work (resource `WorkingHours`) on May 6, 2023, from 08:00 to 22:00 (Europe/Berlin). Each visit takes 5 minutes, the visit duration per node; each resource may work 12 hours, a sample value, and drive 2200 km.
-- **Two days:** with the constant `ADD_EVEN_ODD_SPLITTING` set to `true`, the nodes and resources with an even index move to May 7, and the plan splits into two days: the opening hours are optionally split by even/odd node id into different days (multi-dimensional clustering behavior), and the working hours are produced via `createWorkingHours(dayOfMay(ii))`, which supports the even/odd day split. The committed value is `false`.
+- **Two days:** with the constant `ADD_EVEN_ODD_SPLITTING` set to `true`, the nodes and resources with an even index move to May 7, the nodes with their opening hours and the resources with their working hours (`createWorkingHours(dayOfMay(ii))`), and the plan splits into two days (multi-dimensional clustering behavior). The committed value is `false`.
 
 ## How the code works
 
@@ -69,7 +69,7 @@ opti.setOptimizationScheme(
 
 ### Construction only
 
-To highlight clustering construction quality, the example disables the later optimization stages, and `ClusteringCityToCityExample` does so just like the inner-city example: both set the same two properties, zero generations and zero SA iterations. This means the output is pure construction (no SA, no GA), so it demonstrates what the construction stage can do on its own, at "country scale" for the city-to-city data. The block shows the two properties of `ClusteringCityToCityExample` and `ClusteringInnerCityExample`:
+To highlight clustering construction quality, `ClusteringCityToCityExample` and `ClusteringInnerCityExample` disable the later optimization stages: both set the same two properties, zero generations and zero SA iterations. This means the output is pure construction (no SA, no GA), so it demonstrates what the construction stage can do on its own, at "country scale" for the city-to-city data. The block shows the two properties of `ClusteringCityToCityExample` and `ClusteringInnerCityExample`:
 
 ```java
 // Zero generations and zero iterations: no genetic evolution and no simulated annealing after
@@ -157,7 +157,7 @@ With the public evaluation license, each of the three classes ended with exit co
 
   The license error above it is the cause. The run prints no result and writes no KML file.
 
-The clustering construction feature guide shows figures of construction results for phyllotaxis data of its own, with 40 resources, and for city-to-city data across Germany.
+The clustering construction feature guide shows figures of construction results for phyllotaxis data of its own, with 40 resources, and for city-to-city data across Germany; the guide made its city-to-city figure with an earlier version of `SmartConstructionAlgo`.
 
 ### With a full license
 
@@ -190,7 +190,7 @@ JOpt's clustering construction is explicitly designed to be **multi-dimensional*
 
 ## The construction algorithm (as described in the documentation)
 
-The documentation describes the **HybridMultiDimensionalClusteringAlgorithm**, a clustering construction algorithm; without a choice of construction algorithm, JOpt runs `SmartConstructionAlgo`. The examples of this page choose `SmartConstructionAlgo` as the construction algorithm (`ConstructionOptimizationAlgorithm.SMART_CONSTR_ALGO`), which also builds clusters. The two test runs of each class with the public evaluation license show it in a status event before the license error: `StatusEvent(OPTIMIZATION_ALGO_INITIALIZED, SmartConstructionAlgo)`. The algorithm of the documentation runs when you choose it as the construction algorithm instead (`ConstructionOptimizationAlgorithm.CLUSTERED_SEQUENTIAL_SPACE_SAVINGS_ALGO`).
+The [clustering construction feature guide](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/clustering_construction) describes `SmartConstructionAlgo`, the default construction algorithm: without a choice of construction algorithm, JOpt runs it. The examples of this page choose `SmartConstructionAlgo` explicitly as the construction algorithm (`ConstructionOptimizationAlgorithm.SMART_CONSTR_ALGO`), which builds clusters. The two test runs of each class with the public evaluation license show it in a status event before the license error: `StatusEvent(OPTIMIZATION_ALGO_INITIALIZED, SmartConstructionAlgo)`. The HybridMultiDimensionalClusteringAlgorithm (`ConstructionOptimizationAlgorithm.CLUSTERED_SEQUENTIAL_SPACE_SAVINGS_ALGO`), a separate clustering construction algorithm, still runs when you choose it, but it is deprecated; use `SmartConstructionAlgo`.
 
 ### Requirements the algorithm is designed to meet
 The algorithm is designed to be:

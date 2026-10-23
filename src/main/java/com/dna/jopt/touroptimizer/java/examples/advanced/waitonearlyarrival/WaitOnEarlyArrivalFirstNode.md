@@ -160,7 +160,7 @@ Do not use this behavior if your opening hours are hard operational constraints,
 - customers that must not be served early.
 
 In those cases:
-- keep `setWaitOnEarlyArrival(true)` (the node waits until it opens),
+- keep `setWaitOnEarlyArrival(true)` (the resource waits until the node opens),
 - and do not relax mid-route waiting.
 
 ## Recommended production guidance
