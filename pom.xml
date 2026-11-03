@@ -48,8 +48,8 @@
 
 	<repositories>
 		<repository>
-			<id>jopt-maven-public</id>
-			<url>https://nexus.dna-evolutions.net/repository/maven-public/</url>
+			<id>dna-releases</id>
+			<url>https://repo.dna-evolutions.com/releases</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>

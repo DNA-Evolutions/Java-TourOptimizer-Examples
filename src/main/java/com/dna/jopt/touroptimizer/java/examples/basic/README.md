@@ -157,11 +157,11 @@ Recommended companion doc:
 - [Optimization properties](https://www.dna-evolutions.com/docs/learn-and-explore/feature-guides/optimization_properties): the property reference.
 - [Documentation Hub introduction](https://www.dna-evolutions.com/docs/getting-started/home/introduction): the introduction to the documentation.
 - [Public JavaDocs](https://public.javadoc.dna-evolutions.com): the API documentation of JOpt.
-- [Public Nexus repository](https://nexus.dna-evolutions.net/): the Maven repository with the JOpt artifacts.
+- [Public Maven repository](https://repo.dna-evolutions.com/releases): the Maven repository with the JOpt artifacts.
 - [RELEASE_NOTES.md](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/RELEASE_NOTES.md): the release notes of this repository.
 - [CHANGELOG.md](https://github.com/DNA-Evolutions/Java-TourOptimizer-Examples/blob/master/CHANGELOG.md): the change log of this repository.
 - [Contact](https://www.dna-evolutions.com/contact): the contact form of DNA Evolutions, or [info@dna-evolutions.com](mailto:info@dna-evolutions.com).
 
 ---
 
-Added: 2020-05-27 (JOpt core 7.4.2) | Last updated: 2026-10-23
+Added: 2020-05-27 (JOpt core 7.4.2) | Last updated: 2026-11-03

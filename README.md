@@ -8,7 +8,7 @@ A Maven project with Java examples for JOpt.TourOptimizer by DNA Evolutions. JOp
 - **Special features:** [dna-evolutions.com/docs/learn-and-explore/special/special_features](https://www.dna-evolutions.com/docs/learn-and-explore/special/special_features)
 - **Interactive API:** [dna-evolutions.com/api](https://www.dna-evolutions.com/api/)
 - **JavaDocs:** [public.javadoc.dna-evolutions.com](https://public.javadoc.dna-evolutions.com)
-- **Nexus repository:** [nexus.dna-evolutions.net](https://nexus.dna-evolutions.net)
+- **Maven repository:** [repo.dna-evolutions.com/releases](https://repo.dna-evolutions.com/releases)
 
 ---
 
@@ -208,18 +208,12 @@ To use it in Eclipse:
 
 ### Repository
 
-Add the DNA Evolutions Nexus repository to your `pom.xml`:
+Add the DNA Evolutions Maven repository to your `pom.xml`. The repository is public and needs no login:
 
 ```xml
 <repository>
-    <id>jopt4-maven</id>
-    <url>https://nexus.dna-evolutions.net/repository/maven-public/</url>
-    <releases>
-        <enabled>true</enabled>
-    </releases>
-    <snapshots>
-        <enabled>true</enabled>
-    </snapshots>
+    <id>dna-releases</id>
+    <url>https://repo.dna-evolutions.com/releases</url>
 </repository>
 ```
 
@@ -275,14 +269,44 @@ The JavaDocs are also available online as a [browsable reference](https://public
 
 ### Direct download
 
-- [Shaded JAR (latest)](https://nexus.dna-evolutions.net/service/rest/v1/search/assets/download?sort=version&repository=maven-releases&group=jopt&maven.artifactId=jopt.core.pg&maven.extension=jar&maven.classifier=shaded)
-- [JavaDoc JAR (latest)](https://nexus.dna-evolutions.net/service/rest/v1/search/assets/download?sort=version&repository=maven-releases&group=jopt&maven.artifactId=jopt.core.pg&maven.extension=jar&maven.classifier=javadoc)
+- [Shaded JAR (7.5.3-rc5-j17)](https://repo.dna-evolutions.com/releases/jopt/jopt.core.pg/7.5.3-rc5-j17/jopt.core.pg-7.5.3-rc5-j17-shaded.jar)
+- [JavaDoc JAR (7.5.3-rc5-j17)](https://repo.dna-evolutions.com/releases/jopt/jopt.core.pg/7.5.3-rc5-j17/jopt.core.pg-7.5.3-rc5-j17-javadoc.jar)
+- [All versions](https://repo.dna-evolutions.com/releases/jopt/jopt.core.pg/): one folder per version with its jars
+
+### Snapshots (customers with a token)
+
+Snapshot builds are only for customers with an access token. Add the snapshot repository to your `pom.xml`:
+
+```xml
+<repository>
+    <id>dna-snapshots</id>
+    <url>https://repo.dna-evolutions.com/snapshots</url>
+    <releases>
+        <enabled>false</enabled>
+    </releases>
+    <snapshots>
+        <enabled>true</enabled>
+    </snapshots>
+</repository>
+```
+
+Add a server with the same id to your `~/.m2/settings.xml`, with the name and the secret of your token:
+
+```xml
+<servers>
+    <server>
+        <id>dna-snapshots</id>
+        <username>YOUR_TOKEN_NAME</username>
+        <password>YOUR_TOKEN_SECRET</password>
+    </server>
+</servers>
+```
 
 ---
 
 ## Non-Maven build tools
 
-JOpt is compatible with Gradle, SBT, IVY, Grape, Leiningen, and other JVM build tools. Browse the [Nexus repository](https://nexus.dna-evolutions.net/#browse/browse:maven-releases), select the desired artifact, and look for the Usage panel to find the snippet for your build tool. Add the DNA Evolutions repository to the build configuration of any tool.
+JOpt is compatible with Gradle, SBT, IVY, Grape, Leiningen, and other JVM build tools. Browse the [Maven repository](https://repo.dna-evolutions.com/releases/jopt/jopt.core.pg/) for the versions and use the coordinates group `jopt`, artifact `jopt.core.pg` and classifier `shaded` in your build tool. Add the DNA Evolutions repository (`https://repo.dna-evolutions.com/releases`) to the build configuration of any tool.
 
 ---
 
@@ -291,6 +315,8 @@ JOpt is compatible with Gradle, SBT, IVY, Grape, Leiningen, and other JVM build 
 Version **7.5.2** is the last release to include a Java 8 compatible build. From version 7.5.3 onward, Java 17 is required.
 
 On Java 8, use the [JOpt.TourOptimizer REST service](https://github.com/DNA-Evolutions/Docker-REST-TourOptimizer) in a container; a client in any language can be generated from its OpenAPI spec.
+
+The Java 8 artifacts come from the same repository as above (`https://repo.dna-evolutions.com/releases`, id `dna-releases`):
 
 ```xml
 <!-- Last Java 8 compatible release -->
@@ -369,7 +395,7 @@ Get an extended free license for customers evaluating the product. It allows up 
 ### Code and registry
 
 - [Docker REST TourOptimizer](https://github.com/DNA-Evolutions/Docker-REST-TourOptimizer): containerised REST API
-- [Nexus repository](https://nexus.dna-evolutions.net): all JOpt releases
+- [Maven repository](https://repo.dna-evolutions.com/releases): the JOpt releases
 
 ### Social
 
